@@ -1,0 +1,216 @@
+{
+  "name": "cdk-nag",
+  "description": "Check CDK applications for best practices using a combination on available rule packs.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdklabs/cdk-nag.git"
+  },
+  "scripts": {
+    "clobber": "npx projen clobber",
+    "compile": "npx projen compile",
+    "test:compile": "npx projen test:compile",
+    "test": "npx projen test",
+    "build": "npx projen build",
+    "test:watch": "npx projen test:watch",
+    "test:update": "npx projen test:update",
+    "bump": "npx projen bump",
+    "unbump": "npx projen unbump",
+    "upgrade-dependencies": "npx projen upgrade-dependencies",
+    "default": "npx projen default",
+    "watch": "npx projen watch",
+    "package": "npx projen package",
+    "eslint": "npx projen eslint",
+    "compat": "npx projen compat",
+    "publish:npm": "npx projen publish:npm",
+    "publish:pypi": "npx projen publish:pypi",
+    "docgen": "npx projen docgen",
+    "release": "npx projen release",
+    "projen": "npx projen",
+    "start": "npx projen start"
+  },
+  "author": {
+    "name": "Arun Donti",
+    "email": "donti@amazon.com",
+    "organization": false
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "^1.110.0",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^10.17.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
+    "eslint": "^7.28.0",
+    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.23.4",
+    "jest": "^27.0.4",
+    "jest-junit": "^12",
+    "jsii": "^1.30.0",
+    "jsii-diff": "^1.30.0",
+    "jsii-docgen": "^1.8.90",
+    "jsii-pacmak": "^1.30.0",
+    "json-schema": "^0.3.0",
+    "npm-check-updates": "^11",
+    "projen": "^0.27.1",
+    "standard-version": "^9",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.2"
+  },
+  "peerDependencies": {
+    "@aws-cdk/aws-apigateway": "^1.110.0",
+    "@aws-cdk/aws-apigatewayv2": "^1.110.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers": "^1.110.0",
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.110.0",
+    "@aws-cdk/aws-athena": "^1.110.0",
+    "@aws-cdk/aws-autoscaling": "^1.110.0",
+    "@aws-cdk/aws-cloud9": "^1.110.0",
+    "@aws-cdk/aws-cloudfront": "^1.110.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.110.0",
+    "@aws-cdk/aws-codebuild": "^1.110.0",
+    "@aws-cdk/aws-cognito": "^1.110.0",
+    "@aws-cdk/aws-dax": "^1.110.0",
+    "@aws-cdk/aws-docdb": "^1.110.0",
+    "@aws-cdk/aws-dynamodb": "^1.110.0",
+    "@aws-cdk/aws-ec2": "^1.110.0",
+    "@aws-cdk/aws-ecr": "^1.110.0",
+    "@aws-cdk/aws-ecs": "^1.110.0",
+    "@aws-cdk/aws-efs": "^1.110.0",
+    "@aws-cdk/aws-eks": "^1.110.0",
+    "@aws-cdk/aws-elasticache": "^1.110.0",
+    "@aws-cdk/aws-elasticbeanstalk": "^1.110.0",
+    "@aws-cdk/aws-elasticloadbalancing": "^1.110.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "^1.110.0",
+    "@aws-cdk/aws-elasticsearch": "^1.110.0",
+    "@aws-cdk/aws-emr": "^1.110.0",
+    "@aws-cdk/aws-iam": "^1.110.0",
+    "@aws-cdk/aws-kinesis": "^1.110.0",
+    "@aws-cdk/aws-kinesisanalytics": "^1.110.0",
+    "@aws-cdk/aws-kinesisfirehose": "^1.110.0",
+    "@aws-cdk/aws-kms": "^1.110.0",
+    "@aws-cdk/aws-lambda": "^1.110.0",
+    "@aws-cdk/aws-logs": "^1.110.0",
+    "@aws-cdk/aws-mediastore": "^1.110.0",
+    "@aws-cdk/aws-msk": "^1.110.0",
+    "@aws-cdk/aws-neptune": "^1.110.0",
+    "@aws-cdk/aws-quicksight": "^1.110.0",
+    "@aws-cdk/aws-rds": "^1.110.0",
+    "@aws-cdk/aws-redshift": "^1.110.0",
+    "@aws-cdk/aws-s3": "^1.110.0",
+    "@aws-cdk/aws-sagemaker": "^1.110.0",
+    "@aws-cdk/aws-sns": "^1.110.0",
+    "@aws-cdk/aws-sqs": "^1.110.0",
+    "@aws-cdk/aws-stepfunctions": "^1.110.0",
+    "@aws-cdk/aws-wafv2": "^1.110.0",
+    "@aws-cdk/core": "^1.110.0",
+    "constructs": "^3.2.27"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.110.0",
+    "@aws-cdk/aws-apigatewayv2": "^1.110.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers": "^1.110.0",
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.110.0",
+    "@aws-cdk/aws-athena": "^1.110.0",
+    "@aws-cdk/aws-autoscaling": "^1.110.0",
+    "@aws-cdk/aws-cloud9": "^1.110.0",
+    "@aws-cdk/aws-cloudfront": "^1.110.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.110.0",
+    "@aws-cdk/aws-codebuild": "^1.110.0",
+    "@aws-cdk/aws-cognito": "^1.110.0",
+    "@aws-cdk/aws-dax": "^1.110.0",
+    "@aws-cdk/aws-docdb": "^1.110.0",
+    "@aws-cdk/aws-dynamodb": "^1.110.0",
+    "@aws-cdk/aws-ec2": "^1.110.0",
+    "@aws-cdk/aws-ecr": "^1.110.0",
+    "@aws-cdk/aws-ecs": "^1.110.0",
+    "@aws-cdk/aws-efs": "^1.110.0",
+    "@aws-cdk/aws-eks": "^1.110.0",
+    "@aws-cdk/aws-elasticache": "^1.110.0",
+    "@aws-cdk/aws-elasticbeanstalk": "^1.110.0",
+    "@aws-cdk/aws-elasticloadbalancing": "^1.110.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "^1.110.0",
+    "@aws-cdk/aws-elasticsearch": "^1.110.0",
+    "@aws-cdk/aws-emr": "^1.110.0",
+    "@aws-cdk/aws-iam": "^1.110.0",
+    "@aws-cdk/aws-kinesis": "^1.110.0",
+    "@aws-cdk/aws-kinesisanalytics": "^1.110.0",
+    "@aws-cdk/aws-kinesisfirehose": "^1.110.0",
+    "@aws-cdk/aws-kms": "^1.110.0",
+    "@aws-cdk/aws-lambda": "^1.110.0",
+    "@aws-cdk/aws-logs": "^1.110.0",
+    "@aws-cdk/aws-mediastore": "^1.110.0",
+    "@aws-cdk/aws-msk": "^1.110.0",
+    "@aws-cdk/aws-neptune": "^1.110.0",
+    "@aws-cdk/aws-quicksight": "^1.110.0",
+    "@aws-cdk/aws-rds": "^1.110.0",
+    "@aws-cdk/aws-redshift": "^1.110.0",
+    "@aws-cdk/aws-s3": "^1.110.0",
+    "@aws-cdk/aws-sagemaker": "^1.110.0",
+    "@aws-cdk/aws-sns": "^1.110.0",
+    "@aws-cdk/aws-sqs": "^1.110.0",
+    "@aws-cdk/aws-stepfunctions": "^1.110.0",
+    "@aws-cdk/aws-wafv2": "^1.110.0",
+    "@aws-cdk/core": "^1.110.0"
+  },
+  "bundledDependencies": [],
+  "keywords": [
+    "cdk"
+  ],
+  "main": "lib/index.js",
+  "license": "Apache-2.0",
+  "version": "0.0.0",
+  "jest": {
+    "testMatch": [
+      "**/__tests__/**/*.ts?(x)",
+      "**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "clearMocks": true,
+    "collectCoverage": true,
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "clover",
+      "text"
+    ],
+    "coverageDirectory": "coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "watchPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "test-reports"
+        }
+      ]
+    ],
+    "preset": "ts-jest",
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.jest.json"
+      }
+    }
+  },
+  "types": "lib/index.d.ts",
+  "stability": "stable",
+  "jsii": {
+    "outdir": "dist",
+    "targets": {
+      "python": {
+        "distName": "cdk-nag",
+        "module": "cdk_nag"
+      }
+    },
+    "tsc": {
+      "outDir": "lib",
+      "rootDir": "src"
+    }
+  },
+  "//": "~~ Generated by projen. To modify, edit .projenrc.js and run \"npx projen\"."
+}
