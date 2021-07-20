@@ -1,0 +1,15 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-json
+      - id: trailing-whitespace
+        exclude: ^API.md||.github/$
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.28.0
+    hooks:
+      - id: eslint
+        files: \.[jt]sx?$
+        types: [file]

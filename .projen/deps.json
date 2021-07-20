@@ -1,0 +1,549 @@
+{
+  "dependencies": [
+    {
+      "name": "@aws-cdk/assert",
+      "version": "^1.110.0",
+      "type": "build"
+    },
+    {
+      "name": "@types/jest",
+      "type": "build"
+    },
+    {
+      "name": "@types/node",
+      "version": "^10.17.0",
+      "type": "build"
+    },
+    {
+      "name": "@typescript-eslint/eslint-plugin",
+      "type": "build"
+    },
+    {
+      "name": "@typescript-eslint/parser",
+      "type": "build"
+    },
+    {
+      "name": "eslint",
+      "type": "build"
+    },
+    {
+      "name": "eslint-import-resolver-node",
+      "type": "build"
+    },
+    {
+      "name": "eslint-import-resolver-typescript",
+      "type": "build"
+    },
+    {
+      "name": "eslint-plugin-import",
+      "type": "build"
+    },
+    {
+      "name": "jest",
+      "type": "build"
+    },
+    {
+      "name": "jest-junit",
+      "version": "^12",
+      "type": "build"
+    },
+    {
+      "name": "jsii",
+      "type": "build"
+    },
+    {
+      "name": "jsii-diff",
+      "type": "build"
+    },
+    {
+      "name": "jsii-docgen",
+      "type": "build"
+    },
+    {
+      "name": "jsii-pacmak",
+      "type": "build"
+    },
+    {
+      "name": "json-schema",
+      "type": "build"
+    },
+    {
+      "name": "npm-check-updates",
+      "version": "^11",
+      "type": "build"
+    },
+    {
+      "name": "projen",
+      "type": "build"
+    },
+    {
+      "name": "standard-version",
+      "version": "^9",
+      "type": "build"
+    },
+    {
+      "name": "ts-jest",
+      "type": "build"
+    },
+    {
+      "name": "typescript",
+      "type": "build"
+    },
+    {
+      "name": "@aws-cdk/aws-apigateway",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2-authorizers",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2-integrations",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-athena",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-autoscaling",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-cloud9",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudfront-origins",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudfront",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-codebuild",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-cognito",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-dax",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-docdb",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-dynamodb",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-ec2",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-ecr",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-ecs",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-efs",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-eks",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticache",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticbeanstalk",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticloadbalancing",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticloadbalancingv2",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticsearch",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-emr",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-iam",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-kinesis",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-kinesisanalytics",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-kinesisfirehose",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-kms",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-lambda",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-logs",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-mediastore",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-msk",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-neptune",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-quicksight",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-rds",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-redshift",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-s3",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-sagemaker",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-sns",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-sqs",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-stepfunctions",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-wafv2",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/core",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "constructs",
+      "version": "^3.2.27",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-apigateway",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2-authorizers",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2-integrations",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-apigatewayv2",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-athena",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-autoscaling",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-cloud9",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudfront-origins",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudfront",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-codebuild",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-cognito",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-dax",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-docdb",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-dynamodb",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-ec2",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-ecr",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-ecs",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-efs",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-eks",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticache",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticbeanstalk",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticloadbalancing",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticloadbalancingv2",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticsearch",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-emr",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-iam",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-kinesis",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-kinesisanalytics",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-kinesisfirehose",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-kms",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-lambda",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-logs",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-mediastore",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-msk",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-neptune",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-quicksight",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-rds",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-redshift",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-s3",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-sagemaker",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-sns",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-sqs",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-stepfunctions",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-wafv2",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/core",
+      "version": "^1.110.0",
+      "type": "runtime"
+    }
+  ],
+  "//": "~~ Generated by projen. To modify, edit .projenrc.js and run \"npx projen\"."
+}
