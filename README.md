@@ -2,9 +2,20 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 -->
+
 # cdk-nag
 
-Check CDK applications for best practices using a combination on available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
+## cdk
+
+[![PyPI version](https://badge.fury.io/py/cdk-nag.svg)](https://badge.fury.io/py/cdk-nag)
+[![npm version](https://badge.fury.io/js/cdk-nag.svg)](https://badge.fury.io/js/cdk-nag)
+
+## monocdk
+
+[![PyPI version](https://badge.fury.io/py/monocdk-nag.svg)](https://badge.fury.io/py/monocdk-nag)
+[![npm version](https://badge.fury.io/js/monocdk-nag.svg)](https://badge.fury.io/js/monocdk-nag)
+
+Check CDK applications for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
 
 ![](cdk_nag.gif)
 
