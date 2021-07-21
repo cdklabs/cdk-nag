@@ -1,0 +1,18 @@
+import { CfnPolicy, CfnManagedPolicy } from '@aws-cdk/aws-iam';
+import { IConstruct, Stack } from '@aws-cdk/core';
+
+/**
+ * No IAM policies within the CDK stack are attached at the user level - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6)
+ * @param node the CfnResource to check
+ */
+export default function (node: IConstruct): boolean {
+  if ( node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
+    const policyUsers = Stack.of(node).resolve(node.users);
+
+    if (policyUsers != undefined) {
+      return false;
+    }
+  }
+
+  return true;
+}
