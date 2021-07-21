@@ -1,3 +1,8 @@
+<!--
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # cdk-nag
 
 Check CDK applications for best practices. Choose from a variety of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
