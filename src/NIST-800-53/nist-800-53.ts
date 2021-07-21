@@ -14,7 +14,7 @@ import {
 } from './rules/ec2';
 
 /**
- * Check whether the cloudformation stack is NIST 800-53 compliant
+ * Check for NIST 800-53 compliance.
  * Based on the NIST 800-53 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
  */
 export class NIST80053Checks extends NagPack {
