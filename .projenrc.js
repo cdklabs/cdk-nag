@@ -74,7 +74,12 @@ const project = new AwsCdkConstructLibrary({
     distName: 'cdk-nag',
     module: 'cdk_nag',
   },
-
+  projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+  autoApproveOptions: {
+    allowedUsernames: ['aws-cdk-automation'],
+    secret: 'GITHUB_TOKEN',
+  },
+  autoApproveUpgrades: true,
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
     ignoreProjen: false,
     workflowOptions: {
