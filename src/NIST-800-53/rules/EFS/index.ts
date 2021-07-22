@@ -1,1 +1,1 @@
-export { default as efs_encrypted_check } from './encrypted_check'
+export { default as nist80053_efs_encrypted_check } from './nist800-53_efs_encrypted_check'
