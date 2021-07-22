@@ -13,8 +13,8 @@ import {
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
 import {
-  nist80053_efs_encrypted_check
-} from './rules/EFS';
+  nist80053EFSEncrypted,
+} from './rules/efs';
 
 import {
   nist80053IamGroupMembership,
