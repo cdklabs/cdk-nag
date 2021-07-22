@@ -76,7 +76,7 @@ const project = new AwsCdkConstructLibrary({
   },
   projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
   autoApproveOptions: {
-    allowedUsernames: ['aws-cdk-automation'],
+    allowedUsernames: ['dontirun'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
