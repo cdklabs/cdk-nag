@@ -102,7 +102,7 @@ export class NIST80053Checks extends NagPack {
       !nist80053_efs_encrypted_check(node)
     ) {
       const ruleId = 'NIST.800.53-EFSEncryptedCheck';
-      const info = 'EFS does not have encryption configured (Control IDs: SC-13, SC-28).';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
       const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
