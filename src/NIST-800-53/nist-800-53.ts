@@ -11,6 +11,8 @@ import {
   nist80053EC2CheckInsideVPC,
   nist80053EC2CheckNoPublicIPs,
   nist80053EC2CheckSSHRestricted,
+  nist80053EC2CheckCommonPortsRestricted,
+  nist80053EC2CheckDefaultSecurityGroupClosed,
 } from './rules/ec2';
 
 /**
@@ -72,6 +74,28 @@ export class NIST80053Checks extends NagPack {
       const ruleId = 'NIST.800.53-EC2CheckSSHRestricted';
       const info = 'The Security Group allows unrestricted SSH access - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation = 'Not allowing ingress (or remote) traffic from 0.0.0.0/0 or ::/0 to port 22 on your resources helps to restrict remote access.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckDefaultSecurityGroupClosed') &&
+      !nist80053EC2CheckDefaultSecurityGroupClosed(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckDefaultSecurityGroupClosed';
+      const info = 'The default security group for one or more VPCs is not closed - (Control IDs: AC-4, SC-7, SC-7(3)).';
+      const explanation = 'Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckCommonPortsRestricted') &&
+      !nist80053EC2CheckCommonPortsRestricted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
+      const info = 'The EC2 machine does not restrict all common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
+      const explanation = 'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
