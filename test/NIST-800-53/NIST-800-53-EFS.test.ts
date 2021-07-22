@@ -16,7 +16,7 @@ describe('Amazon Elastic File System (Amazon EFS)', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EFS-Encrypted-Check:'),
+            data: expect.stringContaining('NIST.800.53-EFSEncryptedCheck:'),
           }),
         }),
       );
@@ -30,7 +30,7 @@ describe('Amazon Elastic File System (Amazon EFS)', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EFS-Encrypted-Check:'),
+            data: expect.stringContaining('NIST.800.53-EFSEncryptedCheck:'),
           }),
         }),
       );
