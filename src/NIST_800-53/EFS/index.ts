@@ -1,0 +1,1 @@
+export { default as efs_encrypted_check } from './encrypted_check'
