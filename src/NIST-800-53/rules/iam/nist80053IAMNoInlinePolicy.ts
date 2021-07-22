@@ -17,8 +17,8 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (
     node instanceof CfnGroup ||
-      node instanceof CfnUser ||
-      node instanceof CfnRole
+    node instanceof CfnUser ||
+    node instanceof CfnRole
   ) {
     const inlinePolicies = Stack.of(node).resolve(node.policies);
     if (inlinePolicies != undefined) {

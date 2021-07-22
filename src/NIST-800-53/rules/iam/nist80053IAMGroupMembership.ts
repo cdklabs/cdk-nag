@@ -10,7 +10,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-  if ( node instanceof CfnUser ) {
+  if (node instanceof CfnUser) {
     const userGroup = Stack.of(node).resolve(node.groups);
 
     if (userGroup == undefined) {

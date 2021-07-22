@@ -30,17 +30,17 @@ export class NIST80053Checks extends NagPack {
     if (node instanceof CfnResource) {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
-      this.checkCompute(node, ignores);
+      this.checkEC2(node, ignores);
       this.checkIAM(node, ignores);
     }
   }
 
   /**
-   * Check Compute Services
+   * Check EC2 Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-  private checkCompute(node: CfnResource, ignores: any): void {
+  private checkEC2(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckDetailedMonitoring') &&
       !nist80053EC2CheckDetailedMonitoring(node)
@@ -92,15 +92,15 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkIAM(node: CfnResource, ignores: any): void {
+  private checkIAM(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMGroupMembershipCheck') &&
-          !nist80053IamGroupMembership(node)
+      !nist80053IamGroupMembership(node)
     ) {
       const ruleId = 'NIST.800.53-IAMGroupMembershipCheck';
       const info = 'The IAM user does not belong to any group(s) - (Control IDs: AC-2(1), AC-2(j), AC-3, and AC-6).';
       const explanation =
-            'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations, by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+        'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations, by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -108,12 +108,12 @@ export class NIST80053Checks extends NagPack {
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMUserNoPoliciesCheck') &&
-          !nist80053IamUserNoPolicies(node)
+      !nist80053IamUserNoPolicies(node)
     ) {
       const ruleId = 'NIST.800.53-IAMUserNoPoliciesCheck';
       const info = 'The IAM policy is attached at the user level - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
       const explanation =
-            'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
+        'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -121,12 +121,12 @@ export class NIST80053Checks extends NagPack {
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMNoInlinePolicyCheck') &&
-          !nist80053IamNoInlinePolicy(node)
+      !nist80053IamNoInlinePolicy(node)
     ) {
       const ruleId = 'NIST.800.53-IAMNoInlinePolicyCheck';
       const info = 'The IAM Group, User, or Role contains an inline policy - (Control ID: AC-6).';
       const explanation =
-            'AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
+        'AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -134,12 +134,12 @@ export class NIST80053Checks extends NagPack {
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess') &&
-          !nist80053IamPolicyNoStatementsWithAdminAccess(node)
+      !nist80053IamPolicyNoStatementsWithAdminAccess(node)
     ) {
       const ruleId = 'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess';
       const info = 'The IAM policy grants admin access - (Control IDs AC-2(1), AC-2(j), AC-3, AC-6).';
       const explanation =
-            'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );

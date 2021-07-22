@@ -10,7 +10,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-  if ( node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
+  if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
     const policyUsers = Stack.of(node).resolve(node.users);
 
     if (policyUsers != undefined) {
