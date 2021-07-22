@@ -12,7 +12,7 @@ import {
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * No IAM policies within the CDK stack contain statements that give admin access - (Control IDs: AC-2(1), AC-2(j), AC-3, and AC-6)
+ * IAM policies do not grant admin access - (Control IDs: AC-2(1), AC-2(j), AC-3, and AC-6)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
@@ -43,4 +43,3 @@ function checkDocument(node: IConstruct, policyDoc: any): boolean {
   }
   return false;
 }
-

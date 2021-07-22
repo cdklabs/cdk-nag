@@ -11,7 +11,7 @@ import {
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * IAM users are assigned to at least one group - (Control ID: AC-6)
+ * IAM Users do not contain inline policies - (Control ID: AC-6)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
