@@ -98,8 +98,8 @@ export class NIST80053Checks extends NagPack {
    */
   private checkEFS(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncryptedCheck') &&
-      !nist80053_efs_encrypted_check(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
     ) {
       const ruleId = 'NIST.800.53-EFSEncrypted';
       const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
