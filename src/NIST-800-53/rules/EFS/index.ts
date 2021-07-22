@@ -1,1 +1,5 @@
-export { default as nist80053_efs_encrypted_check } from './nist800-53_efs_encrypted_check'
+/*
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+*/
+export { default as nist80053EFSEncrypted } from './nist80053EFSEncrypted';
