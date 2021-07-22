@@ -10,7 +10,10 @@
     "@aws-cdk/cloudformation-diff" "1.114.0"
     "@aws-cdk/core" "1.114.0"
     "@aws-cdk/cx-api" "1.114.0"
+<<<<<<< Updated upstream
     constructs "^3.3.69"
+=======
+>>>>>>> Stashed changes
 
 "@aws-cdk/assets@1.114.0":
   version "1.114.0"
