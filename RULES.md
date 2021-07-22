@@ -151,4 +151,4 @@ Rules from the AWS NIST 800-53 Conformance Pack which could not be implemented.
 | AWS Config Rule Name                                                                               | Summary                                                                    | Relevant Control IDs |
 | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------- |
 | [ec2-imdsv2-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-imdsv2-check.html) | The EC2 instance has IMDSV2 (instance metadata service version 2) enabled. | AC-6                 |
-| [efs-in-backup-plan](https://docs.aws.amazon.com/config/latest/developerguide/ec2-imdsv2-check.html) | EFS is in an AWS Backup plan. | CP-9(b), CP-10, SI-12                 |
+| [efs-in-backup-plan](https://docs.aws.amazon.com/config/latest/developerguide/efs-in-backup-plan.html) | EFS is in an AWS Backup plan. | CP-9(b), CP-10, SI-12                 |
