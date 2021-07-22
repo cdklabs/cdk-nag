@@ -207,6 +207,21 @@
     "@aws-cdk/core" "1.115.0"
     constructs "^3.3.69"
 
+"@aws-cdk/aws-cloudtrail@^1.110.0":
+  version "1.115.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-cloudtrail/-/aws-cloudtrail-1.115.0.tgz#b60e474c746e42a5717c98a7e01ddc71928fd6ca"
+  integrity sha512-aBHjDmrmMwvc3R4kfMTpapygGXjWN5aiIgCrl06ISeFhWWeVuDrZP/uUWLhHnNSMuIlDFst/qWdwq4kVitncGQ==
+  dependencies:
+    "@aws-cdk/aws-events" "1.115.0"
+    "@aws-cdk/aws-iam" "1.115.0"
+    "@aws-cdk/aws-kms" "1.115.0"
+    "@aws-cdk/aws-lambda" "1.115.0"
+    "@aws-cdk/aws-logs" "1.115.0"
+    "@aws-cdk/aws-s3" "1.115.0"
+    "@aws-cdk/aws-sns" "1.115.0"
+    "@aws-cdk/core" "1.115.0"
+    constructs "^3.3.69"
+
 "@aws-cdk/aws-cloudwatch@1.115.0":
   version "1.115.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-cloudwatch/-/aws-cloudwatch-1.115.0.tgz#7531a318a9fc7090665b52fd73a0dde4e22a3745"
