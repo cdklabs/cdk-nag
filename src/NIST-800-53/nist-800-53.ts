@@ -109,7 +109,7 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
-  
+
   /**
    * Check IAM Resources
    * @param node the IConstruct to evaluate
