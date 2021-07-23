@@ -30,7 +30,6 @@ describe('Amazon Elastic File System (Amazon EFS)', () => {
       vpc: new Vpc(negative, 'rVpc'),
       encrypted: true,
     });
-    console.log(JSON.stringify(SynthUtils.toCloudFormation(negative)));
     const messages2 = SynthUtils.synthesize(negative).messages;
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
