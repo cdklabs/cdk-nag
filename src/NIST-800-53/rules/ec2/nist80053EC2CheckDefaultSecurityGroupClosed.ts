@@ -7,8 +7,7 @@ import { CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * EC2 instances have detailed monitoring enabled - (Control IDs: CA-7(a)(b), SI-4(2), SI-4(a)(b)(c)).
- * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
+ * The default security group for VPCs is closed - (AC-4, SC-7, SC-7(3)).
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
