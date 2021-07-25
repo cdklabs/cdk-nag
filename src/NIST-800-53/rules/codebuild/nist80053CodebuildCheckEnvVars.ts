@@ -1,0 +1,28 @@
+/*
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+*/
+
+import { CfnProject } from '@aws-cdk/aws-codebuild';
+import { IConstruct, Stack } from '@aws-cdk/core';
+
+/**
+ * Codebuild projects DO NOT store AWS credentails as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))
+ * @param node the CfnResource to check
+ */
+export default function (node: IConstruct): boolean {
+  if (node instanceof CfnProject) {
+    
+    //Check for the presence of OAUTH
+    const environment = Stack.of(node).resolve(node.environment);
+    const environmentVars = Stack.of(node).resolve(environment.EnvironmentVariables);
+    //For each envvar, check if its a sensitive credential being stored
+    for (const envVar of environmentVars) {
+      const resolvedEnvVar=Stack.of(node).resolve(envVar);
+      if(resolvedEnvVar.Key == "AWS_ACCESS_KEY_ID" || resolvedEnvVar.Key == "AWS_SECRET_ACCESS_KEY" ){
+        return false;
+      }
+    }
+  }
+  return true;
+}
