@@ -7,28 +7,23 @@ import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
 
 import {
-  nist80053DynamoDBPITREnabled,
-  nist80053DynamoDBTableEncryptedKMS
+  nist80053DynamoDBPITREnabled
 } from './rules/DynamoDB';
-
 import {
   nist80053EC2CheckDetailedMonitoring,
   nist80053EC2CheckInsideVPC,
   nist80053EC2CheckNoPublicIPs,
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
-
 import {
   nist80053EFSEncrypted,
 } from './rules/efs';
-
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
-}
-  from './rules/iam/index';
+} from './rules/iam';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -43,6 +38,7 @@ export class NIST80053Checks extends NagPack {
       this.checkEC2(node, ignores);
       this.checkEFS(node, ignores);
       this.checkIAM(node, ignores);
+      this.checkEFS(node, ignores);
     }
   }
   
@@ -59,17 +55,6 @@ export class NIST80053Checks extends NagPack {
       const ruleId = 'NIST.800.53-DynamoDBPITREnabled';
       const info = 'DynamoDB does not have point-in-time recovery enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
       const explanation = 'Point-in-time recovery maintains continuous backups of your table for the last 35 days.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'NIST.800.53-DynamoDBTableEncryptedKMS') &&
-      !nist80053DynamoDBTableEncryptedKMS(node)
-    ) {
-      const ruleId = 'NIST.800.53-DynamoDBTableEncryptedKMS';
-      const info = 'The DynamoDB Table is not encrypted in KMS - (Control ID: SC-13).';
-      const explanation = 'Because sensitive data can exist at rest in these tables, enable encryption at rest to help to protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -146,7 +131,6 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
-  
   /**
    * Check IAM Resources
    * @param node the IConstruct to evaluate
