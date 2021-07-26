@@ -24,6 +24,11 @@ import {
 } from './rules/efs';
 
 import {
+  nist80053ALBHttpDropInvalidHeaderEnabled,
+  nist80053ELBLoggingEnabled,
+  nist80053ALBLoggingEnabled,
+} from './rules/elb';
+import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
@@ -44,6 +49,7 @@ export class NIST80053Checks extends NagPack {
       this.checkIAM(node, ignores);
       this.checkCloudTrail(node, ignores);
       this.checkEFS(node, ignores);
+      this.checkELB(node, ignores);
     }
   }
 
@@ -222,4 +228,51 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
+
+  /**
+   * Check CloudTrail Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkELB(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled') &&
+          !nist80053ALBHttpDropInvalidHeaderEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
+      const info = 'The load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
+      const explanation =
+            'Ensure that your Elastic Load Balancers (ELB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-nist80053ELBLoggingEnabled') &&
+          !nist80053ELBLoggingEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-nist80053ELBLoggingEnabled';
+      const info = 'The elastic load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+      const explanation =
+            'Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client\'s IP address, latencies, request paths, and server responses.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-nist80053ALBLoggingEnabled') &&
+          !nist80053ALBLoggingEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-nist80053ALBLoggingEnabled';
+      const info = 'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+      const explanation =
+            'Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client\'s IP address, latencies, request paths, and server responses.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
 }

@@ -6,7 +6,6 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { Trail } from '@aws-cdk/aws-cloudtrail';
 import { Key } from '@aws-cdk/aws-kms';
 import { LogGroup } from '@aws-cdk/aws-logs';
-//import { Role } from '@aws-cdk/aws-iam';
 
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
