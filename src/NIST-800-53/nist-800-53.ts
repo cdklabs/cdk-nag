@@ -8,7 +8,6 @@ import { NagPack } from '../common';
 
 import {
   nist80053DynamoDBPITREnabled,
-  nist80053DynamoDBTableEncryptedKMS
 } from './rules/DynamoDB';
 
 import {
