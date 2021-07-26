@@ -6,7 +6,7 @@ import { CfnTable } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * DynamoDB tables have Point-in-time Recovery enabled
+ * DynamoDB tables have Point-in-time Recovery enabled (Control IDs: CP-9(b), CP-10, SI-12)
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
