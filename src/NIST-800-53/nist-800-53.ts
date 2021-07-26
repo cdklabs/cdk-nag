@@ -20,10 +20,6 @@ import {
   nist80053EFSEncrypted,
 } from './rules/efs';
 import {
-  nist80053EFSEncrypted,
-} from './rules/efs';
-
-import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
