@@ -39,35 +39,4 @@ describe('Amazon DynamoDB', () => {
         }),
       );
     });
-    test('NIST.800.53-DynamoDBTableEncryptedKMS', () => {
-      const positive = new Stack();
-      Aspects.of(positive).add(new NIST80053Checks());
-      new Table(positive, 'rTable2', {
-        partitionKey: { name: 'foo', type: AttributeType.STRING },
-        pointInTimeRecovery: true
-      });
-      const messages = SynthUtils.synthesize(positive).messages;
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-DynamoDBTableEncryptedKMS:'),
-          }),
-        }),
-      );
-
-      const negative = new Stack();
-      Aspects.of(negative).add(new NIST80053Checks());
-      new Table(negative, 'rTable2', {
-        partitionKey: { name: 'foo', type: AttributeType.STRING },
-        serverSideEncryption: true,
-      });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-DynamoDBTableEncryptedKMS:'),
-          }),
-        }),
-      );
-    });
   });

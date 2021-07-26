@@ -63,17 +63,6 @@ export class NIST80053Checks extends NagPack {
         this.createMessage(ruleId, info, explanation),
       );
     }
-    if (
-      !this.ignoreRule(ignores, 'NIST.800.53-DynamoDBTableEncryptedKMS') &&
-      !nist80053DynamoDBTableEncryptedKMS(node)
-    ) {
-      const ruleId = 'NIST.800.53-DynamoDBTableEncryptedKMS';
-      const info = 'The DynamoDB Table is not encrypted in KMS - (Control ID: SC-13).';
-      const explanation = 'Because sensitive data can exist at rest in these tables, enable encryption at rest to help to protect that data.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
-      );
-    }
   }
 
   /**
