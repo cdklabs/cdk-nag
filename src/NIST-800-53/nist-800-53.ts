@@ -10,8 +10,7 @@ import {
   nist80053CloudTrailLogFileValidationEnabled,
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
-}
-  from './rules/cloudtrail/index';
+} from './rules/cloudtrail/index';
 
 import {
   nist80053EC2CheckDetailedMonitoring,
@@ -21,12 +20,15 @@ import {
 } from './rules/ec2';
 
 import {
+  nist80053EFSEncrypted,
+} from './rules/efs';
+
+import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
-}
-  from './rules/iam/index';
+} from './rules/iam';
 
 
 /**
@@ -41,6 +43,7 @@ export class NIST80053Checks extends NagPack {
       this.checkCompute(node, ignores);
       this.checkIAM(node, ignores);
       this.checkCloudTrail(node, ignores);
+      this.checkEFS(node, ignores);
     }
   }
 
@@ -90,6 +93,25 @@ export class NIST80053Checks extends NagPack {
       const ruleId = 'NIST.800.53-EC2CheckSSHRestricted';
       const info = 'The Security Group allows unrestricted SSH access - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation = 'Not allowing ingress (or remote) traffic from 0.0.0.0/0 or ::/0 to port 22 on your resources helps to restrict remote access.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check EFS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkEFS(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EFSEncrypted';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
