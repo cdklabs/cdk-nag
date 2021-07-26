@@ -17,7 +17,9 @@ import {
   nist80053EC2CheckNoPublicIPs,
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
-
+import {
+  nist80053EFSEncrypted,
+} from './rules/efs';
 import {
   nist80053EFSEncrypted,
 } from './rules/efs';
@@ -27,8 +29,7 @@ import {
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
-}
-  from './rules/iam/index';
+} from './rules/iam';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -43,6 +44,7 @@ export class NIST80053Checks extends NagPack {
       this.checkEC2(node, ignores);
       this.checkEFS(node, ignores);
       this.checkIAM(node, ignores);
+      this.checkEFS(node, ignores);
     }
   }
   
