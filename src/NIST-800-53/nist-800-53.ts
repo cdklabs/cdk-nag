@@ -34,7 +34,7 @@ import {
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
-
+import { nist80053SNSEncryptedKMS } from './rules/sns';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -50,6 +50,7 @@ export class NIST80053Checks extends NagPack {
       this.checkCloudTrail(node, ignores);
       this.checkEFS(node, ignores);
       this.checkELB(node, ignores);
+      this.checkSNS(node, ignores);
     }
   }
 
@@ -242,7 +243,7 @@ export class NIST80053Checks extends NagPack {
       const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
       const info = 'The load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
       const explanation =
-            'Ensure that your Elastic Load Balancers (ELB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+            'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -273,6 +274,27 @@ export class NIST80053Checks extends NagPack {
         this.createMessage(ruleId, info, explanation),
       );
     }
+  }
+
+  /**
+   * Check CloudTrail Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkSNS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-SNSEncryptedKMS') &&
+          !nist80053SNSEncryptedKMS(node)
+    ) {
+      const ruleId = 'NIST.800.53-SNSEncryptedKMS';
+      const info = 'The SNS topic does not have KMS encryption enabled or an associated KMS key - (Control ID: SC-13, SC-28).';
+      const explanation =
+            'To help protect data at rest, ensure that your Amazon Simple Notification Service (Amazon SNS) topics require encryption using AWS Key Management Service (AWS KMS). Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+
   }
 
 }
