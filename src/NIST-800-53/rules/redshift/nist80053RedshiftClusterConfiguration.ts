@@ -6,7 +6,7 @@ import { CfnCluster } from '@aws-cdk/aws-redshift';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * Redshift clusters have audit logging enabled
+ * Redshift clusters have encryption and audit logging enabled
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
