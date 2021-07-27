@@ -89,7 +89,6 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
     });
 
     test('NIST.800.53-nist80053ELBLoggingEnabled: Load balancers have logging enabled', () => {
-      //tests for ELBS
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       new LoadBalancer(nonCompliant, 'rELB', {
