@@ -3,16 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnCluster as CfnDaxCluster } from '@aws-cdk/aws-dax';
 import {
-  CfnDBCluster as CfnDocumentCluster,
-  DatabaseCluster as DocumentCluster,
-} from '@aws-cdk/aws-docdb';
-import { AttributeType, Table } from '@aws-cdk/aws-dynamodb';
-import {
-  InstanceClass,
-  InstanceSize,
-  InstanceType,
   Vpc,
 } from '@aws-cdk/aws-ec2';
 import {
