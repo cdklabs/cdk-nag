@@ -3,18 +3,18 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { LoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
+import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Elasticsearch service domains have encryption at rest enabled - (Control IDs: SC-13, SC-28)
+ * ELBs utilize secure ACM-managed certificates - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
   
-  if (node instanceof LoadBalancer) {
+  if (node instanceof CfnLoadBalancer) {
     //For each listener, ensure that it's utilizing an ACM SSL/HTTPS cert
-    const listeners = Stack.of(node).resolve(node.Listeners);
+    const listeners = Stack.of(node).resolve(node.listeners);
     if (listeners != undefined) {
       //Iterate through listeners, checking if secured ACM certs are used
       for (const listener of listeners) {
