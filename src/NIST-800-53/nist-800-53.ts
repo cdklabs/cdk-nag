@@ -21,8 +21,8 @@ import {
 } from './rules/iam';
 import {
   nist80053RedshiftClusterConfiguration,
-  nist80053RedshiftClusterPublicAccess
-} from './rules/redshift'
+  nist80053RedshiftClusterPublicAccess,
+} from './rules/redshift';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -191,17 +191,18 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkRedshift(node: CfnResource, ignores: any): void {
+  private checkRedshift(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterConfiguration') &&
       !nist80053RedshiftClusterConfiguration(node)
     ) {
       const ruleId = 'NIST.800.53-RedshiftClusterConfiguration';
-      const info = 'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c), SC-13).';
+      const info =
+        'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c), SC-13).';
       const explanation =
         'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
@@ -210,12 +211,13 @@ export class NIST80053Checks extends NagPack {
       !nist80053RedshiftClusterPublicAccess(node)
     ) {
       const ruleId = 'NIST.800.53-RedshiftClusterPublicAccess';
-      const info = 'The Redshift cluster allows public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+      const info =
+        'The Redshift cluster allows public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
       const explanation =
         'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
-  }  
+  }
 }

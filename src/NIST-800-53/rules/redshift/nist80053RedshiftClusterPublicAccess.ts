@@ -11,7 +11,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCluster) {
-    const publicAccess = Stack.of(node).resolve(node.publiclyAccessible)
+    const publicAccess = Stack.of(node).resolve(node.publiclyAccessible);
     if (publicAccess) {
       return false;
     }
