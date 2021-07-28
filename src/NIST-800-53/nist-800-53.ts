@@ -172,7 +172,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check IAM Resources
+   * Check Redshift Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
