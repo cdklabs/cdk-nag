@@ -7,7 +7,7 @@ import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ELBs utilize secure ACM-managed certificates - (Control IDs: SC-13, SC-28)
+ * ELBs utilize secure ACM-managed certificates - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

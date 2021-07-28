@@ -7,7 +7,7 @@ import { CfnFunction } from '@aws-cdk/aws-lambda';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * EC2 instances are created within VPCs - (Control IDs: AC-4, SC-7, SC-7(3))
+ * Lambda functions are created within VPCs - (Control IDs: AC-4, SC-7, SC-7(3))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
