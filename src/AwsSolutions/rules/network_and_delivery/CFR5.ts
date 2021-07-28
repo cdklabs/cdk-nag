@@ -22,7 +22,7 @@ export default function (node: CfnResource): boolean {
         const resolvedOrigin = Stack.of(node).resolve(origin);
         if (resolvedOrigin.customOriginConfig != undefined) {
           const customOriginConfig = Stack.of(node).resolve(
-            resolvedOrigin.customOriginConfig,
+            resolvedOrigin.customOriginConfig
           );
           if (
             customOriginConfig.originProtocolPolicy !=

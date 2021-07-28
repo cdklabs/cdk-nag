@@ -21,11 +21,11 @@ export default function (node: CfnResource): boolean {
     }
 
     const sse = Stack.of(node).resolve(
-      encryption.serverSideEncryptionConfiguration,
+      encryption.serverSideEncryptionConfiguration
     );
     for (const rule of sse) {
       const defaultEncryption = Stack.of(node).resolve(
-        rule.serverSideEncryptionByDefault,
+        rule.serverSideEncryptionByDefault
       );
       if (
         defaultEncryption == undefined ||

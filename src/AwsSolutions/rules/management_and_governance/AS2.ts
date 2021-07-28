@@ -13,7 +13,7 @@ export default function (node: IConstruct): boolean {
   if (node instanceof CfnAutoScalingGroup) {
     const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
     const healthCheckGracePeriod = Stack.of(node).resolve(
-      node.healthCheckGracePeriod,
+      node.healthCheckGracePeriod
     );
     if (
       healthCheckType != undefined &&

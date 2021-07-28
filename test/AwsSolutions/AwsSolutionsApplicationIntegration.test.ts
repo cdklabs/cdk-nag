@@ -20,7 +20,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SNS2:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -33,7 +33,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SNS2:'),
         }),
-      }),
+      })
     );
   });
 });
@@ -49,7 +49,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SQS2:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -62,7 +62,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SQS2:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsSqs3: SQS queues have a dead-letter queue enabled or have a cdk_nag rule suppression indicating they are a dead-letter queue', () => {
@@ -75,7 +75,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SQS3:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -98,7 +98,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SQS3:'),
         }),
-      }),
+      })
     );
   });
 });

@@ -22,7 +22,7 @@ describe('Amazon Elastic File System (Amazon EFS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('NIST.800.53-EFSEncrypted:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new NIST80053Checks());
@@ -36,7 +36,7 @@ describe('Amazon Elastic File System (Amazon EFS)', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('NIST.800.53-EFSEncrypted:'),
         }),
-      }),
+      })
     );
   });
 });

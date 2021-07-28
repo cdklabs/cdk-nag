@@ -26,7 +26,7 @@ export default function (node: IConstruct): boolean {
       for (const policy of inlinePolicies) {
         const resolvedPolicy = Stack.of(node).resolve(policy);
         const resolvedPolicyDocument = Stack.of(node).resolve(
-          resolvedPolicy.policyDocument,
+          resolvedPolicy.policyDocument
         );
         if (JSON.stringify(resolvedPolicyDocument).includes('*')) {
           return false;

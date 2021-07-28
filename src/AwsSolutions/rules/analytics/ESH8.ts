@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
     const encryptionAtRestOptions = Stack.of(node).resolve(
-      node.encryptionAtRestOptions,
+      node.encryptionAtRestOptions
     );
     if (encryptionAtRestOptions == undefined) {
       return false;
