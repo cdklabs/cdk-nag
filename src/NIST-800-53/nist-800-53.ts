@@ -7,6 +7,10 @@ import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
 
 import {
+  nist80053APIGWCacheEnabledAndEncrypted,
+  nist80053APIGWExecutionLoggingEnabled,
+} from './rules/apigw';
+import {
   nist80053CloudTrailLogFileValidationEnabled,
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
@@ -28,13 +32,16 @@ import {
   nist80053ELBLoggingEnabled,
   nist80053ALBLoggingEnabled,
 } from './rules/elb';
+
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
+
 import { nist80053SNSEncryptedKMS } from './rules/sns';
+
 
 /**
  * Check for NIST 800-53 compliance.
@@ -51,6 +58,7 @@ export class NIST80053Checks extends NagPack {
       this.checkEFS(node, ignores);
       this.checkELB(node, ignores);
       this.checkSNS(node, ignores);
+      this.checkAPIGW(node, ignores);
     }
   }
 
@@ -231,7 +239,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check CloudTrail Resources
+   * Check Elastic Load Balancer Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
@@ -277,7 +285,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check CloudTrail Resources
+   * Check Amazon SNS Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
@@ -290,6 +298,39 @@ export class NIST80053Checks extends NagPack {
       const info = 'The SNS topic does not have KMS encryption enabled or an associated KMS key - (Control ID: SC-13, SC-28).';
       const explanation =
             'To help protect data at rest, ensure that your Amazon Simple Notification Service (Amazon SNS) topics require encryption using AWS Key Management Service (AWS KMS). Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check API Gateway Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkAPIGW(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-APIGWCacheEnabledAndEncrypted') &&
+          !nist80053APIGWCacheEnabledAndEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-APIGWCacheEnabledAndEncrypted';
+      const info = 'The API Gateway stage does not have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const explanation =
+            'To help protect data at rest, ensure encryption is enabled for your API Gateway stage\'s cache. Because sensitive data can be captured for the API method, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-APIGWExecutionLoggingEnabled') &&
+          !nist80053APIGWExecutionLoggingEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-APIGWExecutionLoggingEnabled';
+      const info = 'The API Gateway stage does not have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const explanation =
+            'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
