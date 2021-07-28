@@ -20,7 +20,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS1:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -34,7 +34,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS1:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsMs4: Media Store containers define metric policies to send metrics to CloudWatch', () => {
@@ -49,7 +49,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS4:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -65,7 +65,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS4:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsMs7: Media Store containers define container policies', () => {
@@ -80,7 +80,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS7:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -94,7 +94,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS7:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsMs8: Media Store containers define CORS policies', () => {
@@ -109,7 +109,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS8:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -130,7 +130,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS8:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsMs10: Media Store containers define lifecycle policies', () => {
@@ -145,7 +145,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS10:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -160,7 +160,7 @@ describe('AWS Elemental MediaStore', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-MS10:'),
         }),
-      }),
+      })
     );
   });
 });

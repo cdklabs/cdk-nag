@@ -16,7 +16,7 @@ export default function (node: IConstruct): boolean {
       return false;
     }
     const containerLevelMetrics = Stack.of(node).resolve(
-      metricPolicy.containerLevelMetrics,
+      metricPolicy.containerLevelMetrics
     );
     if (containerLevelMetrics != 'ENABLED') {
       return false;

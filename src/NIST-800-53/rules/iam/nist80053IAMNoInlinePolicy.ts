@@ -2,12 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import {
-  CfnRole,
-  CfnUser,
-  CfnGroup,
-  CfnPolicy,
-} from '@aws-cdk/aws-iam';
+import { CfnRole, CfnUser, CfnGroup, CfnPolicy } from '@aws-cdk/aws-iam';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**

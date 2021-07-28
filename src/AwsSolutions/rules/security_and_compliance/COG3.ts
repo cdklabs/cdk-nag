@@ -16,7 +16,7 @@ export default function (node: IConstruct): boolean {
       return false;
     }
     const advancedSecurityMode = Stack.of(node).resolve(
-      userPoolAddOns.advancedSecurityMode,
+      userPoolAddOns.advancedSecurityMode
     );
     if (
       advancedSecurityMode == undefined ||

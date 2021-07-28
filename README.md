@@ -82,7 +82,7 @@ user.addToPolicy(
   new PolicyStatement({
     actions: ['s3:PutObject'],
     resources: [new Bucket(this, 'rBucket').arnForObjects('*')],
-  }),
+  })
 );
 const cfnUser = user.node.children;
 for (const child of cfnUser) {

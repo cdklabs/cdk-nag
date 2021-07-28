@@ -16,7 +16,7 @@ export default function (node: IConstruct): boolean {
     if (networkInterfaces != undefined) {
       //Iterate through network interfaces, checking if public IPs are enabled
       for (const networkInterface of networkInterfaces) {
-        const resolvedInterface=Stack.of(node).resolve(networkInterface);
+        const resolvedInterface = Stack.of(node).resolve(networkInterface);
         if (resolvedInterface.associatePublicIpAddress != undefined) {
           if (resolvedInterface.associatePublicIpAddress == true) {
             return false;

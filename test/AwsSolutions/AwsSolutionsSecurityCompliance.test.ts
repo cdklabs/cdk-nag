@@ -38,7 +38,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-IAM4:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -48,12 +48,12 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           ManagedPolicy.fromManagedPolicyName(
             negative,
             'rPolicyWithRef',
-            'foo',
+            'foo'
           ),
           ManagedPolicy.fromManagedPolicyArn(
             negative,
             'rPolicyWithNumber',
-            'arn:aws:iam::123456789012:policy/teststack',
+            'arn:aws:iam::123456789012:policy/teststack'
           ),
         ],
       });
@@ -63,7 +63,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-IAM4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsIam5: IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission', () => {
@@ -88,7 +88,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-IAM5:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -97,7 +97,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
         new PolicyStatement({
           actions: ['s3:*'],
           resources: [new Bucket(positive2, 'rBucket').bucketArn],
-        }),
+        })
       );
       const messages2 = SynthUtils.synthesize(positive).messages;
       expect(messages2).toContainEqual(
@@ -105,7 +105,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-IAM5:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -114,7 +114,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
         new PolicyStatement({
           actions: ['s3:PutObject'],
           resources: [new Bucket(negative, 'rBucket').arnForObjects('*')],
-        }),
+        })
       );
       const cfnUser = user.node.children;
       for (const child of cfnUser) {
@@ -140,7 +140,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-IAM5:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -156,7 +156,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG1:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -174,7 +174,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -193,7 +193,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCog2: Cognito user pools require MFA', () => {
@@ -206,7 +206,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG2:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -218,7 +218,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -230,7 +230,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCog3: Cognito user pools have AdvancedSecurityMode set to ENFORCED', () => {
@@ -243,7 +243,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG3:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -257,7 +257,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -271,7 +271,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCog7: Cognito identity pools do not allow for unauthenticated logins without a valid reason', () => {
@@ -286,7 +286,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG7:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -300,7 +300,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-COG7:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -316,7 +316,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KMS5:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -328,7 +328,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KMS5:'),
           }),
-        }),
+        })
       );
     });
   });

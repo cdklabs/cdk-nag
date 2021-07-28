@@ -12,27 +12,27 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnWorkGroup) {
     const workGroupConfiguration = Stack.of(node).resolve(
-      node.workGroupConfiguration,
+      node.workGroupConfiguration
     );
     if (workGroupConfiguration == undefined) {
       const workGroupConfigurationUpdates = Stack.of(node).resolve(
-        node.workGroupConfigurationUpdates,
+        node.workGroupConfigurationUpdates
       );
       if (workGroupConfigurationUpdates == undefined) {
         return false;
       }
       const resultConfigurationUpdates = Stack.of(node).resolve(
-        workGroupConfigurationUpdates.resultConfigurationUpdates,
+        workGroupConfigurationUpdates.resultConfigurationUpdates
       );
       if (resultConfigurationUpdates != undefined) {
         const removeEncryptionConfiguration = Stack.of(node).resolve(
-          resultConfigurationUpdates.removeEncryptionConfiguration,
+          resultConfigurationUpdates.removeEncryptionConfiguration
         );
         const encryptionConfiguration = Stack.of(node).resolve(
-          resultConfigurationUpdates.encryptionConfiguration,
+          resultConfigurationUpdates.encryptionConfiguration
         );
         const enforceWorkGroupConfiguration = Stack.of(node).resolve(
-          workGroupConfigurationUpdates.enforceWorkGroupConfiguration,
+          workGroupConfigurationUpdates.enforceWorkGroupConfiguration
         );
         if (
           removeEncryptionConfiguration &&
@@ -48,19 +48,19 @@ export default function (node: IConstruct): boolean {
       }
     } else {
       const enforceWorkGroupConfiguration = Stack.of(node).resolve(
-        workGroupConfiguration.enforceWorkGroupConfiguration,
+        workGroupConfiguration.enforceWorkGroupConfiguration
       );
       if (!enforceWorkGroupConfiguration) {
         return false;
       }
       const resultConfiguration = Stack.of(node).resolve(
-        workGroupConfiguration.resultConfiguration,
+        workGroupConfiguration.resultConfiguration
       );
       if (resultConfiguration == undefined) {
         return false;
       }
       const encryptionConfiguration = Stack.of(node).resolve(
-        resultConfiguration.encryptionConfiguration,
+        resultConfiguration.encryptionConfiguration
       );
       if (encryptionConfiguration == undefined) {
         return false;

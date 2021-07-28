@@ -6,7 +6,7 @@ import { CfnFileSystem } from '@aws-cdk/aws-efs';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Elastic File Systems are configured for encryption at rest.
+ * Elastic File Systems are configured for encryption at rest - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

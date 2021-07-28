@@ -166,11 +166,12 @@ export class AwsSolutionsChecks extends NagPack {
       !awsSolutionsEc23(node)
     ) {
       const ruleId = 'AwsSolutions-EC23';
-      const info = 'The Security Group allows for 0.0.0.0/0 or ::/0 inbound access.';
+      const info =
+        'The Security Group allows for 0.0.0.0/0 or ::/0 inbound access.';
       const explanation =
         'Large port ranges, when open, expose instances to unwanted attacks. More than that, they make traceability of vulnerabilities very difficult. For instance, your web servers may only require 80 and 443 ports to be open, but not all. One of the most common mistakes observed is when  all ports for 0.0.0.0/0 range are open in a rush to access the instance. EC2 instances must expose only to those ports enabled on the corresponding security group level.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -182,7 +183,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         "With EBS encryption, you aren't required to build, maintain, and secure your own key management infrastructure. EBS encryption uses KMS keys when creating encrypted volumes and snapshots. This helps protect data at rest.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -194,7 +195,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Descriptions help simplify operations and remove any opportunities for operator errors.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -207,7 +208,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Monitoring data helps make better decisions on architecting and managing compute resources.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -220,7 +221,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Termination Protection safety feature enabled in order to protect the instances from being accidentally terminated.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -232,7 +233,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Removing * principals in an ECR Repository helps protect against unauthorized access.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -245,7 +246,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'CloudWatch Container Insights allow operators to gain a better perspective on how the cluster’s applications and microservices are performing.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -258,7 +259,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Container logging allows operators to view and aggregate the logs from the container.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -271,7 +272,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of the ELB for enhanced incoming traffic distribution, better performance and lower costs.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -283,7 +284,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Access logs allow operators to to analyze traffic patterns and identify and troubleshoot security issues.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -295,7 +296,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Access logs allow operators to to analyze traffic patterns and identify and troubleshoot security issues.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -307,7 +308,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'With Connection Draining feature enabled, if an EC2 backend instance fails health checks the ELB will not send any new requests to the unhealthy instance. However, it will still allow existing (in-flight) requests to complete for the duration of the configured timeout.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -320,7 +321,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'ELBs can distribute the traffic evenly across all backend instances. To use Cross-Zone Load Balancing at optimal level, the system should maintain an equal EC2 capacity distribution in each of the AZs registered with the load balancer.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -333,7 +334,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The HTTPs or SSL protocols enable secure communication by encrypting the communication between the client and the load balancer.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -350,7 +351,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The bucket should have server access logging enabled to provide detailed records for the requests that are made to the bucket.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-S2') && !awsSolutionsS2(node)) {
@@ -360,7 +361,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The bucket should have public access restricted and blocked to prevent unauthorized access.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-S3') && !awsSolutionsS3(node)) {
@@ -369,7 +370,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The bucket should minimally have SSE enabled to help protect data-at-rest.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -381,7 +382,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'By using an encrypted file system, data and metadata are automatically encrypted before being written to the file system. Similarly, as data and metadata are read, they are automatically decrypted before being presented to the application. These processes are handled transparently by EFS without requiring modification of applications.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -402,7 +403,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Storage encryption helps protect data-at-rest by encrypting the underlying storage, automated backups, read replicas, and snapshots for the database.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -415,7 +416,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         "With IAM Database Authentication enabled, the system doesn't have to use a password when connecting to the MySQL/PostgreSQL database instances, instead it uses an authentication token.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -428,7 +429,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The deletion protection feature helps protect the database from being accidentally deleted.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -441,7 +442,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. MySQL/Aurora port 3306, SQL Server port 1433, PostgreSQL port 5432, etc).';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -452,7 +453,7 @@ export class AwsSolutionsChecks extends NagPack {
       const info = 'The RDS instance is not configured for automated backups.';
       const explanation = 'Automated backups allow for point-in-time recovery.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -465,7 +466,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Backtrack helps order to rewind cluster tables to a specific time, without using backups.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -478,7 +479,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'This allows operators to use CloudWatch to view logs to help diagnose problems in the database.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -491,7 +492,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'DynamoDB continuous backups represent an additional layer of insurance against accidental loss of data on top of on-demand backups. The DynamoDB service can back up the data with per-second granularity and restore it to any single second from the time PITR was enabled up to the prior 35 days.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -504,7 +505,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Data in cache, configuration data and log files should be encrypted using Server-Side Encryption in order to protect from unauthorized access to the underlying storage.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -516,7 +517,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Provisioning the cluster within a VPC allows for better flexibility and control over the cache clusters security, availability, traffic routing and more.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -529,7 +530,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encryption in transit helps secure communications to the cluster. Encryption at rest helps protect data at rest from unauthorized access.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -542,7 +543,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The cluster should use a Multi-AZ deployment configuration for high availability.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -554,7 +555,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. Redis port 6379 and Memcached port 11211).';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -567,7 +568,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Redis authentication tokens enable Redis to require a token (password) before allowing clients to execute commands, thereby improving data security.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-N1') && !awsSolutionsN1(node)) {
@@ -577,7 +578,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The cluster should use a Multi-AZ deployment configuration for high availability.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-N2') && !awsSolutionsN2(node)) {
@@ -587,7 +588,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The Neptune service regularly releases engine updates. Enabling Auto Minor Version Upgrade will allow the service to automatically apply these upgrades to DB Instances.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-N3') && !awsSolutionsN3(node)) {
@@ -597,7 +598,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The retention period represents the number of days to retain automated snapshots. A minimum retention period of 7 days is recommended but can be adjust to meet system requirements.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-N4') && !awsSolutionsN4(node)) {
@@ -607,7 +608,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (!this.ignoreRule(ignores, 'AwsSolutions-N5') && !awsSolutionsN5(node)) {
@@ -617,7 +618,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         "With IAM Database Authentication enabled, the system doesn't have to use a password when connecting to the cluster.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -630,7 +631,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Enabling the "require_ssl" parameter secures data-in-transit by encrypting the connection between the clients and the Redshift clusters.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -642,7 +643,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Provisioning the cluster within a VPC allows for better flexibility and control over the Redshift clusters security, availability, traffic routing and more.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -654,7 +655,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using a custom master user name instead of the default master user name (i.e. "awsuser") provides an additional layer of defense against non-targeted attacks.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -666,7 +667,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. Redshift port 5439).';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -678,7 +679,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Audit logging helps operators troubleshoot issues and ensure security.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -691,7 +692,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encrypting data-at-rest protects data confidentiality.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -703,7 +704,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Disabling public accessibility helps minimize security risks.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -716,7 +717,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Version Upgrade must enabled to enable the cluster to automatically receive upgrades during the maintenance window.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -729,7 +730,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The retention period represents the number of days to retain automated snapshots. A positive retention period should be set to configure this feature.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -742,7 +743,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -754,7 +755,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. MongoDB port 27017).';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -767,7 +768,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         "Secrets Manager enables operators to replace hardcoded credentials in your code, including passwords, with an API call to Secrets Manager to retrieve the secret programmatically. This helps ensure the secret can't be compromised by someone examining system code, because the secret no longer exists in the code. Also, operators can configure Secrets Manager to automatically rotate the secret for you according to a specified schedule. This enables you to replace long-term secrets with short-term ones, significantly reducing the risk of compromise.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -780,7 +781,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The retention period represents the number of days to retain automated snapshots. A minimum retention period of 7 days is recommended but can be adjust to meet system requirements.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -793,7 +794,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -813,7 +814,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Network ACLs should be used sparingly for the following reasons: they can be complex to manage, they are stateless, every IP address must be explicitly opened in each (inbound/outbound) direction, and they affect a complete subnet. Use security groups when possible as they are stateful and easier to manage.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -825,7 +826,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Geo restriction may need to be enabled for the distribution in order to allow or deny a country in order to allow or restrict users in specific locations from accessing content.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -838,7 +839,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The Web Application Firewall can help protect against application-layer attacks that can compromise the security of the system or place unnecessary load on them.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -851,7 +852,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Enabling access logs helps operators track all viewer requests for the content delivered through the Content Delivery Network.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -864,7 +865,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Vulnerabilities have been and continue to be discovered in the deprecated SSL and TLS protocols. Using a security policy with minimum TLSv1.1 or TLSv1.2 and appropriate security ciphers for HTTPS helps protect viewer connections.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -877,7 +878,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Origin access identities help with security by restricting any direct access to objects through S3 URLs.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -889,7 +890,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Enabling access logs helps operators view who accessed an API and how the caller accessed the API.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -901,7 +902,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'In most cases an API needs to have an authentication and authorization implementation strategy. This includes using such approaches as IAM, Cognito User Pools, Custom authorizer, etc.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -914,7 +915,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Enabling CloudWatch logs at the stage level helps operators to track and analyze execution behavior at the API stage level.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -934,7 +935,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'A cooldown period temporarily suspends any scaling activities in order to allow the newly launched EC2 instance(s) some time to start handling the application traffic.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -947,7 +948,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The health check feature enables the service to detect whether its registered EC2 instances are healthy or not.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -960,7 +961,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Notifications on EC2 instance launch, launch error, termination, and termination errors allow operators to gain better insights into systems attributes such as activity and health.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -981,7 +982,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Provisioning the notebook instances inside a VPC enables the notebook to access VPC-only resources such as EFS file systems.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -994,7 +995,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encrypting storage volumes helps protect SageMaker data-at-rest.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1007,7 +1008,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Disabling public accessibility helps minimize security risks.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -1027,7 +1028,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encrypting query results stored in S3 helps secure data to meet compliance requirements for data-at-rest encryption.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1039,7 +1040,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Uploading logs to S3 enables the system to keep the logging data for historical purposes or to track and analyze the clusters behavior.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1052,7 +1053,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'SSH clients can use an EC2 key pair to authenticate to cluster instances. Alternatively, with EMR release version 5.10.0 or later, solutions can configure Kerberos to authenticate users and SSH connections to the master node.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1064,7 +1065,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Provisioning the domain within a VPC enables better flexibility and control over the clusters access and security as this feature keeps all traffic between the VPC and Elasticsearch domains within the AWS network instead of going over the public Internet.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1077,7 +1078,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Enabling the node-to-node encryption feature adds an extra layer of data protection on top of the existing ES security features such as HTTPS client to cluster encryption and data-at-rest encryption.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1090,7 +1091,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using allowlisted IP addresses helps protect the domain against unauthorized access.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1102,7 +1103,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using dedicated master nodes helps improve environmental stability by offloading all the management tasks from the data nodes.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1115,7 +1116,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Restricting public access helps prevent unauthorized access and prevents any unsigned requests to be made to the resources.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1127,7 +1128,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Enabling cross-zone replication (Zone Awareness) increases the availability of the ES domain by allocating the nodes and replicate the data across two AZs in the same region in order to prevent data loss and minimize downtime in the event of node or AZ failure.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1139,7 +1140,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1152,7 +1153,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'These logs enable operators to gain full insight into the performance of these operations.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1165,7 +1166,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Checkpoints are backups of application state that KDA automatically creates periodically and uses to restore from faults.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1178,7 +1179,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         "Data is encrypted before it's written to the Kinesis stream storage layer, and decrypted after it’s retrieved from storage. This allows the system to meet strict regulatory requirements and enhance the security of system data.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1191,7 +1192,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'This allows the system to meet strict regulatory requirements and enhance the security of system data.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1204,7 +1205,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'TLS only communication secures data-in-transit by encrypting the connection between the clients and brokers.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1217,7 +1218,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'TLS communication secures data-in-transit by encrypting the connection between brokers.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1230,7 +1231,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Broker logs enable operators to troubleshoot Apache Kafka applications and to analyze their communications with the MSK cluster. The cluster can deliver logs to the following resources: a CloudWatch log group, an S3 bucket, a Kinesis Data Firehose delivery stream.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1243,7 +1244,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'SSL secures communications to data sources, especially when using public networks. Using SSL with QuickSight requires the use of certificates signed by a publicly-recognized certificate authority.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -1263,7 +1264,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1276,7 +1277,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1289,7 +1290,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Strong password policies increase system security by encouraging users to create reliable and secure passwords.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1301,7 +1302,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Multi-factor authentication (MFA) increases security for the application by adding another authentication method, and not relying solely on user name and password.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1314,7 +1315,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Advanced security features enable the system to detect and act upon malicious sign-in attempts.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1327,7 +1328,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'In many cases applications do not warrant unauthenticated guest access applications. Metadata explaining the use case allows for transparency to operators.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1339,7 +1340,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'KMS Key Rotation allow a system to set an yearly rotation schedule for a CMK so when a customer master key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -1360,7 +1361,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Logging "ALL" events to CloudWatch logs help operators troubleshoot and audit systems.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1372,7 +1373,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'X-ray provides an end-to-end view of how an application is performing. This helps operators to discover performance issues, detect permission problems, and track requests made to and from other AWS services.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -1393,7 +1394,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Server side encryption adds additional protection of sensitive data delivered as messages to subscribers.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1406,7 +1407,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Server side encryption adds additional protection of sensitive data delivered as messages to subscribers.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1419,7 +1420,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using a DLQ helps maintain the queue flow and avoid losing data by detecting and mitigating failures and service disruptions on time.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -1440,7 +1441,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'The container should have access logging enabled to provide detailed records for the requests that are made to the container.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1453,7 +1454,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using a combination of MediaStore metrics and CloudWatch alarms helps operators gain better insights into container operations.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1466,7 +1467,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using a container policy helps follow the standard security advice of granting least privilege, or granting only the permissions required to allow needed access to the container.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1478,7 +1479,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using a CORS policy helps follow the standard security advice of granting least privilege, or granting only the permissions required to allow needed access to the container.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1491,7 +1492,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Many use cases warrant the usage of lifecycle configurations to manage container objects during their lifetime.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -1511,7 +1512,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Privileged grants elevated rights to the system, which introduces additional risk. Privileged mode should only be set to true only if the build project is used to build Docker images. Otherwise, a build that attempts to interact with the Docker daemon fails.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1523,7 +1524,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Using a CMK helps follow the standard security advice of granting least privilege to objects generated by the project.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1536,7 +1537,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'Explaining differences/edits to Docker images helps operators better understand system dependencies.';
       Annotations.of(node).addWarning(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -1549,7 +1550,7 @@ export class AwsSolutionsChecks extends NagPack {
       const explanation =
         'SSM adds an additional layer of protection as it allows operators to control access through IAM permissions and does not require opening inbound ports.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
