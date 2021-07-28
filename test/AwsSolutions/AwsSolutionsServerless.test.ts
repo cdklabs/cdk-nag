@@ -28,7 +28,7 @@ describe('AWS Step Functions', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SF1:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -47,7 +47,7 @@ describe('AWS Step Functions', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SF1:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsSf2: Step Function have X-Ray tracing enabled', () => {
@@ -64,7 +64,7 @@ describe('AWS Step Functions', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SF2:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -80,7 +80,7 @@ describe('AWS Step Functions', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-SF2:'),
         }),
-      }),
+      })
     );
   });
 });

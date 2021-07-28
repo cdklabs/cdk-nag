@@ -21,7 +21,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-S1:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -29,7 +29,7 @@ describe('AWS Solutions Storage Checks', () => {
         serverAccessLogsBucket: Bucket.fromBucketName(
           negative,
           'rLogsBucket',
-          'foo',
+          'foo'
         ),
       });
       const messages2 = SynthUtils.synthesize(negative).messages;
@@ -38,7 +38,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-S1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsS2: S3 Buckets should have public access restricted and blocked', () => {
@@ -58,7 +58,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-S2:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -76,7 +76,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-S2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsS3: S3 Buckets should have default encryption enabled', () => {
@@ -91,7 +91,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-S3:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -104,7 +104,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-S3:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -123,7 +123,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EFS1:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -137,7 +137,7 @@ describe('AWS Solutions Storage Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EFS1:'),
           }),
-        }),
+        })
       );
     });
   });

@@ -26,21 +26,21 @@ export default function (node: IConstruct): boolean {
     }
 
     const requireUppercase = Stack.of(node).resolve(
-      passwordPolicy.requireUppercase,
+      passwordPolicy.requireUppercase
     );
     if (minimumLength == undefined || !requireUppercase) {
       return false;
     }
 
     const requireNumbers = Stack.of(node).resolve(
-      passwordPolicy.requireNumbers,
+      passwordPolicy.requireNumbers
     );
     if (requireNumbers == undefined || !requireNumbers) {
       return false;
     }
 
     const requireSymbols = Stack.of(node).resolve(
-      passwordPolicy.requireSymbols,
+      passwordPolicy.requireSymbols
     );
     if (requireSymbols == undefined || !requireSymbols) {
       return false;

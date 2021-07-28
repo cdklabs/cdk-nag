@@ -15,10 +15,16 @@ export default function (node: IConstruct): boolean {
     if (ingressRules != undefined) {
       for (const rule of ingressRules) {
         const resolvedRule = Stack.of(node).resolve(rule);
-        if (resolvedRule.cidrIp != undefined && resolvedRule.cidrIp.includes('/0')) {
+        if (
+          resolvedRule.cidrIp != undefined &&
+          resolvedRule.cidrIp.includes('/0')
+        ) {
           return false;
         }
-        if (resolvedRule.cidrIpv6 != undefined && resolvedRule.cidrIpv6.includes('/0')) {
+        if (
+          resolvedRule.cidrIpv6 != undefined &&
+          resolvedRule.cidrIpv6.includes('/0')
+        ) {
           return false;
         }
       }

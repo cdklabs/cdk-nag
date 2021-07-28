@@ -14,7 +14,9 @@ export default function (node: CfnResource): boolean {
     if (node.autoMinorVersionUpgrade == undefined) {
       return false;
     }
-    const autoMinorVersionUpgrade = Stack.of(node).resolve(node.autoMinorVersionUpgrade);
+    const autoMinorVersionUpgrade = Stack.of(node).resolve(
+      node.autoMinorVersionUpgrade
+    );
     if (!autoMinorVersionUpgrade) {
       return false;
     }

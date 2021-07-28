@@ -11,7 +11,9 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCluster) {
-    const allowVersionUpgrade = Stack.of(node).resolve(node.allowVersionUpgrade);
+    const allowVersionUpgrade = Stack.of(node).resolve(
+      node.allowVersionUpgrade
+    );
     if (allowVersionUpgrade === false) {
       return false;
     }

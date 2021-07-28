@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnIdentityPool) {
     const allowUnauthenticatedIdentities = Stack.of(node).resolve(
-      node.allowUnauthenticatedIdentities,
+      node.allowUnauthenticatedIdentities
     );
     if (allowUnauthenticatedIdentities) {
       return false;

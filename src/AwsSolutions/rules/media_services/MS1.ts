@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnContainer) {
     const accessLoggingEnabled = Stack.of(node).resolve(
-      node.accessLoggingEnabled,
+      node.accessLoggingEnabled
     );
     if (accessLoggingEnabled == undefined || !accessLoggingEnabled) {
       return false;

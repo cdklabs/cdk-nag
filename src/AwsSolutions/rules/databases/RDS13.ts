@@ -11,7 +11,9 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBInstance) {
-    const backupRetentionPeriod = Stack.of(node).resolve(node.backupRetentionPeriod);
+    const backupRetentionPeriod = Stack.of(node).resolve(
+      node.backupRetentionPeriod
+    );
     if (!(backupRetentionPeriod == undefined || backupRetentionPeriod > 0)) {
       return false;
     }

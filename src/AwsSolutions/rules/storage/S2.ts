@@ -14,7 +14,9 @@ export default function (node: CfnResource): boolean {
     if (node.publicAccessBlockConfiguration == undefined) {
       return false;
     }
-    const publicAccess = Stack.of(node).resolve(node.publicAccessBlockConfiguration);
+    const publicAccess = Stack.of(node).resolve(
+      node.publicAccessBlockConfiguration
+    );
     if (
       publicAccess.blockPublicAcls == undefined ||
       publicAccess.blockPublicPolicy == undefined ||
@@ -23,10 +25,18 @@ export default function (node: CfnResource): boolean {
     ) {
       return false;
     }
-    const blockPublicAcls = Stack.of(node).resolve(publicAccess.blockPublicAcls);
-    const blockPublicPolicy = Stack.of(node).resolve(publicAccess.blockPublicPolicy);
-    const ignorePublicAcls = Stack.of(node).resolve(publicAccess.ignorePublicAcls);
-    const restrictPublicBuckets = Stack.of(node).resolve(publicAccess.restrictPublicBuckets);
+    const blockPublicAcls = Stack.of(node).resolve(
+      publicAccess.blockPublicAcls
+    );
+    const blockPublicPolicy = Stack.of(node).resolve(
+      publicAccess.blockPublicPolicy
+    );
+    const ignorePublicAcls = Stack.of(node).resolve(
+      publicAccess.ignorePublicAcls
+    );
+    const restrictPublicBuckets = Stack.of(node).resolve(
+      publicAccess.restrictPublicBuckets
+    );
     if (
       blockPublicAcls == false ||
       blockPublicPolicy == false ||
