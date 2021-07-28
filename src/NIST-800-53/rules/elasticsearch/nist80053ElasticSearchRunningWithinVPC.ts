@@ -15,11 +15,10 @@ export default function (node: IConstruct): boolean {
     //Is the VPC property set?
     const vpcOptions = Stack.of(node).resolve(node.vpcOptions);
     if (vpcOptions != undefined) {
-     if (vpcOptions.SubnetIds == undefined || vpcOptions.SubnetIds.length == 0){
-      return false;
-     }
-    }
-    else{
+      if (vpcOptions.SubnetIds == undefined || vpcOptions.SubnetIds.length == 0) {
+        return false;
+      }
+    } else {
       return false;
     }
   }

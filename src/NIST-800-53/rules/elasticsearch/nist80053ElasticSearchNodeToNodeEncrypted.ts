@@ -15,11 +15,10 @@ export default function (node: IConstruct): boolean {
     //Is the node to node encryption property set?
     const encryptedNodeToNode = Stack.of(node).resolve(node.nodeToNodeEncryptionOptions);
     if (encryptedNodeToNode != undefined) {
-     if (encryptedNodeToNode.Enabled == undefined || encryptedNodeToNode.Enabled == false){
-      return false;
-     }
-    }
-    else{
+      if (encryptedNodeToNode.Enabled == undefined || encryptedNodeToNode.Enabled == false) {
+        return false;
+      }
+    } else {
       return false;
     }
   }

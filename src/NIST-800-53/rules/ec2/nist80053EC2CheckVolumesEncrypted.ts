@@ -13,7 +13,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnInstance || node instanceof CfnAutoScalingGroup) {
-    if(checkVolumesEncrypted(node) == false){
+    if (checkVolumesEncrypted(node) == false) {
       return false;
     }
   }
@@ -24,17 +24,17 @@ export default function (node: IConstruct): boolean {
  * Helper function to identify if any volume is NOT encrypted
  * @param node the AWS cfn resource to check
  */
- function checkVolumesEncrypted (node: any){
+function checkVolumesEncrypted (node: any) {
   const ebsMappings = Stack.of(node).resolve(node.blockDeviceMappings);
   //Check if we have any EBS mappings in the first place
   if (ebsMappings != undefined) {
     //For each mapping, check if encryption is enabled
     for (const mapping of ebsMappings) {
-        //Get EBS device
-        const ebsDevice = Stack.of(node).resolve(mapping.ebs);
-        if(ebsDevice.encryption == false){
-          return false;
-        }
+      //Get EBS device
+      const ebsDevice = Stack.of(node).resolve(mapping.ebs);
+      if (ebsDevice.encryption == false) {
+        return false;
+      }
     }
   }
   return true;

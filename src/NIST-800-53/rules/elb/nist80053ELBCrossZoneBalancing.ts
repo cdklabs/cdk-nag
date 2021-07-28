@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
+import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
@@ -12,13 +12,10 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnLoadBalancer) {
-    const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
-    if (attributes != undefined) {
-      if ('deletion_protection.enabled' in attributes) {
-        if (attributes['deletion_protection.enabled'] != true) {
-          return false;
-        }
-      } else {
+    //Is cross zone balancing enabled?
+    const crossZoneBalancing = Stack.of(node).resolve(node.crossZone);
+    if (crossZoneBalancing != undefined) {
+      if (crossZoneBalancing == false) {
         return false;
       }
     } else {

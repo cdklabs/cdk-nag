@@ -14,7 +14,7 @@ const blockedPorts=[20, 21, 3389, 3309, 3306, 4333];
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */
- export default function (node: IConstruct): boolean {
+export default function (node: IConstruct): boolean {
   if (node instanceof CfnSecurityGroup) {
     const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
     if (ingressRules != undefined) {
@@ -44,7 +44,7 @@ const blockedPorts=[20, 21, 3389, 3309, 3306, 4333];
  * @param rule the CfnSecurityGroupIngress rule to check
  * @param portNum the number of the port to check
  */
- function testPort (rule: CfnSecurityGroupIngress, portNum: Number): boolean {
+function testPort (rule: CfnSecurityGroupIngress, portNum: Number): boolean {
   //Is a port range specified?
   if (rule.fromPort != undefined && rule.toPort != undefined) {
     if ((rule.fromPort <= portNum && rule.toPort >= portNum) ||
@@ -59,6 +59,5 @@ const blockedPorts=[20, 21, 3389, 3309, 3306, 4333];
   }
   return true;
 }
-
 
 

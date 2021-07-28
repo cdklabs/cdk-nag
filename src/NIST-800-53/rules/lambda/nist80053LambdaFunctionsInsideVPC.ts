@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnFunction) {
-    
+
     //Check for a VPC configuration
     const vpcConfig = Stack.of(node).resolve(node.vpcConfig);
     if (vpcConfig == undefined) {

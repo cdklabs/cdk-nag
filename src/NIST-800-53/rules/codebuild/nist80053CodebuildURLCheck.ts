@@ -12,16 +12,15 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnProject) {
-    
+
     //Check for the presence of OAUTH
     const projectSource = Stack.of(node).resolve(node.source);
     const projectAuth = projectSource.Auth;
-    if(projectAuth == undefined){
+    if (projectAuth == undefined) {
       return false;
-    }
-    else{
+    } else {
       const projectAuthType = projectAuth.Type;
-      if (projectAuthType != "OAUTH"){
+      if (projectAuthType != 'OAUTH') {
         return false;
       }
     }
