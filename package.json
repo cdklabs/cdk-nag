@@ -149,7 +149,8 @@
     "@aws-cdk/aws-sqs": "^1.110.0",
     "@aws-cdk/aws-stepfunctions": "^1.110.0",
     "@aws-cdk/aws-wafv2": "^1.110.0",
-    "@aws-cdk/core": "^1.110.0"
+    "@aws-cdk/core": "^1.110.0",
+    "aws-elasticsearch": "^0.0.4"
   },
   "bundledDependencies": [],
   "keywords": [
