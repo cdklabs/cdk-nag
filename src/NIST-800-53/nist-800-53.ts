@@ -19,6 +19,10 @@ import {
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
+import {
+  nist80053RedshiftClusterConfiguration,
+  nist80053RedshiftClusterPublicAccess,
+} from './rules/redshift';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -30,8 +34,9 @@ export class NIST80053Checks extends NagPack {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
       this.checkEC2(node, ignores);
-      this.checkIAM(node, ignores);
       this.checkEFS(node, ignores);
+      this.checkIAM(node, ignores);
+      this.checkRedshift(node, ignores);
     }
   }
 
@@ -115,7 +120,6 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
-
   /**
    * Check IAM Resources
    * @param node the IConstruct to evaluate
@@ -176,6 +180,41 @@ export class NIST80053Checks extends NagPack {
         'The IAM policy grants admin access - (Control IDs AC-2(1), AC-2(j), AC-3, AC-6).';
       const explanation =
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
+   * Check Redshift Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkRedshift(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterConfiguration') &&
+      !nist80053RedshiftClusterConfiguration(node)
+    ) {
+      const ruleId = 'NIST.800.53-RedshiftClusterConfiguration';
+      const info =
+        'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c), SC-13).';
+      const explanation =
+        'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterPublicAccess') &&
+      !nist80053RedshiftClusterPublicAccess(node)
+    ) {
+      const ruleId = 'NIST.800.53-RedshiftClusterPublicAccess';
+      const info =
+        'The Redshift cluster allows public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+      const explanation =
+        'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
