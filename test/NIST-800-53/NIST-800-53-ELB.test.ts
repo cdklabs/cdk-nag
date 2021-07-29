@@ -11,8 +11,8 @@ import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
-  describe('Amazon Cloud Trail', () => {
+describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
+  describe('Amazon ELB', () => {
     test('NIST.800.53-ALBHttpDropInvalidHeaderEnabled: Load balancers have invalid http header dropping enabled', () => {
 
       const nonCompliant = new Stack(undefined, undefined, {

@@ -328,7 +328,7 @@ export class NIST80053Checks extends NagPack {
           !nist80053APIGWExecutionLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-APIGWExecutionLoggingEnabled';
-      const info = 'The API Gateway stage does not have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const info = 'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
             'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.';
       Annotations.of(node).addError(

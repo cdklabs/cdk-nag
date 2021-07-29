@@ -9,8 +9,8 @@ import { Topic } from '@aws-cdk/aws-sns';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
-  describe('Amazon Cloud Trail', () => {
+describe('NIST 800-53 SNS Compliance Checks', () => {
+  describe('Amazon SNS', () => {
     test('NIST.800.53-SNSEncryptedKMS: SNS Topics are encrypted via AWS Key Management Service (KMS)', () => {
 
       //AC 1: Given a CDK stack with one or more non-compliant IAM users
