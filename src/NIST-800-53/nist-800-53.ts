@@ -16,6 +16,9 @@ import {
   nist80053EFSEncrypted,
 } from './rules/efs';
 import {
+  nist80053EMRKerberosEnabled
+} from './rules/emr';
+import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
@@ -34,6 +37,7 @@ export class NIST80053Checks extends NagPack {
       this.checkEC2(node, ignores);
       this.checkIAM(node, ignores);
       this.checkEFS(node, ignores);
+      this.checkEMR(node, ignores);
     }
   }
 
@@ -107,6 +111,25 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
+
+    /**
+   * Check EMR Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+     private checkEMR(node: CfnResource, ignores: any) {
+      if (
+        !this.ignoreRule(ignores, 'NIST.800.53-EMRKerberosEnabled') &&
+        !nist80053EMRKerberosEnabled(node)
+      ) {
+        const ruleId = 'NIST.800.53-EFSEncrypted';
+        const info = 'The EMR cluster does not have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, and AC-6).';
+        const explanation = 'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
+        Annotations.of(node).addError(
+          this.createMessage(ruleId, info, explanation),
+        );
+      }
+    }
 
   /**
    * Check IAM Resources
