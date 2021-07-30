@@ -9,7 +9,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * The API Gateway stage does not have caching enabled and encrypted. - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
- export default function (node: IConstruct): boolean {
+export default function (node: IConstruct): boolean {
   if (node instanceof CfnStage) {
     if (node.methodSettings == undefined) {
       return false;
@@ -21,7 +21,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
       if (
         resolvedSetting?.httpMethod == '*' &&
         resolvedSetting?.resourcePath == '/*' &&
-        resolvedSetting?.cacheDataEncrypted  &&
+        resolvedSetting?.cacheDataEncrypted &&
         resolvedSetting?.cachingEnabled
       ) {
         found = true;

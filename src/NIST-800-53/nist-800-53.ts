@@ -29,6 +29,7 @@ import {
 
 import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
+  nist80053ALBHttpToHttpsRedirection,
   nist80053ELBLoggingEnabled,
   nist80053ALBLoggingEnabled,
 } from './rules/elb';
@@ -278,6 +279,19 @@ export class NIST80053Checks extends NagPack {
       const info = 'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
             'Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client\'s IP address, latencies, request paths, and server responses.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ALBHttpToHttpsRedirection') &&
+          !nist80053ALBHttpToHttpsRedirection(node)
+    ) {
+      const ruleId = 'NIST.800.53-ALBHttpToHttpsRedirection';
+      const info = 'Http ALB listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).';
+      const explanation =
+            'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );

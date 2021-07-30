@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { LoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
-import { ApplicationLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
+import { ApplicationLoadBalancer, ApplicationListener, ListenerAction, ApplicationProtocol } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
@@ -47,6 +47,85 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ALBHttpDropInvalidHeaderEnabled:'),
+          }),
+        }),
+      );
+
+    });
+
+    test('NIST.800.53-ALBHttpToHttpsRedirection: Http ALB listeners are configured to redirect to https', () => {
+      //test for non-compliant application listener
+      const nonCompliant = new Stack(undefined, undefined, {
+        env: { region: 'us-east-1' },
+      });
+      Aspects.of(nonCompliant).add(new NIST80053Checks());
+
+      const myBalancer = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
+        vpc: new Vpc(nonCompliant, 'rVPC'),
+      });
+
+      myBalancer.logAccessLogs(new Bucket(nonCompliant, 'rLogsBucket'));
+      myBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+
+      new ApplicationListener(nonCompliant, 'rALBListener', {
+        loadBalancer: myBalancer,
+        protocol: ApplicationProtocol.HTTP,
+        defaultAction: ListenerAction.fixedResponse(200, {
+          contentType: 'string',
+          messageBody: 'OK',
+        }),
+      });
+
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ALBHttpToHttpsRedirection:'),
+          }),
+        }),
+      );
+
+      //test for application listener configured correctly
+      const compliant = new Stack(undefined, undefined, {
+        env: { region: 'us-east-1' },
+      });
+      Aspects.of(compliant).add(new NIST80053Checks());
+
+      const myBalancer2 = new ApplicationLoadBalancer(compliant, 'rELB', {
+        vpc: new Vpc(compliant, 'rVPC'),
+      });
+
+      myBalancer2.logAccessLogs(new Bucket(compliant, 'rLogsBucket'));
+      myBalancer2.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+
+      new ApplicationListener(compliant, 'rALBListener', {
+        loadBalancer: myBalancer2,
+        protocol: ApplicationProtocol.HTTP,
+        defaultAction: ListenerAction.redirect({ protocol: ApplicationProtocol.HTTPS }),
+      });
+
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ALBHttpToHttpsRedirection:'),
+          }),
+        }),
+      );
+
+      //test for no listeners or load balancers
+      const compliant2 = new Stack(undefined, undefined, {
+        env: { region: 'us-east-1' },
+      });
+      Aspects.of(compliant2).add(new NIST80053Checks());
+
+      new Vpc(compliant2, 'rVPC');
+
+      const messages3 = SynthUtils.synthesize(compliant2).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ALBHttpToHttpsRedirection:'),
           }),
         }),
       );
