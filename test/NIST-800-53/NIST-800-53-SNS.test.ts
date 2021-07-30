@@ -13,9 +13,6 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
   describe('Amazon SNS', () => {
     test('NIST.800.53-SNSEncryptedKMS: SNS Topics are encrypted via AWS Key Management Service (KMS)', () => {
 
-      //AC 1: Given a CDK stack with one or more non-compliant IAM users
-      //when NIST-503 Secure Aspects is run
-      //the CDK stack does not deploy and the consultant receives an explanation about the non compliant user for the relevant NIST standards
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -32,10 +29,6 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
         }),
       );
 
-      //AC 2:
-      //Given a CDK stack with compliant IAM user(s):
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the compliant resource for AC-2(1) NIST standard
       const activeCompliant = new Stack();
       Aspects.of(activeCompliant).add(new NIST80053Checks());
       const myKey = new Key(activeCompliant, 'rKey');
@@ -50,13 +43,9 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
         }),
       );
 
-      //AC 3:
-      //Given a CDK stack with no IAM users:
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about AC-2(1) NIST standard
+      
       const passiveCompliant = new Stack();
       Aspects.of(passiveCompliant).add(new NIST80053Checks());
-      //no SNS topics or keys
 
       const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
       expect(messages3).not.toContainEqual(
