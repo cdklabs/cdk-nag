@@ -18,4 +18,4 @@ import { CfnResource, Stack } from '@aws-cdk/core';
       }
     }
     return true;
-  }
+}
