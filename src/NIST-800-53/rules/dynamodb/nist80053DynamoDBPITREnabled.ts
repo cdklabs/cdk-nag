@@ -1,4 +1,4 @@
-import { CfnTable } from '@aws-cdk/aws-dynamodb'
+import { CfnTable } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
@@ -6,16 +6,16 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 
- export default function (node: CfnResource): boolean {
-    if (node instanceof CfnTable) {
-      if (node.pointInTimeRecoverySpecification == undefined) {
-        return false;
-      }
-      const pitr = Stack.of(node).resolve(node.pointInTimeRecoverySpecification);
-      const enabled = Stack.of(node).resolve(pitr.pointInTimeRecoveryEnabled);
-      if (!enabled) {
-        return false;
-      }
+export default function (node: CfnResource): boolean {
+  if (node instanceof CfnTable) {
+    if (node.pointInTimeRecoverySpecification == undefined) {
+      return false;
     }
-    return true;
+    const pitr = Stack.of(node).resolve(node.pointInTimeRecoverySpecification);
+    const enabled = Stack.of(node).resolve(pitr.pointInTimeRecoveryEnabled);
+    if (!enabled) {
+      return false;
+    }
+  }
+  return true;
 }
