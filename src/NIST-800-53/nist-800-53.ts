@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
+import nist80053AutoscalingHealthChecks from './rules/autoscaling/nist80053AutoscalingHealthChecks';
 
 import {
   nist80053EC2CheckDetailedMonitoring,
@@ -107,6 +108,123 @@ export class NIST80053Checks extends NagPack {
       const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
       const info = 'The EC2 machine does not restrict all common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
       const explanation = 'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check autoscaling Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+   private checkAutoscaling(node: CfnResource, ignores: any) {
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-AutoscalingHealthChecks') &&
+      !nist80053AutoscalingHealthChecks(node)
+    ) {
+      const ruleId = 'NIST.800.53-AutoscalingHealthChecks';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+
+
+  }
+
+  /**
+   * Check codebuild Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+   private checkCodebuild(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EFSEncrypted';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check elasticsearch Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+   private checkElasticache(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EFSEncrypted';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check ELB Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+   private checkELB(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EFSEncrypted';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check Lambda Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+   private checkLambda(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EFSEncrypted';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+
+  /**
+   * Check Sagemaker Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+   private checkSagemaker(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
+      !nist80053EFSEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EFSEncrypted';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
