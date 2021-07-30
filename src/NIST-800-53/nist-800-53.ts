@@ -54,7 +54,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-DynamoDBPITREnabled';
       const info =
-        'DynamoDB tables do not have Point-in-time Recovery enabled (Control IDs: CP-9(b), CP-10, SI-12).';
+        'The DynamoDB table does not have Point-in-time Recovery enabled (Control IDs: CP-9(b), CP-10, SI-12).';
       const explanation =
         'It maintains the backups by ensuring that point-in-time recovery is enabled in Amazon DynamoDB. The recovery maintains continuous backups of your table for the last 35 days. ';
       Annotations.of(node).addError(
