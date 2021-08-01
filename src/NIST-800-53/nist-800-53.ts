@@ -340,12 +340,34 @@ export class NIST80053Checks extends NagPack {
    */
    private checkSagemaker(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
-      !nist80053EFSEncrypted(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-SagemakerDirectInternetAccessDisbabled') &&
+      !nist80053SagemakerDirectInternetAccessDisabled(node)
     ) {
-      const ruleId = 'NIST.800.53-EFSEncrypted';
-      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      const ruleId = 'NIST.800.53-SagemakerDirectInternetAccessDisbabled';
+      const info = 'The Sagemaker resource does not disable direct internet access - (Control IDs: SC-13, SC-28).';
+      const explanation = 'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-SagemakerEndpointKMS') &&
+      !nist80053SagemakerEndpointKMS(node)
+    ) {
+      const ruleId = 'NIST.800.53-SagemakerEndpointKMS';
+      const info = 'The Sagemaker resource endpoint is encryped using KMS - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-SagemakerNotebookKMS') &&
+      !nist80053SagemakerNotebookKMS(node)
+    ) {
+      const ruleId = 'NIST.800.53-SagemakerNotebookKMS';
+      const info = 'The Sagemaker notebook is encryped using KMS - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Because sensitive data can exist at rest in SageMaker notebook, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
