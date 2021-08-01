@@ -15,9 +15,9 @@ import {
   nist80053ElasticSearchNodeToNodeEncrypted,
 } from './rules/elasticsearch';
 import {
-  nist80053ELBCertsUseSSLOrHTTPS,
   nist80053ELBCrossZoneBalancing,
   nist80053ELBDeletionProtectionEnabled,
+  nist80053ELBListenersUseSSLOrHTTPS,
   nist80053ELBUseACMCerts,
 } from './rules/elb';
 import {
@@ -269,12 +269,45 @@ export class NIST80053Checks extends NagPack {
    */
    private checkELB(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
-      !nist80053EFSEncrypted(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBListenersUseSSLOrHTTPS') &&
+      !nist80053ELBListenersUseSSLOrHTTPS(node)
     ) {
-      const ruleId = 'NIST.800.53-EFSEncrypted';
-      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      const ruleId = 'NIST.800.53-ELBListenersUseSSLOrHTTPS';
+      const info = 'The ELB has listeners which do not use SSL or HTTPS - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23).';
+      const explanation = 'Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBDeletionProtectionEnabled') &&
+      !nist80053ELBDeletionProtectionEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBDeletionProtectionEnabled';
+      const info = 'The ELB does not have deletion protection enabled - (Control IDs: CM-2, CP-10).';
+      const explanation = 'Use this feature to prevent your load balancer from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBCrossZoneBalancing') &&
+      !nist80053ELBCrossZoneBalancing(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBCrossZoneBalancing';
+      const info = 'The ELB does not balance traffic between at least 2 AZs - (Control IDs: SC-5, CP-10).';
+      const explanation = 'The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBUseACMCerts') &&
+      !nist80053ELBUseACMCerts(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBUseACMCerts';
+      const info = 'The ELB does not utilize ACM (Amazon Certificate Manager) certifications - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).';
+      const explanation = 'Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
