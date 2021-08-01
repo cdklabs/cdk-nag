@@ -5,8 +5,21 @@ SPDX-License-Identifier: Apache-2.0
 
 import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
-import nist80053AutoscalingHealthChecks from './rules/autoscaling/nist80053AutoscalingHealthChecks';
 
+import {
+  nist80053AutoscalingHealthChecks,
+} from './rules/autoscaling';
+import {
+  nist80053ElasticSearchRunningWithinVPC,
+  nist80053ElasticSearchEncryptedAtRest,
+  nist80053ElasticSearchNodeToNodeEncrypted,
+} from './rules/elasticsearch';
+import {
+  nist80053ELBCertsUseSSLOrHTTPS,
+  nist80053ELBCrossZoneBalancing,
+  nist80053ELBDeletionProtectionEnabled,
+  nist80053ELBUseACMCerts,
+} from './rules/elb';
 import {
   nist80053EC2CheckDetailedMonitoring,
   nist80053EC2CheckInsideVPC,
@@ -14,16 +27,30 @@ import {
   nist80053EC2CheckSSHRestricted,
   nist80053EC2CheckCommonPortsRestricted,
   nist80053EC2CheckDefaultSecurityGroupClosed,
+  nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts,
+  nist80053EC2CheckVolumesEncrypted,
 } from './rules/ec2';
 import {
-  nist80053EFSEncrypted,
-} from './rules/efs';
+  nist80053LambdaFunctionsInsideVPC,
+} from './rules/lambda';
+import {
+  nist80053SagemakerDirectInternetAccessDisabled,
+  nist80053SagemakerEndpointKMS,
+  nist80053SagemakerNotebookKMS,
+} from './rules/sagemaker';
+import { 
+  nist80053CodeBuildCheckEnvVars, 
+  nist80053CodebuildURLCheck 
+} from './rules/codebuild';
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
+import {
+  nist80053EFSEncrypted,
+} from './rules/efs';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -35,6 +62,12 @@ export class NIST80053Checks extends NagPack {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
       this.checkEC2(node, ignores);
+      this.checkAutoscaling(node, ignores);
+      this.checkElasticsearch(node, ignores);
+      this.checkCodebuild(node, ignores);
+      this.checkELB(node, ignores);
+      this.checkLambda(node, ignores);
+      this.checkSagemaker(node, ignores);
       this.checkIAM(node, ignores);
       this.checkEFS(node, ignores);
     }
@@ -112,6 +145,28 @@ export class NIST80053Checks extends NagPack {
         this.createMessage(ruleId, info, explanation),
       );
     }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts') &&
+      !nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
+      const info = 'The VPC Security Group does not allow all authorized ports - (Control IDs: AC-4, SC-7, SC-7(3).';
+      const explanation = 'Not restricting access on ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVolumesEncrypted') &&
+      !nist80053EC2CheckVolumesEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
+      const info = 'The EC2 instance does not utilize encrypted volumes. - (Control IDs: SC-13, SC-28.';
+      const explanation = 'Utilizing encrypted volumes makes it more difficult for attackers to steal your information.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
   }
 
   /**
@@ -126,8 +181,8 @@ export class NIST80053Checks extends NagPack {
       !nist80053AutoscalingHealthChecks(node)
     ) {
       const ruleId = 'NIST.800.53-AutoscalingHealthChecks';
-      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-5).';
+      const explanation = 'Health checks for EC2 instances within an autoscaling group help maintain a reliable infrastructure.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -143,12 +198,23 @@ export class NIST80053Checks extends NagPack {
    */
    private checkCodebuild(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
-      !nist80053EFSEncrypted(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildCheckEnvVars') &&
+      !nist80053CodeBuildCheckEnvVars(node)
     ) {
-      const ruleId = 'NIST.800.53-EFSEncrypted';
-      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      const ruleId = 'NIST.800.53-CodeBuildCheckEnvVars';
+      const info = 'The Codebuild environment stores sensitive credentials as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
+      const explanation = 'Sensitive credentials should not be stored as environment variables.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildURLCheck') &&
+      !nist80053CodebuildURLCheck(node)
+    ) {
+      const ruleId = 'NIST.800.53-CodeBuildURLCheck';
+      const info = 'The Codebuild project does not utilize OAUTH - (Control IDs: SA-3(a).';
+      const explanation = 'OAUTH is the most secure method of authenticating your Codebuild application.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
@@ -160,14 +226,36 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkElasticache(node: CfnResource, ignores: any) {
+   private checkElasticsearch(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-EFSEncrypted') &&
-      !nist80053EFSEncrypted(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchNodeToNodeEncrypted') &&
+      !nist80053ElasticSearchNodeToNodeEncrypted(node)
     ) {
-      const ruleId = 'NIST.800.53-EFSEncrypted';
-      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      const ruleId = 'NIST.800.53-ElasticSearchNodeToNodeEncrypted';
+      const info = 'The Elasticsearch resource is not node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)).';
+      const explanation = 'Node to node encryption helps to ensure that data is secure while in transit between nodes.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchEncryptedAtRest') &&
+      !nist80053ElasticSearchEncryptedAtRest(node)
+    ) {
+      const ruleId = 'NIST.800.53-ElasticSearchEncryptedAtRest';
+      const info = 'The Elasticsearch resource is not encrypted at rest - (Control IDs: SC-13, SC-28).';
+      const explanation = 'Encryption at rest helps to ensure that data is secure within each node.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchRunningWithinVPC') &&
+      !nist80053ElasticSearchRunningWithinVPC(node)
+    ) {
+      const ruleId = 'NIST.800.53-ElasticSearchRunningWithinVPC';
+      const info = 'The Elasticsearch resource is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+      const explanation = 'VPCs help secure your AWS resources and provide an extra layer of protection.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );

@@ -9,3 +9,5 @@ export { default as nist80053EC2CheckNoPublicIPs } from './nist80053EC2CheckNoPu
 export { default as nist80053EC2CheckSSHRestricted } from './nist80053EC2CheckSSHRestricted';
 export { default as nist80053EC2CheckCommonPortsRestricted } from './nist80053EC2CheckCommonPortsRestricted';
 export { default as nist80053EC2CheckDefaultSecurityGroupClosed } from './nist80053EC2CheckDefaultSecurityGroupClosed';
+export { default as nist80053EC2CheckVolumesEncrypted } from './nist80053EC2CheckVolumesEncrypted';
+export { default as nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts } from './nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts';
