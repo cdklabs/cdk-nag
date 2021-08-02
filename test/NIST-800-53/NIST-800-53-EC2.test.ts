@@ -25,6 +25,90 @@ import { NIST80053Checks } from '../../src';
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
 
+    //Test whether the default VPC security group is closed
+    test('nist80053Check: - Default VPC security group is closed - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+      //Expect a POSITIVE response because the security group is default and contains an ingress rule
+      const positive = new Stack();
+      Aspects.of(positive).add(new NIST80053Checks());
+      new CfnSecurityGroup(positive, 'rSecurityGroup', {
+        groupDescription: 'open default security group',
+        groupName: 'default',
+        securityGroupIngress: [
+          {
+            fromPort: 20,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'),
+          }),
+        }),
+      );
+
+      //Expect a POSITIVE response because the security group is default and contains an egress rule
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new NIST80053Checks());
+      new CfnSecurityGroup(positive2, 'rSecurityGroup', {
+        groupDescription: 'open default security group',
+        groupName: 'default',
+        securityGroupEgress: [
+          {
+            fromPort: 20,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      const messages2 = SynthUtils.synthesize(positive).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'),
+          }),
+        }),
+      );
+
+
+      //Create stack for negative checks
+      const negative = new Stack();
+      Aspects.of(negative).add(new NIST80053Checks());
+
+      //Expect a NEGATIVE response because the security group is default but has no rules
+      new CfnSecurityGroup(negative, 'rSecurityGroup1', {
+        groupName: 'default',
+        groupDescription: 'security group with no rules',
+        securityGroupIngress: [],
+      });
+
+      //Expect a NEGATIVE response the security group is not a default
+      new CfnSecurityGroup(negative, 'rSecurityGroup2', {
+        groupDescription: 'security group with rules but not default',
+        groupName: 'mycoolsecuritygroup',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'tcp',
+            cidrIp: '72.21.210.165',
+          },
+        ],
+      });
+
+      //Check cdk-nag response
+      const messages6 = SynthUtils.synthesize(negative).messages;
+      expect(messages6).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'),
+          }),
+        }),
+      );
+    });
+
     //Test whether common ports are restricted
     test('nist80053EC2CheckCommonPortsRestricted: - EC2 instances restrict common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3))', () => {
       //Expect a POSITIVE response because the security group allows connections from port 20
