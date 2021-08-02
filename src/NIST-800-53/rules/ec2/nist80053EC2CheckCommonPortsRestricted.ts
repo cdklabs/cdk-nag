@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
-
+//Default list of common ports, can be altered as needed
 const blockedPorts=[20, 21, 3389, 3309, 3306, 4333];
 
 /**
@@ -45,19 +45,27 @@ export default function (node: IConstruct): boolean {
  * @param portNum the number of the port to check
  */
 function testPort (rule: CfnSecurityGroupIngress, portNum: Number): boolean {
-  //Is a port range specified?
-  if (rule.fromPort != undefined && rule.toPort != undefined) {
-    if ((rule.fromPort <= portNum && rule.toPort >= portNum) ||
-        (rule.fromPort == -1 || rule.toPort == -1) ||
-        rule.ipProtocol == '-1') {
-      return false;
+  //Does this rule allow all IP addresses (unrestricted access)?
+  if (
+    (rule.cidrIp != undefined && rule.cidrIp.includes('/0')) ||
+    (rule.cidrIpv6 != undefined && rule.cidrIpv6.includes('/0'))
+  ) {
+    //Is a port range specified?
+    if (rule.fromPort != undefined && rule.toPort != undefined) {
+      if ((rule.fromPort <= portNum && rule.toPort >= portNum) ||
+          (rule.fromPort == -1 || rule.toPort == -1) ||
+          rule.ipProtocol == '-1') {
+        return false;
+      }
+    } else {
+      if (rule.fromPort == portNum || rule.ipProtocol == '-1') {
+        return false;
+      }
     }
+    return true;
   } else {
-    if (rule.fromPort == portNum || rule.ipProtocol == '-1') {
-      return false;
-    }
+    return true;
   }
-  return true;
 }
 
 

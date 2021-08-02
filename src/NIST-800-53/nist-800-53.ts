@@ -10,16 +10,9 @@ import {
   nist80053AutoscalingHealthChecks,
 } from './rules/autoscaling';
 import {
-  nist80053ElasticSearchRunningWithinVPC,
-  nist80053ElasticSearchEncryptedAtRest,
-  nist80053ElasticSearchNodeToNodeEncrypted,
-} from './rules/elasticsearch';
-import {
-  nist80053ELBCrossZoneBalancing,
-  nist80053ELBDeletionProtectionEnabled,
-  nist80053ELBListenersUseSSLOrHTTPS,
-  nist80053ELBUseACMCerts,
-} from './rules/elb';
+  nist80053CodebuildCheckEnvVars,
+  nist80053CodebuildURLCheck,
+} from './rules/codebuild';
 import {
   nist80053EC2CheckDetailedMonitoring,
   nist80053EC2CheckInsideVPC,
@@ -31,17 +24,19 @@ import {
   nist80053EC2CheckVolumesEncrypted,
 } from './rules/ec2';
 import {
-  nist80053LambdaFunctionsInsideVPC,
-} from './rules/lambda';
+  nist80053EFSEncrypted,
+} from './rules/efs';
 import {
-  nist80053SagemakerDirectInternetAccessDisabled,
-  nist80053SagemakerEndpointKMS,
-  nist80053SagemakerNotebookKMS,
-} from './rules/sagemaker';
-import { 
-  nist80053CodeBuildCheckEnvVars, 
-  nist80053CodebuildURLCheck 
-} from './rules/codebuild';
+  nist80053ElasticSearchRunningWithinVPC,
+  nist80053ElasticSearchEncryptedAtRest,
+  nist80053ElasticSearchNodeToNodeEncrypted,
+} from './rules/elasticsearch';
+import {
+  nist80053ELBCrossZoneBalancing,
+  nist80053ELBDeletionProtectionEnabled,
+  nist80053ELBListenersUseSSLOrHTTPS,
+  nist80053ELBUseACMCerts,
+} from './rules/elb';
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
@@ -49,8 +44,13 @@ import {
   nist80053IamUserNoPolicies,
 } from './rules/iam';
 import {
-  nist80053EFSEncrypted,
-} from './rules/efs';
+  nist80053LambdaFunctionsInsideVPC,
+} from './rules/lambda';
+import {
+  nist80053SagemakerDirectInternetAccessDisabled,
+  nist80053SagemakerEndpointKMS,
+  nist80053SagemakerNotebookKMS,
+} from './rules/sagemaker';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -174,7 +174,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkAutoscaling(node: CfnResource, ignores: any) {
+  private checkAutoscaling(node: CfnResource, ignores: any) {
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-AutoscalingHealthChecks') &&
@@ -196,10 +196,10 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkCodebuild(node: CfnResource, ignores: any) {
+  private checkCodebuild(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildCheckEnvVars') &&
-      !nist80053CodeBuildCheckEnvVars(node)
+      !nist80053CodebuildCheckEnvVars(node)
     ) {
       const ruleId = 'NIST.800.53-CodeBuildCheckEnvVars';
       const info = 'The Codebuild environment stores sensitive credentials as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
@@ -226,7 +226,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkElasticsearch(node: CfnResource, ignores: any) {
+  private checkElasticsearch(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchNodeToNodeEncrypted') &&
       !nist80053ElasticSearchNodeToNodeEncrypted(node)
@@ -267,7 +267,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkELB(node: CfnResource, ignores: any) {
+  private checkELB(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-ELBListenersUseSSLOrHTTPS') &&
       !nist80053ELBListenersUseSSLOrHTTPS(node)
@@ -319,7 +319,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkLambda(node: CfnResource, ignores: any) {
+  private checkLambda(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-LambdaFunctionsInsideVPC') &&
       !nist80053LambdaFunctionsInsideVPC(node)
@@ -338,7 +338,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkSagemaker(node: CfnResource, ignores: any) {
+  private checkSagemaker(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-SagemakerDirectInternetAccessDisbabled') &&
       !nist80053SagemakerDirectInternetAccessDisabled(node)

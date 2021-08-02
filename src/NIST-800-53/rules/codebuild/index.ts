@@ -4,4 +4,4 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 export { default as nist80053CodebuildURLCheck } from './nist80053CodebuildURLCheck';
-export { default as nist80053CodeBuildCheckEnvVars } from './nist80053CodeBuildCheckEnvVars';
+export { default as nist80053CodebuildCheckEnvVars } from './nist80053CodebuildCheckEnvVars';

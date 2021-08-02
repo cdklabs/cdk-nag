@@ -16,7 +16,7 @@ export default function (node: IConstruct): boolean {
     const ELBTargets = Stack.of(node).resolve(node.targetGroupArns);
     if (ELBTargets != undefined) {
       const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
-      if (healthCheckType == undefined || healthCheckType != "ELB"){
+      if (healthCheckType == undefined || healthCheckType != 'ELB') {
         return false;
       }
     }
