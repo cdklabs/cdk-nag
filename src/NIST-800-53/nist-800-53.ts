@@ -14,9 +14,7 @@ import {
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
 import { nist80053EFSEncrypted } from './rules/efs';
-import {
-  nist80053EMRKerberosEnabled
-} from './rules/emr';
+import { nist80053EMRKerberosEnabled } from './rules/emr';
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
@@ -148,24 +146,26 @@ export class NIST80053Checks extends NagPack {
     }
   }
 
-    /**
+  /**
    * Check EMR Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-     private checkEMR(node: CfnResource, ignores: any) {
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-EMRKerberosEnabled') &&
-        !nist80053EMRKerberosEnabled(node)
-      ) {
-        const ruleId = 'NIST.800.53-EMRKerberosEnabled';
-        const info = 'The EMR cluster does not have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
-        const explanation = 'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
+  private checkEMR(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EMRKerberosEnabled') &&
+      !nist80053EMRKerberosEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-EMRKerberosEnabled';
+      const info =
+        'The EMR cluster does not have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
+      const explanation =
+        'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
     }
+  }
 
   /**
    * Check IAM Resources
