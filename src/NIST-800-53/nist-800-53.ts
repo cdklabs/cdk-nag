@@ -41,9 +41,11 @@ import {
   nist80053IamUserNoPolicies,
 } from './rules/iam';
 
+import { nist80053S3BucketLoggingEnabled } from './rules/s3';
+
 import { nist80053SNSEncryptedKMS } from './rules/sns';
 
-import { nist80053S3BucketLoggingEnabled } from './rules/s3';
+//import { nist80053RDSLoggingEnabled } from './rules/rds';
 
 
 /**
@@ -63,6 +65,7 @@ export class NIST80053Checks extends NagPack {
       this.checkSNS(node, ignores);
       this.checkAPIGW(node, ignores);
       this.checkS3(node, ignores);
+      //this.checkRDS(node, ignores);
     }
   }
 
@@ -360,7 +363,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkS3(node: CfnResource, ignores: any): void {
+  private checkS3(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-S3BucketLoggingEnabled') &&
           !nist80053S3BucketLoggingEnabled(node)
@@ -374,5 +377,28 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
+
+  
+  /**
+   * Check Amazon RDS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  /*
+   private checkRDS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSLoggingEnabled') &&
+          !nist80053RDSLoggingEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSLoggingEnabled';
+      const info = 'The RDS DB Instance does not have cloud watch logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const explanation =
+            'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation),
+      );
+    }
+  }
+  */
 
 }

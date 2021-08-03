@@ -43,7 +43,7 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
         }),
       );
 
-      
+
       const passiveCompliant = new Stack();
       Aspects.of(passiveCompliant).add(new NIST80053Checks());
 

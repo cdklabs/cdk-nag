@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST 800-53 Compliance Checks', () => {
-    describe('Amazon Simple Storage Service (S3)', () => {
+  describe('Amazon Simple Storage Service (S3)', () => {
     test('NIST.800.53-S3BucketLoggingEnabled: S3 Buckets have server access logs enabled', () => {
 
       const nonCompliant = new Stack();
@@ -40,6 +40,18 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
       );
     });
-    
+
+    const passiveCompliant = new Stack();
+      Aspects.of(passiveCompliant).add(new NIST80053Checks());
+      
+      const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-S3BucketLoggingEnabled:'),
+          }),
+        }),
+      );
+
   });
 });
