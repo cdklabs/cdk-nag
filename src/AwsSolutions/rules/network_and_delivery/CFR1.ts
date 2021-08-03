@@ -16,10 +16,10 @@ export default function (node: CfnResource): boolean {
       return false;
     } else {
       const restrictions = Stack.of(node).resolve(
-        distributionConfig.restrictions,
+        distributionConfig.restrictions
       );
       const geoRestrictions = Stack.of(node).resolve(
-        restrictions.geoRestriction,
+        restrictions.geoRestriction
       );
       if (geoRestrictions.restrictionType == 'none') {
         return false;

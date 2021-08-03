@@ -59,7 +59,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS2:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -76,7 +76,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -102,7 +102,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRds6: RDS Aurora MySQL/PostgresSQL clusters have IAM Database Authentication enabled', () => {
@@ -121,7 +121,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS6:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -140,7 +140,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS6:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRds10: RDS instances and Aurora clusters have deletion protection enabled', () => {
@@ -158,7 +158,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS10:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -175,7 +175,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS10:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -201,7 +201,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS10:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRds11: RDS instances and Aurora clusters do not use the default endpoint ports', () => {
@@ -219,7 +219,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS11:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -236,7 +236,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS11:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -262,7 +262,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS11:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRds13: RDS instances and are configured for automated backups', () => {
@@ -281,7 +281,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS13:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -305,7 +305,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS13:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRds14: RDS Aurora MySQL clusters have Backtrack enabled', () => {
@@ -324,7 +324,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS14:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -339,7 +339,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS14:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRds16: RDS Aurora serverless clusters have all available Log Exports enabled', () => {
@@ -360,7 +360,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS16:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -391,7 +391,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS16:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -408,7 +408,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DDB3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -423,7 +423,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DDB3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsDdb4: DAX clusters have server-side encryption enabled', () => {
@@ -442,7 +442,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DDB4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -461,7 +461,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DDB4:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -480,7 +480,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC1:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -495,7 +495,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -518,7 +518,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAec3: ElastiCache Redis clusters have both encryption in transit and at rest enabled', () => {
@@ -536,7 +536,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -555,7 +555,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAec4: ElastiCache Redis clusters are deployed in a Multi-AZ configuration', () => {
@@ -572,7 +572,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -590,7 +590,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAec5: ElastiCache clusters do not use the default endpoint ports', () => {
@@ -608,7 +608,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC1:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -624,7 +624,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -648,7 +648,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC5:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAec5: ElastiCache clusters do not use the default endpoint ports', () => {
@@ -666,7 +666,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC1:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -682,7 +682,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -706,7 +706,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC5:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAec6: ElastiCache Redis clusters use Redis AUTH for user authentication', () => {
@@ -723,7 +723,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -742,7 +742,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AEC5:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -762,7 +762,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -777,7 +777,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsN2: Neptune DB instances have Auto Minor Version Upgrade enabled', () => {
@@ -798,7 +798,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -813,7 +813,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsN3: Neptune DB clusters have a reasonable minimum backup retention period configured', () => {
@@ -831,7 +831,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -847,7 +847,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsN4: Neptune DB clusters have encryption at rest enabled', () => {
@@ -864,7 +864,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -881,7 +881,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsN5: Neptune DB clusters have IAM Database Authentication enabled', () => {
@@ -897,7 +897,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -913,7 +913,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-N5:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -930,7 +930,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS1:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -943,7 +943,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS1:'),
           }),
-        }),
+        })
       );
 
       const positive3 = new Stack();
@@ -957,7 +957,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS1:'),
           }),
-        }),
+        })
       );
 
       const positive4 = new Stack();
@@ -971,7 +971,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -985,7 +985,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs2: Redshift clusters are provisioned in a VPC', () => {
@@ -1004,7 +1004,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1019,7 +1019,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs3: Redshift clusters use custom user names vice the default (awsuser)', () => {
@@ -1039,7 +1039,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1054,7 +1054,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs4: Redshift clusters do not use the default endpoint port', () => {
@@ -1070,7 +1070,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1086,7 +1086,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs5: Redshift clusters have audit logging enabled', () => {
@@ -1102,7 +1102,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1118,7 +1118,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS5:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs6: Redshift clusters have encryption at rest enabled', () => {
@@ -1135,7 +1135,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS6:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1150,7 +1150,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS6:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs8: Redshift clusters are not publicly accessible', () => {
@@ -1167,7 +1167,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS8:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1182,7 +1182,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS8:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs9: Redshift clusters have version upgrade enabled', () => {
@@ -1202,7 +1202,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS9:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1217,7 +1217,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS9:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsRs10: Redshift clusters have a retention period for automated snapshots configured', () => {
@@ -1237,7 +1237,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS10:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1252,7 +1252,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS10:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -1275,7 +1275,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1295,7 +1295,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsDoc2: Document DB clusters do not use the default endpoint port', () => {
@@ -1315,7 +1315,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1336,7 +1336,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsDoc3: Document DB clusters have the username and password stored in Secrets Manager', () => {
@@ -1356,7 +1356,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1376,7 +1376,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsDoc4: Document DB clusters have a reasonable minimum backup retention period configured', () => {
@@ -1396,7 +1396,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1417,7 +1417,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsDoc5: Document DB clusters have authenticate, createIndex, and dropCollection Log Exports enabled', () => {
@@ -1437,7 +1437,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC5:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -1452,7 +1452,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -1473,7 +1473,7 @@ describe('AWS Solutions Databases Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC5:'),
           }),
-        }),
+        })
       );
     });
   });

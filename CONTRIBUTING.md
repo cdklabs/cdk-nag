@@ -68,7 +68,8 @@ This repository use [pre-commit](https://pre-commit.com/) hooks for linting and 
 6. Build
    - `npx projen build`
 7. Update relevant documentation
-8. Create the commit and update files based on `pre-commit` findings
+8. Create the commit with relevant files
+   - Note: you may need to update the commit if `pre-commit` changes/suggests changes to files
 
 ### Step 4: Make the pull request
 

@@ -21,7 +21,6 @@ import { NIST80053Checks } from '../../src';
 describe('NIST 800-53 Compliance Checks', () => {
   describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     test('NIST.800.53-IAMGroupMembershipCheck: IAM users are assigned to at least one group', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant IAM users
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant user for AC-2(1) NIST standard
@@ -36,9 +35,11 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMGroupMembershipCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMGroupMembershipCheck:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 2:
@@ -55,9 +56,11 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMGroupMembershipCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMGroupMembershipCheck:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -71,23 +74,25 @@ describe('NIST 800-53 Compliance Checks', () => {
       myGroup.addToPolicy(
         new PolicyStatement({
           actions: ['s3:PutObject'],
-          resources: [new Bucket(passiveCompliant, 'rBucket').arnForObjects('*')],
-        }),
+          resources: [
+            new Bucket(passiveCompliant, 'rBucket').arnForObjects('*'),
+          ],
+        })
       );
 
       const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMGroupMembershipCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMGroupMembershipCheck:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
     test('NIST.800.53-IAMUserNoPoliciesCheck: IAM policies are not attached at the user level', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant IAM users
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant user for the relevant NIST standard
@@ -103,7 +108,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         new PolicyStatement({
           actions: ['s3:PutObject'],
           resources: [new Bucket(nonCompliant, 'rBucket').arnForObjects('*')],
-        }),
+        })
       );
 
       myPolicy.attachToUser(user);
@@ -112,11 +117,12 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMUserNoPoliciesCheck:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //testing that check also catches non compliance when using .addToPolicy on a user directly
       const nonCompliant2 = new Stack();
@@ -129,16 +135,18 @@ describe('NIST 800-53 Compliance Checks', () => {
         new PolicyStatement({
           actions: ['s3:PutObject'],
           resources: [new Bucket(nonCompliant2, 'rBucket').arnForObjects('*')],
-        }),
+        })
       );
 
       const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMUserNoPoliciesCheck:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 2:
@@ -152,8 +160,10 @@ describe('NIST 800-53 Compliance Checks', () => {
       myGroup.addToPolicy(
         new PolicyStatement({
           actions: ['s3:PutObject'],
-          resources: [new Bucket(activeCompliant, 'rBucket').arnForObjects('*')],
-        }),
+          resources: [
+            new Bucket(activeCompliant, 'rBucket').arnForObjects('*'),
+          ],
+        })
       );
 
       const user2 = new User(activeCompliant, 'rUser');
@@ -163,9 +173,11 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMUserNoPoliciesCheck:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -179,23 +191,25 @@ describe('NIST 800-53 Compliance Checks', () => {
       myGroup2.addToPolicy(
         new PolicyStatement({
           actions: ['s3:PutObject'],
-          resources: [new Bucket(passiveCompliant, 'rBucket').arnForObjects('*')],
-        }),
+          resources: [
+            new Bucket(passiveCompliant, 'rBucket').arnForObjects('*'),
+          ],
+        })
       );
 
       const messages4 = SynthUtils.synthesize(passiveCompliant).messages;
       expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMUserNoPoliciesCheck:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
     test('NIST.800.53-IAMNoInlinePolicyCheck: There are no inline IAM policies, only managed', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant IAM users
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant user for the relevant NIST standard
@@ -208,18 +222,19 @@ describe('NIST 800-53 Compliance Checks', () => {
         new PolicyStatement({
           actions: ['s3:PutObject'],
           resources: [new Bucket(nonCompliant, 'rBucket').arnForObjects('*')],
-        }),
+        })
       );
 
       const messages1 = SynthUtils.synthesize(nonCompliant).messages;
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMNoInlinePolicyCheck:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //testing that check also catches non compliance when using .addToPolicy to create an inline policy
       const nonCompliant2 = new Stack();
@@ -229,16 +244,18 @@ describe('NIST 800-53 Compliance Checks', () => {
         new PolicyStatement({
           actions: ['s3:PutObject'],
           resources: [new Bucket(nonCompliant2, 'rBucket').arnForObjects('*')],
-        }),
+        })
       );
 
       const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMNoInlinePolicyCheck:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 2:
@@ -249,15 +266,19 @@ describe('NIST 800-53 Compliance Checks', () => {
       Aspects.of(activeCompliant).add(new NIST80053Checks());
 
       const group = new Group(activeCompliant, 'MyGroup');
-      group.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess'));
+      group.addManagedPolicy(
+        ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess')
+      );
 
       const messages3 = SynthUtils.synthesize(activeCompliant).messages;
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMNoInlinePolicyCheck:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -276,15 +297,15 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMNoInlinePolicyCheck:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
     test('NIST.800.53-IAMPolicyNoStatementsWithAdminAccess: There are no IAM policies within the deployment that give admin-level access', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant IAM users
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant user for the relevant NIST standard
@@ -298,16 +319,18 @@ describe('NIST 800-53 Compliance Checks', () => {
           effect: Effect.ALLOW,
           actions: ['*'],
           resources: ['arn*'],
-        }),
+        })
       );
 
       const messages1 = SynthUtils.synthesize(nonCompliant).messages;
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'
+            ),
           }),
-        }),
+        })
       );
 
       //testing that check also catches non compliance when there are multiple statements and * is in the actions field as an array
@@ -324,22 +347,23 @@ describe('NIST 800-53 Compliance Checks', () => {
         new PolicyStatement({
           actions: ['glacier:DescribeJob', '*'],
           resources: ['*'],
-        }),
+        })
       );
 
       const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'
+            ),
           }),
-        }),
+        })
       );
 
       //testing that check also catches non compliance when the policy is defined as inline and * is in the actions field as an array
       const nonCompliant3 = new Stack();
       Aspects.of(nonCompliant3).add(new NIST80053Checks());
-
 
       new Role(nonCompliant3, 'rRole', {
         assumedBy: new AccountRootPrincipal(),
@@ -348,18 +372,19 @@ describe('NIST 800-53 Compliance Checks', () => {
           effect: Effect.ALLOW,
           resources: ['*'],
           actions: ['glacier:DescribeJob', '*'],
-        }),
+        })
       );
 
       const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //AC 2:
       //Given a CDK stack with compliant IAM policies:
@@ -372,16 +397,18 @@ describe('NIST 800-53 Compliance Checks', () => {
         new PolicyStatement({
           actions: ['glacier:DescribeJob'],
           resources: ['*'],
-        }),
+        })
       );
 
       const messages4 = SynthUtils.synthesize(activeCompliant).messages;
       expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -400,12 +427,12 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages5).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'),
+            data: expect.stringContaining(
+              'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'
+            ),
           }),
-        }),
+        })
       );
-
     });
-
   });
 });

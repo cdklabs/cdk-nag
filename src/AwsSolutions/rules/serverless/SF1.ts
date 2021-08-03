@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnStateMachine) {
     const loggingConfiguration = Stack.of(node).resolve(
-      node.loggingConfiguration,
+      node.loggingConfiguration
     );
     if (loggingConfiguration == undefined) {
       return false;

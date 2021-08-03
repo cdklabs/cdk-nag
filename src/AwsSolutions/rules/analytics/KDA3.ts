@@ -13,26 +13,26 @@ export default function (node: IConstruct): boolean {
   if (node instanceof CfnApplicationV2) {
     if (node.runtimeEnvironment.toLowerCase().startsWith('flink')) {
       const applicationConfiguration = Stack.of(node).resolve(
-        node.applicationConfiguration,
+        node.applicationConfiguration
       );
       if (applicationConfiguration == undefined) {
         return false;
       }
       const flinkApplicationConfiguration = Stack.of(node).resolve(
-        applicationConfiguration.flinkApplicationConfiguration,
+        applicationConfiguration.flinkApplicationConfiguration
       );
       if (flinkApplicationConfiguration == undefined) {
         return false;
       }
       const checkpointConfiguration = Stack.of(node).resolve(
-        flinkApplicationConfiguration.checkpointConfiguration,
+        flinkApplicationConfiguration.checkpointConfiguration
       );
       if (checkpointConfiguration == undefined) {
         return false;
       }
       if (checkpointConfiguration.configurationType == 'CUSTOM') {
         const enabled = Stack.of(node).resolve(
-          checkpointConfiguration.checkpointingEnabled,
+          checkpointConfiguration.checkpointingEnabled
         );
         if (!enabled) {
           return false;

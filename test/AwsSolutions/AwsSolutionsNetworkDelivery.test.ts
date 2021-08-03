@@ -45,7 +45,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-VPC3:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -56,7 +56,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-VPC3:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -67,7 +67,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-VPC3:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -87,7 +87,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR1:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -103,7 +103,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -120,7 +120,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCfr2: CloudFront distributions may require integration with AWS WAF', () => {
@@ -137,7 +137,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -168,7 +168,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCfr3: CloudFront distributions have access logging enabled', () => {
@@ -185,7 +185,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR3:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -212,7 +212,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -252,7 +252,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCfr5: CloudFront distributions do not use SSLv3 or TLSv1 for communication to the origin', () => {
@@ -271,7 +271,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR5:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -291,7 +291,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -316,7 +316,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR5:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsCfr6: CloudFront distributions use an origin access identity for S3 origins', () => {
@@ -345,7 +345,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR6:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -361,7 +361,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR6:'),
           }),
-        }),
+        })
       );
 
       const positive3 = new Stack();
@@ -387,7 +387,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR6:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -420,7 +420,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-CFR6:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -436,7 +436,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG1:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -448,7 +448,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -456,7 +456,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
       new RestApi(negative, 'rRestApi', {
         deployOptions: {
           accessLogDestination: new LogGroupLogDestination(
-            new LogGroup(negative, 'rLogGroup'),
+            new LogGroup(negative, 'rLogGroup')
           ),
         },
       }).root.addMethod('ANY');
@@ -474,7 +474,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsApig4: APIs implement authorization', () => {
@@ -487,7 +487,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG4:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -506,7 +506,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -520,7 +520,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           handler: Function.fromFunctionArn(
             negative,
             'rLambdaAuthorizer',
-            'bar',
+            'bar'
           ),
         }),
       }).addRoutes({
@@ -535,7 +535,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsApig6: REST API Stages have CloudWatch logging enabled for all methods', () => {
@@ -548,7 +548,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG6:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -561,7 +561,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG6:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -575,7 +575,7 @@ describe('AWS Solutions Network and Delivery Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-APIG6:'),
           }),
-        }),
+        })
       );
     });
   });
