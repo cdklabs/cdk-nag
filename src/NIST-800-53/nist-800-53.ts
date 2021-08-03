@@ -50,7 +50,7 @@ import { nist80053S3BucketLoggingEnabled } from './rules/s3';
 
 import { nist80053SNSEncryptedKMS } from './rules/sns';
 
-//import { nist80053RDSLoggingEnabled } from './rules/rds';
+import { nist80053RDSLoggingEnabled } from './rules/rds';
 
 
 /**
@@ -70,7 +70,7 @@ export class NIST80053Checks extends NagPack {
       this.checkSNS(node, ignores);
       this.checkAPIGW(node, ignores);
       this.checkS3(node, ignores);
-      //this.checkRDS(node, ignores);
+      this.checkRDS(node, ignores);
       this.checkDynamoDB(node, ignores);
       this.checkRedshift(node, ignores);
     }
@@ -464,7 +464,6 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-  /*
    private checkRDS(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-RDSLoggingEnabled') &&
@@ -479,6 +478,5 @@ export class NIST80053Checks extends NagPack {
       );
     }
   }
-  */
 
 }
