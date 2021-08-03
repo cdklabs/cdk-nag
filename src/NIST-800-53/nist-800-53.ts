@@ -123,7 +123,7 @@ export class NIST80053Checks extends NagPack {
         !nist80053EMRKerberosEnabled(node)
       ) {
         const ruleId = 'NIST.800.53-EFSEncrypted';
-        const info = 'The EMR cluster does not have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, and AC-6).';
+        const info = 'The EMR cluster does not have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
         const explanation = 'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
         Annotations.of(node).addError(
           this.createMessage(ruleId, info, explanation),
