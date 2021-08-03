@@ -37,7 +37,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -59,7 +59,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAs2: Auto Scaling Groups have properly configured health checks', () => {
@@ -76,7 +76,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -98,7 +98,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsAs3: Auto Scaling Groups have notifications for all scaling events configured', () => {
@@ -121,7 +121,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS3:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -137,7 +137,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -180,7 +180,7 @@ describe('AWS Solutions Management and Governance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-AS3:'),
           }),
-        }),
+        })
       );
     });
   });

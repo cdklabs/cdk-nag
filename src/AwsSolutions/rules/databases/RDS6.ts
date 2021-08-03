@@ -15,7 +15,9 @@ export default function (node: CfnResource): boolean {
       if (node.enableIamDatabaseAuthentication == undefined) {
         return false;
       }
-      const iamAuth = Stack.of(node).resolve(node.enableIamDatabaseAuthentication);
+      const iamAuth = Stack.of(node).resolve(
+        node.enableIamDatabaseAuthentication
+      );
       if (iamAuth == false) {
         return false;
       }

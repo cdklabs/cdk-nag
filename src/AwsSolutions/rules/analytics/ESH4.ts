@@ -12,13 +12,13 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
     const elasticsearchClusterConfig = Stack.of(node).resolve(
-      node.elasticsearchClusterConfig,
+      node.elasticsearchClusterConfig
     );
     if (elasticsearchClusterConfig == undefined) {
       return false;
     }
     const dedicatedMasterEnabled = Stack.of(node).resolve(
-      elasticsearchClusterConfig.dedicatedMasterEnabled,
+      elasticsearchClusterConfig.dedicatedMasterEnabled
     );
     if (!dedicatedMasterEnabled) {
       return false;

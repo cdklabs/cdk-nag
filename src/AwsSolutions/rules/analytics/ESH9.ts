@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
     const logPublishingOptions = Stack.of(node).resolve(
-      node.logPublishingOptions,
+      node.logPublishingOptions
     );
     if (logPublishingOptions == undefined) {
       return false;

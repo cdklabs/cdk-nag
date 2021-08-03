@@ -18,7 +18,9 @@ export default function (node: IConstruct): boolean {
     if (configuration.executeCommandConfiguration == undefined) {
       return false;
     }
-    const executeCommandConfiguration = Stack.of(node).resolve(configuration.executeCommandConfiguration);
+    const executeCommandConfiguration = Stack.of(node).resolve(
+      configuration.executeCommandConfiguration
+    );
     if (
       executeCommandConfiguration.logging == undefined ||
       executeCommandConfiguration.logging == 'NONE'

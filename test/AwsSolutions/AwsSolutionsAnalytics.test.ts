@@ -48,7 +48,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -70,7 +70,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
       const positive3 = new Stack();
       Aspects.of(positive3).add(new AwsSolutionsChecks());
@@ -87,7 +87,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
       const positive4 = new Stack();
       Aspects.of(positive4).add(new AwsSolutionsChecks());
@@ -106,7 +106,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
       const positive5 = new Stack();
       Aspects.of(positive5).add(new AwsSolutionsChecks());
@@ -125,7 +125,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
 
       const positive6 = new Stack();
@@ -145,7 +145,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
 
       const positive7 = new Stack();
@@ -166,7 +166,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -212,7 +212,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ATH1:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -232,7 +232,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EMR2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -250,7 +250,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EMR2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEmr6: EMR clusters implement authentication via an EC2 Key Pair or Kerberos', () => {
@@ -268,7 +268,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EMR6:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -295,7 +295,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EMR6:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -312,7 +312,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -327,7 +327,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh2: ES domains have node-to-node encryption enabled', () => {
@@ -342,7 +342,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -357,7 +357,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh3: ES domains only grant access via allowlisted IP addresses', () => {
@@ -385,7 +385,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -417,7 +417,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh4: ES domains use dedicated master nodes', () => {
@@ -432,7 +432,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -447,7 +447,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh5: ES domains do not allow for unsigned requests or anonymous access', () => {
@@ -463,7 +463,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH5:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -487,7 +487,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH5:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -519,7 +519,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH5:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh7: ES domains have Zone Awareness enabled', () => {
@@ -534,7 +534,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH7:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -550,7 +550,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH7:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh8: ES domains have encryption at rest enabled', () => {
@@ -565,7 +565,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH8:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -580,7 +580,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH8:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEsh9: ES domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
@@ -595,7 +595,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH9:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -610,7 +610,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH9:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -625,7 +625,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ESH9:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -645,7 +645,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KDA3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -689,7 +689,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KDA3:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -706,7 +706,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KDS1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -718,7 +718,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KDS1:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -740,7 +740,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KDF1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -762,7 +762,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KDF1:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -784,7 +784,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -808,7 +808,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsMsk3: MSK clusters use TLS communication between brokers', () => {
@@ -828,7 +828,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -852,7 +852,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsMsk6: MSK clusters send broker logs to a supported destination', () => {
@@ -869,7 +869,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK6:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -886,7 +886,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK6:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -914,7 +914,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-MSK6:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -931,7 +931,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-QS1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -948,7 +948,7 @@ describe('AWS Analytics Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-QS1:'),
           }),
-        }),
+        })
       );
     });
   });

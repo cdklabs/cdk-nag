@@ -38,7 +38,7 @@ describe('AWS CodeBuild', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-CB3:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -58,7 +58,7 @@ describe('AWS CodeBuild', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-CB3:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsCb4: Codebuild projects use a CMK for encryption', () => {
@@ -80,7 +80,7 @@ describe('AWS CodeBuild', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-CB4:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -101,7 +101,7 @@ describe('AWS CodeBuild', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-CB4:'),
         }),
-      }),
+      })
     );
   });
   test('awsSolutionsCb5: Codebuild projects use images provided by the CodeBuild service or have a cdk_nag suppression rule explaining the need for a custom image', () => {
@@ -127,7 +127,7 @@ describe('AWS CodeBuild', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-CB5:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -148,7 +148,7 @@ describe('AWS CodeBuild', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-CB5:'),
         }),
-      }),
+      })
     );
   });
 });
@@ -166,14 +166,14 @@ describe('AWS Cloud9', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-C91:'),
         }),
-      }),
+      })
     );
     const negative = new Stack();
     Aspects.of(negative).add(new AwsSolutionsChecks());
     new CfnEnvironmentEC2(negative, 'rC9Env', {
       instanceType: InstanceType.of(
         InstanceClass.T2,
-        InstanceSize.MICRO,
+        InstanceSize.MICRO
       ).toString(),
       connectionType: 'CONNECT_SSM',
     });
@@ -183,7 +183,7 @@ describe('AWS Cloud9', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-C91:'),
         }),
-      }),
+      })
     );
   });
 });

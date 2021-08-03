@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDeliveryStream) {
     const deliveryStreamEncryptionConfigurationInput = Stack.of(node).resolve(
-      node.deliveryStreamEncryptionConfigurationInput,
+      node.deliveryStreamEncryptionConfigurationInput
     );
     if (deliveryStreamEncryptionConfigurationInput == undefined) {
       return false;

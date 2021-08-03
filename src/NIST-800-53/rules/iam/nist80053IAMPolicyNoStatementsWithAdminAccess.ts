@@ -16,7 +16,6 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-
   if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
     if (checkDocument(node, node.policyDocument)) {
       return false;
@@ -37,7 +36,8 @@ export default function (node: IConstruct): boolean {
  */
 function checkDocument(node: IConstruct, policyDoc: any): boolean {
   const resolvedDoc = Stack.of(node).resolve(policyDoc) as PolicyDocument;
-  const reg = /"Action":\[?(.*,)?"\*"(,.*)?\]?,"Effect":"Allow","Resource":"(?:arn(?::.*(?::)?)?)?\*"/gm;
+  const reg =
+    /"Action":\[?(.*,)?"\*"(,.*)?\]?,"Effect":"Allow","Resource":"(?:arn(?::.*(?::)?)?)?\*"/gm;
   if (JSON.stringify(resolvedDoc).search(reg) != -1) {
     return true;
   }

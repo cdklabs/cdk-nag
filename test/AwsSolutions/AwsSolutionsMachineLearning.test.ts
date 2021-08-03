@@ -25,7 +25,7 @@ describe('AWS Solutions Machine Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SM1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -43,7 +43,7 @@ describe('AWS Solutions Machine Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SM1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsSm2: SageMaker notebook instances use encrypted storage volumes', () => {
@@ -61,7 +61,7 @@ describe('AWS Solutions Machine Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SM2:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -79,7 +79,7 @@ describe('AWS Solutions Machine Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SM2:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsSm3: SageMaker notebook instances have direct internet access disabled', () => {
@@ -97,7 +97,7 @@ describe('AWS Solutions Machine Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SM3:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -116,7 +116,7 @@ describe('AWS Solutions Machine Learning Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SM3:'),
           }),
-        }),
+        })
       );
     });
   });

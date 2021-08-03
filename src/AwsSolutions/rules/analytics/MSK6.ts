@@ -25,11 +25,11 @@ export default function (node: IConstruct): boolean {
       }
     }
     const cloudWatchLogs = Stack.of(node).resolve(
-      resolvedBrokerLogs.cloudWatchLogs,
+      resolvedBrokerLogs.cloudWatchLogs
     );
     if (cloudWatchLogs != undefined) {
       const cloudWatchLogsEnabled = Stack.of(node).resolve(
-        cloudWatchLogs.enabled,
+        cloudWatchLogs.enabled
       );
       if (cloudWatchLogsEnabled) {
         enabled = true;
