@@ -6,7 +6,7 @@ import { CfnCluster } from '@aws-cdk/aws-emr';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * EMR cluster has Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, and AC-6)
+ * EMR clusters have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, and AC-6)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
