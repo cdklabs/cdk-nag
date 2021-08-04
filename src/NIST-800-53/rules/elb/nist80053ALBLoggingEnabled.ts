@@ -7,7 +7,7 @@ import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Application Load Balancers have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).
+ * Application Load Balancers have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

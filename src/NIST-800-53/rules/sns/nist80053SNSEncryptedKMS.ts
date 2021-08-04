@@ -6,7 +6,7 @@ import { CfnTopic } from '@aws-cdk/aws-sns';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * SNS topics are encrypted via KMS
+ * SNS topics are encrypted via KMS - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
