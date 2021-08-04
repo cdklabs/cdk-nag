@@ -29,6 +29,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloudfront-origins',
     '@aws-cdk/aws-cognito',
     '@aws-cdk/aws-dax',
+    '@aws-cdk/aws-dms',
     '@aws-cdk/aws-docdb',
     '@aws-cdk/aws-dynamodb',
     '@aws-cdk/aws-ec2',
