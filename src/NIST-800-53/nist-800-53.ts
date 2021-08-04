@@ -5,7 +5,6 @@ SPDX-License-Identifier: Apache-2.0
 
 import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
-
 import { nist80053DynamoDBPITREnabled } from './rules/dynamodb';
 import {
   nist80053APIGWCacheEnabledAndEncrypted,
@@ -16,25 +15,20 @@ import {
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
 } from './rules/cloudtrail/index';
-
 import {
   nist80053EC2CheckDetailedMonitoring,
   nist80053EC2CheckInsideVPC,
   nist80053EC2CheckNoPublicIPs,
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
-
-import {
-  nist80053EFSEncrypted,
-} from './rules/efs';
-
+import { nist80053EFSEncrypted } from './rules/efs';
+import { nist80053EMRKerberosEnabled } from './rules/emr';
 import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
   nist80053ALBHttpToHttpsRedirection,
   nist80053ELBLoggingEnabled,
   nist80053ALBLoggingEnabled,
 } from './rules/elb';
-
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
@@ -45,11 +39,8 @@ import {
   nist80053RedshiftClusterConfiguration,
   nist80053RedshiftClusterPublicAccess,
 } from './rules/redshift';
-
 import { nist80053S3BucketLoggingEnabled } from './rules/s3';
-
 import { nist80053SNSEncryptedKMS } from './rules/sns';
-
 import { nist80053RDSLoggingEnabled } from './rules/rds';
 
 
@@ -62,7 +53,8 @@ export class NIST80053Checks extends NagPack {
     if (node instanceof CfnResource) {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
-      this.checkCompute(node, ignores);
+      this.checkEC2(node, ignores);
+      this.checkEMR(node, ignores);
       this.checkIAM(node, ignores);
       this.checkCloudTrail(node, ignores);
       this.checkEFS(node, ignores);
@@ -102,7 +94,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-  private checkCompute(node: CfnResource, ignores: any): void {
+  private checkEC2(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckDetailedMonitoring') &&
       !nist80053EC2CheckDetailedMonitoring(node)
@@ -172,6 +164,27 @@ export class NIST80053Checks extends NagPack {
         'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
       const explanation =
         'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
+   * Check EMR Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkEMR(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EMRKerberosEnabled') &&
+      !nist80053EMRKerberosEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-EMRKerberosEnabled';
+      const info =
+        'The EMR cluster does not have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
+      const explanation =
+        'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
