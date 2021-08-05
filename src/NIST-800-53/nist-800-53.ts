@@ -162,7 +162,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-EC2CheckVolumesEncrypted';
       const info = 'The EC2 instance does not utilize encrypted volumes. - (Control IDs: SC-13, SC-28.';
-      const explanation = 'Utilizing encrypted volumes makes it more difficult for attackers to steal your information.';
+      const explanation = 'Because senstive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic Block Store (Amazon EBS) volumes.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
