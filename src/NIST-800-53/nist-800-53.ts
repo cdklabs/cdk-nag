@@ -160,7 +160,7 @@ export class NIST80053Checks extends NagPack {
       !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVolumesEncrypted') &&
       !nist80053EC2CheckVolumesEncrypted(node)
     ) {
-      const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
+      const ruleId = 'NIST.800.53-EC2CheckVolumesEncrypted';
       const info = 'The EC2 instance does not utilize encrypted volumes. - (Control IDs: SC-13, SC-28.';
       const explanation = 'Utilizing encrypted volumes makes it more difficult for attackers to steal your information.';
       Annotations.of(node).addError(

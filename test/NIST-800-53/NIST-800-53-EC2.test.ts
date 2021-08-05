@@ -34,19 +34,18 @@ describe('NIST-800-53 Compute Checks', () => {
         imageId: 'badInstance',
         blockDeviceMappings: [
           {
-            deviceName : "unencrypteddevice",
-            ebs : {
+            deviceName: 'unencrypteddevice',
+            ebs: {
               encrypted: false,
-            }
-          }
+            },
+          },
         ],
-        
       });
       const messages = SynthUtils.synthesize(positive).messages;
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'),
+            data: expect.stringContaining('NIST.800.53-EC2CheckVolumesEncrypted:'),
           }),
         }),
       );
@@ -93,7 +92,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'),
+            data: expect.stringContaining('NIST.800.53-EC2CheckVolumesEncrypted:'),
           }),
         }),
       );

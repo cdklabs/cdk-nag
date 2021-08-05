@@ -32,7 +32,7 @@ function checkVolumesEncrypted (node: any) {
     for (const mapping of ebsMappings) {
       //Get EBS device
       const ebsDevice = Stack.of(node).resolve(mapping.ebs);
-      if (ebsDevice.encryption == false) {
+      if (ebsDevice.encrypted == false) {
         return false;
       }
     }
