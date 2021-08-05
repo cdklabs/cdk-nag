@@ -57,7 +57,8 @@ export class NIST80053Checks extends NagPack {
       !nist80053DMSReplicationNotPublic(node)
     ) {
       const ruleId = 'NIST.800.53-DMSReplicationNotPublic';
-      const info = 'The DMS replication instance is public (Control IDs: AC-3).';
+      const info =
+        'The DMS replication instance is public (Control IDs: AC-3).';
       const explanation =
         'DMS replication instances can contain sensitive information and access control is required for such accounts.';
       Annotations.of(node).addError(

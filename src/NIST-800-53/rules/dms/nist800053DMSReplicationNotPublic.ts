@@ -12,7 +12,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnReplicationInstance) {
     const publicAccess = Stack.of(node).resolve(node.publiclyAccessible);
-    if (publicAccess) {
+    if (!(publicAccess === false)) {
       return false;
     }
   }
