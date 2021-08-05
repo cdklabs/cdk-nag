@@ -162,6 +162,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-dms",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-docdb",
       "version": "^1.110.0",
       "type": "peer"
@@ -388,6 +393,11 @@
     },
     {
       "name": "@aws-cdk/aws-dax",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-dms",
       "version": "^1.110.0",
       "type": "runtime"
     },
