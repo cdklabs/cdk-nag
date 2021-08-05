@@ -13,11 +13,11 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnLoadBalancer) {
     const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
-    const reg = /"routing\.http\.drop_invalid_header_fields\.enabled","value":"true"/gm;
+    const reg =
+      /"routing\.http\.drop_invalid_header_fields\.enabled","value":"true"/gm;
     if (JSON.stringify(attributes).search(reg) == -1) {
       return false;
     }
-
   }
   return true;
 }

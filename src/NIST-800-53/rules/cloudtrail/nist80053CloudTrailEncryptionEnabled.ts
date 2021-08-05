@@ -10,14 +10,12 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-
-  if ( node instanceof CfnTrail ) {
+  if (node instanceof CfnTrail) {
     const keyID = Stack.of(node).resolve(node.kmsKeyId);
 
     if (keyID == undefined) {
       return false;
     }
-
   }
   return true;
 }

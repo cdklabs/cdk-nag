@@ -6,7 +6,12 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { LoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
-import { ApplicationLoadBalancer, ApplicationListener, ListenerAction, ApplicationProtocol } from '@aws-cdk/aws-elasticloadbalancingv2';
+import {
+  ApplicationLoadBalancer,
+  ApplicationListener,
+  ListenerAction,
+  ApplicationProtocol,
+} from '@aws-cdk/aws-elasticloadbalancingv2';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
@@ -14,7 +19,6 @@ import { NIST80053Checks } from '../../src';
 describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
   describe('Amazon ELB', () => {
     test('NIST.800.53-ALBHttpDropInvalidHeaderEnabled: Load balancers have invalid http header dropping enabled', () => {
-
       const nonCompliant = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
       });
@@ -27,9 +31,11 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ALBHttpDropInvalidHeaderEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ALBHttpDropInvalidHeaderEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       const compliant = new Stack(undefined, undefined, {
@@ -41,16 +47,20 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       });
 
       alb.logAccessLogs(new Bucket(compliant, 'rLogsBucket'));
-      alb.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+      alb.setAttribute(
+        'routing.http.drop_invalid_header_fields.enabled',
+        'true'
+      );
       const messages2 = SynthUtils.synthesize(compliant).messages;
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ALBHttpDropInvalidHeaderEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ALBHttpDropInvalidHeaderEnabled:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
     test('NIST.800.53-ALBHttpToHttpsRedirection: Http ALB listeners are configured to redirect to https', () => {
@@ -65,7 +75,10 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       });
 
       myBalancer.logAccessLogs(new Bucket(nonCompliant, 'rLogsBucket'));
-      myBalancer.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+      myBalancer.setAttribute(
+        'routing.http.drop_invalid_header_fields.enabled',
+        'true'
+      );
 
       new ApplicationListener(nonCompliant, 'rALBListener', {
         loadBalancer: myBalancer,
@@ -80,9 +93,11 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ALBHttpToHttpsRedirection:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ALBHttpToHttpsRedirection:'
+            ),
           }),
-        }),
+        })
       );
 
       //test for application listener configured correctly
@@ -96,21 +111,28 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       });
 
       myBalancer2.logAccessLogs(new Bucket(compliant, 'rLogsBucket'));
-      myBalancer2.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+      myBalancer2.setAttribute(
+        'routing.http.drop_invalid_header_fields.enabled',
+        'true'
+      );
 
       new ApplicationListener(compliant, 'rALBListener', {
         loadBalancer: myBalancer2,
         protocol: ApplicationProtocol.HTTP,
-        defaultAction: ListenerAction.redirect({ protocol: ApplicationProtocol.HTTPS }),
+        defaultAction: ListenerAction.redirect({
+          protocol: ApplicationProtocol.HTTPS,
+        }),
       });
 
       const messages2 = SynthUtils.synthesize(compliant).messages;
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ALBHttpToHttpsRedirection:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ALBHttpToHttpsRedirection:'
+            ),
           }),
-        }),
+        })
       );
 
       //test for no listeners or load balancers
@@ -125,29 +147,34 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ALBHttpToHttpsRedirection:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ALBHttpToHttpsRedirection:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
     test('NIST.800.53-nist80053ALBLoggingEnabled: Load balancers have logging enabled', () => {
-
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       const alb2 = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
         vpc: new Vpc(nonCompliant, 'rVPC'),
       });
-      alb2.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+      alb2.setAttribute(
+        'routing.http.drop_invalid_header_fields.enabled',
+        'true'
+      );
 
       const messages = SynthUtils.synthesize(nonCompliant).messages;
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-nist80053ALBLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-nist80053ALBLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
       const compliant = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -161,9 +188,11 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-nist80053ALBLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-nist80053ALBLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
     });
 
@@ -181,9 +210,11 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-nist80053ELBLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-nist80053ELBLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
       const compliant = new Stack();
       Aspects.of(compliant).add(new NIST80053Checks());
@@ -198,15 +229,12 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-nist80053ELBLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-nist80053ELBLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
-
     });
-
-
   });
 });
-
-

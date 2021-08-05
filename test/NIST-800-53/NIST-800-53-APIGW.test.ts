@@ -4,17 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { SynthUtils } from '@aws-cdk/assert';
-import {
-  MethodLoggingLevel,
-  RestApi,
-} from '@aws-cdk/aws-apigateway';
+import { MethodLoggingLevel, RestApi } from '@aws-cdk/aws-apigateway';
 import { Aspects, Stack } from '@aws-cdk/core';
 
 import { NIST80053Checks } from '../../src';
 
 describe('NIST 800-53 API Gateway Compliance Checks', () => {
   describe('Amazon API Gateway', () => {
-
     test('NIST.800.53-APIGWCacheEnabledAndEncrypted: API Gateway stages have caching enabled and encrypted for all methods', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
@@ -23,9 +19,11 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWCacheEnabledAndEncrypted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWCacheEnabledAndEncrypted:'
+            ),
           }),
-        }),
+        })
       );
 
       const nonCompliant2 = new Stack();
@@ -37,9 +35,11 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWCacheEnabledAndEncrypted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWCacheEnabledAndEncrypted:'
+            ),
           }),
-        }),
+        })
       );
 
       const nonCompliant3 = new Stack();
@@ -51,9 +51,11 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWCacheEnabledAndEncrypted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWCacheEnabledAndEncrypted:'
+            ),
           }),
-        }),
+        })
       );
 
       const compliant = new Stack();
@@ -65,9 +67,11 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWCacheEnabledAndEncrypted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWCacheEnabledAndEncrypted:'
+            ),
           }),
-        }),
+        })
       );
     });
 
@@ -79,9 +83,11 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWExecutionLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWExecutionLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
       const nonCompliant2 = new Stack();
       Aspects.of(nonCompliant2).add(new NIST80053Checks());
@@ -92,9 +98,11 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWExecutionLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWExecutionLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       const compliant = new Stack();
@@ -106,13 +114,12 @@ describe('NIST 800-53 API Gateway Compliance Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-APIGWExecutionLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-APIGWExecutionLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
     });
-
   });
 });
-
-

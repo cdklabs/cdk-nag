@@ -12,7 +12,6 @@ import { NIST80053Checks } from '../../src';
 describe('NIST 800-53 SNS Compliance Checks', () => {
   describe('Amazon SNS', () => {
     test('NIST.800.53-SNSEncryptedKMS: SNS Topics are encrypted via AWS Key Management Service (KMS)', () => {
-
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -26,7 +25,7 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SNSEncryptedKMS:'),
           }),
-        }),
+        })
       );
 
       const activeCompliant = new Stack();
@@ -40,9 +39,8 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SNSEncryptedKMS:'),
           }),
-        }),
+        })
       );
-
 
       const passiveCompliant = new Stack();
       Aspects.of(passiveCompliant).add(new NIST80053Checks());
@@ -53,12 +51,8 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SNSEncryptedKMS:'),
           }),
-        }),
+        })
       );
-
     });
-
   });
 });
-
-

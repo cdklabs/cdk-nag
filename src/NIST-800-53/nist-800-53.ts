@@ -5,7 +5,6 @@ SPDX-License-Identifier: Apache-2.0
 
 import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
-import { nist80053DynamoDBPITREnabled } from './rules/dynamodb';
 import {
   nist80053APIGWCacheEnabledAndEncrypted,
   nist80053APIGWExecutionLoggingEnabled,
@@ -15,6 +14,7 @@ import {
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
 } from './rules/cloudtrail/index';
+import { nist80053DynamoDBPITREnabled } from './rules/dynamodb';
 import {
   nist80053EC2CheckDetailedMonitoring,
   nist80053EC2CheckInsideVPC,
@@ -22,27 +22,26 @@ import {
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
 import { nist80053EFSEncrypted } from './rules/efs';
-import { nist80053EMRKerberosEnabled } from './rules/emr';
 import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
   nist80053ALBHttpToHttpsRedirection,
   nist80053ELBLoggingEnabled,
   nist80053ALBLoggingEnabled,
 } from './rules/elb';
+import { nist80053EMRKerberosEnabled } from './rules/emr';
 import {
   nist80053IamGroupMembership,
   nist80053IamNoInlinePolicy,
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
+import { nist80053RDSLoggingEnabled } from './rules/rds';
 import {
   nist80053RedshiftClusterConfiguration,
   nist80053RedshiftClusterPublicAccess,
 } from './rules/redshift';
 import { nist80053S3BucketLoggingEnabled } from './rules/s3';
 import { nist80053SNSEncryptedKMS } from './rules/sns';
-import { nist80053RDSLoggingEnabled } from './rules/rds';
-
 
 /**
  * Check for NIST 800-53 compliance.
@@ -199,13 +198,13 @@ export class NIST80053Checks extends NagPack {
   private checkIAM(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMGroupMembershipCheck') &&
-          !nist80053IamGroupMembership(node)
+      !nist80053IamGroupMembership(node)
     ) {
       const ruleId = 'NIST.800.53-IAMGroupMembershipCheck';
       const info =
         'The IAM user does not belong to any group(s) - (Control IDs: AC-2(1), AC-2(j), AC-3, and AC-6).';
       const explanation =
-            'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations, by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+        'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations, by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -213,13 +212,13 @@ export class NIST80053Checks extends NagPack {
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMUserNoPoliciesCheck') &&
-          !nist80053IamUserNoPolicies(node)
+      !nist80053IamUserNoPolicies(node)
     ) {
       const ruleId = 'NIST.800.53-IAMUserNoPoliciesCheck';
       const info =
         'The IAM policy is attached at the user level - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
       const explanation =
-            'This rule ensures AWS Identity and Access Management (IAM) policies are attached only to groups or roles to control access to systems and assets. Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
+        'This rule ensures AWS Identity and Access Management (IAM) policies are attached only to groups or roles to control access to systems and assets. Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -227,13 +226,13 @@ export class NIST80053Checks extends NagPack {
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMNoInlinePolicyCheck') &&
-          !nist80053IamNoInlinePolicy(node)
+      !nist80053IamNoInlinePolicy(node)
     ) {
       const ruleId = 'NIST.800.53-IAMNoInlinePolicyCheck';
       const info =
         'The IAM Group, User, or Role contains an inline policy - (Control ID: AC-6).';
       const explanation =
-            'This check ensures an AWS Identity and Access Management (IAM) user, IAM role or IAM group does not have an inline policy to control access to systems and assets. AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
+        'This check ensures an AWS Identity and Access Management (IAM) user, IAM role or IAM group does not have an inline policy to control access to systems and assets. AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -250,9 +249,9 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The IAM policy grants admin access - (Control IDs AC-2(1), AC-2(j), AC-3, AC-6).';
       const explanation =
-            'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -264,39 +263,48 @@ export class NIST80053Checks extends NagPack {
    */
   private checkCloudTrail(node: CfnResource, ignores: any): void {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-CloudTrailCloudWatchLogsEnabled') &&
-          !nist80053CloudTrailCloudWatchLogsEnabled(node)
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-CloudTrailCloudWatchLogsEnabled'
+      ) &&
+      !nist80053CloudTrailCloudWatchLogsEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-CloudTrailCloudWatchLogsEnabled';
-      const info = 'The Cloud Trail resource does not have Cloud Watch logs enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-6(1)(3), AU-7(1), AU-12(a)(c), CA-7(a)(b), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
+      const info =
+        'The Cloud Trail resource does not have Cloud Watch logs enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-6(1)(3), AU-7(1), AU-12(a)(c), CA-7(a)(b), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
       const explanation =
-            'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.';
+        'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-CloudTrailEncryptionEnabled') &&
-          !nist80053CloudTrailEncryptionEnabled(node)
+      !nist80053CloudTrailEncryptionEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-CloudTrailEncryptionEnabled';
-      const info = 'The Cloud Trail resource does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
+      const info =
+        'The Cloud Trail resource does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
       const explanation =
-            'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
+        'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-CloudTrailLogFileValidationEnabled') &&
-          !nist80053CloudTrailLogFileValidationEnabled(node)
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-CloudTrailLogFileValidationEnabled'
+      ) &&
+      !nist80053CloudTrailLogFileValidationEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-CloudTrailLogFileValidationEnabled';
-      const info = 'The Cloud Trail resource does not have log file validation enabled - (Control ID: AC-6).';
+      const info =
+        'The Cloud Trail resource does not have log file validation enabled - (Control ID: AC-6).';
       const explanation =
-            'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.';
+        'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -345,54 +353,61 @@ export class NIST80053Checks extends NagPack {
    */
   private checkELB(node: CfnResource, ignores: any): void {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled') &&
-          !nist80053ALBHttpDropInvalidHeaderEnabled(node)
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-ALBHttpDropInvalidHeaderEnabled'
+      ) &&
+      !nist80053ALBHttpDropInvalidHeaderEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
-      const info = 'The load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
+      const info =
+        'The load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
       const explanation =
-            'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+        'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-nist80053ELBLoggingEnabled') &&
-          !nist80053ELBLoggingEnabled(node)
+      !nist80053ELBLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-nist80053ELBLoggingEnabled';
-      const info = 'The elastic load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+      const info =
+        'The elastic load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
-            'Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client\'s IP address, latencies, request paths, and server responses.';
+        "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-nist80053ALBLoggingEnabled') &&
-          !nist80053ALBLoggingEnabled(node)
+      !nist80053ALBLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-nist80053ALBLoggingEnabled';
-      const info = 'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+      const info =
+        'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
-            'Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client\'s IP address, latencies, request paths, and server responses.';
+        "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-ALBHttpToHttpsRedirection') &&
-          !nist80053ALBHttpToHttpsRedirection(node)
+      !nist80053ALBHttpToHttpsRedirection(node)
     ) {
       const ruleId = 'NIST.800.53-ALBHttpToHttpsRedirection';
-      const info = 'Http ALB listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).';
+      const info =
+        'Http ALB listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).';
       const explanation =
-            'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+        'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -405,14 +420,15 @@ export class NIST80053Checks extends NagPack {
   private checkSNS(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-SNSEncryptedKMS') &&
-          !nist80053SNSEncryptedKMS(node)
+      !nist80053SNSEncryptedKMS(node)
     ) {
       const ruleId = 'NIST.800.53-SNSEncryptedKMS';
-      const info = 'The SNS topic does not have KMS encryption enabled or an associated KMS key - (Control ID: SC-13, SC-28).';
+      const info =
+        'The SNS topic does not have KMS encryption enabled or an associated KMS key - (Control ID: SC-13, SC-28).';
       const explanation =
-            'To help protect data at rest, ensure that your Amazon Simple Notification Service (Amazon SNS) topics require encryption using AWS Key Management Service (AWS KMS). Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
+        'To help protect data at rest, ensure that your Amazon Simple Notification Service (Amazon SNS) topics require encryption using AWS Key Management Service (AWS KMS). Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -425,30 +441,31 @@ export class NIST80053Checks extends NagPack {
   private checkAPIGW(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-APIGWCacheEnabledAndEncrypted') &&
-          !nist80053APIGWCacheEnabledAndEncrypted(node)
+      !nist80053APIGWCacheEnabledAndEncrypted(node)
     ) {
       const ruleId = 'NIST.800.53-APIGWCacheEnabledAndEncrypted';
-      const info = 'The API Gateway stage does not have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const info =
+        'The API Gateway stage does not have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
-            'To help protect data at rest, ensure encryption is enabled for your API Gateway stage\'s cache. Because sensitive data can be captured for the API method, enable encryption at rest to help protect that data.';
+        "To help protect data at rest, ensure encryption is enabled for your API Gateway stage's cache. Because sensitive data can be captured for the API method, enable encryption at rest to help protect that data.";
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
 
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-APIGWExecutionLoggingEnabled') &&
-          !nist80053APIGWExecutionLoggingEnabled(node)
+      !nist80053APIGWExecutionLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-APIGWExecutionLoggingEnabled';
-      const info = 'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const info =
+        'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
-            'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.';
+        'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
-
   }
 
   /**
@@ -459,37 +476,37 @@ export class NIST80053Checks extends NagPack {
   private checkS3(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-S3BucketLoggingEnabled') &&
-          !nist80053S3BucketLoggingEnabled(node)
+      !nist80053S3BucketLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-S3BucketLoggingEnabled';
-      const info = 'The S3 Bucket does not have logging enabled - (Control IDs: AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const info =
+        'The S3 Bucket does not have logging enabled - (Control IDs: AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
-            'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.';
+        'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
 
-  
   /**
    * Check Amazon RDS Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkRDS(node: CfnResource, ignores: any): void {
+  private checkRDS(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-RDSLoggingEnabled') &&
-          !nist80053RDSLoggingEnabled(node)
+      !nist80053RDSLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-RDSLoggingEnabled';
-      const info = 'The RDS DB Instance does not have cloud watch logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+      const info =
+        'The RDS DB Instance does not have cloud watch logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
-            'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
+        'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
-
 }

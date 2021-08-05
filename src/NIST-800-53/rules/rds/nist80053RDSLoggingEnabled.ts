@@ -10,49 +10,48 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-  if (node instanceof CfnDBInstance) {    
+  if (node instanceof CfnDBInstance) {
     const dbType = JSON.stringify(Stack.of(node).resolve(node.engine));
-    const dbLogs = JSON.stringify(Stack.of(node).resolve(node.enableCloudwatchLogsExports));
-    if (dbLogs == undefined){
+    const dbLogs = JSON.stringify(
+      Stack.of(node).resolve(node.enableCloudwatchLogsExports)
+    );
+    if (dbLogs == undefined) {
+      return false;
+    }
+
+    if (dbType.includes('mariadb') || dbType.includes('mysql')) {
+      if (
+        !(
+          dbLogs.includes('audit') &&
+          dbLogs.includes('error') &&
+          dbLogs.includes('general') &&
+          dbLogs.includes('slowquery')
+        )
+      )
         return false;
     }
 
-    if (dbType.includes('mariadb') || (dbType.includes('mysql'))){
-        if (!(
-        (dbLogs.includes('audit')) &&
-        (dbLogs.includes('error')) &&
-        (dbLogs.includes('general')) &&
-        (dbLogs.includes('slowquery'))
-        ))
+    if (dbType.includes('postgres')) {
+      if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade')))
         return false;
     }
 
-    if (dbType.includes('postgres')){
-        if (!(
-        (dbLogs.includes('postgresql')) &&
-        (dbLogs.includes('upgrade'))
-        ))
+    if (dbType.includes('oracle')) {
+      console.log('here');
+      if (
+        !(
+          dbLogs.includes('audit') &&
+          dbLogs.includes('alert') &&
+          dbLogs.includes('listener') &&
+          dbLogs.includes('oemagent') &&
+          dbLogs.includes('trace')
+        )
+      )
         return false;
     }
-    
-    if (dbType.includes('oracle')){
-        console.log("here");
-        if (!(
-        (dbLogs.includes('audit')) &&
-        (dbLogs.includes('alert')) &&
-        (dbLogs.includes('listener')) &&
-        (dbLogs.includes('oemagent')) &&
-        (dbLogs.includes('trace'))
-        ))
-        return false;
-    }
-    
-    if (dbType.includes('sqlserver')){
-        if (!(
-        (dbLogs.includes('agent')) &&
-        (dbLogs.includes('error'))
-        ))
-        return false;
+
+    if (dbType.includes('sqlserver')) {
+      if (!(dbLogs.includes('agent') && dbLogs.includes('error'))) return false;
     }
   }
   return true;

@@ -12,14 +12,12 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnLoadBalancer) {
-
     const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
     const reg = /"access_logs\.s3\.enabled","value":"true"/gm;
 
     if (JSON.stringify(attributes).search(reg) == -1) {
       return false;
     }
-
   }
   return true;
 }

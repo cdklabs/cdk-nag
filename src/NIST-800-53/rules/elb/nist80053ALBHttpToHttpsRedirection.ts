@@ -12,14 +12,16 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnListener) {
-
     let found = false;
     const protocol = Stack.of(node).resolve(node.protocol);
     const actions = Stack.of(node).resolve(node.defaultActions);
 
     if (protocol == 'HTTP') {
       for (const action of actions) {
-        if ((action.type == 'redirect') && (action.redirectConfig.protocol == 'HTTPS')) {
+        if (
+          action.type == 'redirect' &&
+          action.redirectConfig.protocol == 'HTTPS'
+        ) {
           found = true;
         }
       }

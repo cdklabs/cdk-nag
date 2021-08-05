@@ -10,14 +10,12 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-
-  if ( node instanceof CfnTrail ) {
+  if (node instanceof CfnTrail) {
     const cloudWatch = Stack.of(node).resolve(node.cloudWatchLogsLogGroupArn);
 
     if (cloudWatch == undefined) {
       return false;
     }
-
   }
   return true;
 }

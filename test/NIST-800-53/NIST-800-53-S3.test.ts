@@ -10,7 +10,6 @@ import { NIST80053Checks } from '../../src';
 describe('NIST 800-53 Compliance Checks', () => {
   describe('Amazon Simple Storage Service (S3)', () => {
     test('NIST.800.53-S3BucketLoggingEnabled: S3 Buckets have server access logs enabled', () => {
-
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       new Bucket(nonCompliant, 'rBucket');
@@ -18,9 +17,11 @@ describe('NIST 800-53 Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-S3BucketLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-S3BucketLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
       const compliant = new Stack();
       Aspects.of(compliant).add(new NIST80053Checks());
@@ -28,30 +29,31 @@ describe('NIST 800-53 Compliance Checks', () => {
         serverAccessLogsBucket: Bucket.fromBucketName(
           compliant,
           'rLogsBucket',
-          'foo',
+          'foo'
         ),
       });
       const messages2 = SynthUtils.synthesize(compliant).messages;
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-S3BucketLoggingEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-S3BucketLoggingEnabled:'
+            ),
           }),
-        }),
+        })
       );
     });
 
     const passiveCompliant = new Stack();
-      Aspects.of(passiveCompliant).add(new NIST80053Checks());
-      
-      const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
-      expect(messages3).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-S3BucketLoggingEnabled:'),
-          }),
-        }),
-      );
+    Aspects.of(passiveCompliant).add(new NIST80053Checks());
 
+    const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53-S3BucketLoggingEnabled:'),
+        }),
+      })
+    );
   });
 });

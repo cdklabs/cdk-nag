@@ -13,7 +13,6 @@ import { NIST80053Checks } from '../../src';
 describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
   describe('Amazon Cloud Trail', () => {
     test('NIST.800.53-CloudTrailCloudWatchLogsEnabled: Cloud Trails have Cloud Watch logs enabled', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant Cloud Trails
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant trail for the relevant NIST standards
@@ -27,9 +26,11 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailCloudWatchLogsEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 2:
@@ -52,9 +53,11 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailCloudWatchLogsEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -70,16 +73,15 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailCloudWatchLogsEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
-
     test('NIST.800.53-CloudTrailEncryptionEnabled: Cloud Trails have encryption enabled', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant Cloud Trails
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant trail for the relevant NIST standards
@@ -99,9 +101,11 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailEncryptionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailEncryptionEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 2:
@@ -127,9 +131,11 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailEncryptionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailEncryptionEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -145,15 +151,15 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailEncryptionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailEncryptionEnabled:'
+            ),
           }),
-        }),
+        })
       );
-
     });
 
     test('NIST.800.53-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
-
       //AC 1: Given a CDK stack with one or more non-compliant Cloud Trails
       //when NIST-503 Secure Aspects is run
       //the CDK stack does not deploy and the consultant receives an explanation about the non compliant trail for the relevant NIST standards
@@ -174,9 +180,11 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages1).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailLogFileValidationEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailLogFileValidationEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 2:
@@ -202,9 +210,11 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailLogFileValidationEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailLogFileValidationEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //AC 3:
@@ -220,12 +230,12 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CloudTrailLogFileValidationEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-CloudTrailLogFileValidationEnabled:'
+            ),
           }),
-        }),
+        })
       );
-
     });
-
   });
 });

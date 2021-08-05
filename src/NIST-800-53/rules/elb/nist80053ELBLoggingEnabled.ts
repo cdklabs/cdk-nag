@@ -14,7 +14,9 @@ export default function (node: IConstruct): boolean {
     if (node.accessLoggingPolicy == undefined) {
       return false;
     }
-    const accessLoggingPolicy = Stack.of(node).resolve(node.accessLoggingPolicy);
+    const accessLoggingPolicy = Stack.of(node).resolve(
+      node.accessLoggingPolicy
+    );
     const enabled = Stack.of(node).resolve(accessLoggingPolicy.enabled);
 
     if (enabled == false) {

@@ -20,9 +20,9 @@ export default function (node: IConstruct): boolean {
       const resolvedSetting = Stack.of(node).resolve(setting);
       if (
         resolvedSetting?.httpMethod == '*' &&
-          resolvedSetting?.resourcePath == '/*' &&
-          (resolvedSetting?.loggingLevel == MethodLoggingLevel.ERROR ||
-            resolvedSetting?.loggingLevel == MethodLoggingLevel.INFO)
+        resolvedSetting?.resourcePath == '/*' &&
+        (resolvedSetting?.loggingLevel == MethodLoggingLevel.ERROR ||
+          resolvedSetting?.loggingLevel == MethodLoggingLevel.INFO)
       ) {
         found = true;
         break;

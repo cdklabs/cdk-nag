@@ -3,22 +3,22 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { DatabaseInstance, 
-    DatabaseInstanceEngine,
-    MariaDbEngineVersion,
-    PostgresEngineVersion,
-    SqlServerEngineVersion,
-    MysqlEngineVersion,
-    OracleEngineVersion
- } from '@aws-cdk/aws-rds';
 import { Vpc } from '@aws-cdk/aws-ec2';
+import {
+  DatabaseInstance,
+  DatabaseInstanceEngine,
+  MariaDbEngineVersion,
+  PostgresEngineVersion,
+  SqlServerEngineVersion,
+  MysqlEngineVersion,
+  OracleEngineVersion,
+} from '@aws-cdk/aws-rds';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST 800-53 Compliance Checks', () => {
   describe('Amazon Relational Database Service (RDS)', () => {
     test('NIST.800.53-RDSLoggingEnabled: RDS Database Instances have all Cloudwatch logging exports enabled', () => {
-
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       new DatabaseInstance(nonCompliant, 'rDbInstance', {
@@ -34,7 +34,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const nonCompliant2 = new Stack();
@@ -52,7 +52,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const nonCompliant3 = new Stack();
@@ -63,7 +63,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(nonCompliant3, 'rVpc'),
-        cloudwatchLogsExports: ['error']
+        cloudwatchLogsExports: ['error'],
       });
       const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
       expect(messages3).toContainEqual(
@@ -71,7 +71,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const nonCompliant4 = new Stack();
@@ -89,7 +89,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const nonCompliant5 = new Stack();
@@ -100,7 +100,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(nonCompliant5, 'rVpc'),
-        cloudwatchLogsExports: ['trace', 'listener']
+        cloudwatchLogsExports: ['trace', 'listener'],
       });
       const messages5 = SynthUtils.synthesize(nonCompliant5).messages;
       expect(messages5).toContainEqual(
@@ -108,7 +108,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const compliant = new Stack();
@@ -119,7 +119,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(compliant, 'rVpc'),
-        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery']
+        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
       });
       const messages6 = SynthUtils.synthesize(compliant).messages;
       expect(messages6).not.toContainEqual(
@@ -127,7 +127,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const compliant2 = new Stack();
@@ -138,7 +138,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(compliant2, 'rVpc'),
-        cloudwatchLogsExports: ['postgresql', 'upgrade']
+        cloudwatchLogsExports: ['postgresql', 'upgrade'],
       });
       const messages7 = SynthUtils.synthesize(compliant2).messages;
       expect(messages7).not.toContainEqual(
@@ -146,7 +146,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const compliant3 = new Stack();
@@ -157,7 +157,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(compliant3, 'rVpc'),
-        cloudwatchLogsExports: ['agent', 'error']
+        cloudwatchLogsExports: ['agent', 'error'],
       });
       const messages8 = SynthUtils.synthesize(compliant3).messages;
       expect(messages8).not.toContainEqual(
@@ -165,7 +165,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const compliant4 = new Stack();
@@ -176,7 +176,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(compliant4, 'rVpc'),
-        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery']
+        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
       });
       const messages9 = SynthUtils.synthesize(compliant4).messages;
       expect(messages9).not.toContainEqual(
@@ -184,7 +184,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const compliant5 = new Stack();
@@ -195,7 +195,13 @@ describe('NIST 800-53 Compliance Checks', () => {
         }),
         port: 5432,
         vpc: new Vpc(compliant5, 'rVpc'),
-        cloudwatchLogsExports: ['trace', 'listener', 'audit', 'alert', 'oemagent']
+        cloudwatchLogsExports: [
+          'trace',
+          'listener',
+          'audit',
+          'alert',
+          'oemagent',
+        ],
       });
       const messages10 = SynthUtils.synthesize(compliant5).messages;
       expect(messages10).not.toContainEqual(
@@ -203,7 +209,7 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
 
       const passiveCompliant = new Stack();
@@ -214,9 +220,8 @@ describe('NIST 800-53 Compliance Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
           }),
-        }),
+        })
       );
-
     });
   });
 });
