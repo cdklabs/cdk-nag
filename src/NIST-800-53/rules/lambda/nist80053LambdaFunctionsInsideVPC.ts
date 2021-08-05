@@ -17,6 +17,15 @@ export default function (node: IConstruct): boolean {
     const vpcConfig = Stack.of(node).resolve(node.vpcConfig);
     if (vpcConfig == undefined) {
       return false;
+    } else {
+      const secgroups = Stack.of(node).resolve(vpcConfig.securityGroupIds);
+      const subnets = Stack.of(node).resolve(vpcConfig.subnetIds);
+      //Does this function exist within at least one VPC security group or subnet?
+      if (secgroups == undefined || secgroups.length == 0) {
+        if (subnets == undefined || subnets.length ==0) {
+          return false;
+        }
+      }
     }
   }
   return true;
