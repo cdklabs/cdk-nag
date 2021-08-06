@@ -9,12 +9,12 @@ import {
   nist80053APIGWCacheEnabledAndEncrypted,
   nist80053APIGWExecutionLoggingEnabled,
 } from './rules/apigw';
-import { nist80053DMSReplicationNotPublic } from './rules/dms';
 import {
   nist80053CloudTrailLogFileValidationEnabled,
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
 } from './rules/cloudtrail/index';
+import { nist80053DMSReplicationNotPublic } from './rules/dms';
 import { nist80053DynamoDBPITREnabled } from './rules/dynamodb';
 import {
   nist80053EC2CheckDetailedMonitoring,
