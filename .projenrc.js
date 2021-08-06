@@ -30,6 +30,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloudtrail',
     '@aws-cdk/aws-cognito',
     '@aws-cdk/aws-dax',
+    '@aws-cdk/aws-dms',
     '@aws-cdk/aws-docdb',
     '@aws-cdk/aws-dynamodb',
     '@aws-cdk/aws-ec2',

@@ -9,6 +9,7 @@ import {
   nist80053APIGWCacheEnabledAndEncrypted,
   nist80053APIGWExecutionLoggingEnabled,
 } from './rules/apigw';
+import { nist80053DMSReplicationNotPublic } from './rules/dms';
 import {
   nist80053CloudTrailLogFileValidationEnabled,
   nist80053CloudTrailCloudWatchLogsEnabled,
@@ -54,6 +55,7 @@ export class NIST80053Checks extends NagPack {
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
       this.checkAPIGW(node, ignores);
       this.checkCloudTrail(node, ignores);
+      this.checkDMS(node, ignores);
       this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
       this.checkEFS(node, ignores);
@@ -96,6 +98,27 @@ export class NIST80053Checks extends NagPack {
         'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
         'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
+   * Check DMS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkDMS(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-DMSReplicationNotPublic') &&
+      !nist80053DMSReplicationNotPublic(node)
+    ) {
+      const ruleId = 'NIST.800.53-DMSReplicationNotPublic';
+      const info =
+        'The DMS replication instance is public (Control IDs: AC-3).';
+      const explanation =
+        'DMS replication instances can contain sensitive information and access control is required for such accounts.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

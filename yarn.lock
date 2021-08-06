@@ -303,6 +303,14 @@
     "@aws-cdk/core" "1.117.0"
     constructs "^3.3.69"
 
+"@aws-cdk/aws-dms@^1.110.0":
+  version "1.117.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-dms/-/aws-dms-1.117.0.tgz#55ec1066ffcf886b448cf082d52f46ab01f6c532"
+  integrity sha512-uRdNvO/GF+Sg+NMBGA4tYEvsp+QbWegI/gv2N1ffLKHhDY+Zc1ZJTi6GAZfIquDyhf6BQtQxL7KOT06OvrXAuQ==
+  dependencies:
+    "@aws-cdk/core" "1.117.0"
+    constructs "^3.3.69"
+
 "@aws-cdk/aws-docdb@^1.110.0":
   version "1.117.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-docdb/-/aws-docdb-1.117.0.tgz#1fa968f79562f68c63b53331dc1b6cf1a6230bb3"
