@@ -44,16 +44,5 @@ describe('NIST 800-53 Compliance Checks', () => {
       );
     });
 
-    const passiveCompliant = new Stack();
-    Aspects.of(passiveCompliant).add(new NIST80053Checks());
-
-    const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-S3BucketLoggingEnabled:'),
-        }),
-      })
-    );
   });
 });

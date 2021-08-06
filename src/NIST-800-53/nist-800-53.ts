@@ -89,7 +89,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check Compute Services
+   * Check EC2 Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
@@ -218,7 +218,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The IAM policy is attached at the user level - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6).';
       const explanation =
-        'This rule ensures AWS Identity and Access Management (IAM) policies are attached only to groups or roles to control access to systems and assets. Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
+        'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -232,7 +232,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The IAM Group, User, or Role contains an inline policy - (Control ID: AC-6).';
       const explanation =
-        'This check ensures an AWS Identity and Access Management (IAM) user, IAM role or IAM group does not have an inline policy to control access to systems and assets. AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
+        'AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -271,7 +271,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CloudTrailCloudWatchLogsEnabled';
       const info =
-        'The Cloud Trail resource does not have Cloud Watch logs enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-6(1)(3), AU-7(1), AU-12(a)(c), CA-7(a)(b), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
+        'The trail does not have CloudWatch logs enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-6(1)(3), AU-7(1), AU-12(a)(c), CA-7(a)(b), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
       const explanation =
         'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.';
       Annotations.of(node).addError(
@@ -285,7 +285,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CloudTrailEncryptionEnabled';
       const info =
-        'The Cloud Trail resource does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
+        'The trail  does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
       const explanation =
         'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
       Annotations.of(node).addError(
@@ -302,7 +302,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CloudTrailLogFileValidationEnabled';
       const info =
-        'The Cloud Trail resource does not have log file validation enabled - (Control ID: AC-6).';
+        'The trail does not have log file validation enabled - (Control ID: AC-6).';
       const explanation =
         'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.';
       Annotations.of(node).addError(
@@ -361,7 +361,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
       const info =
-        'The load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
+        'The application load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
       const explanation =
         'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
@@ -391,7 +391,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
-        "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
+        "Application Load Balancing activity is a central point of communication within an environment. Ensure ALB logging is enabled. The collected data provides detailed information about requests sent to the ALB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -403,7 +403,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ALBHttpToHttpsRedirection';
       const info =
-        'Http ALB listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).';
+        'The ALB's Http listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).';
       const explanation =
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
@@ -424,9 +424,9 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-SNSEncryptedKMS';
       const info =
-        'The SNS topic does not have KMS encryption enabled or an associated KMS key - (Control ID: SC-13, SC-28).';
+        'The SNS topic does not have KMS encryption enabled  - (Control ID: SC-13, SC-28).';
       const explanation =
-        'To help protect data at rest, ensure that your Amazon Simple Notification Service (Amazon SNS) topics require encryption using AWS Key Management Service (AWS KMS). Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
+        'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -501,7 +501,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSLoggingEnabled';
       const info =
-        'The RDS DB Instance does not have cloud watch logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+        'The RDS DB Instance does not have CloudWatch logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
         'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
       Annotations.of(node).addError(

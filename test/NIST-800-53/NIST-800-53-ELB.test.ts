@@ -17,7 +17,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
-  describe('Amazon ELB', () => {
+  describe('Elastic Load Balancing', () => {
     test('NIST.800.53-ALBHttpDropInvalidHeaderEnabled: Load balancers have invalid http header dropping enabled', () => {
       const nonCompliant = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -155,7 +155,7 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       );
     });
 
-    test('NIST.800.53-nist80053ALBLoggingEnabled: Load balancers have logging enabled', () => {
+    test('NIST.800.53-nist80053ALBLoggingEnabled: Application load balancers have logging enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       const alb2 = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
@@ -196,7 +196,7 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       );
     });
 
-    test('NIST.800.53-nist80053ELBLoggingEnabled: Load balancers have logging enabled', () => {
+    test('NIST.800.53-nist80053ELBLoggingEnabled: Elastic Load balancers have logging enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       new LoadBalancer(nonCompliant, 'rELB', {

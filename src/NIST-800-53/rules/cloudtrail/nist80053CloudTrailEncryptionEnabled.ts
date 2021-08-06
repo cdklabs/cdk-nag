@@ -6,7 +6,7 @@ import { CfnTrail } from '@aws-cdk/aws-cloudtrail';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * The Cloud Trail resource has encryption enabled - (Control ID: AU-9)
+ * CloudTrail trails have encryption enabled - (Control ID: AU-9)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

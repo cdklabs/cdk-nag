@@ -6,7 +6,7 @@ import { CfnStage, MethodLoggingLevel } from '@aws-cdk/aws-apigateway';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * The API Gateway stage does not have logging enabled. - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c))
+ * API Gateway stages  have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

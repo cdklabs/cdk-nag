@@ -6,7 +6,7 @@ import { CfnTrail } from '@aws-cdk/aws-cloudtrail';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * The Cloud Trail resources have log file validation enabled - (Control ID: AC-6)
+ * CloudTrail trails have log file validation enabled - (Control ID: AC-6)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

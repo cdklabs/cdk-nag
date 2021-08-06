@@ -10,12 +10,9 @@ import { LogGroup } from '@aws-cdk/aws-logs';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
-  describe('Amazon Cloud Trail', () => {
-    test('NIST.800.53-CloudTrailCloudWatchLogsEnabled: Cloud Trails have Cloud Watch logs enabled', () => {
-      //AC 1: Given a CDK stack with one or more non-compliant Cloud Trails
-      //when NIST-503 Secure Aspects is run
-      //the CDK stack does not deploy and the consultant receives an explanation about the non compliant trail for the relevant NIST standards
+describe('NIST 800-53 CloudTrail Compliance Checks', () => {
+  describe('AWS CloudTrail', () => {
+    test('NIST.800.53-CloudTrailCloudWatchLogsEnabled: CloudTrail trails have CloudWatch logs enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -33,10 +30,6 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
         })
       );
 
-      //AC 2:
-      //Given a CDK stack with compliant Cloud Trails(s):
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the compliant resource for the relevant NIST standards
       const activeCompliant = new Stack();
       Aspects.of(activeCompliant).add(new NIST80053Checks());
 
@@ -60,31 +53,8 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
         })
       );
 
-      //AC 3:
-      //Given a CDK stack with no Cloud Trails:
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the revelant NIST standards
-      const passiveCompliant = new Stack();
-      Aspects.of(passiveCompliant).add(new NIST80053Checks());
 
-      //no Cloud Trail resources
-
-      const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
-      expect(messages3).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
-            ),
-          }),
-        })
-      );
-    });
-
-    test('NIST.800.53-CloudTrailEncryptionEnabled: Cloud Trails have encryption enabled', () => {
-      //AC 1: Given a CDK stack with one or more non-compliant Cloud Trails
-      //when NIST-503 Secure Aspects is run
-      //the CDK stack does not deploy and the consultant receives an explanation about the non compliant trail for the relevant NIST standards
+    test('NIST.800.53-CloudTrailEncryptionEnabled: CloudTrail trails have encryption enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -108,10 +78,6 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
         })
       );
 
-      //AC 2:
-      //Given a CDK stack with compliant Cloud Trails(s):
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the compliant resource for the relevant NIST standards
       const activeCompliant = new Stack();
       Aspects.of(activeCompliant).add(new NIST80053Checks());
 
@@ -138,31 +104,8 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
         })
       );
 
-      //AC 3:
-      //Given a CDK stack with no Cloud Trails:
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the revelant NIST standards
-      const passiveCompliant = new Stack();
-      Aspects.of(passiveCompliant).add(new NIST80053Checks());
-
-      //no Cloud Trail resources
-
-      const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
-      expect(messages3).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailEncryptionEnabled:'
-            ),
-          }),
-        })
-      );
-    });
 
     test('NIST.800.53-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
-      //AC 1: Given a CDK stack with one or more non-compliant Cloud Trails
-      //when NIST-503 Secure Aspects is run
-      //the CDK stack does not deploy and the consultant receives an explanation about the non compliant trail for the relevant NIST standards
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -187,10 +130,6 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
         })
       );
 
-      //AC 2:
-      //Given a CDK stack with compliant Cloud Trails(s):
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the compliant resource for the relevant NIST standards
       const activeCompliant = new Stack();
       Aspects.of(activeCompliant).add(new NIST80053Checks());
 
@@ -216,26 +155,3 @@ describe('NIST 800-53 Cloud Trail Compliance Checks', () => {
           }),
         })
       );
-
-      //AC 3:
-      //Given a CDK stack with no Cloud Trails:
-      //When NIST-503 Secure Aspects is run
-      //Then the CDK stack deploys and the consultant does not receive an explanation about the revelant NIST standards
-      const passiveCompliant = new Stack();
-      Aspects.of(passiveCompliant).add(new NIST80053Checks());
-
-      //no Cloud Trail resources
-
-      const messages3 = SynthUtils.synthesize(passiveCompliant).messages;
-      expect(messages3).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailLogFileValidationEnabled:'
-            ),
-          }),
-        })
-      );
-    });
-  });
-});
