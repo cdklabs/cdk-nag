@@ -100,7 +100,6 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
         })
       );
 
-      //test for application listener configured correctly
       const compliant = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
       });
@@ -135,7 +134,6 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
         })
       );
 
-      //test for no listeners or load balancers
       const compliant2 = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
       });

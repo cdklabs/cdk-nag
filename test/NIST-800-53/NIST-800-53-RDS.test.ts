@@ -211,17 +211,6 @@ describe('NIST 800-53 Compliance Checks', () => {
           }),
         })
       );
-
-      const passiveCompliant = new Stack();
-      Aspects.of(passiveCompliant).add(new NIST80053Checks());
-      const messages11 = SynthUtils.synthesize(passiveCompliant).messages;
-      expect(messages11).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-RDSLoggingEnabled:'),
-          }),
-        })
-      );
     });
   });
 });
