@@ -41,7 +41,6 @@ describe('NIST 800-53 SNS Compliance Checks', () => {
           }),
         })
       );
-
     });
   });
 });

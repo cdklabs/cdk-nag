@@ -66,9 +66,8 @@ export class NIST80053Checks extends NagPack {
       this.checkRedshift(node, ignores);
     }
   }
-  
 
- /**
+  /**
    * Check API Gateway Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
@@ -103,60 +102,60 @@ export class NIST80053Checks extends NagPack {
     }
   }
 
-/**
+  /**
    * Check CloudTrail Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
- private checkCloudTrail(node: CfnResource, ignores: any): void {
-  if (
-    !this.ignoreRule(
-      ignores,
-      'NIST.800.53-CloudTrailCloudWatchLogsEnabled'
-    ) &&
-    !nist80053CloudTrailCloudWatchLogsEnabled(node)
-  ) {
-    const ruleId = 'NIST.800.53-CloudTrailCloudWatchLogsEnabled';
-    const info =
-      'The trail does not have CloudWatch logs enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-6(1)(3), AU-7(1), AU-12(a)(c), CA-7(a)(b), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
-    const explanation =
-      'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.';
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
-  }
+  private checkCloudTrail(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-CloudTrailCloudWatchLogsEnabled'
+      ) &&
+      !nist80053CloudTrailCloudWatchLogsEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-CloudTrailCloudWatchLogsEnabled';
+      const info =
+        'The trail does not have CloudWatch logs enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-6(1)(3), AU-7(1), AU-12(a)(c), CA-7(a)(b), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
+      const explanation =
+        'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
 
-  if (
-    !this.ignoreRule(ignores, 'NIST.800.53-CloudTrailEncryptionEnabled') &&
-    !nist80053CloudTrailEncryptionEnabled(node)
-  ) {
-    const ruleId = 'NIST.800.53-CloudTrailEncryptionEnabled';
-    const info =
-      'The trail  does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
-    const explanation =
-      'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
-  }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-CloudTrailEncryptionEnabled') &&
+      !nist80053CloudTrailEncryptionEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-CloudTrailEncryptionEnabled';
+      const info =
+        'The trail  does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
+      const explanation =
+        'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
 
-  if (
-    !this.ignoreRule(
-      ignores,
-      'NIST.800.53-CloudTrailLogFileValidationEnabled'
-    ) &&
-    !nist80053CloudTrailLogFileValidationEnabled(node)
-  ) {
-    const ruleId = 'NIST.800.53-CloudTrailLogFileValidationEnabled';
-    const info =
-      'The trail does not have log file validation enabled - (Control ID: AC-6).';
-    const explanation =
-      'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.';
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-CloudTrailLogFileValidationEnabled'
+      ) &&
+      !nist80053CloudTrailLogFileValidationEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-CloudTrailLogFileValidationEnabled';
+      const info =
+        'The trail does not have log file validation enabled - (Control ID: AC-6).';
+      const explanation =
+        'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
   }
-}
 
   /**
    * CheckDynamoDB Resources
@@ -266,64 +265,63 @@ export class NIST80053Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkELB(node: CfnResource, ignores: any): void {
-  if (
-    !this.ignoreRule(
-      ignores,
-      'NIST.800.53-ALBHttpDropInvalidHeaderEnabled'
-    ) &&
-    !nist80053ALBHttpDropInvalidHeaderEnabled(node)
-  ) {
-    const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
-    const info =
-      'The application load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
-    const explanation =
-      'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
-  }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-ALBHttpDropInvalidHeaderEnabled'
+      ) &&
+      !nist80053ALBHttpDropInvalidHeaderEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
+      const info =
+        'The application load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
+      const explanation =
+        'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
 
-  if (
-    !this.ignoreRule(ignores, 'NIST.800.53-nist80053ELBLoggingEnabled') &&
-    !nist80053ELBLoggingEnabled(node)
-  ) {
-    const ruleId = 'NIST.800.53-nist80053ELBLoggingEnabled';
-    const info =
-      'The elastic load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
-    const explanation =
-      "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
-  }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-nist80053ELBLoggingEnabled') &&
+      !nist80053ELBLoggingEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-nist80053ELBLoggingEnabled';
+      const info =
+        'The elastic load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+      const explanation =
+        "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
 
-  if (
-    !this.ignoreRule(ignores, 'NIST.800.53-nist80053ALBLoggingEnabled') &&
-    !nist80053ALBLoggingEnabled(node)
-  ) {
-    const ruleId = 'NIST.800.53-nist80053ALBLoggingEnabled';
-    const info =
-      'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
-    const explanation =
-      "Application Load Balancing activity is a central point of communication within an environment. Ensure ALB logging is enabled. The collected data provides detailed information about requests sent to the ALB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
-  }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-nist80053ALBLoggingEnabled') &&
+      !nist80053ALBLoggingEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-nist80053ALBLoggingEnabled';
+      const info =
+        'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+      const explanation =
+        "Application Load Balancing activity is a central point of communication within an environment. Ensure ALB logging is enabled. The collected data provides detailed information about requests sent to the ALB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
 
-  if (
-    !this.ignoreRule(ignores, 'NIST.800.53-ALBHttpToHttpsRedirection') &&
-    !nist80053ALBHttpToHttpsRedirection(node)
-  ) {
-    const ruleId = 'NIST.800.53-ALBHttpToHttpsRedirection';
-    const info =
-      `The ALB's Http listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).`;
-    const explanation =
-      'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
-    Annotations.of(node).addError(
-      this.createMessage(ruleId, info, explanation)
-    );
-  }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ALBHttpToHttpsRedirection') &&
+      !nist80053ALBHttpToHttpsRedirection(node)
+    ) {
+      const ruleId = 'NIST.800.53-ALBHttpToHttpsRedirection';
+      const info = `The ALB's Http listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).`;
+      const explanation =
+        'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
   }
 
   /**
@@ -418,7 +416,7 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkS3(node: CfnResource, ignores: any): void {
+  private checkS3(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-S3BucketLoggingEnabled') &&
       !nist80053S3BucketLoggingEnabled(node)
@@ -432,7 +430,7 @@ export class NIST80053Checks extends NagPack {
         this.createMessage(ruleId, info, explanation)
       );
     }
-  }  
+  }
 
   /**
    * Check Amazon SNS Resources
@@ -476,38 +474,38 @@ export class NIST80053Checks extends NagPack {
     }
   }
 
-    /**
+  /**
    * Check Redshift Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-     private checkRedshift(node: CfnResource, ignores: any): void {
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterConfiguration') &&
-        !nist80053RedshiftClusterConfiguration(node)
-      ) {
-        const ruleId = 'NIST.800.53-RedshiftClusterConfiguration';
-        const info =
-          'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c), SC-13).';
-        const explanation =
-          'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation)
-        );
-      }
-  
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterPublicAccess') &&
-        !nist80053RedshiftClusterPublicAccess(node)
-      ) {
-        const ruleId = 'NIST.800.53-RedshiftClusterPublicAccess';
-        const info =
-          'The Redshift cluster allows public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
-        const explanation =
-          'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation)
-        );
-      }
+  private checkRedshift(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterConfiguration') &&
+      !nist80053RedshiftClusterConfiguration(node)
+    ) {
+      const ruleId = 'NIST.800.53-RedshiftClusterConfiguration';
+      const info =
+        'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c), SC-13).';
+      const explanation =
+        'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
     }
+
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RedshiftClusterPublicAccess') &&
+      !nist80053RedshiftClusterPublicAccess(node)
+    ) {
+      const ruleId = 'NIST.800.53-RedshiftClusterPublicAccess';
+      const info =
+        'The Redshift cluster allows public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+      const explanation =
+        'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 }

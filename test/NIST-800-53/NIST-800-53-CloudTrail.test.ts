@@ -52,7 +52,7 @@ describe('NIST 800-53 CloudTrail Compliance Checks', () => {
           }),
         })
       );
-
+    });
 
     test('NIST.800.53-CloudTrailEncryptionEnabled: CloudTrail trails have encryption enabled', () => {
       const nonCompliant = new Stack();
@@ -103,7 +103,7 @@ describe('NIST 800-53 CloudTrail Compliance Checks', () => {
           }),
         })
       );
-
+    });
 
     test('NIST.800.53-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
       const nonCompliant = new Stack();
@@ -155,3 +155,6 @@ describe('NIST 800-53 CloudTrail Compliance Checks', () => {
           }),
         })
       );
+    });
+  });
+});
