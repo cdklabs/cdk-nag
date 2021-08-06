@@ -297,7 +297,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
       const info =
-        'The application load balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
+        'The Application Load Balancer does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
       const explanation =
         'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
@@ -311,7 +311,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-nist80053ELBLoggingEnabled';
       const info =
-        'The elastic load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+        'The Elastic Load Balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
         "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to the ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
       Annotations.of(node).addError(
@@ -325,7 +325,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-nist80053ALBLoggingEnabled';
       const info =
-        'The application load balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
+        'The Application Load Balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
         "Application Load Balancing activity is a central point of communication within an environment. Ensure ALB logging is enabled. The collected data provides detailed information about requests sent to the ALB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
       Annotations.of(node).addError(
