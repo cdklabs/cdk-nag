@@ -195,4 +195,4 @@ Rules from the AWS NIST 800-53 Conformance Pack which could not be implemented.
 
 ## Footnotes
 
-<a id="dynamodb-table-encrypted-kms">1</a>: This rule is intentionally unimplemented. Server-side encryption at rest is enabled on all DynamoDB table data and [cannot be disabled](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/encryption.usagenotes.html#encryption.usagenotes.tabledata)
+<a id="dynamodb-table-encrypted-kms">1</a>: This rule is intentionally unimplemented. Server-side encryption at rest is enabled on all DynamoDB table data and [cannot be disabled](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/encryption.usagenotes.html#encryption.usagenotes.tabledata).
