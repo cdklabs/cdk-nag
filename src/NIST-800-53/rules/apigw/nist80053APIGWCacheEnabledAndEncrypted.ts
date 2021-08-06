@@ -6,7 +6,7 @@ import { CfnStage } from '@aws-cdk/aws-apigateway';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * API Gateway stages have caching enabled and encrypted - (Control IDs: SC-13, SC-28)
+ * All methods in API Gateway stages have caching enabled and encrypted - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
