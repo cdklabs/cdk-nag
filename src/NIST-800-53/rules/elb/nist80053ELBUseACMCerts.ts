@@ -18,10 +18,15 @@ export default function (node: IConstruct): boolean {
     if (listeners != undefined) {
       //Iterate through listeners, checking if secured ACM certs are used
       for (const listener of listeners) {
-        const listenerARN = listener.SSLCertificateId;
+        const resolvedListener = Stack.of(node).resolve(listener);
+        const listenerARN = resolvedListener.sslCertificateId;
         //Use the ARN to check if this is an ACM managed cert
-        if (listenerARN.substr(0, 11) != 'arn:aws:acm') {
+        if (listenerARN == undefined) {
           return false;
+        } else {
+          if (listenerARN.substr(0, 11) != 'arn:aws:acm') {
+            return false;
+          }
         }
       }
     }
