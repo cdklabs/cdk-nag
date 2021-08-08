@@ -233,7 +233,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ElasticSearchNodeToNodeEncrypted';
       const info = 'The Elasticsearch resource is not node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)).';
-      const explanation = 'Node to node encryption helps to ensure that data is secure while in transit between nodes.';
+      const explanation = 'Because sensitive data can exist, enable encryption in transit to help protect that data..';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );

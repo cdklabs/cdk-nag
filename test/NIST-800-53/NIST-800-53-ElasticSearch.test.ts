@@ -12,6 +12,68 @@ import { NIST80053Checks } from '../../src';
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon ElasticSearch', () => {
 
+
+    //Test whether ElasticSearch domains are node-to-node encrypted
+    test('nist80053ElasticSearchNodeToNodeEncrypted: - ElasticSearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
+
+
+      //Expect a POSITIVE response because node-to-node encryption isnt enabled
+      const positive = new Stack();
+      Aspects.of(positive).add(new NIST80053Checks());
+      new CfnDomain(positive, 'newdomain', {
+      });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ElasticSearchNodeToNodeEncrypted:'),
+          }),
+        }),
+      );
+
+      //Expect a POSITIVE response because node-to-node encryption is not enabled
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new NIST80053Checks());
+      new CfnDomain(positive2, 'newdomain', {
+        nodeToNodeEncryptionOptions: {
+          enabled: false,
+        },
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ElasticSearchNodeToNodeEncrypted:'),
+          }),
+        }),
+      );
+
+
+      //Create stack for negative checks
+      const negative = new Stack();
+      Aspects.of(negative).add(new NIST80053Checks());
+
+
+      //Expect a NEGATIVE response because node-to-node encryption is enabled
+      new CfnDomain(negative, 'newdomain', {
+        nodeToNodeEncryptionOptions: {
+          enabled: true,
+        },
+      });
+
+
+      //Check cdk-nag response
+      const messages6 = SynthUtils.synthesize(negative).messages;
+      expect(messages6).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ElasticSearchNodeToNodeEncrypted:'),
+          }),
+        }),
+      );
+    });
+
+
     //Test whether ElasticSearch domains are running within a VPC
     test('nist80053ElasticSearchRunningWithinVPC: - ElasticSearch domains are running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
 
