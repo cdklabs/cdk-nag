@@ -8,6 +8,7 @@ import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   CfnLoadBalancer,
   LoadBalancer,
+  LoadBalancingProtocol,
 } from '@aws-cdk/aws-elasticloadbalancing';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
@@ -15,6 +16,82 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon ELB', () => {
+
+    //Ensure ELBs are only listening for SSL and HTTPS traffic
+    test('nist80053ELBListenersUseSSLOrHTTPSOnly: - ELBs are only listening for SSL and HTTPS traffic - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23)', () => {
+
+      const positive = new Stack();
+      const positive2 = new Stack();
+      Aspects.of(positive).add(new NIST80053Checks());
+      Aspects.of(positive2).add(new NIST80053Checks());
+      const lb = new LoadBalancer(positive, 'rELB', {
+        vpc: new Vpc(positive, 'rVPC'),
+      });
+      lb.addListener({
+        internalProtocol: LoadBalancingProtocol.TCP,
+        externalPort: 42,
+        externalProtocol: LoadBalancingProtocol.SSL,
+      });
+      const lb2 = new LoadBalancer(positive2, 'rELB', {
+        vpc: new Vpc(positive2, 'rVPC'),
+      });
+      lb2.addListener({
+        internalProtocol: LoadBalancingProtocol.HTTP,
+        externalPort: 443,
+      });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+          }),
+        }),
+      );
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+          }),
+        }),
+      );
+      const negative = new Stack();
+      const negative2 = new Stack();
+      Aspects.of(negative).add(new NIST80053Checks());
+      Aspects.of(negative2).add(new NIST80053Checks());
+      const lb3 = new LoadBalancer(negative, 'rELB', {
+        vpc: new Vpc(negative, 'rVPC'),
+      });
+      lb3.addListener({
+        internalProtocol: LoadBalancingProtocol.SSL,
+        externalPort: 42,
+        externalProtocol: LoadBalancingProtocol.SSL,
+      });
+      const lb4 = new LoadBalancer(negative2, 'rELB', {
+        vpc: new Vpc(negative2, 'rVPC'),
+      });
+      lb4.addListener({
+        internalProtocol: LoadBalancingProtocol.HTTPS,
+        externalPort: 443,
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+          }),
+        }),
+      );
+      const messages4 = SynthUtils.synthesize(negative2).messages;
+      expect(messages4).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+          }),
+        }),
+      );
+    });
+
 
     //Ensure ELBs are load balanced across AZs
     test('nist80053ELBCrossZoneBalancing: - ELBs are load balanced across AZs - (Control IDs: SC-5, CP-10)', () => {
