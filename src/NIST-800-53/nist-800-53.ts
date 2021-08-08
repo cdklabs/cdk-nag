@@ -198,21 +198,21 @@ export class NIST80053Checks extends NagPack {
    */
   private checkCodebuild(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildCheckEnvVars') &&
+      !this.ignoreRule(ignores, 'NIST.800.53-CodebuildCheckEnvVars') &&
       !nist80053CodebuildCheckEnvVars(node)
     ) {
-      const ruleId = 'NIST.800.53-CodeBuildCheckEnvVars';
+      const ruleId = 'NIST.800.53-CodebuildCheckEnvVars';
       const info = 'The Codebuild environment stores sensitive credentials as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
-      const explanation = 'Sensitive credentials should not be stored as environment variables.';
+      const explanation = 'Do not store these variables in clear text. Storing these variables in clear text leads to unintended data exposure and unauthorized access.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildURLCheck') &&
+      !this.ignoreRule(ignores, 'NIST.800.53-CodebuildURLCheck') &&
       !nist80053CodebuildURLCheck(node)
     ) {
-      const ruleId = 'NIST.800.53-CodeBuildURLCheck';
+      const ruleId = 'NIST.800.53-CodebuildURLCheck';
       const info = 'The Codebuild project does not utilize OAUTH - (Control IDs: SA-3(a).';
       const explanation = 'OAUTH is the most secure method of authenticating your Codebuild application.';
       Annotations.of(node).addError(

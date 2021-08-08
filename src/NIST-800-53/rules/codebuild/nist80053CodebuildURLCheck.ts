@@ -15,11 +15,11 @@ export default function (node: IConstruct): boolean {
 
     //Check for the presence of OAUTH
     const projectSource = Stack.of(node).resolve(node.source);
-    const projectAuth = projectSource.Auth;
+    const projectAuth = Stack.of(node).resolve(projectSource.auth);
     if (projectAuth == undefined) {
       return false;
     } else {
-      const projectAuthType = projectAuth.Type;
+      const projectAuthType = projectAuth.type;
       if (projectAuthType != 'OAUTH') {
         return false;
       }
