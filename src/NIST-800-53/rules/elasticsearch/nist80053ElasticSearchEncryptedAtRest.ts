@@ -15,7 +15,7 @@ export default function (node: IConstruct): boolean {
     //Is the encryption at rest property set?
     const encryptionAtRestOptions = Stack.of(node).resolve(node.encryptionAtRestOptions);
     if (encryptionAtRestOptions != undefined) {
-      if (encryptionAtRestOptions.Enabled == undefined || encryptionAtRestOptions.Enabled == false) {
+      if (encryptionAtRestOptions.enabled == undefined || encryptionAtRestOptions.enabled == false) {
         return false;
       }
     } else {

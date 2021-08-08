@@ -244,7 +244,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ElasticSearchEncryptedAtRest';
       const info = 'The Elasticsearch resource is not encrypted at rest - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Encryption at rest helps to ensure that data is secure within each node.';
+      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elasticsearch Service (Amazon ES) domains.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation),
       );

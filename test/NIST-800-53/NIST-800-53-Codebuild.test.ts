@@ -226,7 +226,7 @@ describe('NIST-800-53 Compute Checks', () => {
 
 
     //Test whether Codebuild resources use OAUTH
-    test('nist80053CodebuildURLCheck: - Codebuild functions use OAUTH - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+    test('nist80053CodebuildURLCheck: - Codebuild functions use OAUTH - (Control IDs: SA-3(a))', () => {
 
       //Expect a POSITIVE response because OAUTH is not used
       const positive = new Stack();
