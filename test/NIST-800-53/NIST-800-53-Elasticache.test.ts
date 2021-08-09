@@ -75,7 +75,7 @@ describe('Amazon Elasticache', () => {
       port: 42,
     });
     const messages3 = SynthUtils.synthesize(negative).messages;
-    expect(messages2).not.toContainEqual(
+    expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
