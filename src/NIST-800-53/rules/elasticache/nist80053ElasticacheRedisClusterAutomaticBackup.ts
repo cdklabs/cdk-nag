@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnCacheCluster } from '@aws-cdk/aws-elasticache';
+import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
 
 /**
@@ -15,6 +15,15 @@ export default function (node: CfnResource): boolean {
     const retention = node.snapshotRetentionLimit;
     if (engine == 'redis' && (retention == undefined || retention < 15)) {
       return false;
+    }
+  }
+  if (node instanceof CfnReplicationGroup) {
+    if (node.engine != undefined) {
+      const engine = node.engine.toLowerCase();
+      const retention = node.snapshotRetentionLimit;
+      if (engine == 'redis' && (retention == undefined || retention < 15)) {
+        return false;
+      }
     }
   }
   return true;
