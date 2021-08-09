@@ -27,6 +27,10 @@
       "type": "build"
     },
     {
+      "name": "eslint-config-prettier",
+      "type": "build"
+    },
+    {
       "name": "eslint-import-resolver-node",
       "type": "build"
     },
@@ -36,6 +40,10 @@
     },
     {
       "name": "eslint-plugin-import",
+      "type": "build"
+    },
+    {
+      "name": "eslint-plugin-prettier",
       "type": "build"
     },
     {
@@ -70,6 +78,10 @@
     {
       "name": "npm-check-updates",
       "version": "^11",
+      "type": "build"
+    },
+    {
+      "name": "prettier",
       "type": "build"
     },
     {
@@ -135,6 +147,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-cloudtrail",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-codebuild",
       "version": "^1.110.0",
       "type": "peer"
@@ -146,6 +163,11 @@
     },
     {
       "name": "@aws-cdk/aws-dax",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-dms",
       "version": "^1.110.0",
       "type": "peer"
     },
@@ -365,6 +387,11 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-cdk/aws-cloudtrail",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
       "name": "@aws-cdk/aws-codebuild",
       "version": "^1.110.0",
       "type": "runtime"
@@ -376,6 +403,11 @@
     },
     {
       "name": "@aws-cdk/aws-dax",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-dms",
       "version": "^1.110.0",
       "type": "runtime"
     },

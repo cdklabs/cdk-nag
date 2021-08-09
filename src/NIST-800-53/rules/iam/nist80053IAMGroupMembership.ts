@@ -16,7 +16,6 @@ export default function (node: IConstruct): boolean {
     if (userGroup == undefined) {
       return false;
     }
-
   }
   return true;
 }

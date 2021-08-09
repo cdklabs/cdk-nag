@@ -10,6 +10,7 @@ jobs:
     permissions:
       checks: write
       contents: write
+      actions: write
     env:
       CI: "true"
     steps:
@@ -33,7 +34,7 @@ jobs:
         name: Commit and push changes (if changed)
         run: |-
           git add . && git commit -m "chore: self mutation" 
-          && git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - if: steps.git_diff.outputs.has_changes
         name: Update status check (if changed)
         run: gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name

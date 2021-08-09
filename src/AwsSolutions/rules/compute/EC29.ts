@@ -11,7 +11,9 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnInstance) {
-    const disableApiTermination = Stack.of(node).resolve(node.disableApiTermination);
+    const disableApiTermination = Stack.of(node).resolve(
+      node.disableApiTermination
+    );
     if (disableApiTermination == undefined || disableApiTermination == false) {
       return false;
     }

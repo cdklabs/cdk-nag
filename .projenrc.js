@@ -27,8 +27,10 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloud9',
     '@aws-cdk/aws-cloudfront',
     '@aws-cdk/aws-cloudfront-origins',
+    '@aws-cdk/aws-cloudtrail',
     '@aws-cdk/aws-cognito',
     '@aws-cdk/aws-dax',
+    '@aws-cdk/aws-dms',
     '@aws-cdk/aws-docdb',
     '@aws-cdk/aws-dynamodb',
     '@aws-cdk/aws-ec2',
@@ -63,13 +65,13 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-wafv2',
     '@aws-cdk/core',
   ],
-
   pullRequestTemplateContents: [
     '',
     '----',
     '',
     '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
   ],
+  eslintOptions: { prettier: true },
   publishToPypi: {
     distName: 'cdk-nag',
     module: 'cdk_nag',
@@ -92,6 +94,10 @@ const project = new AwsCdkConstructLibrary({
   }),
   buildWorkflow: true,
   release: true,
+});
+project.package.addField('prettier', { singleQuote: true, semi: true });
+project.eslint.addRules({
+  'prettier/prettier': ['error', { singleQuote: true, semi: true }],
 });
 project.package.addField('resolutions', {
   'trim-newlines': '3.0.1',
@@ -125,7 +131,7 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
   {
     if: 'steps.git_diff.outputs.has_changes',
     name: 'Commit and push changes (if changed)',
-    run: 'git add . && git commit -m "chore: self mutation" \n&& git push origin HEAD:${{ github.event.pull_request.head.ref }}',
+    run: 'git add . && git commit -m "chore: self mutation" \ngit push origin HEAD:${{ github.event.pull_request.head.ref }}',
   },
   {
     if: 'steps.git_diff.outputs.has_changes',
@@ -144,6 +150,7 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
     },
   },
 ]);
+
 project.release.addJobs({
   release: {
     runsOn: 'ubuntu-latest',

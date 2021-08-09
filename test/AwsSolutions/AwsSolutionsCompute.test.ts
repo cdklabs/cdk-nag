@@ -48,7 +48,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC23:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
@@ -62,7 +62,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC23:'),
           }),
-        }),
+        })
       );
 
       const positive3 = new Stack();
@@ -77,7 +77,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC23:'),
           }),
-        }),
+        })
       );
 
       const positive4 = new Stack();
@@ -91,7 +91,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC23:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -117,7 +117,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC23:'),
           }),
-        }),
+        })
       );
     });
 
@@ -134,7 +134,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC27:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -148,7 +148,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC27:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEc28 for Instance: EC2 Instances have detailed monitoring enabled', () => {
@@ -165,7 +165,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC28:'),
           }),
-        }),
+        })
       );
 
       const positive2 = new Stack();
@@ -182,7 +182,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC28:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -204,7 +204,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC28:'),
           }),
-        }),
+        })
       );
     });
 
@@ -222,7 +222,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC29:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -238,7 +238,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC29:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -257,7 +257,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC26:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -272,7 +272,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-EC26:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -286,7 +286,7 @@ describe('AWS Solutions Compute Checks', () => {
           effect: Effect.ALLOW,
           actions: ['*'],
           principals: [new AccountPrincipal('*'), new AccountRootPrincipal()],
-        }),
+        })
       );
       const messages = SynthUtils.synthesize(positive).messages;
       expect(messages).toContainEqual(
@@ -294,7 +294,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ECR1:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -305,7 +305,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ECR1:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -320,7 +320,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ECS4:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -331,7 +331,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ECS4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsEcs7: ECS Task Definition has awslogs logging enabled at the minimum', () => {
@@ -345,7 +345,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ECS7:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -360,7 +360,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ECS7:'),
           }),
-        }),
+        })
       );
     });
   });
@@ -378,7 +378,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB1:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -396,7 +396,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB1:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsElb2a: ALBs have access logs enabled', () => {
@@ -411,7 +411,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB2a:'),
           }),
-        }),
+        })
       );
       const negative = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -427,7 +427,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB2a:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsElb2e: ELBs have access logs enabled', () => {
@@ -446,7 +446,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB2e:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -463,7 +463,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB2e:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsElb3: ELBs have connection draining enabled', () => {
@@ -486,7 +486,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB3:'),
           }),
-        }),
+        })
       );
       const messages2 = SynthUtils.synthesize(positive2).messages;
       expect(messages2).toContainEqual(
@@ -494,7 +494,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB3:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
@@ -510,7 +510,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB3:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsElb4: ELBs use at least two AZs with the Cross-Zone Load Balancing feature enabled', () => {
@@ -526,7 +526,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB4:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -545,7 +545,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB4:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -560,7 +560,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB4:'),
           }),
-        }),
+        })
       );
       const negative2 = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -579,7 +579,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB4:'),
           }),
-        }),
+        })
       );
     });
     test('awsSolutionsElb5: ELB listeners should be configured for secure (HTTPs or SSL) protocols for client communication', () => {
@@ -608,7 +608,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB5:'),
           }),
-        }),
+        })
       );
       const messages2 = SynthUtils.synthesize(positive2).messages;
       expect(messages2).toContainEqual(
@@ -616,7 +616,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB5:'),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       const negative2 = new Stack();
@@ -643,7 +643,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB5:'),
           }),
-        }),
+        })
       );
       const messages4 = SynthUtils.synthesize(negative2).messages;
       expect(messages4).not.toContainEqual(
@@ -651,7 +651,7 @@ describe('AWS Solutions Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-ELB5:'),
           }),
-        }),
+        })
       );
     });
   });

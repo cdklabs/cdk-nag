@@ -21,7 +21,6 @@ import {
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
 
@@ -430,7 +429,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group allows connections from any IPv4 address from any port
@@ -447,7 +446,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group allows SSH by specifying an IP range including port 22
@@ -470,7 +469,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group ingress allows SSH by specifying an IP range including port 22
@@ -488,7 +487,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
           }),
-        }),
+        })
       );
 
       //Create stack for negative checks
@@ -503,7 +502,8 @@ describe('NIST-800-53 Compute Checks', () => {
 
       //Expect a NEGATIVE response because SSH is enabled for a specific IP address
       new CfnSecurityGroup(negative, 'rSecurityGroup2', {
-        groupDescription: 'security group with SSH ingress allowed for a specific IP address',
+        groupDescription:
+          'security group with SSH ingress allowed for a specific IP address',
         securityGroupIngress: [
           {
             fromPort: 22,
@@ -515,7 +515,8 @@ describe('NIST-800-53 Compute Checks', () => {
 
       //Expect a NEGATIVE response because port 80 (not 22) is open to the world
       new CfnSecurityGroup(negative, 'rSecurityGroup3', {
-        groupDescription: 'security group with an open-world ingress rule for HTTP traffic',
+        groupDescription:
+          'security group with an open-world ingress rule for HTTP traffic',
         securityGroupIngress: [
           {
             fromPort: 80,
@@ -532,7 +533,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
           }),
-        }),
+        })
       );
     });
 
@@ -556,9 +557,8 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckNoPublicIPs:'),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -578,8 +578,7 @@ describe('NIST-800-53 Compute Checks', () => {
       //Expect a NEGATIVE response because the machine does not have any network interfaces configured
       new CfnInstance(negative, 'rInstance2', {
         imageId: 'NegativeInstance',
-        networkInterfaces: [
-        ],
+        networkInterfaces: [],
       });
 
       //Expect a NEGATIVE response because the machine does not have a public IP
@@ -596,7 +595,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckNoPublicIPs:'),
           }),
-        }),
+        })
       );
     });
 
@@ -614,7 +613,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckInsideVPC:'),
           }),
-        }),
+        })
       );
 
       //Create stack for negative checks
@@ -641,7 +640,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckInsideVPC:'),
           }),
-        }),
+        })
       );
     });
 
@@ -660,9 +659,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckDetailedMonitoring:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDetailedMonitoring:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because instances in the ASG do not have detailed monitoring enabled
@@ -678,9 +679,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckDetailedMonitoring:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDetailedMonitoring:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a NEGATIVE response because the instance has detailed monitoring enabled
@@ -704,9 +707,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckDetailedMonitoring:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDetailedMonitoring:'
+            ),
           }),
-        }),
+        })
       );
     });
   });

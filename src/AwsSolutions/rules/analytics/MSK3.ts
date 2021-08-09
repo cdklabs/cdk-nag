@@ -14,7 +14,7 @@ export default function (node: IConstruct): boolean {
     const encryptionInfo = Stack.of(node).resolve(node.encryptionInfo);
     if (encryptionInfo != undefined) {
       const encryptionInTransit = Stack.of(node).resolve(
-        encryptionInfo.encryptionInTransit,
+        encryptionInfo.encryptionInTransit
       );
       if (encryptionInTransit != undefined) {
         const inCluster = Stack.of(node).resolve(encryptionInTransit.inCluster);

@@ -15,6 +15,7 @@
     "test:update": "npx projen test:update",
     "bump": "npx projen bump",
     "unbump": "npx projen unbump",
+    "publish:github": "npx projen publish:github",
     "upgrade-dependencies": "npx projen upgrade-dependencies",
     "default": "npx projen default",
     "watch": "npx projen watch",
@@ -25,8 +26,7 @@
     "publish:pypi": "npx projen publish:pypi",
     "docgen": "npx projen docgen",
     "release": "npx projen release",
-    "projen": "npx projen",
-    "start": "npx projen start"
+    "projen": "npx projen"
   },
   "author": {
     "name": "Arun Donti",
@@ -37,12 +37,14 @@
     "@aws-cdk/assert": "^1.110.0",
     "@types/jest": "^26.0.24",
     "@types/node": "^10.17.0",
-    "@typescript-eslint/eslint-plugin": "^4.28.5",
-    "@typescript-eslint/parser": "^4.28.5",
-    "eslint": "^7.31.0",
-    "eslint-import-resolver-node": "^0.3.4",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-node": "^0.3.5",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "jest": "^27.0.6",
     "jest-junit": "^12",
     "jsii": "^1.32.0",
@@ -51,7 +53,8 @@
     "jsii-pacmak": "^1.32.0",
     "json-schema": "^0.3.0",
     "npm-check-updates": "^11",
-    "projen": "^0.27.7",
+    "prettier": "^2.3.2",
+    "projen": "^0.27.23",
     "standard-version": "^9",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5"
@@ -66,9 +69,11 @@
     "@aws-cdk/aws-cloud9": "^1.110.0",
     "@aws-cdk/aws-cloudfront": "^1.110.0",
     "@aws-cdk/aws-cloudfront-origins": "^1.110.0",
+    "@aws-cdk/aws-cloudtrail": "^1.110.0",
     "@aws-cdk/aws-codebuild": "^1.110.0",
     "@aws-cdk/aws-cognito": "^1.110.0",
     "@aws-cdk/aws-dax": "^1.110.0",
+    "@aws-cdk/aws-dms": "^1.110.0",
     "@aws-cdk/aws-docdb": "^1.110.0",
     "@aws-cdk/aws-dynamodb": "^1.110.0",
     "@aws-cdk/aws-ec2": "^1.110.0",
@@ -114,9 +119,11 @@
     "@aws-cdk/aws-cloud9": "^1.110.0",
     "@aws-cdk/aws-cloudfront": "^1.110.0",
     "@aws-cdk/aws-cloudfront-origins": "^1.110.0",
+    "@aws-cdk/aws-cloudtrail": "^1.110.0",
     "@aws-cdk/aws-codebuild": "^1.110.0",
     "@aws-cdk/aws-cognito": "^1.110.0",
     "@aws-cdk/aws-dax": "^1.110.0",
+    "@aws-cdk/aws-dms": "^1.110.0",
     "@aws-cdk/aws-docdb": "^1.110.0",
     "@aws-cdk/aws-dynamodb": "^1.110.0",
     "@aws-cdk/aws-ec2": "^1.110.0",
@@ -211,6 +218,10 @@
       "outDir": "lib",
       "rootDir": "src"
     }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": true
   },
   "resolutions": {
     "trim-newlines": "3.0.1"

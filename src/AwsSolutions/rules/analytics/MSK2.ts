@@ -14,11 +14,11 @@ export default function (node: IConstruct): boolean {
     const encryptionInfo = Stack.of(node).resolve(node.encryptionInfo);
     if (encryptionInfo != undefined) {
       const encryptionInTransit = Stack.of(node).resolve(
-        encryptionInfo.encryptionInTransit,
+        encryptionInfo.encryptionInTransit
       );
       if (encryptionInTransit != undefined) {
         const clientBroker = Stack.of(node).resolve(
-          encryptionInTransit.clientBroker,
+          encryptionInTransit.clientBroker
         );
         if (
           clientBroker != undefined &&

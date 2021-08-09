@@ -32,7 +32,7 @@ describe('Testing rule suppression with complete metadata', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-EC23:'),
         }),
-      }),
+      })
     );
   });
   test('Test rule suppression does not overrite aws:cdk:path', () => {
@@ -53,16 +53,20 @@ describe('Testing rule suppression with complete metadata', () => {
     });
     const synthed = SynthUtils.synthesize(stack);
 
-    expect(synthed).toHaveResourceLike('AWS::EC2::SecurityGroup', {
-      Metadata: {
-        'aws:cdk:path': stringLike('*Resource*'),
-        'cdk_nag': {
-          rules_to_suppress: [{ id: 'AwsSolutions-EC23', reason: 'lorem ipsum' }],
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          'aws:cdk:path': stringLike('*Resource*'),
+          cdk_nag: {
+            rules_to_suppress: [
+              { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+            ],
+          },
         },
       },
-    },
-    1);
-
+      1
+    );
   });
   test('Test multi rule suppression', () => {
     const stack = new Stack();
@@ -86,14 +90,14 @@ describe('Testing rule suppression with complete metadata', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-EC23:'),
         }),
-      }),
+      })
     );
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-EC27:'),
         }),
-      }),
+      })
     );
   });
   test('Do not suppress with no reason', () => {
@@ -114,7 +118,7 @@ describe('Testing rule suppression with complete metadata', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('AwsSolutions-EC23:'),
         }),
-      }),
+      })
     );
   });
 });
@@ -133,7 +137,7 @@ describe('Testing rule explanations', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('Large port ranges'),
         }),
-      }),
+      })
     );
   });
   test('Test no explanation', () => {
@@ -149,7 +153,7 @@ describe('Testing rule explanations', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('Large port ranges'),
         }),
-      }),
+      })
     );
   });
   test('Test explanation', () => {
@@ -165,7 +169,7 @@ describe('Testing rule explanations', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining('Large port ranges'),
         }),
-      }),
+      })
     );
   });
 });

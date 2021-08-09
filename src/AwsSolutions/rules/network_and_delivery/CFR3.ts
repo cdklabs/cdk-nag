@@ -20,7 +20,7 @@ export default function (node: CfnResource): boolean {
     }
   } else if (node instanceof CfnStreamingDistribution) {
     const distributionConfig = Stack.of(node).resolve(
-      node.streamingDistributionConfig,
+      node.streamingDistributionConfig
     );
     if (distributionConfig.logging == undefined) {
       return false;

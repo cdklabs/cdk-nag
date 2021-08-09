@@ -18,18 +18,29 @@ export default function (node: IConstruct): boolean {
       for (const rule of ingressRules) {
         const resolvedRule = Stack.of(node).resolve(rule);
         if (
-          (resolvedRule.cidrIp != undefined && resolvedRule.cidrIp.includes('/0')) ||
-          (resolvedRule.cidrIpv6 != undefined && resolvedRule.cidrIpv6.includes('/0'))
+          (resolvedRule.cidrIp != undefined &&
+            resolvedRule.cidrIp.includes('/0')) ||
+          (resolvedRule.cidrIpv6 != undefined &&
+            resolvedRule.cidrIpv6.includes('/0'))
         ) {
           //Is a port range specified?
-          if (resolvedRule.fromPort != undefined && resolvedRule.toPort != undefined) {
-            if ((resolvedRule.fromPort <= 22 && resolvedRule.toPort >= 22) ||
-                (resolvedRule.fromPort == -1 || resolvedRule.toPort == -1) ||
-                resolvedRule.ipProtocol == '-1') {
+          if (
+            resolvedRule.fromPort != undefined &&
+            resolvedRule.toPort != undefined
+          ) {
+            if (
+              (resolvedRule.fromPort <= 22 && resolvedRule.toPort >= 22) ||
+              resolvedRule.fromPort == -1 ||
+              resolvedRule.toPort == -1 ||
+              resolvedRule.ipProtocol == '-1'
+            ) {
               return false;
             }
           } else {
-            if (resolvedRule.fromPort == 22 || resolvedRule.ipProtocol == '-1') {
+            if (
+              resolvedRule.fromPort == 22 ||
+              resolvedRule.ipProtocol == '-1'
+            ) {
               return false;
             }
           }
@@ -43,9 +54,12 @@ export default function (node: IConstruct): boolean {
     ) {
       //Is a port range specified?
       if (node.fromPort != undefined && node.toPort != undefined) {
-        if ((node.fromPort <= 22 && node.toPort >= 22) ||
-            (node.fromPort == -1 || node.toPort == -1) ||
-            node.ipProtocol == '-1') {
+        if (
+          (node.fromPort <= 22 && node.toPort >= 22) ||
+          node.fromPort == -1 ||
+          node.toPort == -1 ||
+          node.ipProtocol == '-1'
+        ) {
           return false;
         }
       } else {

@@ -20,7 +20,7 @@ export default function (node: CfnResource): boolean {
       for (const origin of origins) {
         const resolvedOrigin = Stack.of(node).resolve(origin);
         const resolvedDomainName = Stack.of(node).resolve(
-          resolvedOrigin.domainName,
+          resolvedOrigin.domainName
         );
         const s3Regex =
           /^.+\.s3(?:-website)?(?:\..+)?(?:(?:\.amazonaws\.com(?:\.cn)?)|(?:\.c2s\.ic\.gov)|(?:\.sc2s\.sgov\.gov))$/;
@@ -29,7 +29,7 @@ export default function (node: CfnResource): boolean {
             return false;
           }
           const resolvedConfig = Stack.of(node).resolve(
-            resolvedOrigin.s3OriginConfig,
+            resolvedOrigin.s3OriginConfig
           );
           if (
             resolvedConfig.originAccessIdentity == undefined ||
@@ -42,7 +42,7 @@ export default function (node: CfnResource): boolean {
     }
   } else if (node instanceof CfnStreamingDistribution) {
     const distributionConfig = Stack.of(node).resolve(
-      node.streamingDistributionConfig,
+      node.streamingDistributionConfig
     );
     const resolvedOrigin = Stack.of(node).resolve(distributionConfig.s3Origin);
     if (resolvedOrigin.originAccessIdentity.replace(/\s/g, '').length == 0) {
