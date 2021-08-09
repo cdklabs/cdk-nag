@@ -14,11 +14,16 @@ export default function (node: IConstruct): boolean {
   if (node instanceof CfnLoadBalancer) {
     const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
     if (attributes != undefined) {
-      if ('deletion_protection.enabled' in attributes) {
-        if (attributes['deletion_protection.enabled'] != true) {
-          return false;
+      var deletionProtectionEnabled = false;
+      for (const attr of attributes) {
+        const resolvedAttr = Stack.of(node).resolve(attr);
+        if (resolvedAttr.key != undefined && resolvedAttr.key == 'deletion_protection.enabled') {
+          if (resolvedAttr.value == 'true') {
+            deletionProtectionEnabled = true;
+          }
         }
-      } else {
+      }
+      if (!deletionProtectionEnabled) {
         return false;
       }
     } else {
