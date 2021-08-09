@@ -6,15 +6,14 @@ import { CfnCacheCluster } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
 
 /**
- * ElastiCache Redis clusters have been automatically backed up
+ * ElastiCache Redis clusters have been automatically backed up (Control IDs: CP-9(b), CP-10, and SI-12)
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCacheCluster) {
     const engine = node.engine.toLowerCase();
-    if (engine == 'redis' && node.snapshotRetentionLimit >= 15) {
-      return true;
-    } else if (engine == 'redis' && node.snapshotRetentionLimit < 15) {
+    const retention = node.snapshotRetentionLimit;
+    if (engine == 'redis' && (retention == undefined || retention < 15)) {
       return false;
     }
   }
