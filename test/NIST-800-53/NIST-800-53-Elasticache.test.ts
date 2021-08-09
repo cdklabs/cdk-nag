@@ -34,7 +34,7 @@ describe('Amazon Elasticache', () => {
     new CfnReplicationGroup(positive2, 'rAecGroup', {
       replicationGroupDescription: 'lorem ipsum dolor sit amet',
       cacheNodeType: 'cache.t3.micro',
-      engine: 'redis'
+      engine: 'redis',
     });
     const messages2 = SynthUtils.synthesize(positive2).messages;
     expect(messages2).toContainEqual(
@@ -72,4 +72,5 @@ describe('Amazon Elasticache', () => {
         }),
       })
     );
+  });
 });
