@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src/NIST-800-53/nist-800-53';
 
 describe('Amazon Elasticache', () => {
-  test('NIST.800.53-ElasticacheRedisClusterAutomaticBackup: ElastiCache Redis clusters have been automatically backed up', () => {
+  test('NIST.800.53-ElasticacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new CfnCacheCluster(positive, 'rAec', {
