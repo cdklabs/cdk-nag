@@ -23,6 +23,7 @@ import {
   nist80053EC2CheckSSHRestricted,
 } from './rules/ec2';
 import { nist80053EFSEncrypted } from './rules/efs';
+import { nist80053ElasticacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
   nist80053ALBHttpToHttpsRedirection,
@@ -59,6 +60,7 @@ export class NIST80053Checks extends NagPack {
       this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
       this.checkEFS(node, ignores);
+      this.checkElasticache(node, ignores);
       this.checkELB(node, ignores);
       this.checkEMR(node, ignores);
       this.checkIAM(node, ignores);
@@ -276,6 +278,30 @@ export class NIST80053Checks extends NagPack {
         'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
       const explanation =
         'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
+   * Check Elasticache Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkElasticache(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-ElasticacheRedisClusterAutomaticBackup'
+      ) &&
+      !nist80053ElasticacheRedisClusterAutomaticBackup(node)
+    ) {
+      const ruleId = 'NIST.800.53-ElasticacheRedisClusterAutomaticBackup';
+      const info =
+        'The ElastiCache Redis cluster does not retain automatic backups for at least 15 days (Control IDs: CP-9(b), CP-10, SI-12).';
+      const explanation =
+        'Automatic backups can help guard against data loss. If a failure occurs, you can create a new cluster, which restores your data from the most recent backup.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
