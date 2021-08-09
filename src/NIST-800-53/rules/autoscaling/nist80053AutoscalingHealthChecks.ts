@@ -12,11 +12,19 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnAutoScalingGroup) {
-    //Is the VPC property set?
-    const ELBTargets = Stack.of(node).resolve(node.targetGroupArns);
-    if (ELBTargets != undefined) {
+    //get all associated CLASSIC load balancers
+    const classicLBs = Stack.of(node).resolve(node.loadBalancerNames);
+    //get all associated Application LBs, Gateway LBs, and Network LBs
+    const otherLBs = Stack.of(node).resolve(node.targetGroupArns);
+    if ( (otherLBs != undefined && otherLBs.length > 0) ||
+         (classicLBs != undefined && classicLBs.length > 0) ) {
       const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
-      if (healthCheckType == undefined || healthCheckType != 'ELB') {
+      //Did we use ELB health checks?
+      if (healthCheckType != undefined) {
+        if (healthCheckType != 'ELB') {
+          return false;
+        }
+      } else {
         return false;
       }
     }
