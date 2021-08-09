@@ -7,7 +7,7 @@ import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 //list of allowed ports, can be altered as needed
-const allowedPorts=[80];
+const allowedPorts = [80];
 
 /**
  * VPC Security Groups allow only authorized ports - (AC-4, SC-7, SC-7(3)).
@@ -39,7 +39,7 @@ export default function (node: IConstruct): boolean {
  * @param rule the CfnSecurityGroupIngress rule to check
  * @param portNum the number of the port to check
  */
-function checkRuleCompliance (rule: CfnSecurityGroupIngress): boolean {
+function checkRuleCompliance(rule: CfnSecurityGroupIngress): boolean {
   //Does this rule allow all IP addresses (unrestricted access)?
   if (
     (rule.cidrIp != undefined && rule.cidrIp.includes('/0')) ||
@@ -58,7 +58,7 @@ function checkRuleCompliance (rule: CfnSecurityGroupIngress): boolean {
         }
       }
     } else {
-      if (rule.fromPort != undefined && !(allowedPorts.includes(rule.fromPort))) {
+      if (rule.fromPort != undefined && !allowedPorts.includes(rule.fromPort)) {
         return false;
       }
     }

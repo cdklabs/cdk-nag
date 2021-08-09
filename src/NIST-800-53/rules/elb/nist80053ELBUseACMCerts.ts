@@ -11,7 +11,6 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-
   if (node instanceof CfnLoadBalancer) {
     //For each listener, ensure that it's utilizing an ACM SSL/HTTPS cert
     const listeners = Stack.of(node).resolve(node.listeners);

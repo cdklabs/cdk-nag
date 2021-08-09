@@ -29,7 +29,6 @@ export default function (node: IConstruct): boolean {
         }
       }
     }
-
   }
   return true;
 }

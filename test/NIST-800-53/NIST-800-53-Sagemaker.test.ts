@@ -9,15 +9,10 @@ import { CfnEndpointConfig, CfnNotebookInstance } from '@aws-cdk/aws-sagemaker';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Sagemaker', () => {
-
-
     //Test whether Sagemaker endpoints are encrypted with a KMS key
     test('NIST.800.53-SagemakerEndpointKMS: SageMaker endpoints use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
-
-
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnEndpointConfig(positive, 'badendpoint', {
@@ -29,7 +24,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SagemakerEndpointKMS:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -44,10 +39,9 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SagemakerEndpointKMS:'),
           }),
-        }),
+        })
       );
     });
-
 
     //Test whether Sagemaker notebooks are encrypted with a KMS key
     //These tests taken from AWS Solutions tests for rule "SM2"
@@ -66,7 +60,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SagemakerNotebookKMS:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -84,14 +78,13 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-SagemakerNotebookKMS:'),
           }),
-        }),
+        })
       );
     });
 
     //Test whether Sagemaker notebooks disable direct internet access
     //These tests taken from AWS Solutions tests for rule "SM3"
     test('nist80053SagemakerDirectInternetAccessDisabled: - Sagemaker instances disabled direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
-
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {
@@ -104,9 +97,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-SagemakerDirectInternetAccessDisbabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-SagemakerDirectInternetAccessDisbabled:'
+            ),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -123,11 +118,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-SagemakerDirectInternetAccessDisbabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-SagemakerDirectInternetAccessDisbabled:'
+            ),
           }),
-        }),
+        })
       );
     });
-
   });
 });

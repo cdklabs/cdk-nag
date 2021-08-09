@@ -17,7 +17,10 @@ export default function (node: IConstruct): boolean {
       var deletionProtectionEnabled = false;
       for (const attr of attributes) {
         const resolvedAttr = Stack.of(node).resolve(attr);
-        if (resolvedAttr.key != undefined && resolvedAttr.key == 'deletion_protection.enabled') {
+        if (
+          resolvedAttr.key != undefined &&
+          resolvedAttr.key == 'deletion_protection.enabled'
+        ) {
           if (resolvedAttr.value == 'true') {
             deletionProtectionEnabled = true;
           }

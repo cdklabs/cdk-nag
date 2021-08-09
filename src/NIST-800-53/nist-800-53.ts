@@ -6,39 +6,37 @@ SPDX-License-Identifier: Apache-2.0
 import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
 import {
-    nist80053ElasticSearchRunningWithinVPC,
-    nist80053ElasticSearchEncryptedAtRest,
-    nist80053ElasticSearchNodeToNodeEncrypted,
-  } from './rules/elasticsearch';
-import {
-    nist80053AutoscalingHealthChecks,
-  } from './rules/autoscaling';
-  import {
-    nist80053CodebuildCheckEnvVars,
-    nist80053CodebuildURLCheck,
-} from './rules/codebuild';
-import {
   nist80053APIGWCacheEnabledAndEncrypted,
   nist80053APIGWExecutionLoggingEnabled,
 } from './rules/apigw';
+import { nist80053AutoscalingHealthChecks } from './rules/autoscaling';
 import {
   nist80053CloudTrailLogFileValidationEnabled,
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
 } from './rules/cloudtrail/index';
+import {
+  nist80053CodebuildCheckEnvVars,
+  nist80053CodebuildURLCheck,
+} from './rules/codebuild';
 import { nist80053DMSReplicationNotPublic } from './rules/dms';
 import { nist80053DynamoDBPITREnabled } from './rules/dynamodb';
 import {
-    nist80053EC2CheckDetailedMonitoring,
-    nist80053EC2CheckInsideVPC,
-    nist80053EC2CheckNoPublicIPs,
-    nist80053EC2CheckSSHRestricted,
-    nist80053EC2CheckCommonPortsRestricted,
-    nist80053EC2CheckDefaultSecurityGroupClosed,
-    nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts,
-    nist80053EC2CheckVolumesEncrypted,
+  nist80053EC2CheckDetailedMonitoring,
+  nist80053EC2CheckInsideVPC,
+  nist80053EC2CheckNoPublicIPs,
+  nist80053EC2CheckSSHRestricted,
+  nist80053EC2CheckCommonPortsRestricted,
+  nist80053EC2CheckDefaultSecurityGroupClosed,
+  nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts,
+  nist80053EC2CheckVolumesEncrypted,
 } from './rules/ec2';
 import { nist80053EFSEncrypted } from './rules/efs';
+import {
+  nist80053ElasticSearchRunningWithinVPC,
+  nist80053ElasticSearchEncryptedAtRest,
+  nist80053ElasticSearchNodeToNodeEncrypted,
+} from './rules/elasticsearch';
 import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
   nist80053ALBHttpToHttpsRedirection,
@@ -56,21 +54,19 @@ import {
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
+import { nist80053LambdaFunctionsInsideVPC } from './rules/lambda';
 import { nist80053RDSLoggingEnabled } from './rules/rds';
 import {
   nist80053RedshiftClusterConfiguration,
   nist80053RedshiftClusterPublicAccess,
 } from './rules/redshift';
 import { nist80053S3BucketLoggingEnabled } from './rules/s3';
-import { nist80053SNSEncryptedKMS } from './rules/sns';
 import {
-    nist80053LambdaFunctionsInsideVPC,
-  } from './rules/lambda';
-  import {
-    nist80053SagemakerDirectInternetAccessDisabled,
-    nist80053SagemakerEndpointKMS,
-    nist80053SagemakerNotebookKMS,
-  } from './rules/sagemaker';
+  nist80053SagemakerDirectInternetAccessDisabled,
+  nist80053SagemakerEndpointKMS,
+  nist80053SagemakerNotebookKMS,
+} from './rules/sagemaker';
+import { nist80053SNSEncryptedKMS } from './rules/sns';
 
 /**
  * Check for NIST 800-53 compliance.
@@ -293,72 +289,84 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-        !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckDefaultSecurityGroupClosed') &&
-        !nist80053EC2CheckDefaultSecurityGroupClosed(node)
-      ) {
-        const ruleId = 'NIST.800.53-EC2CheckDefaultSecurityGroupClosed';
-        const info = 'The default security group for one or more VPCs is not closed - (Control IDs: AC-4, SC-7, SC-7(3)).';
-        const explanation = 'Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckCommonPortsRestricted') &&
-        !nist80053EC2CheckCommonPortsRestricted(node)
-      ) {
-        const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
-        const info = 'The EC2 machine does not restrict all common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
-        const explanation = 'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts') &&
-        !nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts(node)
-      ) {
-        const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
-        const info = 'The VPC Security Group does not allow all authorized ports - (Control IDs: AC-4, SC-7, SC-7(3).';
-        const explanation = 'Not restricting access on ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVolumesEncrypted') &&
-        !nist80053EC2CheckVolumesEncrypted(node)
-      ) {
-        const ruleId = 'NIST.800.53-EC2CheckVolumesEncrypted';
-        const info = 'The EC2 instance does not utilize encrypted volumes. - (Control IDs: SC-13, SC-28.';
-        const explanation = 'Because senstive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic Block Store (Amazon EBS) volumes.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-EC2CheckDefaultSecurityGroupClosed'
+      ) &&
+      !nist80053EC2CheckDefaultSecurityGroupClosed(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckDefaultSecurityGroupClosed';
+      const info =
+        'The default security group for one or more VPCs is not closed - (Control IDs: AC-4, SC-7, SC-7(3)).';
+      const explanation =
+        'Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckCommonPortsRestricted') &&
+      !nist80053EC2CheckCommonPortsRestricted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
+      const info =
+        'The EC2 machine does not restrict all common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
+      const explanation =
+        'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts'
+      ) &&
+      !nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
+      const info =
+        'The VPC Security Group does not allow all authorized ports - (Control IDs: AC-4, SC-7, SC-7(3).';
+      const explanation =
+        'Not restricting access on ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVolumesEncrypted') &&
+      !nist80053EC2CheckVolumesEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-EC2CheckVolumesEncrypted';
+      const info =
+        'The EC2 instance does not utilize encrypted volumes. - (Control IDs: SC-13, SC-28.';
+      const explanation =
+        'Because senstive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic Block Store (Amazon EBS) volumes.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
   }
 
-  
   /**
    * Check autoscaling Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkAutoscaling(node: CfnResource, ignores: any) {
-
+  private checkAutoscaling(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-AutoscalingHealthChecks') &&
       !nist80053AutoscalingHealthChecks(node)
     ) {
       const ruleId = 'NIST.800.53-AutoscalingHealthChecks';
-      const info = 'The EFS does not have encryption at rest enabled - (Control IDs: SC-5).';
-      const explanation = 'Health checks for EC2 instances within an autoscaling group help maintain a reliable infrastructure.';
+      const info =
+        'The EFS does not have encryption at rest enabled - (Control IDs: SC-5).';
+      const explanation =
+        'Health checks for EC2 instances within an autoscaling group help maintain a reliable infrastructure.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
-
-
   }
 
   /**
@@ -372,10 +380,12 @@ export class NIST80053Checks extends NagPack {
       !nist80053CodebuildCheckEnvVars(node)
     ) {
       const ruleId = 'NIST.800.53-CodebuildCheckEnvVars';
-      const info = 'The Codebuild environment stores sensitive credentials as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
-      const explanation = 'Do not store these variables in clear text. Storing these variables in clear text leads to unintended data exposure and unauthorized access.';
+      const info =
+        'The Codebuild environment stores sensitive credentials as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
+      const explanation =
+        'Do not store these variables in clear text. Storing these variables in clear text leads to unintended data exposure and unauthorized access.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -383,10 +393,12 @@ export class NIST80053Checks extends NagPack {
       !nist80053CodebuildURLCheck(node)
     ) {
       const ruleId = 'NIST.800.53-CodebuildURLCheck';
-      const info = 'The Codebuild project does not utilize OAUTH - (Control IDs: SA-3(a).';
-      const explanation = 'OAUTH is the most secure method of authenticating your Codebuild application.';
+      const info =
+        'The Codebuild project does not utilize OAUTH - (Control IDs: SA-3(a).';
+      const explanation =
+        'OAUTH is the most secure method of authenticating your Codebuild application.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
@@ -398,14 +410,19 @@ export class NIST80053Checks extends NagPack {
    */
   private checkElasticsearch(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchNodeToNodeEncrypted') &&
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-ElasticSearchNodeToNodeEncrypted'
+      ) &&
       !nist80053ElasticSearchNodeToNodeEncrypted(node)
     ) {
       const ruleId = 'NIST.800.53-ElasticSearchNodeToNodeEncrypted';
-      const info = 'The Elasticsearch resource is not node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)).';
-      const explanation = 'Because sensitive data can exist, enable encryption in transit to help protect that data..';
+      const info =
+        'The Elasticsearch resource is not node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)).';
+      const explanation =
+        'Because sensitive data can exist, enable encryption in transit to help protect that data..';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -413,10 +430,12 @@ export class NIST80053Checks extends NagPack {
       !nist80053ElasticSearchEncryptedAtRest(node)
     ) {
       const ruleId = 'NIST.800.53-ElasticSearchEncryptedAtRest';
-      const info = 'The Elasticsearch resource is not encrypted at rest - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elasticsearch Service (Amazon ES) domains.';
+      const info =
+        'The Elasticsearch resource is not encrypted at rest - (Control IDs: SC-13, SC-28).';
+      const explanation =
+        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elasticsearch Service (Amazon ES) domains.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -424,8 +443,10 @@ export class NIST80053Checks extends NagPack {
       !nist80053ElasticSearchRunningWithinVPC(node)
     ) {
       const ruleId = 'NIST.800.53-ElasticSearchRunningWithinVPC';
-      const info = 'The Elasticsearch resource is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
-      const explanation = 'VPCs help secure your AWS resources and provide an extra layer of protection.';
+      const info =
+        'The Elasticsearch resource is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+      const explanation =
+        'VPCs help secure your AWS resources and provide an extra layer of protection.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -517,49 +538,57 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-        !this.ignoreRule(ignores, 'NIST.800.53-ELBListenersUseSSLOrHTTPS') &&
-        !nist80053ELBListenersUseSSLOrHTTPS(node)
-      ) {
-        const ruleId = 'NIST.800.53-ELBListenersUseSSLOrHTTPS';
-        const info = 'The ELB has listeners which do not use SSL or HTTPS - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23).';
-        const explanation = 'Because sensitive data can exist, enable encryption in transit to help protect that data.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-ELBDeletionProtectionEnabled') &&
-        !nist80053ELBDeletionProtectionEnabled(node)
-      ) {
-        const ruleId = 'NIST.800.53-ELBDeletionProtectionEnabled';
-        const info = 'The ELB does not have deletion protection enabled - (Control IDs: CM-2, CP-10).';
-        const explanation = 'Use this feature to prevent your load balancer from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-ELBCrossZoneBalancing') &&
-        !nist80053ELBCrossZoneBalancing(node)
-      ) {
-        const ruleId = 'NIST.800.53-ELBCrossZoneBalancing';
-        const info = 'The ELB does not balance traffic between at least 2 AZs - (Control IDs: SC-5, CP-10).';
-        const explanation = 'The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
-      if (
-        !this.ignoreRule(ignores, 'NIST.800.53-ELBUseACMCerts') &&
-        !nist80053ELBUseACMCerts(node)
-      ) {
-        const ruleId = 'NIST.800.53-ELBUseACMCerts';
-        const info = 'The ELB does not utilize ACM (Amazon Certificate Manager) certifications - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).';
-        const explanation = 'Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
-        Annotations.of(node).addError(
-          this.createMessage(ruleId, info, explanation),
-        );
-      }
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBListenersUseSSLOrHTTPS') &&
+      !nist80053ELBListenersUseSSLOrHTTPS(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBListenersUseSSLOrHTTPS';
+      const info =
+        'The ELB has listeners which do not use SSL or HTTPS - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23).';
+      const explanation =
+        'Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBDeletionProtectionEnabled') &&
+      !nist80053ELBDeletionProtectionEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBDeletionProtectionEnabled';
+      const info =
+        'The ELB does not have deletion protection enabled - (Control IDs: CM-2, CP-10).';
+      const explanation =
+        'Use this feature to prevent your load balancer from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBCrossZoneBalancing') &&
+      !nist80053ELBCrossZoneBalancing(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBCrossZoneBalancing';
+      const info =
+        'The ELB does not balance traffic between at least 2 AZs - (Control IDs: SC-5, CP-10).';
+      const explanation =
+        'The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBUseACMCerts') &&
+      !nist80053ELBUseACMCerts(node)
+    ) {
+      const ruleId = 'NIST.800.53-ELBUseACMCerts';
+      const info =
+        'The ELB does not utilize ACM (Amazon Certificate Manager) certifications - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).';
+      const explanation =
+        'Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
   }
 
   /**
@@ -583,20 +612,21 @@ export class NIST80053Checks extends NagPack {
     }
   }
 
-  
   /**
    * Check Lambda Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-   private checkLambda(node: CfnResource, ignores: any) {
+  private checkLambda(node: CfnResource, ignores: any) {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-LambdaFunctionsInsideVPC') &&
       !nist80053LambdaFunctionsInsideVPC(node)
     ) {
       const ruleId = 'NIST.800.53-LambdaFunctionsInsideVPC';
-      const info = 'The Lambda function does not exist within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
-      const explanation = 'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
+      const info =
+        'The Lambda function does not exist within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+      const explanation =
+        'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -610,14 +640,19 @@ export class NIST80053Checks extends NagPack {
    */
   private checkSagemaker(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-SagemakerDirectInternetAccessDisbabled') &&
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-SagemakerDirectInternetAccessDisbabled'
+      ) &&
       !nist80053SagemakerDirectInternetAccessDisabled(node)
     ) {
       const ruleId = 'NIST.800.53-SagemakerDirectInternetAccessDisbabled';
-      const info = 'The Sagemaker resource does not disable direct internet access - (Control IDs: SC-13, SC-28).';
-      const explanation = 'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.';
+      const info =
+        'The Sagemaker resource does not disable direct internet access - (Control IDs: SC-13, SC-28).';
+      const explanation =
+        'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -625,10 +660,12 @@ export class NIST80053Checks extends NagPack {
       !nist80053SagemakerEndpointKMS(node)
     ) {
       const ruleId = 'NIST.800.53-SagemakerEndpointKMS';
-      const info = 'The Sagemaker resource endpoint is encryped using KMS - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.';
+      const info =
+        'The Sagemaker resource endpoint is encryped using KMS - (Control IDs: SC-13, SC-28).';
+      const explanation =
+        'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
     if (
@@ -636,14 +673,16 @@ export class NIST80053Checks extends NagPack {
       !nist80053SagemakerNotebookKMS(node)
     ) {
       const ruleId = 'NIST.800.53-SagemakerNotebookKMS';
-      const info = 'The Sagemaker notebook is encryped using KMS - (Control IDs: SC-13, SC-28).';
-      const explanation = 'Because sensitive data can exist at rest in SageMaker notebook, enable encryption at rest to help protect that data.';
+      const info =
+        'The Sagemaker notebook is encryped using KMS - (Control IDs: SC-13, SC-28).';
+      const explanation =
+        'Because sensitive data can exist at rest in SageMaker notebook, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation),
+        this.createMessage(ruleId, info, explanation)
       );
     }
   }
-  
+
   /**
    * Check IAM Resources
    * @param node the IConstruct to evaluate

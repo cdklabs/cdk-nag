@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnNotebookInstance) {
     const directInternetAccess = Stack.of(node).resolve(
-      node.directInternetAccess,
+      node.directInternetAccess
     );
     if (
       directInternetAccess == undefined ||

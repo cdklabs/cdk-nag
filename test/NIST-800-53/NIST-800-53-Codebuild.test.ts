@@ -8,14 +8,10 @@ import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Codebuild', () => {
-
-
     //Test whether Codebuild resources store sensitive credentials as environment variables
     test('nist80053CodebuildCheckEnvVars: - Codebuild projects DO NOT store sensitive data as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))', () => {
-
       //Expect a POSITIVE response because AWS_ACCESS_KEY_ID is defined as a plaintext env var
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -50,7 +46,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because AWS_ACCESS_KEY_ID is defined without ensuring that its not plaintext (the default)
@@ -86,7 +82,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because AWS_SECRET_ACCESS_KEY is defined without ensuring that its not plaintext (the default)
@@ -122,9 +118,8 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -139,7 +134,6 @@ describe('NIST-800-53 Compute Checks', () => {
           computeType: 'BUILD_GENERAL1_SMALL',
           image: 'aws/codebuild/standard:4.0',
           type: 'LINUX_CONTAINER',
-
         },
         serviceRole: 'someservicerole',
         source: {
@@ -212,7 +206,6 @@ describe('NIST-800-53 Compute Checks', () => {
         },
       });
 
-
       //Check cdk-nag response
       const messages6 = SynthUtils.synthesize(negative).messages;
       expect(messages6).not.toContainEqual(
@@ -220,14 +213,12 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
           }),
-        }),
+        })
       );
     });
 
-
     //Test whether Codebuild resources use OAUTH
     test('nist80053CodebuildURLCheck: - Codebuild functions use OAUTH - (Control IDs: SA-3(a))', () => {
-
       //Expect a POSITIVE response because OAUTH is not used
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -252,9 +243,8 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodebuildURLCheck:'),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -277,7 +267,6 @@ describe('NIST-800-53 Compute Checks', () => {
         },
       });
 
-
       //Check cdk-nag response
       const messages6 = SynthUtils.synthesize(negative).messages;
       expect(messages6).not.toContainEqual(
@@ -285,10 +274,8 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodebuildURLCheck:'),
           }),
-        }),
+        })
       );
     });
-
-
   });
 });

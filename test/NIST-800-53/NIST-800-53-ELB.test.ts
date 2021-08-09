@@ -16,11 +16,8 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon ELB', () => {
-
-
     //Test whether ELBs have deletion protection enabled
     test('nist80053ELBDeletionProtectionEnabled: - ELBs have deletion protection enabled - (Control IDs: CM-2, CP-10)', () => {
-
       //Expect a POSITIVE response because deletion protection is not set
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -31,9 +28,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBDeletionProtectionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBDeletionProtectionEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because deletion protection is disabled
@@ -51,9 +50,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBDeletionProtectionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBDeletionProtectionEnabled:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response an attribute other than deletion protection is enabled
@@ -71,11 +72,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBDeletionProtectionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBDeletionProtectionEnabled:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -96,16 +98,16 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBDeletionProtectionEnabled:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBDeletionProtectionEnabled:'
+            ),
           }),
-        }),
+        })
       );
     });
 
-
     //Ensure ELBs are only listening for SSL and HTTPS traffic
     test('nist80053ELBListenersUseSSLOrHTTPSOnly: - ELBs are only listening for SSL and HTTPS traffic - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23)', () => {
-
       const positive = new Stack();
       const positive2 = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -129,17 +131,21 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBListenersUseSSLOrHTTPS:'
+            ),
           }),
-        }),
+        })
       );
       const messages2 = SynthUtils.synthesize(positive2).messages;
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBListenersUseSSLOrHTTPS:'
+            ),
           }),
-        }),
+        })
       );
       const negative = new Stack();
       const negative2 = new Stack();
@@ -164,24 +170,26 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBListenersUseSSLOrHTTPS:'
+            ),
           }),
-        }),
+        })
       );
       const messages4 = SynthUtils.synthesize(negative2).messages;
       expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBListenersUseSSLOrHTTPS:'),
+            data: expect.stringContaining(
+              'NIST.800.53-ELBListenersUseSSLOrHTTPS:'
+            ),
           }),
-        }),
+        })
       );
     });
 
-
     //Ensure ELBs are load balanced across AZs
     test('nist80053ELBCrossZoneBalancing: - ELBs are load balanced across AZs - (Control IDs: SC-5, CP-10)', () => {
-
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new LoadBalancer(positive, 'rELB', {
@@ -194,7 +202,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBCrossZoneBalancing:'),
           }),
-        }),
+        })
       );
       const positive2 = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -213,7 +221,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBCrossZoneBalancing:'),
           }),
-        }),
+        })
       );
 
       const negative = new Stack();
@@ -228,7 +236,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBCrossZoneBalancing:'),
           }),
-        }),
+        })
       );
       const negative2 = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
@@ -247,14 +255,12 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBCrossZoneBalancing:'),
           }),
-        }),
+        })
       );
     });
 
-
     //Test whether ELBs exist within VPCs
     test('nist80053ELBUseACMCerts: - ELBs use ACM certificates - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13)', () => {
-
       //Expect a POSITIVE response because the ELB listener does not use an ACM certificate
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -274,7 +280,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBUseACMCerts:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because there is no certificate ARN given
@@ -295,9 +301,8 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBUseACMCerts:'),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -305,8 +310,7 @@ describe('NIST-800-53 Compute Checks', () => {
 
       //Expect a NEGATIVE response because there are no listeners in the ELB
       new CfnLoadBalancer(negative, 'newelb', {
-        listeners: [
-        ],
+        listeners: [],
       });
 
       //Expect a NEGATIVE response because the certificate ARN is a valid ACM resource
@@ -328,10 +332,8 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBUseACMCerts:'),
           }),
-        }),
+        })
       );
     });
-
-
   });
 });

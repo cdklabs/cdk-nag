@@ -8,13 +8,10 @@ import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Autoscaling', () => {
-
     //Test whether Autoscaling groups associated with a load balancer utilize ELB health checks
     test('nist80053AutoscalingHealthChecks: - Autoscaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)', () => {
-
       //Expect a POSITIVE response because a classic LB is defined and health checks are not specified
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -27,9 +24,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-AutoscalingHealthChecks:'),
+            data: expect.stringContaining(
+              'NIST.800.53-AutoscalingHealthChecks:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because multiple load balancer target groups are specified and healthchecks are not specified
@@ -45,11 +44,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-AutoscalingHealthChecks:'),
+            data: expect.stringContaining(
+              'NIST.800.53-AutoscalingHealthChecks:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Expect a POSITIVE response because a classic LB is defined and health checks are set to "EC2"
       const positive3 = new Stack();
@@ -64,11 +64,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-AutoscalingHealthChecks:'),
+            data: expect.stringContaining(
+              'NIST.800.53-AutoscalingHealthChecks:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -101,12 +102,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-AutoscalingHealthChecks:'),
+            data: expect.stringContaining(
+              'NIST.800.53-AutoscalingHealthChecks:'
+            ),
           }),
-        }),
+        })
       );
     });
-
-
   });
 });

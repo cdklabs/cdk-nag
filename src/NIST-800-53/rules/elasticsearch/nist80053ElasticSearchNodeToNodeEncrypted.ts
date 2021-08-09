@@ -13,9 +13,14 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
     //Is the node to node encryption property set?
-    const encryptedNodeToNode = Stack.of(node).resolve(node.nodeToNodeEncryptionOptions);
+    const encryptedNodeToNode = Stack.of(node).resolve(
+      node.nodeToNodeEncryptionOptions
+    );
     if (encryptedNodeToNode != undefined) {
-      if (encryptedNodeToNode.enabled == undefined || encryptedNodeToNode.enabled == false) {
+      if (
+        encryptedNodeToNode.enabled == undefined ||
+        encryptedNodeToNode.enabled == false
+      ) {
         return false;
       }
     } else {

@@ -16,8 +16,10 @@ export default function (node: IConstruct): boolean {
     const classicLBs = Stack.of(node).resolve(node.loadBalancerNames);
     //get all associated Application LBs, Gateway LBs, and Network LBs
     const otherLBs = Stack.of(node).resolve(node.targetGroupArns);
-    if ( (otherLBs != undefined && otherLBs.length > 0) ||
-         (classicLBs != undefined && classicLBs.length > 0) ) {
+    if (
+      (otherLBs != undefined && otherLBs.length > 0) ||
+      (classicLBs != undefined && classicLBs.length > 0)
+    ) {
       const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
       //Did we use ELB health checks?
       if (healthCheckType != undefined) {

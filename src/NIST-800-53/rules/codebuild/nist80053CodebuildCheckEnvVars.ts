@@ -12,17 +12,24 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnProject) {
-
     //Check for the presence of OAUTH
     const environment = Stack.of(node).resolve(node.environment);
-    const environmentVars = Stack.of(node).resolve(environment.environmentVariables);
+    const environmentVars = Stack.of(node).resolve(
+      environment.environmentVariables
+    );
     if (environmentVars != undefined) {
       //For each envvar, check if its a sensitive credential being stored
       for (const envVar of environmentVars) {
-        const resolvedEnvVar=Stack.of(node).resolve(envVar);
-        if (resolvedEnvVar.name == 'AWS_ACCESS_KEY_ID' || resolvedEnvVar.name == 'AWS_SECRET_ACCESS_KEY' ) {
+        const resolvedEnvVar = Stack.of(node).resolve(envVar);
+        if (
+          resolvedEnvVar.name == 'AWS_ACCESS_KEY_ID' ||
+          resolvedEnvVar.name == 'AWS_SECRET_ACCESS_KEY'
+        ) {
           //is this credential being stored as plaintext?
-          if (resolvedEnvVar.type == undefined || resolvedEnvVar.type == 'PLAINTEXT') {
+          if (
+            resolvedEnvVar.type == undefined ||
+            resolvedEnvVar.type == 'PLAINTEXT'
+          ) {
             return false;
           }
         }

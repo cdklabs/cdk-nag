@@ -13,9 +13,14 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
     //Is the encryption at rest property set?
-    const encryptionAtRestOptions = Stack.of(node).resolve(node.encryptionAtRestOptions);
+    const encryptionAtRestOptions = Stack.of(node).resolve(
+      node.encryptionAtRestOptions
+    );
     if (encryptionAtRestOptions != undefined) {
-      if (encryptionAtRestOptions.enabled == undefined || encryptionAtRestOptions.enabled == false) {
+      if (
+        encryptionAtRestOptions.enabled == undefined ||
+        encryptionAtRestOptions.enabled == false
+      ) {
         return false;
       }
     } else {

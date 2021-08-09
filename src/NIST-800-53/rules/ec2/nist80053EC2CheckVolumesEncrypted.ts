@@ -24,7 +24,7 @@ export default function (node: IConstruct): boolean {
  * Helper function to identify if any volume is NOT encrypted
  * @param node the AWS cfn resource to check
  */
-function checkVolumesEncrypted (node: any) {
+function checkVolumesEncrypted(node: any) {
   const ebsMappings = Stack.of(node).resolve(node.blockDeviceMappings);
   //Check if we have any EBS mappings in the first place
   if (ebsMappings != undefined) {

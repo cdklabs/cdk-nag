@@ -12,7 +12,6 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnFunction) {
-
     //Check for a VPC configuration
     const vpcConfig = Stack.of(node).resolve(node.vpcConfig);
     if (vpcConfig == undefined) {
@@ -22,7 +21,7 @@ export default function (node: IConstruct): boolean {
       const subnets = Stack.of(node).resolve(vpcConfig.subnetIds);
       //Does this function exist within at least one VPC security group or subnet?
       if (secgroups == undefined || secgroups.length == 0) {
-        if (subnets == undefined || subnets.length ==0) {
+        if (subnets == undefined || subnets.length == 0) {
           return false;
         }
       }

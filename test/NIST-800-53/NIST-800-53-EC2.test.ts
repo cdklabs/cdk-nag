@@ -23,7 +23,6 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
-
     //Test whether EC2 instances use only encrypted storage volumes
     test('nist80053CheckStorageVolumesEncrypted: - EC2 storage volumes are encrypted - (Control IDs: SC-13, SC-28)', () => {
       //Expect a POSITIVE response because the storage volume is not encrypted
@@ -44,11 +43,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckVolumesEncrypted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckVolumesEncrypted:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -91,12 +91,13 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckVolumesEncrypted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckVolumesEncrypted:'
+            ),
           }),
-        }),
+        })
       );
     });
-
 
     //Test whether VPC security groups only allow authorized ports
     test('nist80053CheckVPCSecurityGroupsAllowOnlyAuthPorts: - VPC security groups only allow authorized ports - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
@@ -117,11 +118,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -164,9 +166,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'
+            ),
           }),
-        }),
+        })
       );
     });
 
@@ -190,9 +194,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group is default and contains an egress rule
@@ -213,11 +219,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -248,9 +255,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'
+            ),
           }),
-        }),
+        })
       );
     });
 
@@ -273,9 +282,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckCommonPortsRestricted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group allows connections from port 21
@@ -295,9 +306,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckCommonPortsRestricted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group allows connections from all ports
@@ -312,9 +325,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckCommonPortsRestricted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group allows port 21 by specifying an IP range including port 21
@@ -335,11 +350,12 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages4).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckCommonPortsRestricted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
           }),
-        }),
+        })
       );
-
 
       //Create stack for negative checks
       const negative = new Stack();
@@ -353,7 +369,8 @@ describe('NIST-800-53 Compute Checks', () => {
 
       //Expect a NEGATIVE response because port 21 is enabled for a specific IP address
       new CfnSecurityGroup(negative, 'rSecurityGroup2', {
-        groupDescription: 'security group with SSH ingress allowed for a specific IP address',
+        groupDescription:
+          'security group with SSH ingress allowed for a specific IP address',
         securityGroupIngress: [
           {
             fromPort: 21,
@@ -365,7 +382,8 @@ describe('NIST-800-53 Compute Checks', () => {
 
       //Expect a NEGATIVE response because port 80 (not a restricted port) is open to the world
       new CfnSecurityGroup(negative, 'rSecurityGroup3', {
-        groupDescription: 'security group with an open-world ingress rule for HTTP traffic',
+        groupDescription:
+          'security group with an open-world ingress rule for HTTP traffic',
         securityGroupIngress: [
           {
             fromPort: 80,
@@ -380,9 +398,11 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-EC2CheckCommonPortsRestricted:'),
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
           }),
-        }),
+        })
       );
     });
 
@@ -407,7 +427,7 @@ describe('NIST-800-53 Compute Checks', () => {
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
           }),
-        }),
+        })
       );
 
       //Expect a POSITIVE response because the security group allows SSH connections from any IPv6 address
