@@ -217,7 +217,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         })
       );
     });
-    test('awsSolutionsRds10: RDS instances and Aurora clusters have deletion protection enabled', () => {
+    test('NIST.800.53-RDSInstanceDeletionProtectionEnabled: RDS instances and Aurora clusters have deletion protection enabled', () => {
         const positive = new Stack();
         Aspects.of(positive).add(new NIST80053Checks());
         new AuroraCluster(positive, 'rDbCluster', {
@@ -230,7 +230,7 @@ describe('NIST 800-53 Compliance Checks', () => {
         expect(messages).toContainEqual(
           expect.objectContaining({
             entry: expect.objectContaining({
-              data: expect.stringContaining('AwsSolutions-RDS10:'),
+              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
             }),
           })
         );
@@ -273,7 +273,69 @@ describe('NIST 800-53 Compliance Checks', () => {
         expect(messages3).not.toContainEqual(
           expect.objectContaining({
             entry: expect.objectContaining({
-              data: expect.stringContaining('AwsSolutions-RDS10:'),
+              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
+            }),
+          })
+        );
+      });
+    });
+    test('NIST.800.53-RDSInstanceDeletionProtectionEnabled: RDS instances and Aurora clusters have deletion protection enabled', () => {
+        const positive = new Stack();
+        Aspects.of(positive).add(new NIST80053Checks());
+        new AuroraCluster(positive, 'rDbCluster', {
+          engine: DatabaseClusterEngine.auroraMysql({
+            version: AuroraMysqlEngineVersion.VER_5_7_12,
+          }),
+          instanceProps: { vpc: new Vpc(positive, 'rVpc') },
+        });
+        const messages = SynthUtils.synthesize(positive).messages;
+        expect(messages).toContainEqual(
+          expect.objectContaining({
+            entry: expect.objectContaining({
+              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
+            }),
+          })
+        );
+        const positive2 = new Stack();
+        Aspects.of(positive2).add(new NIST80053Checks());
+        new RdsInstance(positive2, 'rDbInstance', {
+          engine: DatabaseInstanceEngine.postgres({
+            version: PostgresEngineVersion.VER_13_2,
+          }),
+          vpc: new Vpc(positive2, 'rVpc'),
+          storageEncrypted: false,
+        });
+        const messages2 = SynthUtils.synthesize(positive2).messages;
+        expect(messages2).toContainEqual(
+          expect.objectContaining({
+            entry: expect.objectContaining({
+              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
+            }),
+          })
+        );
+  
+        const negative = new Stack();
+        Aspects.of(negative).add(new NIST80053Checks());
+        const vpc = new Vpc(negative, 'rVpc');
+        new AuroraCluster(negative, 'rDbCluster', {
+          engine: DatabaseClusterEngine.auroraMysql({
+            version: AuroraMysqlEngineVersion.VER_5_7_12,
+          }),
+          instanceProps: { vpc: vpc },
+          storageEncrypted: true,
+        });
+        new RdsInstance(negative, 'rDbInstance', {
+          engine: DatabaseInstanceEngine.postgres({
+            version: PostgresEngineVersion.VER_13_2,
+          }),
+          vpc: vpc,
+          storageEncrypted: true,
+        });
+        const messages3 = SynthUtils.synthesize(negative).messages;
+        expect(messages3).not.toContainEqual(
+          expect.objectContaining({
+            entry: expect.objectContaining({
+              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
             }),
           })
         );
