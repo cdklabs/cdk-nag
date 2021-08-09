@@ -25,6 +25,7 @@ describe('NIST-800-53 Compute Checks', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnLoadBalancerV2(positive, 'newelb', {
+        loadBalancerAttributes: [],
       });
       const messages = SynthUtils.synthesize(positive).messages;
       expect(messages).toContainEqual(
