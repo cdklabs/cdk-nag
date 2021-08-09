@@ -299,8 +299,8 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ElasticacheRedisClusterAutomaticBackup';
       const info =
-        'ElastiCache Redis clusters have not been automatically backed up (Control IDs: CP-9(b), CP-10, and SI-12).';
-      const explanation = 'Automatic backups can help guard against data loss.';
+        'The ElastiCache Redis cluster does not retain automatic backups for at least 15 days (Control IDs: CP-9(b), CP-10, SI-12).';
+      const explanation = 'Automatic backups can help guard against data loss. If a failure occurs, you can create a new cluster, which restores your data from the most recent backup.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

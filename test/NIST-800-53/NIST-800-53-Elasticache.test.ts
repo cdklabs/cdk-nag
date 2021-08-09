@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src/NIST-800-53/nist-800-53';
 
 describe('Amazon Elasticache', () => {
-  test('NIST.800.53-ElasticacheRedisClusterAutomaticBackup: ElastiCache Redis clusters have been automatically backed up', () => {
+  test('NIST.800.53-ElasticacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new CfnCacheCluster(positive, 'rAec', {
@@ -29,6 +29,23 @@ describe('Amazon Elasticache', () => {
       })
     );
 
+    const positive2 = new Stack();
+    Aspects.of(positive2).add(new NIST80053Checks());
+    new CfnReplicationGroup(positive2, 'rAecGroup', {
+      replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      cacheNodeType: 'cache.t3.micro',
+      engine: 'redis'
+    });
+    const messages2 = SynthUtils.synthesize(positive2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-ElasticacheRedisClusterAutomaticBackup:'
+          ),
+        }),
+      })
+    );
     const positive2 = new Stack();
     Aspects.of(positive2).add(new NIST80053Checks());
     new CfnReplicationGroup(positive2, 'rAec', {
@@ -57,8 +74,8 @@ describe('Amazon Elasticache', () => {
       snapshotRetentionLimit: 16,
       port: 42,
     });
-    const messages2 = SynthUtils.synthesize(negative).messages;
-    expect(messages2).not.toContainEqual(
+    const messages3 = SynthUtils.synthesize(negative).messages;
+    expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
