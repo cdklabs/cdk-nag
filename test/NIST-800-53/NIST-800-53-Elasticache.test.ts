@@ -56,6 +56,12 @@ describe('Amazon Elasticache', () => {
       snapshotRetentionLimit: 16,
       port: 42,
     });
+    new CfnReplicationGroup(negative, 'rAecGroup', {
+      replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      cacheNodeType: 'cache.t3.micro',
+      engine: 'redis',
+      snapshotRetentionLimit: 16,
+    });
     const messages3 = SynthUtils.synthesize(negative).messages;
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
@@ -66,24 +72,4 @@ describe('Amazon Elasticache', () => {
         }),
       })
     );
-  });
-
-  const negative2 = new Stack();
-  Aspects.of(negative2).add(new NIST80053Checks());
-  new CfnReplicationGroup(negative2, 'rAec', {
-    cacheNodeType: 'cache.t3.micro',
-    engine: 'redis',
-    snapshotRetentionLimit: 16,
-    replicationGroupDescription: 'lorem ipsum dolor sit amet',
-  });
-  const messages2 = SynthUtils.synthesize(negative2).messages;
-  expect(messages2).not.toContainEqual(
-    expect.objectContaining({
-      entry: expect.objectContaining({
-        data: expect.stringContaining(
-          'NIST.800.53-ElasticacheRedisClusterAutomaticBackup:'
-        ),
-      }),
-    })
-  );
 });
