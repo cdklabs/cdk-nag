@@ -16,8 +16,7 @@ export default function (node: CfnResource): boolean {
     if (engine == 'redis' && (retention == undefined || retention < 15)) {
       return false;
     }
-  }
-  else if (node instanceof CfnReplicationGroup) {
+  } else if (node instanceof CfnReplicationGroup) {
     const retention = node.snapshotRetentionLimit;
     if (retention == undefined || retention < 15) {
       return false;
