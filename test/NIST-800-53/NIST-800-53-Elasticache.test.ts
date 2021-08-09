@@ -31,6 +31,23 @@ describe('Amazon Elasticache', () => {
 
     const positive2 = new Stack();
     Aspects.of(positive2).add(new NIST80053Checks());
+    new CfnReplicationGroup(positive2, 'rAecGroup', {
+      replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      cacheNodeType: 'cache.t3.micro',
+      engine: 'redis'
+    });
+    const messages2 = SynthUtils.synthesize(positive2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-ElasticacheRedisClusterAutomaticBackup:'
+          ),
+        }),
+      })
+    );
+    const positive2 = new Stack();
+    Aspects.of(positive2).add(new NIST80053Checks());
     new CfnReplicationGroup(positive2, 'rAec', {
       cacheNodeType: 'cache.t3.micro',
       engine: 'redis',
