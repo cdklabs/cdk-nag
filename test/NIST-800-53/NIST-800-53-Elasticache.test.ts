@@ -74,7 +74,7 @@ describe('Amazon Elasticache', () => {
       snapshotRetentionLimit: 16,
       port: 42,
     });
-    const messages2 = SynthUtils.synthesize(negative).messages;
+    const messages3 = SynthUtils.synthesize(negative).messages;
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
