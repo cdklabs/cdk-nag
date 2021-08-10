@@ -7,7 +7,7 @@ import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Codebuild projects DO NOT store AWS credentails as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))
+ * Codebuild projects DO NOT store AWS credentials as plaintext environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

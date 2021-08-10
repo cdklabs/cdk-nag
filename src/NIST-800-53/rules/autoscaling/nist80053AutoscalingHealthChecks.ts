@@ -7,7 +7,7 @@ import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Autoscaling groups utilize ELB health checks - (Control IDs: SC-5)
+ * Auto Scaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
@@ -21,7 +21,7 @@ export default function (node: IConstruct): boolean {
       (classicLBs != undefined && classicLBs.length > 0)
     ) {
       const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
-      //Did we use ELB health checks?
+      //Do we use ELB health checks?
       if (healthCheckType != undefined) {
         if (healthCheckType != 'ELB') {
           return false;

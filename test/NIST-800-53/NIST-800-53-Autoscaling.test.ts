@@ -10,8 +10,10 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Autoscaling', () => {
+    
     //Test whether Autoscaling groups associated with a load balancer utilize ELB health checks
     test('nist80053AutoscalingHealthChecks: - Autoscaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)', () => {
+      
       //Expect a POSITIVE response because a classic LB is defined and health checks are not specified
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());

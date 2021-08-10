@@ -10,7 +10,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 const allowedPorts = [80];
 
 /**
- * VPC Security Groups allow only authorized ports - (AC-4, SC-7, SC-7(3)).
+ * VPC Security Groups have only authorized ports unrestricted- (AC-4, SC-7, SC-7(3)).
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */
