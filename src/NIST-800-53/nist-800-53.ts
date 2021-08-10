@@ -156,7 +156,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CloudTrailEncryptionEnabled';
       const info =
-        'The trail  does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
+        'The trail does not have a KMS key ID or have encryption enabled - (Control ID: AU-9).';
       const explanation =
         'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
       Annotations.of(node).addError(
