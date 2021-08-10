@@ -211,6 +211,16 @@ Rules from the AWS NIST 800-53 Conformance Pack which could not be implemented.
 | [secretsmanager-scheduled-rotation-success-check](https://docs.aws.amazon.com/config/latest/developerguide/secretsmanager-scheduled-rotation-success-check.html) | AWS Secrets Manager secret rotation has triggered/started successfully as per the configured rotation schedule.                                                      | AC-2(1), AC-2(j)                                   |
 | [vpc-flow-logs-enabled](https://docs.aws.amazon.com/config/latest/developerguide/vpc-flow-logs-enabled.html)                                                     | Amazon Virtual Private Cloud flow logs are found and enabled for Amazon VPC.                                                                                         | AU-2(a)(d), AU-3, AU-12(a)(c)                      |
 | [wafv2-logging-enabled](https://docs.aws.amazon.com/config/latest/developerguide/wafv2-logging-enabled.html)                                                     | Logging is enabled on AWS Web Application Firewall (WAFV2) regional and global web access control list (ACLs).                                                       | AU-2(a)(d), AU-3, AU-12(a)(c), SC-7, SI-4(a)(b)(c) |
+| [ec2-volume-inuse-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-volume-inuse-check.html)                                                     | When an instances is terminated, its associated EBS volumes are marked for deletion                                                       | CM-2, SC-4 |
+| [vpc-vpn-2-tunnels-up](https://docs.aws.amazon.com/config/latest/developerguide/vpc-vpn-2-tunnels-up.html)                                                     | At least two redundant Site-to-Site VPN tunnels are implemented                                                       | CP-10 |
+| [ec2-ebs-encryption-by-default](https://docs.aws.amazon.com/config/latest/developerguide/ec2-ebs-encryption-by-default.html)                                                     | EBS volumes attached to EC2 instances are set to be encrypted by default.                                                      | SC-28 |
+| [ec2-stopped-instance](https://docs.aws.amazon.com/config/latest/developerguide/ec2-stopped-instance.html)                                                     | EC2 instances have not been stopped for more than the allowed number of days                                                      | CM-2 |
+| [ec2-managedinstance-association-compliance-status-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-association-compliance-status-check.html)                                                     | Managed EC2 instances are compliant with their association's standards.                                                      | CM-2, CM-7(a), CM-8(3)(a), SI-2(2) |
+| [ec2-managedinstance-patch-compliance-status-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-patch-compliance-status-check.html)                                                     | EC2 instances are compliant with their patch requirements.                                                     | SI-7(1), SI-2(2), CM-8(3)(a) |
+
+
+
+
 
 ## Footnotes
 
