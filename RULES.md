@@ -217,10 +217,8 @@ Rules from the AWS NIST 800-53 Conformance Pack which could not be implemented.
 | [ec2-stopped-instance](https://docs.aws.amazon.com/config/latest/developerguide/ec2-stopped-instance.html)                                                     | EC2 instances have not been stopped for more than the allowed number of days                                                      | CM-2 |
 | [ec2-managedinstance-association-compliance-status-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-association-compliance-status-check.html)                                                     | Managed EC2 instances are compliant with their association's standards.                                                      | CM-2, CM-7(a), CM-8(3)(a), SI-2(2) |
 | [ec2-managedinstance-patch-compliance-status-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-patch-compliance-status-check.html)                                                     | EC2 instances are compliant with their patch requirements.                                                     | SI-7(1), SI-2(2), CM-8(3)(a) |
-
-
-
-
+| [ec2-managedinstance-patch-compliance-status-check](https://docs.aws.amazon.com/config/latest/developerguide/ec2-managedinstance-patch-compliance-status-check.html)                                                     | EC2 instances are compliant with their patch requirements.                                                     | SI-7(1), SI-2(2), CM-8(3)(a) |
+| [lambda-function-public-access-prohibited](https://docs.aws.amazon.com/config/latest/developerguide/lambda-function-public-access-prohibited.html)                                                     | Public access to lambda functions is prohibited                                                     | AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3) |
 
 ## Footnotes
 
