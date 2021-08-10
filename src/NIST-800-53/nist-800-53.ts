@@ -332,10 +332,10 @@ export class NIST80053Checks extends NagPack {
     }
 
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-nist80053ELBLoggingEnabled') &&
+      !this.ignoreRule(ignores, 'NIST.800.53-ELBLoggingEnabled') &&
       !nist80053ELBLoggingEnabled(node)
     ) {
-      const ruleId = 'NIST.800.53-nist80053ELBLoggingEnabled';
+      const ruleId = 'NIST.800.53-ELBLoggingEnabled';
       const info =
         'The Elastic Load Balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =
@@ -346,10 +346,10 @@ export class NIST80053Checks extends NagPack {
     }
 
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-nist80053ALBLoggingEnabled') &&
+      !this.ignoreRule(ignores, 'NIST.800.53-ALBLoggingEnabled') &&
       !nist80053ALBLoggingEnabled(node)
     ) {
-      const ruleId = 'NIST.800.53-nist80053ALBLoggingEnabled';
+      const ruleId = 'NIST.800.53-ALBLoggingEnabled';
       const info =
         'The Application Load Balancer does not have logging enabled - (Control ID: AU-2(a)(d)).';
       const explanation =

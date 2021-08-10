@@ -153,7 +153,7 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       );
     });
 
-    test('NIST.800.53-nist80053ALBLoggingEnabled: Application Load Balancers have logging enabled', () => {
+    test('NIST.800.53-ALBLoggingEnabled: Application Load Balancers have logging enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       const alb2 = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
@@ -168,9 +168,7 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-nist80053ALBLoggingEnabled:'
-            ),
+            data: expect.stringContaining('NIST.800.53-ALBLoggingEnabled:'),
           }),
         })
       );
@@ -186,15 +184,13 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-nist80053ALBLoggingEnabled:'
-            ),
+            data: expect.stringContaining('NIST.800.53-ALBLoggingEnabled:'),
           }),
         })
       );
     });
 
-    test('NIST.800.53-nist80053ELBLoggingEnabled: Elastic Load Balancers have logging enabled', () => {
+    test('NIST.800.53-ELBLoggingEnabled: Elastic Load Balancers have logging enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       new LoadBalancer(nonCompliant, 'rELB', {
@@ -208,9 +204,7 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-nist80053ELBLoggingEnabled:'
-            ),
+            data: expect.stringContaining('NIST.800.53-ELBLoggingEnabled:'),
           }),
         })
       );
@@ -227,9 +221,7 @@ describe('NIST 800-53 Elastic Load Balancer Compliance Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-nist80053ELBLoggingEnabled:'
-            ),
+            data: expect.stringContaining('NIST.800.53-ELBLoggingEnabled:'),
           }),
         })
       );
