@@ -312,7 +312,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
       const info =
-        'The EC2 machine does not restrict all common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
+        'The EC2 machine does not restrict all common ports (by default these ports include port numbers 20, 21, 3389, 3309, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
       const explanation =
         'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
       Annotations.of(node).addError(
@@ -328,7 +328,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
       const info =
-        'The VPC Security Group has unrestricted ports which are not authorized - (Control IDs: AC-4, SC-7, SC-7(3).';
+        'The VPC Security Group has unrestricted ports which are not authorized (by default only port 80 is authorized) - (Control IDs: AC-4, SC-7, SC-7(3).';
       const explanation =
         'Not restricting access on ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, only port number 80 is allowed unrestricted access.';
       Annotations.of(node).addError(
