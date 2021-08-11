@@ -6,7 +6,6 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
-  CfnDBCluster as CfnAuroraCluster,
   CfnDBInstance,
   DatabaseCluster as AuroraCluster,
   DatabaseClusterEngine,
@@ -219,319 +218,331 @@ describe('NIST 800-53 Compliance Checks', () => {
       );
     });
     test('NIST.800.53-RDSInstanceDeletionProtectionEnabled: RDS instances and Aurora clusters have deletion protection enabled', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        new AuroraCluster(positive, 'rDbCluster', {
-          engine: DatabaseClusterEngine.auroraMysql({
-            version: AuroraMysqlEngineVersion.VER_5_7_12,
-          }),
-          instanceProps: { vpc: new Vpc(positive, 'rVpc') },
-        });
-        const messages = SynthUtils.synthesize(positive).messages;
-        expect(messages).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
-            }),
-          })
-        );
-        const positive2 = new Stack();
-        Aspects.of(positive2).add(new NIST80053Checks());
-        new RdsInstance(positive2, 'rDbInstance', {
-          engine: DatabaseInstanceEngine.postgres({
-            version: PostgresEngineVersion.VER_13_2,
-          }),
-          vpc: new Vpc(positive2, 'rVpc'),
-          deletionProtection: false,
-        });
-        const messages2 = SynthUtils.synthesize(positive2).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
-            }),
-          })
-        );
-  
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        const vpc = new Vpc(negative, 'rVpc');
-        new AuroraCluster(negative, 'rDbCluster', {
-          engine: DatabaseClusterEngine.auroraMysql({
-            version: AuroraMysqlEngineVersion.VER_5_7_12,
-          }),
-          instanceProps: { vpc: vpc },
-          deletionProtection: true,
-        });
-        new RdsInstance(negative, 'rDbInstance', {
-          engine: DatabaseInstanceEngine.postgres({
-            version: PostgresEngineVersion.VER_13_2,
-          }),
-          vpc: vpc,
-          deletionProtection: true,
-        });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
-            }),
-          })
-        );
+      const positive = new Stack();
+      Aspects.of(positive).add(new NIST80053Checks());
+      new AuroraCluster(positive, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
+        }),
+        instanceProps: { vpc: new Vpc(positive, 'rVpc') },
       });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-RDSInstanceDeletionProtectionEnabled:'
+            ),
+          }),
+        })
+      );
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new NIST80053Checks());
+      new RdsInstance(positive2, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
+        }),
+        vpc: new Vpc(positive2, 'rVpc'),
+        deletionProtection: false,
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-RDSInstanceDeletionProtectionEnabled:'
+            ),
+          }),
+        })
+      );
+
+      const negative = new Stack();
+      Aspects.of(negative).add(new NIST80053Checks());
+      const vpc = new Vpc(negative, 'rVpc');
+      new AuroraCluster(negative, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
+        }),
+        instanceProps: { vpc: vpc },
+        deletionProtection: true,
+      });
+      new RdsInstance(negative, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
+        }),
+        vpc: vpc,
+        deletionProtection: true,
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-RDSInstanceDeletionProtectionEnabled:'
+            ),
+          }),
+        })
+      );
     });
-    test('NIST.800.53-RDSStorageEncrypted: RDS instances and Aurora clusters have storage encrypted', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        new AuroraCluster(positive, 'rDbCluster', {
-          engine: DatabaseClusterEngine.auroraMysql({
-            version: AuroraMysqlEngineVersion.VER_5_7_12,
-          }),
-          instanceProps: { vpc: new Vpc(positive, 'rVpc') },
-          storageEncrypted: false,
-        });
-        const messages = SynthUtils.synthesize(positive).messages;
-        expect(messages).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSStorageEncrypted:'),
-            }),
-          })
-        );
-        const positive2 = new Stack();
-        Aspects.of(positive2).add(new NIST80053Checks());
-        new RdsInstance(positive2, 'rDbInstance', {
-          engine: DatabaseInstanceEngine.postgres({
-            version: PostgresEngineVersion.VER_13_2,
-          }),
-          vpc: new Vpc(positive2, 'rVpc'),
-          storageEncrypted: false,
-        });
-        const messages2 = SynthUtils.synthesize(positive2).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSStorageEncrypted:'),
-            }),
-          })
-        );
-  
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        const vpc = new Vpc(negative, 'rVpc');
-        new AuroraCluster(negative, 'rDbCluster', {
-          engine: DatabaseClusterEngine.auroraMysql({
-            version: AuroraMysqlEngineVersion.VER_5_7_12,
-          }),
-          instanceProps: { vpc: vpc },
-          storageEncrypted: true,
-        });
-        new RdsInstance(negative, 'rDbInstance', {
-          engine: DatabaseInstanceEngine.postgres({
-            version: PostgresEngineVersion.VER_13_2,
-          }),
-          vpc: vpc,
-          storageEncrypted: true,
-        });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSStorageEncrypted:'),
-            }),
-          })
-        );
-      });
+  });
+  test('NIST.800.53-RDSStorageEncrypted: RDS instances and Aurora clusters have storage encrypted', () => {
+    const positive = new Stack();
+    Aspects.of(positive).add(new NIST80053Checks());
+    new AuroraCluster(positive, 'rDbCluster', {
+      engine: DatabaseClusterEngine.auroraMysql({
+        version: AuroraMysqlEngineVersion.VER_5_7_12,
+      }),
+      instanceProps: { vpc: new Vpc(positive, 'rVpc') },
+      storageEncrypted: false,
     });
+    const messages = SynthUtils.synthesize(positive).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53-RDSStorageEncrypted:'),
+        }),
+      })
+    );
+    const positive2 = new Stack();
+    Aspects.of(positive2).add(new NIST80053Checks());
+    new RdsInstance(positive2, 'rDbInstance', {
+      engine: DatabaseInstanceEngine.postgres({
+        version: PostgresEngineVersion.VER_13_2,
+      }),
+      vpc: new Vpc(positive2, 'rVpc'),
+      storageEncrypted: false,
+    });
+    const messages2 = SynthUtils.synthesize(positive2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53-RDSStorageEncrypted:'),
+        }),
+      })
+    );
 
-    test('NIST.800.53-RDSEnhancedMonitoring: RDS instances and Aurora clusters have deletion protection enabled', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        new CfnDBInstance(positive, 'rDbInstance', {
-          dbInstanceClass: 'db.t3.micro',
-          monitoringInterval: 0
-        });
-        const messages2 = SynthUtils.synthesize(positive).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
-            }),
-          })
-        );
-  
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        new CfnDBInstance(negative, 'rDbInstance', {
-            dbInstanceClass: 'db.t3.micro',
-            monitoringInterval: 15
-        });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstanceDeletionProtectionEnabled:'),
-            }),
-          })
-        );
-      });
-    
-      test('NIST.800.53-RDSEnhancedMonitoring: RDS instances have enhanced monitoring enabled', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        new CfnDBInstance(positive, 'rDbInstance', {
-          dbInstanceClass: 'db.t3.micro',
-          monitoringInterval: 0
-        });
-        const messages2 = SynthUtils.synthesize(positive).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSEnhancedMonitoringEnabled:'),
-            }),
-          })
-        );
-  
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        new CfnDBInstance(negative, 'rDbInstance', {
-            dbInstanceClass: 'db.t3.micro',
-            monitoringInterval: 15
-        });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSEnhancedMonitoringEnabled:'),
-            }),
-          })
-        );
-      });
+    const negative = new Stack();
+    Aspects.of(negative).add(new NIST80053Checks());
+    const vpc = new Vpc(negative, 'rVpc');
+    new AuroraCluster(negative, 'rDbCluster', {
+      engine: DatabaseClusterEngine.auroraMysql({
+        version: AuroraMysqlEngineVersion.VER_5_7_12,
+      }),
+      instanceProps: { vpc: vpc },
+      storageEncrypted: true,
+    });
+    new RdsInstance(negative, 'rDbInstance', {
+      engine: DatabaseInstanceEngine.postgres({
+        version: PostgresEngineVersion.VER_13_2,
+      }),
+      vpc: vpc,
+      storageEncrypted: true,
+    });
+    const messages3 = SynthUtils.synthesize(negative).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53-RDSStorageEncrypted:'),
+        }),
+      })
+    );
+  });
+});
 
-      test('NIST.800.53-RDSInstanceMultiAzSupport: RDS instances have multi-AZ support', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        const vpc = new Vpc(positive, 'rVpc');
-        new RdsInstance(positive, 'rDbInstance', {
-            engine: DatabaseInstanceEngine.postgres({
-              version: PostgresEngineVersion.VER_13_2,
-            }),
-            vpc: vpc,
-            multiAz: false,
-          });
-        const messages2 = SynthUtils.synthesize(positive).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstanceMultiAzSupport:'),
-            }),
-          })
-        );
-  
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        const vpc2 = new Vpc(negative, 'rVpc');
-        new RdsInstance(negative, 'rDbInstance', {
-            engine: DatabaseInstanceEngine.postgres({
-              version: PostgresEngineVersion.VER_13_2,
-            }),
-            vpc: vpc2,
-            multiAz: true,
-          });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSMultiAzSupport:'),
-            }),
-          })
-        );
-      });
+test('NIST.800.53-RDSEnhancedMonitoring: RDS instances have enhanced monitoring enabled', () => {
+  const positive = new Stack();
+  Aspects.of(positive).add(new NIST80053Checks());
+  new CfnDBInstance(positive, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+    monitoringInterval: 0,
+  });
+  const messages2 = SynthUtils.synthesize(positive).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'NIST.800.53-RDSEnhancedMonitoringEnabled:'
+        ),
+      }),
+    })
+  );
 
-      test('NIST.800.53-DBInstanceBackupEnabled: DB instances have backups enabled', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        new CfnDBInstance(positive, 'rDbInstance', {
-            dbInstanceClass: 'db.t3.micro',
-        });
-        const messages2 = SynthUtils.synthesize(positive).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
-            }),
-          })
-        );
-  
-        const positive2 = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        new CfnDBInstance(positive, 'rDbInstance', {
-            dbInstanceClass: 'db.t3.micro',
-            backupRetentionPeriod: 0,
-        });
-        const messages4 = SynthUtils.synthesize(positive).messages;
-        expect(messages4).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
-            }),
-          })
-        );
+  const negative = new Stack();
+  Aspects.of(negative).add(new NIST80053Checks());
+  new CfnDBInstance(negative, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+    monitoringInterval: 15,
+  });
+  const messages3 = SynthUtils.synthesize(negative).messages;
+  expect(messages3).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'NIST.800.53-RDSEnhancedMonitoringEnabled:'
+        ),
+      }),
+    })
+  );
+});
 
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        new CfnDBInstance(negative, 'rDbInstance', {
-            dbInstanceClass: 'db.t3.micro',
-            backupRetentionPeriod: 15
-        });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
-            }),
-          })
-        );
-      });
+test('NIST.800.53-RDSEnhancedMonitoring: RDS instances have enhanced monitoring enabled', () => {
+  const positive = new Stack();
+  Aspects.of(positive).add(new NIST80053Checks());
+  new CfnDBInstance(positive, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+    monitoringInterval: 0,
+  });
+  const messages2 = SynthUtils.synthesize(positive).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'NIST.800.53-RDSEnhancedMonitoringEnabled:'
+        ),
+      }),
+    })
+  );
 
-      test('NIST.800.53-RDSInstancePublicAccess: RDS instances do not allow public access', () => {
-        const positive = new Stack();
-        Aspects.of(positive).add(new NIST80053Checks());
-        const vpc = new Vpc(positive, 'rVpc');
-        new RdsInstance(positive, 'rDbInstance', {
-            engine: DatabaseInstanceEngine.postgres({
-              version: PostgresEngineVersion.VER_13_2,
-            }),
-            vpc: vpc,
-            publiclyAccessible: true,
-          });
-        const messages2 = SynthUtils.synthesize(positive).messages;
-        expect(messages2).toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstancePublicAccess:'),
-            }),
-          })
-        );
-  
-        const negative = new Stack();
-        Aspects.of(negative).add(new NIST80053Checks());
-        const vpc2 = new Vpc(negative, 'rVpc');
-        new RdsInstance(negative, 'rDbInstance', {
-            engine: DatabaseInstanceEngine.postgres({
-              version: PostgresEngineVersion.VER_13_2,
-            }),
-            vpc: vpc2,
-            publiclyAccessible: false,
-        });
-        const messages3 = SynthUtils.synthesize(negative).messages;
-        expect(messages3).not.toContainEqual(
-          expect.objectContaining({
-            entry: expect.objectContaining({
-              data: expect.stringContaining('NIST.800.53-RDSInstancePublicAccess:'),
-            }),
-          })
-        );
-      });
-      
+  const negative = new Stack();
+  Aspects.of(negative).add(new NIST80053Checks());
+  new CfnDBInstance(negative, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+    monitoringInterval: 15,
+  });
+  const messages3 = SynthUtils.synthesize(negative).messages;
+  expect(messages3).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'NIST.800.53-RDSEnhancedMonitoringEnabled:'
+        ),
+      }),
+    })
+  );
+});
 
+test('NIST.800.53-RDSInstanceMultiAzSupport: RDS instances have multi-AZ support', () => {
+  const positive = new Stack();
+  Aspects.of(positive).add(new NIST80053Checks());
+  const vpc = new Vpc(positive, 'rVpc');
+  new RdsInstance(positive, 'rDbInstance', {
+    engine: DatabaseInstanceEngine.postgres({
+      version: PostgresEngineVersion.VER_13_2,
+    }),
+    vpc: vpc,
+    multiAz: false,
+  });
+  const messages2 = SynthUtils.synthesize(positive).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-RDSInstanceMultiAzSupport:'),
+      }),
+    })
+  );
+
+  const negative = new Stack();
+  Aspects.of(negative).add(new NIST80053Checks());
+  const vpc2 = new Vpc(negative, 'rVpc');
+  new RdsInstance(negative, 'rDbInstance', {
+    engine: DatabaseInstanceEngine.postgres({
+      version: PostgresEngineVersion.VER_13_2,
+    }),
+    vpc: vpc2,
+    multiAz: true,
+  });
+  const messages3 = SynthUtils.synthesize(negative).messages;
+  expect(messages3).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-RDSInstanceMultiAzSupport:'),
+      }),
+    })
+  );
+});
+
+test('NIST.800.53-DBInstanceBackupEnabled: DB instances have backups enabled', () => {
+  const positive = new Stack();
+  Aspects.of(positive).add(new NIST80053Checks());
+  new CfnDBInstance(positive, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+  });
+  const messages2 = SynthUtils.synthesize(positive).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
+      }),
+    })
+  );
+
+  const positive2 = new Stack();
+  Aspects.of(positive2).add(new NIST80053Checks());
+  new CfnDBInstance(positive2, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+    backupRetentionPeriod: 0,
+  });
+  const messages4 = SynthUtils.synthesize(positive2).messages;
+  expect(messages4).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
+      }),
+    })
+  );
+
+  const negative = new Stack();
+  Aspects.of(negative).add(new NIST80053Checks());
+  new CfnDBInstance(negative, 'rDbInstance', {
+    dbInstanceClass: 'db.t3.micro',
+    backupRetentionPeriod: 15,
+  });
+  const messages3 = SynthUtils.synthesize(negative).messages;
+  expect(messages3).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
+      }),
+    })
+  );
+});
+
+test('NIST.800.53-RDSInstancePublicAccess: RDS instances do not allow public access', () => {
+  const positive = new Stack();
+  Aspects.of(positive).add(new NIST80053Checks());
+  const vpc = new Vpc(positive, 'rVpc');
+  new RdsInstance(positive, 'rDbInstance', {
+    engine: DatabaseInstanceEngine.postgres({
+      version: PostgresEngineVersion.VER_13_2,
+    }),
+    vpc: vpc,
+    publiclyAccessible: true,
+  });
+  const messages2 = SynthUtils.synthesize(positive).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-RDSInstancePublicAccess:'),
+      }),
+    })
+  );
+
+  const negative = new Stack();
+  Aspects.of(negative).add(new NIST80053Checks());
+  const vpc2 = new Vpc(negative, 'rVpc');
+  new RdsInstance(negative, 'rDbInstance', {
+    engine: DatabaseInstanceEngine.postgres({
+      version: PostgresEngineVersion.VER_13_2,
+    }),
+    vpc: vpc2,
+    publiclyAccessible: false,
+  });
+  const messages3 = SynthUtils.synthesize(negative).messages;
+  expect(messages3).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining('NIST.800.53-RDSInstancePublicAccess:'),
+      }),
+    })
+  );
+});

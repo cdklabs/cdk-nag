@@ -15,7 +15,7 @@ export default function (node: CfnResource): boolean {
       return false;
     }
     const deletionProtection = Stack.of(node).resolve(node.deletionProtection);
-    if (deletionProtection == false) {
+    if (deletionProtection === false) {
       return false;
     }
     return true;

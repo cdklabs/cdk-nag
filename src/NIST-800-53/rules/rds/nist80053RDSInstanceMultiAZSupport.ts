@@ -11,9 +11,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBInstance) {
-    const multiAz = Stack.of(node).resolve(
-      node.multiAz
-    );
+    const multiAz = Stack.of(node).resolve(node.multiAz);
     if (!multiAz) {
       return false;
     }

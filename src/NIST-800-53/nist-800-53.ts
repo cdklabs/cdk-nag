@@ -37,14 +37,14 @@ import {
   nist80053IamPolicyNoStatementsWithAdminAccess,
   nist80053IamUserNoPolicies,
 } from './rules/iam';
-import { 
+import {
   nist80053RDSLoggingEnabled,
   nist80053RDSEnhancedMonitoringEnabled,
   nist80053RDSInstanceDeletionProtectionEnabled,
   nist80053RDSInstanceMultiAZSupport,
   nist80053RDSInstancePublicAccess,
   nist80053RDSStorageEncrypted,
-  nist80053DBInstanceBackupEnabled, 
+  nist80053DBInstanceBackupEnabled,
 } from './rules/rds';
 import {
   nist80053RedshiftClusterConfiguration,
@@ -556,7 +556,10 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstanceDeletionProtectionEnabled') &&
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-RDSInstanceDeletionProtectionEnabled'
+      ) &&
       !nist80053RDSInstanceDeletionProtectionEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-RDSInstanceDeletionProtectionEnabled';
@@ -569,10 +572,10 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstanceMultiAZSupport') &&
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstanceMultiAzSupport') &&
       !nist80053RDSInstanceMultiAZSupport(node)
     ) {
-      const ruleId = 'NIST.800.53-RDSInstanceMultiAZSupport';
+      const ruleId = 'NIST.800.53-RDSInstanceMultiAzSupport';
       const info =
         'The RDS DB Instance does not have multi-AZ support - (Control IDs: CP-10, SC-5, SC-36).';
       const explanation =
@@ -596,13 +599,13 @@ export class NIST80053Checks extends NagPack {
     }
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-RDSStorageEncrypted') &&
-      !nist80053RDSInstancePublicAccess(node)
+      !nist80053RDSStorageEncrypted(node)
     ) {
       const ruleId = 'NIST.800.53-RDSStorageEncrypted';
       const info =
-        'The RDS DB Instance does not have CloudWatch logging enabled - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+        'RDS does not have storage encrypted - (Control IDs: SC-13, SC-28).';
       const explanation =
-        'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
+        'Because sensitive data can exist at rest in Amazon RDS instances, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

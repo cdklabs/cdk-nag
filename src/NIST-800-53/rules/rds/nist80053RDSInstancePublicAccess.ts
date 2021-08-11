@@ -10,11 +10,9 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
-   if (node instanceof CfnDBInstance) {
+  if (node instanceof CfnDBInstance) {
     const publicAccess = Stack.of(node).resolve(node.publiclyAccessible);
-    if (
-      publicAccess === true || publicAccess == undefined
-    ) {
+    if (publicAccess === true || publicAccess == undefined) {
       return false;
     }
     return true;
