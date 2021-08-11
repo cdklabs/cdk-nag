@@ -11,10 +11,8 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Sagemaker', () => {
-    
     //Test whether Sagemaker endpoints are encrypted with a KMS key
     test('NIST.800.53-SagemakerEndpointKMS: SageMaker endpoints use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
-      
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnEndpointConfig(positive, 'badendpoint', {
@@ -48,7 +46,6 @@ describe('NIST-800-53 Compute Checks', () => {
     //Test whether Sagemaker notebooks are encrypted with a KMS key
     //These tests taken from AWS Solutions tests for rule "SM2"
     test('NIST.800.53-SagemakerNotebookKMS: SageMaker notebooks use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
-      
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {

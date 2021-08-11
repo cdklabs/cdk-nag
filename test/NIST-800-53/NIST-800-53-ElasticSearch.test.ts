@@ -10,10 +10,8 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon ElasticSearch', () => {
-    
     //Test whether ElasticSearch domains are node-to-node encrypted
     test('nist80053ElasticSearchNodeToNodeEncrypted: - ElasticSearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
-      
       //Expect a POSITIVE response because node-to-node encryption isnt set
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -74,7 +72,6 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether ElasticSearch domains are running within a VPC
     test('nist80053ElasticSearchRunningWithinVPC: - ElasticSearch domains are running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
-      
       //Expect a POSITIVE response because vpc options aren't defined
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());

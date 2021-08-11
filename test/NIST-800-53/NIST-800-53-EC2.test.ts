@@ -23,10 +23,8 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
-    
     //Test whether EC2 instances use only encrypted storage volumes
     test('nist80053CheckStorageVolumesEncrypted: - EC2 storage volumes are encrypted - (Control IDs: SC-13, SC-28)', () => {
-     
       //Expect a POSITIVE response because the storage volume is not encrypted
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -89,7 +87,6 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether VPC security groups only allow authorized ports
     test('nist80053CheckVPCSecurityGroupsAllowOnlyAuthPorts: - VPC security groups only allow authorized ports - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
-      
       //Expect a POSITIVE response because port 20 is not on the list of allowed ports
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -165,7 +162,6 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether the default VPC security group is closed
     test('nist80053CheckDefaultSecurityGroupClosed: - Default VPC security group is closed - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
-      
       //Expect a POSITIVE response because the security group is default and contains an ingress rule
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -255,7 +251,6 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether common ports are restricted
     test('nist80053EC2CheckCommonPortsRestricted: - EC2 instances restrict common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3))', () => {
-      
       //Expect a POSITIVE response because the security group allows connections from port 20
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());

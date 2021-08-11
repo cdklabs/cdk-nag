@@ -5,28 +5,26 @@ SPDX-License-Identifier: Apache-2.0
 
 import { SynthUtils } from '@aws-cdk/assert';
 import { Vpc } from '@aws-cdk/aws-ec2';
-import { Bucket } from '@aws-cdk/aws-s3';
 import {
   CfnLoadBalancer,
   LoadBalancer,
   LoadBalancingProtocol,
 } from '@aws-cdk/aws-elasticloadbalancing';
-import { CfnLoadBalancer as CfnLoadBalancerV2 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import {
   ApplicationLoadBalancer,
   ApplicationListener,
   ListenerAction,
   ApplicationProtocol,
+  CfnLoadBalancer as CfnLoadBalancerV2,
 } from '@aws-cdk/aws-elasticloadbalancingv2';
+import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon ELB', () => {
-
     //Test whether ELBs have deletion protection enabled
     test('nist80053ELBDeletionProtectionEnabled: - ELBs have deletion protection enabled - (Control IDs: CM-2, CP-10)', () => {
-      
       //Expect a POSITIVE response because deletion protection is not set
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -272,7 +270,6 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether ELBs use ACM certs
     test('nist80053ELBUseACMCerts: - ELBs use ACM certificates - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13)', () => {
-      
       //Expect a POSITIVE response because the ELB listener does not use an ACM certificate
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -347,7 +344,6 @@ describe('NIST-800-53 Compute Checks', () => {
         })
       );
     });
-
 
     test('NIST.800.53-ALBHttpDropInvalidHeaderEnabled: Load balancers have invalid http header dropping enabled', () => {
       const nonCompliant = new Stack(undefined, undefined, {
@@ -556,9 +552,6 @@ describe('NIST-800-53 Compute Checks', () => {
           }),
         })
       );
-
-
-  
     });
   });
 });
