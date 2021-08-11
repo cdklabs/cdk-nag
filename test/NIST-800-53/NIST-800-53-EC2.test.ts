@@ -111,6 +111,30 @@ describe('NIST-800-53 Compute Checks', () => {
         })
       );
 
+      //Expect a POSITIVE response because the rule specifies all protocols should allow unrestricted port 20 access
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new NIST80053Checks());
+      new CfnSecurityGroup(positive2, 'rSecurityGroup', {
+        groupDescription: 'open default security group',
+        securityGroupIngress: [
+          {
+            fromPort: 20,
+            ipProtocol: '-1',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts:'
+            ),
+          }),
+        })
+      );
+
       //Create stack for negative checks
       const negative = new Stack();
       Aspects.of(negative).add(new NIST80053Checks());
@@ -143,6 +167,19 @@ describe('NIST-800-53 Compute Checks', () => {
             fromPort: 21,
             ipProtocol: 'tcp',
             cidrIp: '72.21.210.165',
+          },
+        ],
+      });
+
+      //Expect a NEGATIVE response because the rule only applies to UDP traffic
+      new CfnSecurityGroup(negative, 'rSecurityGroup4', {
+        groupDescription: 'unrestricted security group',
+        groupName: 'mycoolsecuritygroup',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'udp',
+            cidrIp: '0.0.0.0/0',
           },
         ],
       });
@@ -284,7 +321,7 @@ describe('NIST-800-53 Compute Checks', () => {
           {
             fromPort: 21,
             ipProtocol: 'tcp',
-            cidrIpv6: '::/0',
+            cidrIp: '0.0.0.0/0',
           },
         ],
       });
@@ -328,7 +365,7 @@ describe('NIST-800-53 Compute Checks', () => {
             fromPort: 1,
             toPort: 10000,
             ipProtocol: 'tcp',
-            cidrIpv6: '::/0',
+            cidrIp: '0.0.0.0/0',
           },
         ],
       });
@@ -374,6 +411,18 @@ describe('NIST-800-53 Compute Checks', () => {
           {
             fromPort: 80,
             ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+
+      //Expect a NEGATIVE response because port 21 is unrestricted for UDP traffic (not TCP)
+      new CfnSecurityGroup(negative, 'rSecurityGroup4', {
+        groupDescription: 'security group allowing unrestricted udp traffic',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'udp',
             cidrIp: '0.0.0.0/0',
           },
         ],
