@@ -18,7 +18,7 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST 800-53 Compliance Checks', () => {
   describe('Amazon Relational Database Service (RDS)', () => {
-    test('NIST.800.53-RDSLoggingEnabled: RDS Database Instances have all CloudWatch logging exports enabled', () => {
+    test('NIST.800.53-RDSLoggingEnabled: RDS Instances have all CloudWatch logging exports enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new NIST80053Checks());
       new DatabaseInstance(nonCompliant, 'rDbInstance', {
