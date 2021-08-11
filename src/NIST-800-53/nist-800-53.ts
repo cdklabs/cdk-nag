@@ -16,8 +16,8 @@ import {
   nist80053CloudTrailEncryptionEnabled,
 } from './rules/cloudtrail/index';
 import {
-  nist80053CodebuildCheckEnvVars,
-  nist80053CodebuildURLCheck,
+  nist80053CodeBuildCheckEnvVars,
+  nist80053CodeBuildURLCheck,
 } from './rules/codebuild';
 import { nist80053DMSReplicationNotPublic } from './rules/dms';
 import { nist80053DynamoDBPITREnabled } from './rules/dynamodb';
@@ -34,9 +34,9 @@ import {
 import { nist80053EFSEncrypted } from './rules/efs';
 import { nist80053ElasticacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
-  nist80053ElasticSearchRunningWithinVPC,
-  nist80053ElasticSearchEncryptedAtRest,
-  nist80053ElasticSearchNodeToNodeEncrypted,
+  nist80053ElasticsearchRunningWithinVPC,
+  nist80053ElasticsearchEncryptedAtRest,
+  nist80053ElasticsearchNodeToNodeEncrypted,
 } from './rules/elasticsearch';
 import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
@@ -85,7 +85,7 @@ export class NIST80053Checks extends NagPack {
       this.checkEC2(node, ignores);
       this.checkAutoscaling(node, ignores);
       this.checkElasticsearch(node, ignores);
-      this.checkCodebuild(node, ignores);
+      this.checkCodeBuild(node, ignores);
       this.checkLambda(node, ignores);
       this.checkSagemaker(node, ignores);
       this.checkEFS(node, ignores);
@@ -312,7 +312,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
       const info =
-        'The EC2 machine does not restrict IPv4 traffic for all common TCP ports (by default these ports include port numbers 20, 21, 3389, 3309, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
+        'The EC2 instance does not restrict IPv4 traffic for all common TCP ports (by default these ports include port numbers 20, 21, 3389, 3309, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
       const explanation =
         'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
       Annotations.of(node).addError(
@@ -376,14 +376,14 @@ export class NIST80053Checks extends NagPack {
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-  private checkCodebuild(node: CfnResource, ignores: any) {
+  private checkCodeBuild(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-CodebuildCheckEnvVars') &&
-      !nist80053CodebuildCheckEnvVars(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildCheckEnvVars') &&
+      !nist80053CodeBuildCheckEnvVars(node)
     ) {
-      const ruleId = 'NIST.800.53-CodebuildCheckEnvVars';
+      const ruleId = 'NIST.800.53-CodeBuildCheckEnvVars';
       const info =
-        'The Codebuild environment stores sensitive credentials as plaintext environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
+        'The CodeBuild environment stores sensitive credentials as plaintext environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a)).';
       const explanation =
         'Do not store these variables in clear text. Storing these variables in clear text leads to unintended data exposure and unauthorized access.';
       Annotations.of(node).addError(
@@ -391,14 +391,14 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-CodebuildURLCheck') &&
-      !nist80053CodebuildURLCheck(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-CodeBuildURLCheck') &&
+      !nist80053CodeBuildURLCheck(node)
     ) {
-      const ruleId = 'NIST.800.53-CodebuildURLCheck';
+      const ruleId = 'NIST.800.53-CodeBuildURLCheck';
       const info =
-        'The Codebuild project does not utilize OAUTH - (Control IDs: SA-3(a).';
+        'The CodeBuild project does not utilize OAUTH - (Control IDs: SA-3(a).';
       const explanation =
-        'OAUTH is the most secure method of authenticating your Codebuild application.  Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.';
+        'OAUTH is the most secure method of authenticating your CodeBuild application.  Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -416,9 +416,9 @@ export class NIST80053Checks extends NagPack {
         ignores,
         'NIST.800.53-ElasticSearchNodeToNodeEncrypted'
       ) &&
-      !nist80053ElasticSearchNodeToNodeEncrypted(node)
+      !nist80053ElasticsearchNodeToNodeEncrypted(node)
     ) {
-      const ruleId = 'NIST.800.53-ElasticSearchNodeToNodeEncrypted';
+      const ruleId = 'NIST.800.53-ElasticsearchNodeToNodeEncrypted';
       const info =
         'The Elasticsearch resource is not node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)).';
       const explanation =
@@ -428,10 +428,10 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchEncryptedAtRest') &&
-      !nist80053ElasticSearchEncryptedAtRest(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-ElasticsearchEncryptedAtRest') &&
+      !nist80053ElasticsearchEncryptedAtRest(node)
     ) {
-      const ruleId = 'NIST.800.53-ElasticSearchEncryptedAtRest';
+      const ruleId = 'NIST.800.53-ElasticsearchEncryptedAtRest';
       const info =
         'The Elasticsearch resource is not encrypted at rest - (Control IDs: SC-13, SC-28).';
       const explanation =
@@ -441,10 +441,10 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-ElasticSearchRunningWithinVPC') &&
-      !nist80053ElasticSearchRunningWithinVPC(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-ElasticsearchRunningWithinVPC') &&
+      !nist80053ElasticsearchRunningWithinVPC(node)
     ) {
-      const ruleId = 'NIST.800.53-ElasticSearchRunningWithinVPC';
+      const ruleId = 'NIST.800.53-ElasticsearchRunningWithinVPC';
       const info =
         'The Elasticsearch resource is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation =

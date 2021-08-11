@@ -3,5 +3,5 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-export { default as nist80053CodebuildURLCheck } from './nist80053CodebuildURLCheck';
-export { default as nist80053CodebuildCheckEnvVars } from './nist80053CodebuildCheckEnvVars';
+export { default as nist80053CodeBuildURLCheck } from './nist80053CodeBuildURLCheck';
+export { default as nist80053CodeBuildCheckEnvVars } from './nist80053CodeBuildCheckEnvVars';

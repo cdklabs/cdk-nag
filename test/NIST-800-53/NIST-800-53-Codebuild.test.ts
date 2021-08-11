@@ -9,9 +9,9 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
-  describe('Amazon Codebuild', () => {
-    //Test whether Codebuild resources store sensitive credentials as environment variables
-    test('nist80053CodebuildCheckEnvVars: - Codebuild projects DO NOT store sensitive data as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))', () => {
+  describe('Amazon CodeBuild', () => {
+    //Test whether CodeBuild resources store sensitive credentials as environment variables
+    test('nist80053CodeBuildCheckEnvVars: - CodeBuild projects DO NOT store sensitive data as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))', () => {
       //Expect a POSITIVE response because AWS_ACCESS_KEY_ID is defined as a plaintext env var
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -21,7 +21,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
           environmentVariables: [
             {
@@ -44,7 +44,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
+            data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
           }),
         })
       );
@@ -58,7 +58,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
           environmentVariables: [
             {
@@ -80,7 +80,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
+            data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
           }),
         })
       );
@@ -94,7 +94,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
           environmentVariables: [
             {
@@ -116,7 +116,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
+            data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
           }),
         })
       );
@@ -132,7 +132,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
         },
         serviceRole: 'someservicerole',
@@ -151,7 +151,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
           environmentVariables: [
             {
@@ -182,7 +182,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
           environmentVariables: [
             {
@@ -211,14 +211,14 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CodebuildCheckEnvVars:'),
+            data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
           }),
         })
       );
     });
 
-    //Test whether Codebuild resources use OAUTH
-    test('nist80053CodebuildURLCheck: - Codebuild functions use OAUTH - (Control IDs: SA-3(a))', () => {
+    //Test whether CodeBuild resources use OAUTH
+    test('nist80053CodeBuildURLCheck: - CodeBuild functions use OAUTH - (Control IDs: SA-3(a))', () => {
       //Expect a POSITIVE response because OAUTH is not used
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -228,7 +228,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
         },
         serviceRole: 'someservicerole',
@@ -241,7 +241,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CodebuildURLCheck:'),
+            data: expect.stringContaining('NIST.800.53-CodeBuildURLCheck:'),
           }),
         })
       );
@@ -255,7 +255,7 @@ describe('NIST-800-53 Compute Checks', () => {
         },
         environment: {
           computeType: 'BUILD_GENERAL1_SMALL',
-          image: 'aws/codebuild/standard:4.0',
+          image: 'aws/CodeBuild/standard:4.0',
           type: 'LINUX_CONTAINER',
         },
         serviceRole: 'someservicerole',
@@ -272,7 +272,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages6).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-CodebuildURLCheck:'),
+            data: expect.stringContaining('NIST.800.53-CodeBuildURLCheck:'),
           }),
         })
       );

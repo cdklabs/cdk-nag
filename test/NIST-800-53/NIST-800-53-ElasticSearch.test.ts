@@ -9,9 +9,9 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
-  describe('Amazon ElasticSearch', () => {
-    //Test whether ElasticSearch domains are node-to-node encrypted
-    test('nist80053ElasticSearchNodeToNodeEncrypted: - ElasticSearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
+  describe('Amazon Elasticsearch', () => {
+    //Test whether Elasticsearch domains are node-to-node encrypted
+    test('nist80053ElasticsearchNodeToNodeEncrypted: - Elasticsearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
       //Expect a POSITIVE response because node-to-node encryption isnt set
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -21,7 +21,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchNodeToNodeEncrypted:'
+              'NIST.800.53-ElasticsearchNodeToNodeEncrypted:'
             ),
           }),
         })
@@ -40,7 +40,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchNodeToNodeEncrypted:'
+              'NIST.800.53-ElasticsearchNodeToNodeEncrypted:'
             ),
           }),
         })
@@ -63,15 +63,15 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchNodeToNodeEncrypted:'
+              'NIST.800.53-ElasticsearchNodeToNodeEncrypted:'
             ),
           }),
         })
       );
     });
 
-    //Test whether ElasticSearch domains are running within a VPC
-    test('nist80053ElasticSearchRunningWithinVPC: - ElasticSearch domains are running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+    //Test whether Elasticsearch domains are running within a VPC
+    test('nist80053ElasticsearchRunningWithinVPC: - Elasticsearch domains are running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
       //Expect a POSITIVE response because vpc options aren't defined
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -81,7 +81,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchRunningWithinVPC:'
+              'NIST.800.53-ElasticsearchRunningWithinVPC:'
             ),
           }),
         })
@@ -100,7 +100,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchRunningWithinVPC:'
+              'NIST.800.53-ElasticsearchRunningWithinVPC:'
             ),
           }),
         })
@@ -123,15 +123,15 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchRunningWithinVPC:'
+              'NIST.800.53-ElasticsearchRunningWithinVPC:'
             ),
           }),
         })
       );
     });
 
-    //Test whether ElasticSearch domains are encrypted at rest
-    test('nist80053ElasticSearchEncryptedAtRest: - ElasticSearch domains are encrypted at rest - (Control IDs: SC-13, SC-28)', () => {
+    //Test whether Elasticsearch domains are encrypted at rest
+    test('nist80053ElasticsearchEncryptedAtRest: - Elasticsearch domains are encrypted at rest - (Control IDs: SC-13, SC-28)', () => {
       //Expect a POSITIVE response because encryption at rest is not defined
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
@@ -141,7 +141,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchEncryptedAtRest:'
+              'NIST.800.53-ElasticsearchEncryptedAtRest:'
             ),
           }),
         })
@@ -160,7 +160,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchEncryptedAtRest:'
+              'NIST.800.53-ElasticsearchEncryptedAtRest:'
             ),
           }),
         })
@@ -183,7 +183,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-ElasticSearchEncryptedAtRest:'
+              'NIST.800.53-ElasticsearchEncryptedAtRest:'
             ),
           }),
         })
