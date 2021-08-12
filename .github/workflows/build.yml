@@ -40,6 +40,19 @@ jobs:
         run: gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name
           }}/check-runs -F name="build" -F head_sha="$(git rev-parse HEAD)" -F
           status="completed" -F conclusion="success"
+      - if: steps.git_diff.outputs.has_changes
+        name: Update status check (if changed)
+        run: gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name
+          }}/check-runs -F name="build" -F head_sha="$(git rev-parse HEAD)" -F
+          status="completed" -F conclusion="success"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: steps.git_diff.outputs.has_changes
+        name: Cancel workflow (if changed)
+        run: gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name
+          }}/actions/runs/${{ github.run_id }}/cancel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup for monocdk build
         run: >-
           rm yarn.lock

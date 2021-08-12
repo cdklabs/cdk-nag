@@ -95,9 +95,16 @@ const project = new AwsCdkConstructLibrary({
   buildWorkflow: true,
   release: true,
 });
-project.package.addField('prettier', { singleQuote: true, semi: true });
+project.package.addField('prettier', {
+  singleQuote: true,
+  semi: true,
+  trailingComma: 'es5',
+});
 project.eslint.addRules({
-  'prettier/prettier': ['error', { singleQuote: true, semi: true }],
+  'prettier/prettier': [
+    'error',
+    { singleQuote: true, semi: true, trailingComma: 'es5' },
+  ],
 });
 project.package.addField('resolutions', {
   'trim-newlines': '3.0.1',
@@ -139,6 +146,22 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
     run: 'gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name }}/check-runs -F name="build" -F head_sha="$(git rev-parse HEAD)" -F status="completed" -F conclusion="success"',
   },
   {
+    if: 'steps.git_diff.outputs.has_changes',
+    name: 'Update status check (if changed)',
+    run: 'gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name }}/check-runs -F name="build" -F head_sha="$(git rev-parse HEAD)" -F status="completed" -F conclusion="success"',
+    env: {
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
+    },
+  },
+  {
+    if: 'steps.git_diff.outputs.has_changes',
+    name: 'Cancel workflow (if changed)',
+    run: 'gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name }}/actions/runs/${{ github.run_id }}/cancel',
+    env: {
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
+    },
+  },
+  {
     name: 'Setup for monocdk build',
     run: "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
   },
@@ -157,9 +180,11 @@ project.release.addJobs({
     permissions: {
       contents: 'write',
     },
+    outputs: {
+      latest_commit: { stepId: 'git_remote', outputName: 'latest_commit' },
+    },
     env: {
       CI: 'true',
-      RELEASE: 'true',
     },
     steps: [
       {
@@ -188,6 +213,10 @@ project.release.addJobs({
       {
         name: 'Backup version file',
         run: 'cp -f package.json package.json.bak.json',
+      },
+      {
+        name: 'remove changelog',
+        run: 'rm dist/changelog.md',
       },
       {
         name: 'Unbump',

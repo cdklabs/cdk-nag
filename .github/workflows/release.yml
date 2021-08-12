@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      latest_commit: ${{ steps.git_remote.outputs.latest_commit }}
     env:
       CI: "true"
-      RELEASE: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,6 +32,8 @@ jobs:
         run: npx projen build
       - name: Backup version file
         run: cp -f package.json package.json.bak.json
+      - name: remove changelog
+        run: rm dist/changelog.md
       - name: Unbump
         run: npx projen unbump
       - name: Anti-tamper check
