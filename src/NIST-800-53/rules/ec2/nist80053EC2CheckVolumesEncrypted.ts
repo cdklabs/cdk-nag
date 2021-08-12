@@ -8,7 +8,7 @@ import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * EBS volumes are encrypted - (Control IDs: SC-13, SC-28)
+ * EBS volumes attached to EC2 instances are encrypted - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

@@ -10,9 +10,9 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
-  describe('Amazon Sagemaker', () => {
-    //Test whether Sagemaker endpoints are encrypted with a KMS key
-    test('NIST.800.53-SagemakerEndpointKMS: SageMaker endpoints use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
+  describe('Amazon SageMaker', () => {
+    //Test whether SageMaker endpoints are encrypted with a KMS key
+    test('NIST.800.53-SageMakerEndpointKMS: SageMaker endpoints use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnEndpointConfig(positive, 'badendpoint', {
@@ -22,7 +22,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-SagemakerEndpointKMS:'),
+            data: expect.stringContaining('NIST.800.53-SageMakerEndpointKMS:'),
           }),
         })
       );
@@ -37,15 +37,15 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-SagemakerEndpointKMS:'),
+            data: expect.stringContaining('NIST.800.53-SageMakerEndpointKMS:'),
           }),
         })
       );
     });
 
-    //Test whether Sagemaker notebooks are encrypted with a KMS key
+    //Test whether SageMaker notebooks are encrypted with a KMS key
     //These tests taken from AWS Solutions tests for rule "SM2"
-    test('NIST.800.53-SagemakerNotebookKMS: SageMaker notebooks use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
+    test('NIST.800.53-SageMakerNotebookKMS: SageMaker notebooks use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {
@@ -58,7 +58,7 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-SagemakerNotebookKMS:'),
+            data: expect.stringContaining('NIST.800.53-SageMakerNotebookKMS:'),
           }),
         })
       );
@@ -76,15 +76,15 @@ describe('NIST-800-53 Compute Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-SagemakerNotebookKMS:'),
+            data: expect.stringContaining('NIST.800.53-SageMakerNotebookKMS:'),
           }),
         })
       );
     });
 
-    //Test whether Sagemaker notebooks disable direct internet access
+    //Test whether SageMaker notebooks disable direct internet access
     //These tests taken from AWS Solutions tests for rule "SM3"
-    test('nist80053SagemakerDirectInternetAccessDisabled: - Sagemaker instances disabled direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
+    test('nist80053SageMakerDirectInternetAccessDisabled: - SageMaker instances disabled direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {
@@ -98,7 +98,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-SagemakerDirectInternetAccessDisbabled:'
+              'NIST.800.53-SageMakerDirectInternetAccessDisbabled:'
             ),
           }),
         })
@@ -119,7 +119,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-SagemakerDirectInternetAccessDisbabled:'
+              'NIST.800.53-SageMakerDirectInternetAccessDisbabled:'
             ),
           }),
         })

@@ -3,6 +3,6 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-export { default as nist80053SagemakerDirectInternetAccessDisabled } from './nist80053SagemakerDirectInternetAccessDisabled';
-export { default as nist80053SagemakerEndpointKMS } from './nist80053SagemakerEndpointKMS';
-export { default as nist80053SagemakerNotebookKMS } from './nist80053SagemakerNotebookKMS';
+export { default as nist80053SageMakerDirectInternetAccessDisabled } from './nist80053SageMakerDirectInternetAccessDisabled';
+export { default as nist80053SageMakerEndpointKMS } from './nist80053SageMakerEndpointKMS';
+export { default as nist80053SageMakerNotebookKMS } from './nist80053SageMakerNotebookKMS';
