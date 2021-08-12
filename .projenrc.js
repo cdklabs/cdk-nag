@@ -215,10 +215,6 @@ project.release.addJobs({
         run: 'cp -f package.json package.json.bak.json',
       },
       {
-        name: 'remove changelog',
-        run: 'rm dist/changelog.md',
-      },
-      {
         name: 'Unbump',
         run: 'npx projen unbump',
       },
