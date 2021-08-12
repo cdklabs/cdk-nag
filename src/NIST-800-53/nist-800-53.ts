@@ -9,7 +9,7 @@ import {
   nist80053APIGWCacheEnabledAndEncrypted,
   nist80053APIGWExecutionLoggingEnabled,
 } from './rules/apigw';
-import { nist80053AutoscalingHealthChecks } from './rules/autoscaling';
+import { nist80053AutoScalingHealthChecks } from './rules/autoscaling';
 import {
   nist80053CloudTrailLogFileValidationEnabled,
   nist80053CloudTrailCloudWatchLogsEnabled,
@@ -83,7 +83,7 @@ export class NIST80053Checks extends NagPack {
       this.checkDMS(node, ignores);
       this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
-      this.checkAutoscaling(node, ignores);
+      this.checkAutoScaling(node, ignores);
       this.checkElasticsearch(node, ignores);
       this.checkCodeBuild(node, ignores);
       this.checkLambda(node, ignores);
@@ -351,18 +351,18 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check autoscaling Resources
+   * Check Auto Scaling Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
-  private checkAutoscaling(node: CfnResource, ignores: any) {
+  private checkAutoScaling(node: CfnResource, ignores: any) {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-AutoscalingHealthChecks') &&
-      !nist80053AutoscalingHealthChecks(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-AutoScalingHealthChecks') &&
+      !nist80053AutoScalingHealthChecks(node)
     ) {
-      const ruleId = 'NIST.800.53-AutoscalingHealthChecks';
+      const ruleId = 'NIST.800.53-AutoScalingHealthChecks';
       const info =
-        'The Auto Scaling group does not utilize ELB healthchecks - (Control IDs: SC-5).';
+        'The Auto Scaling group (which is associated with a load balancer) does not utilize ELB healthchecks - (Control IDs: SC-5).';
       const explanation =
         'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability.';
       Annotations.of(node).addError(

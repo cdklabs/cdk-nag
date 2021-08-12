@@ -7,7 +7,7 @@ import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Auto Scaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)
+ * Auto Scaling groups which are associated with load balancers utilize ELB health checks - (Control IDs: SC-5)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

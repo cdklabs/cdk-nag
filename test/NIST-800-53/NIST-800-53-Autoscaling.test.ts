@@ -9,10 +9,10 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
-  describe('Amazon Autoscaling', () => {
-    //Test whether Autoscaling groups associated with a load balancer utilize ELB health checks
-    test('nist80053AutoscalingHealthChecks: - Autoscaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)', () => {
-      //Expect a POSITIVE response because a classic LB is defined and health checks are not specified
+  describe('Amazon AutoScaling', () => {
+    //Test whether AutoScaling groups associated with a load balancer utilize ELB health checks
+    test('nist80053AutoScalingHealthChecks: - AutoScaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)', () => {
+      //Expect a POSITIVE response because a classic load balancer is defined and health checks are not specified
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnAutoScalingGroup(positive, 'newautoscalinggroup', {
@@ -25,7 +25,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-AutoscalingHealthChecks:'
+              'NIST.800.53-AutoScalingHealthChecks:'
             ),
           }),
         })
@@ -45,7 +45,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-AutoscalingHealthChecks:'
+              'NIST.800.53-AutoScalingHealthChecks:'
             ),
           }),
         })
@@ -65,7 +65,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-AutoscalingHealthChecks:'
+              'NIST.800.53-AutoScalingHealthChecks:'
             ),
           }),
         })
@@ -103,7 +103,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-AutoscalingHealthChecks:'
+              'NIST.800.53-AutoScalingHealthChecks:'
             ),
           }),
         })
