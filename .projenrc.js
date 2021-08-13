@@ -138,12 +138,7 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
   {
     if: 'steps.git_diff.outputs.has_changes',
     name: 'Commit and push changes (if changed)',
-    run: 'git add . && git commit -m "chore: self mutation" \ngit push origin HEAD:${{ github.event.pull_request.head.ref }}',
-  },
-  {
-    if: 'steps.git_diff.outputs.has_changes',
-    name: 'Update status check (if changed)',
-    run: 'gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name }}/check-runs -F name="build" -F head_sha="$(git rev-parse HEAD)" -F status="completed" -F conclusion="success"',
+    run: 'git add . && git commit -m "chore: self mutation" \n&& git push origin HEAD:${{ github.event.pull_request.head.ref }}',
   },
   {
     if: 'steps.git_diff.outputs.has_changes',
@@ -173,7 +168,6 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
     },
   },
 ]);
-
 project.release.addJobs({
   release: {
     runsOn: 'ubuntu-latest',
@@ -185,6 +179,7 @@ project.release.addJobs({
     },
     env: {
       CI: 'true',
+      RELEASE: 'true',
     },
     steps: [
       {
@@ -211,8 +206,8 @@ project.release.addJobs({
         run: 'npx projen build',
       },
       {
-        name: 'Backup version file',
-        run: 'cp -f package.json package.json.bak.json',
+        name: 'remove changelog',
+        run: 'rm dist/changelog.md',
       },
       {
         name: 'Unbump',
@@ -235,10 +230,6 @@ project.release.addJobs({
         run: 'npx projen build',
       },
       {
-        name: 'Backup version file',
-        run: 'cp -f package.json package.json.bak.json',
-      },
-      {
         name: 'Unbump',
         run: 'npx projen unbump',
       },
@@ -246,14 +237,6 @@ project.release.addJobs({
         name: 'Check for new commits',
         id: 'git_remote',
         run: 'echo ::set-output name=latest_commit::"$(git ls-remote origin -h ${{ github.ref }} | cut -f1)"',
-      },
-      {
-        name: 'Create release',
-        if: '${{ steps.git_remote.outputs.latest_commit == github.sha }}',
-        run: 'gh release create v$(node -p "require(\'./package.json.bak.json\').version") -F dist/changelog.md -t v$(node -p "require(\'./package.json.bak.json\').version")',
-        env: {
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
-        },
       },
       {
         name: 'Upload artifact',
@@ -270,4 +253,5 @@ project.release.addJobs({
     },
   },
 });
+
 project.synth();
