@@ -84,7 +84,7 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether SageMaker notebooks disable direct internet access
     //These tests taken from AWS Solutions tests for rule "SM3"
-    test('nist80053SageMakerDirectInternetAccessDisabled: - SageMaker instances disabled direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
+    test('nist80053SageMakerNotebookDirectInternetAccessDisabled: - SageMaker instances disabled direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {
@@ -98,7 +98,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-SageMakerDirectInternetAccessDisbabled:'
+              'NIST.800.53-SageMakerNotebookDirectInternetAccessDisbabled:'
             ),
           }),
         })
@@ -119,7 +119,7 @@ describe('NIST-800-53 Compute Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'NIST.800.53-SageMakerDirectInternetAccessDisbabled:'
+              'NIST.800.53-SageMakerNotebookDirectInternetAccessDisbabled:'
             ),
           }),
         })

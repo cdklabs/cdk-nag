@@ -61,7 +61,7 @@ import {
 } from './rules/redshift';
 import { nist80053S3BucketLoggingEnabled } from './rules/s3';
 import {
-  nist80053SageMakerDirectInternetAccessDisabled,
+  nist80053SageMakerNotebookDirectInternetAccessDisabled,
   nist80053SageMakerEndpointKMS,
   nist80053SageMakerNotebookKMS,
 } from './rules/sagemaker';
@@ -637,13 +637,13 @@ export class NIST80053Checks extends NagPack {
     if (
       !this.ignoreRule(
         ignores,
-        'NIST.800.53-SageMakerDirectInternetAccessDisabled'
+        'NIST.800.53-SageMakerNotebookDirectInternetAccessDisabled'
       ) &&
-      !nist80053SageMakerDirectInternetAccessDisabled(node)
+      !nist80053SageMakerNotebookDirectInternetAccessDisabled(node)
     ) {
       const ruleId = 'NIST.800.53-SageMakerDirectInternetAccessDisbabled';
       const info =
-        'The SageMaker resource does not disable direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+        'The SageMaker notebook does not disable direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
       const explanation =
         'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.';
       Annotations.of(node).addError(
