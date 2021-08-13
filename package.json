@@ -54,7 +54,7 @@
     "json-schema": "^0.3.0",
     "npm-check-updates": "^11",
     "prettier": "^2.3.2",
-    "projen": "^0.27.27",
+    "projen": "^0.27.28",
     "standard-version": "^9",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5"
@@ -221,7 +221,8 @@
   },
   "prettier": {
     "singleQuote": true,
-    "semi": true
+    "semi": true,
+    "trailingComma": "es5"
   },
   "resolutions": {
     "trim-newlines": "3.0.1"
