@@ -522,7 +522,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-DBInstanceBackupEnabled';
       const info =
-        'The RDS DB instance does not have backups enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
+        'The RDS DB Instance does not have backups enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
       const explanation =
         'The backup feature of Amazon RDS creates backups of your databases and transaction logs.';
       Annotations.of(node).addError(
