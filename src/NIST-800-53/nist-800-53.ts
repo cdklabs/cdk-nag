@@ -28,7 +28,6 @@ import {
   nist80053EC2CheckSSHRestricted,
   nist80053EC2CheckCommonPortsRestricted,
   nist80053EC2CheckDefaultSecurityGroupClosed,
-  nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts,
   nist80053EC2CheckVolumesEncrypted,
 } from './rules/ec2';
 import { nist80053EFSEncrypted } from './rules/efs';
@@ -299,7 +298,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-EC2CheckDefaultSecurityGroupClosed';
       const info =
-        'The default security group for one or more VPCs is not closed (contains one or more inbound or outbound rules) - (Control IDs: AC-4, SC-7, SC-7(3)).';
+        "The VPC's default security group allows inbound or outbound traffic - (Control IDs: AC-4, SC-7, SC-7(3)).";
       const explanation =
         'Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
       Annotations.of(node).addError(
@@ -312,25 +311,9 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-EC2CheckCommonPortsRestricted';
       const info =
-        'The EC2 instance allows unrestricted inbound IPv4 TCP traffic on one or more common ports (by default these ports include port numbers 20, 21, 3389, 3309, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
+        'The EC2 instance allows unrestricted inbound IPv4 TCP traffic on common ports (20, 21, 3389, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
       const explanation =
         'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(
-        ignores,
-        'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts'
-      ) &&
-      !nist80053EC2CheckVPCSecurityGroupsAllowAuthPorts(node)
-    ) {
-      const ruleId = 'NIST.800.53-EC2CheckVPCSecurityGroupsAllowAuthPorts';
-      const info =
-        'The VPC Security Group allows unrestricted IPv4 TCP traffic on unauthorized ports (by default only port 80 is authorized) - (Control IDs: AC-4, SC-7, SC-7(3).';
-      const explanation =
-        'Not restricting access on ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, only port number 80 is allowed unrestricted access.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
