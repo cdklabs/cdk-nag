@@ -28,7 +28,6 @@ import {
   nist80053EC2CheckSSHRestricted,
   nist80053EC2CheckCommonPortsRestricted,
   nist80053EC2CheckDefaultSecurityGroupClosed,
-  nist80053EC2CheckVolumesEncrypted,
 } from './rules/ec2';
 import { nist80053EFSEncrypted } from './rules/efs';
 import { nist80053ElasticacheRedisClusterAutomaticBackup } from './rules/elasticache';
@@ -314,19 +313,6 @@ export class NIST80053Checks extends NagPack {
         'The EC2 instance allows unrestricted inbound IPv4 TCP traffic on common ports (20, 21, 3389, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
       const explanation =
         'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'NIST.800.53-EC2CheckVolumesEncrypted') &&
-      !nist80053EC2CheckVolumesEncrypted(node)
-    ) {
-      const ruleId = 'NIST.800.53-EC2CheckVolumesEncrypted';
-      const info =
-        'The EC2 instance is attached to one or more unencrypted EBS devices - (Control IDs: SC-13, SC-28).';
-      const explanation =
-        'Because senstive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic Block Store (Amazon EBS) volumes.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

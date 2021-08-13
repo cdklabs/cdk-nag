@@ -23,69 +23,6 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
-    //Test whether EC2 instances use only encrypted storage volumes
-    test('nist80053CheckStorageVolumesEncrypted: - EC2 storage volumes are encrypted - (Control IDs: SC-13, SC-28)', () => {
-      //Expect a POSITIVE response because the storage volume is not encrypted
-      const positive = new Stack();
-      Aspects.of(positive).add(new NIST80053Checks());
-      new CfnInstance(positive, 'newinstance', {
-        imageId: 'badInstance',
-        blockDeviceMappings: [
-          {
-            deviceName: 'unencrypteddevice',
-            ebs: {
-              encrypted: false,
-            },
-          },
-        ],
-      });
-      const messages = SynthUtils.synthesize(positive).messages;
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-EC2CheckVolumesEncrypted:'
-            ),
-          }),
-        })
-      );
-
-      //Create stack for negative checks
-      const negative = new Stack();
-      Aspects.of(negative).add(new NIST80053Checks());
-
-      //Expect a NEGATIVE response because no EBS volume is attached
-      new CfnInstance(negative, 'newinstance', {
-        imageId: 'goodinstance',
-      });
-
-      //Expect a NEGATIVE response because EBS encryption is enabled
-      new CfnInstance(negative, 'newinstance2', {
-        imageId: 'goodinstance',
-        blockDeviceMappings: [
-          {
-            deviceName: 'encrypteddevice',
-            ebs: {
-              encrypted: true,
-            },
-          },
-        ],
-      });
-
-      //Check cdk-nag response
-      const messages6 = SynthUtils.synthesize(negative).messages;
-      expect(messages6).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-EC2CheckVolumesEncrypted:'
-            ),
-          }),
-        })
-      );
-    });
-
-
     //Test whether the default VPC security group is closed
     test('nist80053CheckDefaultSecurityGroupClosed: - Default VPC security group is closed - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
       //Expect a POSITIVE response because the security group is default and contains an ingress rule
