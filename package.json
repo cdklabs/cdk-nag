@@ -221,7 +221,8 @@
   },
   "prettier": {
     "singleQuote": true,
-    "semi": true
+    "semi": true,
+    "trailingComma": "es5"
   },
   "resolutions": {
     "trim-newlines": "3.0.1"
