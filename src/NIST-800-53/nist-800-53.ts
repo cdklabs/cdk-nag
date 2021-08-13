@@ -603,7 +603,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSStorageEncrypted';
       const info =
-        'RDS does not have storage encrypted - (Control IDs: SC-13, SC-28).';
+        'The RDS DB Instance or Aurora Cluster does not have storage encrypted - (Control IDs: SC-13, SC-28).';
       const explanation =
         'Because sensitive data can exist at rest in Amazon RDS instances, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
