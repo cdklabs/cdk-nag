@@ -77,24 +77,24 @@ export class NIST80053Checks extends NagPack {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
       this.checkAPIGW(node, ignores);
+      this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
+      this.checkCodeBuild(node, ignores);
       this.checkDMS(node, ignores);
       this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
-      this.checkAutoScaling(node, ignores);
-      this.checkElasticsearch(node, ignores);
-      this.checkCodeBuild(node, ignores);
-      this.checkLambda(node, ignores);
-      this.checkSageMaker(node, ignores);
       this.checkEFS(node, ignores);
       this.checkElasticache(node, ignores);
+      this.checkElasticsearch(node, ignores);
       this.checkELB(node, ignores);
       this.checkEMR(node, ignores);
       this.checkIAM(node, ignores);
-      this.checkS3(node, ignores);
-      this.checkSNS(node, ignores);
+      this.checkLambda(node, ignores);
       this.checkRDS(node, ignores);
       this.checkRedshift(node, ignores);
+      this.checkS3(node, ignores);
+      this.checkSageMaker(node, ignores);
+      this.checkSNS(node, ignores);
     }
   }
 
@@ -331,7 +331,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-AutoScalingHealthChecks';
       const info =
-        'The Auto Scaling group (which is associated with a load balancer) does not utilize ELB healthchecks - (Control IDs: SC-5).';
+        'The Auto Scaling group utilizes a load balancer and does not have an ELB health check configured - (Control IDs: SC-5).';
       const explanation =
         'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability.';
       Annotations.of(node).addError(
@@ -341,7 +341,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check codebuild Resources
+   * Check CodeBuild Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
