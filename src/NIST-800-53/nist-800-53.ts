@@ -538,7 +538,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ELBListenersUseSSLOrHTTPS';
       const info =
-        'The Classic Load Balancer does not restrict its listeners to only the SSL and HTTPS protocols  - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23).';
+        'The Classic Load Balancer does not restrict its listeners to only the SSL and HTTPS protocols - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23).';
       const explanation =
         'Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
