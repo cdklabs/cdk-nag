@@ -299,8 +299,8 @@ export class NIST80053Checks extends NagPack {
       const info =
         "The VPC's default security group allows inbound or outbound traffic - (Control IDs: AC-4, SC-7, SC-7(3)).";
       const explanation =
-        'Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
-      Annotations.of(node).addError(
+        'When creating a VPC through CloudFormation, the default security group will always be open.  Therefore it is important to always close the default security group after stack creation whenever a VPC is created.  Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
+      Annotations.of(node).addWarning(
         this.createMessage(ruleId, info, explanation)
       );
     }
