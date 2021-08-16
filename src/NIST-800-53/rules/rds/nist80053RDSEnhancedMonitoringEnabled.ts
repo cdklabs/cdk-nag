@@ -6,7 +6,7 @@ import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
 
 /**
- * RDS instances have enhanced monitoring enabled
+ * RDS instances have enhanced monitoring enabled - (Control IDs: CA-7(a)(b))
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
