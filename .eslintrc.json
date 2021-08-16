@@ -47,7 +47,8 @@
       "error",
       {
         "singleQuote": true,
-        "semi": true
+        "semi": true,
+        "trailingComma": "es5"
       }
     ],
     "@typescript-eslint/no-require-imports": [
