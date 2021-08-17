@@ -156,9 +156,7 @@ describe('NIST-800-53 Compute Checks', () => {
         })
       );
       const negative = new Stack();
-      const negative2 = new Stack();
       Aspects.of(negative).add(new NIST80053Checks());
-      Aspects.of(negative2).add(new NIST80053Checks());
       const lb3 = new LoadBalancer(negative, 'rELB', {
         vpc: new Vpc(negative, 'rVPC'),
       });
@@ -167,8 +165,8 @@ describe('NIST-800-53 Compute Checks', () => {
         externalPort: 42,
         externalProtocol: LoadBalancingProtocol.SSL,
       });
-      const lb4 = new LoadBalancer(negative2, 'rELB', {
-        vpc: new Vpc(negative2, 'rVPC'),
+      const lb4 = new LoadBalancer(negative, 'rELB2', {
+        vpc: new Vpc(negative, 'rVPC2'),
       });
       lb4.addListener({
         internalProtocol: LoadBalancingProtocol.HTTPS,
@@ -176,16 +174,6 @@ describe('NIST-800-53 Compute Checks', () => {
       });
       const messages3 = SynthUtils.synthesize(negative).messages;
       expect(messages3).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-ELBListenersUseSSLOrHTTPS:'
-            ),
-          }),
-        })
-      );
-      const messages4 = SynthUtils.synthesize(negative2).messages;
-      expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
@@ -233,33 +221,23 @@ describe('NIST-800-53 Compute Checks', () => {
         })
       );
 
-      const negative = new Stack();
+      const negative = new Stack(undefined, undefined, {
+        env: { region: 'us-east-1' },
+      });
       Aspects.of(negative).add(new NIST80053Checks());
       new LoadBalancer(negative, 'rELB', {
         vpc: new Vpc(negative, 'rVPC'),
         crossZone: true,
       });
-      const messages3 = SynthUtils.synthesize(negative).messages;
-      expect(messages3).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('NIST.800.53-ELBCrossZoneBalancing:'),
-          }),
-        })
-      );
-      const negative2 = new Stack(undefined, undefined, {
-        env: { region: 'us-east-1' },
-      });
-      Aspects.of(negative2).add(new NIST80053Checks());
-      new CfnLoadBalancer(negative2, 'rCfnElb', {
+      new CfnLoadBalancer(negative, 'rCfnElb', {
         listeners: [
           { instancePort: '42', loadBalancerPort: '42', protocol: 'TCP' },
         ],
         crossZone: true,
-        availabilityZones: negative2.availabilityZones,
+        availabilityZones: negative.availabilityZones,
       });
-      const messages4 = SynthUtils.synthesize(negative2).messages;
-      expect(messages4).not.toContainEqual(
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-ELBCrossZoneBalancing:'),
