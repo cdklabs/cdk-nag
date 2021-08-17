@@ -471,7 +471,7 @@ test('NIST.800.53-DBInstanceBackupEnabled: DB instances have backups enabled', (
   expect(messages2).toContainEqual(
     expect.objectContaining({
       entry: expect.objectContaining({
-        data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
+        data: expect.stringContaining('NIST.800.53-RDSInstanceBackupEnabled:'),
       }),
     })
   );
@@ -486,7 +486,7 @@ test('NIST.800.53-DBInstanceBackupEnabled: DB instances have backups enabled', (
   expect(messages4).toContainEqual(
     expect.objectContaining({
       entry: expect.objectContaining({
-        data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
+        data: expect.stringContaining('NIST.800.53-RDSInstanceBackupEnabled:'),
       }),
     })
   );
@@ -501,7 +501,7 @@ test('NIST.800.53-DBInstanceBackupEnabled: DB instances have backups enabled', (
   expect(messages3).not.toContainEqual(
     expect.objectContaining({
       entry: expect.objectContaining({
-        data: expect.stringContaining('NIST.800.53-DBInstanceBackupEnabled:'),
+        data: expect.stringContaining('NIST.800.53-RDSInstanceBackupEnabled:'),
       }),
     })
   );
