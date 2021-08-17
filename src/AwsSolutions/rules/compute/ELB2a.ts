@@ -11,17 +11,20 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnLoadBalancer) {
-    const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
-    for (const attribute of attributes) {
-      const resolvedAttribute = Stack.of(node).resolve(attribute);
-      if (
-        resolvedAttribute.key == 'access_logs.s3.enabled' ||
-        resolvedAttribute.value == 'true'
-      ) {
-        return true;
+    const type = Stack.of(node).resolve(node.type);
+    if (type == undefined || type == 'application') {
+      const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
+      for (const attribute of attributes) {
+        const resolvedAttribute = Stack.of(node).resolve(attribute);
+        if (
+          resolvedAttribute.key == 'access_logs.s3.enabled' ||
+          resolvedAttribute.value == 'true'
+        ) {
+          return true;
+        }
       }
+      return false;
     }
-    return false;
   }
   return true;
 }
