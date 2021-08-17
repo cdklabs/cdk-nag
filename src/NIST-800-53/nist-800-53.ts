@@ -566,7 +566,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The RDS DB Instance or Aurora Cluster does not have deletion protection enabled - (Control ID: SC-5).';
       const explanation =
-        'Ensure Amazon Relational Database Service (Amazon RDS) instances have deletion protection enabled. Use deletion protection to prevent your Amazon RDS instances from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+        'Ensure Amazon Relational Database Service (Amazon RDS) instances  and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
