@@ -44,7 +44,7 @@ import {
   nist80053RDSInstanceMultiAZSupport,
   nist80053RDSInstancePublicAccess,
   nist80053RDSStorageEncrypted,
-  nist80053DBInstanceBackupEnabled,
+  nist80053RDSInstanceBackupEnabled,
 } from './rules/rds';
 import {
   nist80053RedshiftClusterConfiguration,
@@ -517,10 +517,10 @@ export class NIST80053Checks extends NagPack {
    */
   private checkRDS(node: CfnResource, ignores: any): void {
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-DBInstanceBackupEnabled') &&
-      !nist80053DBInstanceBackupEnabled(node)
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstanceBackupEnabled') &&
+      !nist80053RDSInstanceBackupEnabled(node)
     ) {
-      const ruleId = 'NIST.800.53-DBInstanceBackupEnabled';
+      const ruleId = 'NIST.800.53-RDSInstanceBackupEnabled';
       const info =
         'The RDS DB Instance does not have backups enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
       const explanation =
