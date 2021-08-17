@@ -53,7 +53,15 @@ import {
   nist80053IamUserNoPolicies,
 } from './rules/iam';
 import { nist80053LambdaFunctionsInsideVPC } from './rules/lambda';
-import { nist80053RDSLoggingEnabled } from './rules/rds';
+import {
+  nist80053RDSEnhancedMonitoringEnabled,
+  nist80053RDSInstanceBackupEnabled,
+  nist80053RDSInstanceDeletionProtectionEnabled,
+  nist80053RDSInstanceMultiAZSupport,
+  nist80053RDSInstancePublicAccess,
+  nist80053RDSLoggingEnabled,
+  nist80053RDSStorageEncrypted,
+} from './rules/rds';
 import {
   nist80053RedshiftClusterConfiguration,
   nist80053RedshiftClusterPublicAccess,
@@ -677,14 +685,95 @@ export class NIST80053Checks extends NagPack {
    */
   private checkRDS(node: CfnResource, ignores: any): void {
     if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSEnhancedMonitoringEnabled') &&
+      !nist80053RDSEnhancedMonitoringEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSEnhancedMonitoringEnabled';
+      const info =
+        'The RDS DB Instance does not enhanced monitoring enabled - (Control ID: CA-7(a)(b)).';
+      const explanation =
+        'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstanceBackupEnabled') &&
+      !nist80053RDSInstanceBackupEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSInstanceBackupEnabled';
+      const info =
+        'The RDS DB Instance does not have backups enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
+      const explanation =
+        'The backup feature of Amazon RDS creates backups of your databases and transaction logs.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-RDSInstanceDeletionProtectionEnabled'
+      ) &&
+      !nist80053RDSInstanceDeletionProtectionEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSInstanceDeletionProtectionEnabled';
+      const info =
+        'The RDS DB Instance or Aurora Cluster does not have deletion protection enabled - (Control ID: SC-5).';
+      const explanation =
+        'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstanceMultiAzSupport') &&
+      !nist80053RDSInstanceMultiAZSupport(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSInstanceMultiAzSupport';
+      const info =
+        'The RDS DB Instance does not have multi-AZ support - (Control IDs: CP-10, SC-5, SC-36).';
+      const explanation =
+        'Multi-AZ support in Amazon Relational Database Service (Amazon RDS) provides enhanced availability and durability for database instances. When you provision a Multi-AZ database instance, Amazon RDS automatically creates a primary database instance, and synchronously replicates the data to a standby instance in a different Availability Zone. In case of an infrastructure failure, Amazon RDS performs an automatic failover to the standby so that you can resume database operations as soon as the failover is complete.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSInstancePublicAccess') &&
+      !nist80053RDSInstancePublicAccess(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSInstancePublicAccess';
+      const info =
+        'The RDS DB Instance allows public access - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+      const explanation =
+        'Amazon RDS database instances can contain sensitive information, and principles and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
       !this.ignoreRule(ignores, 'NIST.800.53-RDSLoggingEnabled') &&
       !nist80053RDSLoggingEnabled(node)
     ) {
       const ruleId = 'NIST.800.53-RDSLoggingEnabled';
       const info =
-        'The RDS Instance does not have all CloudWatch log types exported - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+        'The RDS DB Instance does not have all CloudWatch log types exported - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
         'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-RDSStorageEncrypted') &&
+      !nist80053RDSStorageEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-RDSStorageEncrypted';
+      const info =
+        'The RDS DB Instance or Aurora Cluster does not have storage encrypted - (Control IDs: SC-13, SC-28).';
+      const explanation =
+        'Because sensitive data can exist at rest in Amazon RDS instances and clusters, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
