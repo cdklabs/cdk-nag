@@ -23,7 +23,7 @@ export default function (node: IConstruct): boolean {
         if (listenerARN == undefined) {
           return false;
         } else {
-          const acmRegex = /^arn:[^:]+:acm:.+$/
+          const acmRegex = /^arn:[^:]+:acm:.+$/;
           if (!acmRegex.test(listenerARN)) {
             return false;
           }
