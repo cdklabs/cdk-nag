@@ -7,7 +7,9 @@ import { CfnVPC } from '@aws-cdk/aws-ec2';
 import { IConstruct } from '@aws-cdk/core';
 
 /**
- * Is there a VPC defined?  If so, its default security group won't be closed.  - (AC-4, SC-7, SC-7(3)).
+ * VPCs have their default security group closed - (AC-4, SC-7, SC-7(3)).
+ * VPCs created via CloudFormation will not have their default security group closed.
+ * https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html#DefaultSecurityGroup
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

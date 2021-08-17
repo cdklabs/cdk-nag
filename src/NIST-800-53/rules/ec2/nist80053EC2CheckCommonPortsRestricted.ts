@@ -6,11 +6,10 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
-//Default list of common TCP ports, can be altered as needed
 const blockedPorts = [20, 21, 3389, 3309, 3306, 4333];
 
 /**
- * EC2 instances have all common TCP ports restricted for IPv4 traffic - (AC-4, CM-2, SC-7, SC-7(3)).
+ * EC2 instances have all common TCP ports restricted for ingress IPv4 traffic - (AC-4, CM-2, SC-7, SC-7(3)).
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */

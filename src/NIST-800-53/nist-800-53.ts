@@ -299,7 +299,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         "The VPC's default security group allows inbound or outbound traffic - (Control IDs: AC-4, SC-7, SC-7(3)).";
       const explanation =
-        'When creating a VPC through CloudFormation, the default security group will always be open.  Therefore it is important to always close the default security group after stack creation whenever a VPC is created.  Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
+        'When creating a VPC through CloudFormation, the default security group will always be open. Therefore it is important to always close the default security group after stack creation whenever a VPC is created. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
       Annotations.of(node).addWarning(
         this.createMessage(ruleId, info, explanation)
       );
@@ -312,7 +312,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The EC2 instance allows unrestricted inbound IPv4 TCP traffic on common ports (20, 21, 3389, 3306, 4333) - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).';
       const explanation =
-        'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems.  By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
+        'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems. By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -367,7 +367,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control IDs: SA-3(a).';
       const explanation =
-        'OAUTH is the most secure method of authenticating your CodeBuild application.  Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.';
+        'OAUTH is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -375,7 +375,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check elasticsearch Resources
+   * Check Elasticsearch Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
@@ -415,7 +415,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ElasticsearchRunningWithinVPC';
       const info =
-        'The Elasticsearch resource is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+        'The Elasticsearch domain is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation =
         'VPCs help secure your AWS resources and provide an extra layer of protection.';
       Annotations.of(node).addError(
