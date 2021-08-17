@@ -690,7 +690,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSEnhancedMonitoringEnabled';
       const info =
-        'The RDS DB Instance does not enhanced monitoring enabled- (Control ID: CA-7(a)(b)).';
+        'The RDS DB Instance does not enhanced monitoring enabled - (Control ID: CA-7(a)(b)).';
       const explanation =
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.';
       Annotations.of(node).addError(
