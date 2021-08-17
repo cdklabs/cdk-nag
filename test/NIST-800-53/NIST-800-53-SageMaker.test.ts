@@ -45,7 +45,7 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether SageMaker notebooks are encrypted with a KMS key
     //These tests taken from AWS Solutions tests for rule "SM2"
-    test('NIST.800.53-SageMakerNotebookKMS: SageMaker notebooks use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
+    test('NIST.800.53-SageMakerNotebookKMS: SageMaker notebooks use a KMS key for encryption at rest - (Control IDs: SC-13, SC-28)', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {
@@ -84,7 +84,7 @@ describe('NIST-800-53 Compute Checks', () => {
 
     //Test whether SageMaker notebooks disable direct internet access
     //These tests taken from AWS Solutions tests for rule "SM3"
-    test('nist80053SageMakerNotebookDirectInternetAccessDisabled: - SageMaker instances disabled direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
+    test('nist80053SageMakerNotebookDirectInternetAccessDisabled: - SageMaker instances have direct internet access disabled - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new NIST80053Checks());
       new CfnNotebookInstance(positive, 'rNotebook', {

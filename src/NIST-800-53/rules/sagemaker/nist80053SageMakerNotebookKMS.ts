@@ -7,7 +7,7 @@ import { CfnNotebookInstance } from '@aws-cdk/aws-sagemaker';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * SageMaker notebook instances utilize a KMS key - (Control IDs: SC-13, SC-28)
+ * SageMaker notebook instances utilize KMS keys for encryption at rest  - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

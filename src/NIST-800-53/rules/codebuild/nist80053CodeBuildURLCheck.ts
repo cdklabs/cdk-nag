@@ -7,7 +7,7 @@ import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Codebuild projects utilize OAUTH - (Control IDs: SA-3(a))
+ * Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: SA-3(a))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

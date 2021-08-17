@@ -207,8 +207,8 @@ describe('NIST-800-53 Compute Checks', () => {
       });
 
       //Check cdk-nag response
-      const messages6 = SynthUtils.synthesize(negative).messages;
-      expect(messages6).not.toContainEqual(
+      const messages4 = SynthUtils.synthesize(negative).messages;
+      expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),

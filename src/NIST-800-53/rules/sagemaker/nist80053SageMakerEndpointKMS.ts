@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnEndpointConfig) {
-    //Does this notebook have a KMS key ID?
+    //Does this endpoint have a KMS key ID?
     const kmsKey = Stack.of(node).resolve(node.kmsKeyId);
     if (kmsKey == undefined) {
       return false;
