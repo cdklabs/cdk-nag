@@ -11,6 +11,7 @@ import {
   InstanceType,
   MachineImage,
   Vpc,
+  CfnVPC,
   CfnInstance,
   CfnSecurityGroup,
   SecurityGroup,
@@ -23,6 +24,198 @@ import { NIST80053Checks } from '../../src';
 
 describe('NIST-800-53 Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
+    //Test whether the default VPC security group is closed
+    test('nist80053CheckDefaultSecurityGroupClosed: - Default VPC security group is closed - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+      //Expect a POSITIVE response because we create a VPC within our stack and its default security group will not be closed.
+      const positive = new Stack();
+      Aspects.of(positive).add(new NIST80053Checks());
+      new CfnVPC(positive, 'rSecurityGroup', {
+        cidrBlock: '1.1.1.1',
+      });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'
+            ),
+          }),
+        })
+      );
+
+      //Create stack for negative checks
+      //Expect a NEGATIVE response because the stack is empty
+      const negative = new Stack();
+      Aspects.of(negative).add(new NIST80053Checks());
+
+      //Check cdk-nag response
+      const messages6 = SynthUtils.synthesize(negative).messages;
+      expect(messages6).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckDefaultSecurityGroupClosed:'
+            ),
+          }),
+        })
+      );
+    });
+
+    //Test whether common ports are restricted
+    test('nist80053EC2CheckCommonPortsRestricted: - EC2 instances restrict common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3))', () => {
+      //Expect a POSITIVE response because the security group allows connections from port 20
+      const positive = new Stack();
+      Aspects.of(positive).add(new NIST80053Checks());
+      new CfnSecurityGroup(positive, 'rSecurityGroup', {
+        groupDescription: 'security group tcp port 20 open',
+        securityGroupIngress: [
+          {
+            fromPort: 20,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
+          }),
+        })
+      );
+
+      //Expect a POSITIVE response because the security group allows connections from port 21
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new NIST80053Checks());
+      new CfnSecurityGroup(positive2, 'rSecurityGroup', {
+        groupDescription: 'security group with SSH unrestricted',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
+          }),
+        })
+      );
+
+      //Expect a POSITIVE response because the security group allows connections from all ports
+      const positive3 = new Stack();
+      Aspects.of(positive3).add(new NIST80053Checks());
+
+      new SecurityGroup(positive3, 'rSg', {
+        vpc: new Vpc(positive3, 'rVpc'),
+      }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+
+      const messages3 = SynthUtils.synthesize(positive3).messages;
+      expect(messages3).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
+          }),
+        })
+      );
+
+      //Expect a POSITIVE response because the security group allows port 21 by specifying an IP range including port 21
+      const positive4 = new Stack();
+      Aspects.of(positive4).add(new NIST80053Checks());
+      new CfnSecurityGroup(positive4, 'rSecurityGroup', {
+        groupDescription: 'security group with port 21 open',
+        securityGroupIngress: [
+          {
+            fromPort: 1,
+            toPort: 10000,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      const messages4 = SynthUtils.synthesize(positive4).messages;
+      expect(messages4).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
+          }),
+        })
+      );
+
+      //Create stack for negative checks
+      const negative = new Stack();
+      Aspects.of(negative).add(new NIST80053Checks());
+
+      //Expect a NEGATIVE response because the security group has no rules
+      new CfnSecurityGroup(negative, 'rSecurityGroup1', {
+        groupDescription: 'security group with no rules',
+        securityGroupIngress: [],
+      });
+
+      //Expect a NEGATIVE response because port 21 is enabled for a specific IP address
+      new CfnSecurityGroup(negative, 'rSecurityGroup2', {
+        groupDescription:
+          'security group with SSH ingress allowed for a specific IP address',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'tcp',
+            cidrIp: '72.21.210.165',
+          },
+        ],
+      });
+
+      //Expect a NEGATIVE response because port 80 (not a restricted port) is open to the world
+      new CfnSecurityGroup(negative, 'rSecurityGroup3', {
+        groupDescription:
+          'security group with an open-world ingress rule for HTTP traffic',
+        securityGroupIngress: [
+          {
+            fromPort: 80,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+
+      //Expect a NEGATIVE response because port 21 is unrestricted for UDP traffic (not TCP)
+      new CfnSecurityGroup(negative, 'rSecurityGroup4', {
+        groupDescription: 'security group allowing unrestricted udp traffic',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'udp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+
+      //Check cdk-nag response
+      const messages6 = SynthUtils.synthesize(negative).messages;
+      expect(messages6).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'NIST.800.53-EC2CheckCommonPortsRestricted:'
+            ),
+          }),
+        })
+      );
+    });
+
     //Test whether Security Groups restrict SSH access
     test('nist80053EC2CheckSSHR‎estricted: - Security Groups do not allow for unrestricted SSH traffic - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
       //Expect a POSITIVE response because the security group allows SSH connections from any IPv4 address
@@ -38,6 +231,14 @@ describe('NIST-800-53 Compute Checks', () => {
           },
         ],
       });
+      const messages = SynthUtils.synthesize(positive).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('NIST.800.53-EC2CheckSSHRestricted:'),
+          }),
+        })
+      );
 
       //Expect a POSITIVE response because the security group allows SSH connections from any IPv6 address
       const positive2 = new Stack();
@@ -228,7 +429,7 @@ describe('NIST-800-53 Compute Checks', () => {
       );
     });
 
-    //Test whether EC2 instances are created within VPCs
+    //Test whether EC2 instances dare created within VPCs
     test('nist80053EC2CheckInsideVPC: - EC2 instances are created within VPCs - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
       //Expect a POSITIVE response because the instance is not defined inside of a VPC (subnet)
       const positive = new Stack();
