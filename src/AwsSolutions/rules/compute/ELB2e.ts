@@ -6,7 +6,7 @@ import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ELBs have access logs enabled.
+ * CLBs have access logs enabled.
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

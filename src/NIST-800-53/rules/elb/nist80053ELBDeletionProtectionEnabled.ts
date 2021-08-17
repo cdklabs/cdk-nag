@@ -7,7 +7,7 @@ import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ELBs have deletion protection enabled - (Control IDs: CM-2, CP-10)
+ * ALBs, NLBs, and GLBs have deletion protection enabled - (Control IDs: CM-2, CP-10)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

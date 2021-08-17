@@ -7,7 +7,7 @@ import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ELBs use at least two AZs with the Cross-Zone Load Balancing feature enabled. - (Control IDs: SC-5, CP-10).
+ * CLBs use at least two AZs with the Cross-Zone Load Balancing feature enabled - (Control IDs: SC-5, CP-10)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

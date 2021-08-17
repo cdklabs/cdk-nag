@@ -12,7 +12,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnAutoScalingGroup) {
-    //get all associated CLASSIC load balancers
+    //get all associated CLBs
     const classicLBs = Stack.of(node).resolve(node.loadBalancerNames);
     //get all associated Application LBs, Gateway LBs, and Network LBs
     const otherLBs = Stack.of(node).resolve(node.targetGroupArns);

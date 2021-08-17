@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
+import { CfnLoadBalancer as CfnLoadBalancerV2 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
@@ -20,6 +21,13 @@ export default function (node: IConstruct): boolean {
     const enabled = Stack.of(node).resolve(accessLoggingPolicy.enabled);
 
     if (enabled == false) {
+      return false;
+    }
+  } else if (node instanceof CfnLoadBalancerV2) {
+    const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
+    const reg = /"access_logs\.s3\.enabled","value":"true"/gm;
+
+    if (JSON.stringify(attributes).search(reg) == -1) {
       return false;
     }
   }
