@@ -66,7 +66,15 @@ import {
   nist80053RedshiftClusterConfiguration,
   nist80053RedshiftClusterPublicAccess,
 } from './rules/redshift';
-import { nist80053S3BucketLoggingEnabled } from './rules/s3';
+import {
+  nist80053S3BucketDefaultLockEnabled,
+  nist80053S3BucketLoggingEnabled,
+  nist80053S3BucketPublicReadProhibited,
+  nist80053S3BucketPublicWriteProhibited,
+  nist80053S3BucketReplicationEnabled,
+  nist80053S3BucketServerSideEncryptionEnabled,
+  nist80053S3BucketVersioningEnabled,
+} from './rules/s3';
 import {
   nist80053SageMakerEndpointKMS,
   nist80053SageMakerNotebookDirectInternetAccessDisabled,
@@ -829,6 +837,87 @@ export class NIST80053Checks extends NagPack {
         'The S3 Bucket does not have server access logs enabled - (Control IDs: AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
         'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketDefaultLockEnabled') &&
+      !nist80053S3BucketDefaultLockEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketDefaultLockEnabled';
+      const info =
+        'The S3 Bucket does not have default lock enabled - (Control ID: SC-28).';
+      const explanation =
+        'Because sensitive data can exist at rest in S3 buckets, enforce object locks at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketPublicReadProhibited') &&
+      !nist80053S3BucketPublicReadProhibited(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketPublicReadProhibited';
+      const info =
+        'The S3 Bucket has public read access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+      const explanation =
+        'The management of access should be consistent with the classification of the data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketPublicWriteProhibited') &&
+      !nist80053S3BucketPublicWriteProhibited(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketPublicWriteProhibited';
+      const info =
+        'The S3 Bucket has public write access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+      const explanation =
+        'The management of access should be consistent with the classification of the data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketReplicationEnabled') &&
+      !nist80053S3BucketReplicationEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketReplicationEnabled';
+      const info =
+        'The S3 Bucket does not have replication enabled - (Control IDs: AU-9(2), CP-9(b), CP-10, SC-5, SC-36).';
+      const explanation =
+        'Amazon Simple Storage Service (Amazon S3) Cross-Region Replication (CRR) supports maintaining adequate capacity and availability. CRR enables automatic, asynchronous copying of objects across Amazon S3 buckets to help ensure that data availability is maintained.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'NIST.800.53-S3BucketServerSideEncryptionEnabled'
+      ) &&
+      !nist80053S3BucketServerSideEncryptionEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketServerSideEncryptionEnabled';
+      const info =
+        'The S3 Bucket does not have server-side encryption enabled - (Control IDs: AU-9(2), CP-9(b), CP-10, SC-5, SC-36).';
+      const explanation =
+        'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketVersioningEnabled') &&
+      !nist80053S3BucketVersioningEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketVersioningEnabled';
+      const info =
+        'The S3 Bucket does not have versioning enabled - (Control IDs: CP-10, SI-12).';
+      const explanation =
+        'Use versioning to preserve, retrieve, and restore every version of every object stored in your Amazon S3 bucket. Versioning helps you to easily recover from unintended user actions and application failures.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
