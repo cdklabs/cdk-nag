@@ -19,7 +19,8 @@ Check CDK applications for best practices using a combination of available rule 
 See [RULES](./RULES.md) for more information on all the available packs.
 
 1. [AWS Solutions](./RULES.md#awssolutions)
-2. [NIST 800-53](./RULES.md#nist-800-53) (In Progress)
+1. [HIPAA Security](./RULES.md#hipaa-security) (In Progress)
+1. [NIST 800-53](./RULES.md#nist-800-53) (In Progress)
 
 ## Usage
 

@@ -5,6 +5,7 @@
 Name|Description
 ----|-----------
 [AwsSolutionsChecks](#cdk-nag-awssolutionschecks)|Check Best practices based on AWS Solutions Security Matrix.
+[HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
 [NIST80053Checks](#cdk-nag-nist80053checks)|Check for NIST 800-53 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule sets.
 
@@ -41,6 +42,46 @@ new AwsSolutionsChecks(props?: NagPackProps)
 
 
 #### visit(node) <a id="cdk-nag-awssolutionschecks-visit"></a>
+
+All aspects can visit an IConstruct.
+
+```ts
+visit(node: IConstruct): void
+```
+
+* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+
+
+
+
+
+
+## class HIPAASecurityChecks  <a id="cdk-nag-hipaasecuritychecks"></a>
+
+Check for HIPAA Security compliance.
+
+Based on the HIPAA Security AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-hipaa_security.html
+
+__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Extends__: [NagPack](#cdk-nag-nagpack)
+
+### Initializer
+
+
+
+
+```ts
+new HIPAASecurityChecks(props?: NagPackProps)
+```
+
+* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
+  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning and error messages. __*Optional*__
+
+
+### Methods
+
+
+#### visit(node) <a id="cdk-nag-hipaasecuritychecks-visit"></a>
 
 All aspects can visit an IConstruct.
 
@@ -100,7 +141,7 @@ visit(node: IConstruct): void
 Base class for all rule sets.
 
 __Implements__: [IAspect](#aws-cdk-core-iaspect)
-__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [NIST80053Checks](#cdk-nag-nist80053checks)
+__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053Checks](#cdk-nag-nist80053checks)
 
 ### Initializer
 

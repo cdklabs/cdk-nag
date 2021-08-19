@@ -22,5 +22,6 @@ repos:
               ^.github/|
               ^.projen/|
               ^.mergify.yml|
-              ^.*.json
+              ^.*.json |
+              ^API.md 
           )
