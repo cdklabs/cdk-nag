@@ -829,6 +829,19 @@ export class NIST80053Checks extends NagPack {
    */
   private checkS3(node: CfnResource, ignores: any): void {
     if (
+      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketDefaultLockEnabled') &&
+      !nist80053S3BucketDefaultLockEnabled(node)
+    ) {
+      const ruleId = 'NIST.800.53-S3BucketDefaultLockEnabled';
+      const info =
+        'The S3 Bucket does not have object lock enabled - (Control ID: SC-28).';
+      const explanation =
+        'Because sensitive data can exist at rest in S3 buckets, enforce object locks at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
       !this.ignoreRule(ignores, 'NIST.800.53-S3BucketLoggingEnabled') &&
       !nist80053S3BucketLoggingEnabled(node)
     ) {
@@ -842,25 +855,12 @@ export class NIST80053Checks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'NIST.800.53-S3BucketDefaultLockEnabled') &&
-      !nist80053S3BucketDefaultLockEnabled(node)
-    ) {
-      const ruleId = 'NIST.800.53-S3BucketDefaultLockEnabled';
-      const info =
-        'The S3 Bucket does not have default lock enabled - (Control ID: SC-28).';
-      const explanation =
-        'Because sensitive data can exist at rest in S3 buckets, enforce object locks at rest to help protect that data.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
       !this.ignoreRule(ignores, 'NIST.800.53-S3BucketPublicReadProhibited') &&
       !nist80053S3BucketPublicReadProhibited(node)
     ) {
       const ruleId = 'NIST.800.53-S3BucketPublicReadProhibited';
       const info =
-        'The S3 Bucket has public read access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+        'The S3 Bucket does not prohibit public read access through its Block Public Access configurations and bucket ACLs - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
       const explanation =
         'The management of access should be consistent with the classification of the data.';
       Annotations.of(node).addError(
@@ -873,7 +873,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-S3BucketPublicWriteProhibited';
       const info =
-        'The S3 Bucket has public write access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+        'The S3 Bucket does not prohibit public write access through its Block Public Access configurations and bucket ACLs - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
       const explanation =
         'The management of access should be consistent with the classification of the data.';
       Annotations.of(node).addError(
@@ -902,7 +902,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-S3BucketServerSideEncryptionEnabled';
       const info =
-        'The S3 Bucket does not have server-side encryption enabled - (Control IDs: AU-9(2), CP-9(b), CP-10, SC-5, SC-36).';
+        'The S3 Bucket does not have default server-side encryption enabled - (Control IDs: AU-9(2), CP-9(b), CP-10, SC-5, SC-36).';
       const explanation =
         'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.';
       Annotations.of(node).addError(

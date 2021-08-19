@@ -6,7 +6,7 @@ import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * S3 Buckets have default lock enabled - (Control ID: SC-28)
+ * S3 Buckets have object lock enabled - (Control ID: SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
