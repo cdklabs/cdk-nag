@@ -268,9 +268,9 @@ export class AwsSolutionsChecks extends NagPack {
     ) {
       const ruleId = 'AwsSolutions-ELB1';
       const info =
-        'The ELB is used for incoming HTTP/HTTPS traffic. Use ALBs instead.';
+        'The CLB is used for incoming HTTP/HTTPS traffic. Use ALBs instead.';
       const explanation =
-        'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of the ELB for enhanced incoming traffic distribution, better performance and lower costs.';
+        'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of The CLB for enhanced incoming traffic distribution, better performance and lower costs.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -292,7 +292,7 @@ export class AwsSolutionsChecks extends NagPack {
       !awsSolutionsElb2e(node)
     ) {
       const ruleId = 'AwsSolutions-ELB2e';
-      const info = 'The ELB does not have access logs enabled.';
+      const info = 'The CLB does not have access logs enabled.';
       const explanation =
         'Access logs allow operators to to analyze traffic patterns and identify and troubleshoot security issues.';
       Annotations.of(node).addError(
@@ -304,9 +304,9 @@ export class AwsSolutionsChecks extends NagPack {
       !awsSolutionsElb3(node)
     ) {
       const ruleId = 'AwsSolutions-ELB3';
-      const info = 'The ELB does not have connection draining enabled.';
+      const info = 'The CLB does not have connection draining enabled.';
       const explanation =
-        'With Connection Draining feature enabled, if an EC2 backend instance fails health checks the ELB will not send any new requests to the unhealthy instance. However, it will still allow existing (in-flight) requests to complete for the duration of the configured timeout.';
+        'With Connection Draining feature enabled, if an EC2 backend instance fails health checks The CLB will not send any new requests to the unhealthy instance. However, it will still allow existing (in-flight) requests to complete for the duration of the configured timeout.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -317,9 +317,9 @@ export class AwsSolutionsChecks extends NagPack {
     ) {
       const ruleId = 'AwsSolutions-ELB4';
       const info =
-        'The ELB does not use at least two AZs with the Cross-Zone Load Balancing feature enabled.';
+        'The CLB does not use at least two AZs with the Cross-Zone Load Balancing feature enabled.';
       const explanation =
-        'ELBs can distribute the traffic evenly across all backend instances. To use Cross-Zone Load Balancing at optimal level, the system should maintain an equal EC2 capacity distribution in each of the AZs registered with the load balancer.';
+        'CLBs can distribute the traffic evenly across all backend instances. To use Cross-Zone Load Balancing at optimal level, the system should maintain an equal EC2 capacity distribution in each of the AZs registered with the load balancer.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -330,7 +330,7 @@ export class AwsSolutionsChecks extends NagPack {
     ) {
       const ruleId = 'AwsSolutions-ELB5';
       const info =
-        'The ELB listener is not configured for secure (HTTPs or SSL) protocols for client communication.';
+        'The CLB listener is not configured for secure (HTTPs or SSL) protocols for client communication.';
       const explanation =
         'The HTTPs or SSL protocols enable secure communication by encrypting the communication between the client and the load balancer.';
       Annotations.of(node).addError(

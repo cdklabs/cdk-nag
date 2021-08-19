@@ -365,7 +365,7 @@ describe('AWS Solutions Compute Checks', () => {
     });
   });
   describe('Elastic Load Balancing', () => {
-    test('awsSolutionsElb1: ELBs are not used for incoming HTTP/HTTPS traffic', () => {
+    test('awsSolutionsElb1: CLBs are not used for incoming HTTP/HTTPS traffic', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       const elb = new LoadBalancer(positive, 'rELB', {
@@ -430,7 +430,7 @@ describe('AWS Solutions Compute Checks', () => {
         })
       );
     });
-    test('awsSolutionsElb2e: ELBs have access logs enabled', () => {
+    test('awsSolutionsElb2e: CLBs have access logs enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new LoadBalancer(positive, 'rELB', {
@@ -466,7 +466,7 @@ describe('AWS Solutions Compute Checks', () => {
         })
       );
     });
-    test('awsSolutionsElb3: ELBs have connection draining enabled', () => {
+    test('awsSolutionsElb3: CLBs have connection draining enabled', () => {
       const positive = new Stack();
       const positive2 = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());

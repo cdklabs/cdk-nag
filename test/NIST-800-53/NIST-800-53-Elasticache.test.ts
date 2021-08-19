@@ -7,8 +7,8 @@ import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src/NIST-800-53/nist-800-53';
 
-describe('Amazon Elasticache', () => {
-  test('NIST.800.53-ElasticacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
+describe('Amazon ElastiCache', () => {
+  test('NIST.800.53-ElastiCacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new CfnCacheCluster(positive, 'rAec', {
@@ -23,7 +23,7 @@ describe('Amazon Elasticache', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-ElasticacheRedisClusterAutomaticBackup:'
+            'NIST.800.53-ElastiCacheRedisClusterAutomaticBackup:'
           ),
         }),
       })
@@ -41,7 +41,7 @@ describe('Amazon Elasticache', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-ElasticacheRedisClusterAutomaticBackup:'
+            'NIST.800.53-ElastiCacheRedisClusterAutomaticBackup:'
           ),
         }),
       })
@@ -67,7 +67,7 @@ describe('Amazon Elasticache', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-ElasticacheRedisClusterAutomaticBackup:'
+            'NIST.800.53-ElastiCacheRedisClusterAutomaticBackup:'
           ),
         }),
       })
