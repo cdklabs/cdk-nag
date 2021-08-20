@@ -3,8 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { CfnResource, IConstruct } from '@aws-cdk/core';
+import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
+import {
+  hipaaSecurityCloudTrailCloudWatchLogsEnabled,
+  hipaaSecurityCloudTrailEncryptionEnabled,
+  hipaaSecurityCloudTrailLogFileValidationEnabled,
+} from './rules/cloudtrail/index';
 
 /**
  * Check for HIPAA Security compliance.
@@ -14,10 +19,10 @@ export class HIPAASecurityChecks extends NagPack {
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
       // Get ignores metadata if it exists
-      // const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
+      const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
       // this.checkAPIGW(node, ignores);
       // this.checkAutoScaling(node, ignores);
-      // this.checkCloudTrail(node, ignores);
+      this.checkCloudTrail(node, ignores);
       // this.checkCloudWatch(node, ignores);
       // this.checkCodeBuild(node, ignores);
       // this.checkDMS(node, ignores);
@@ -61,7 +66,53 @@ export class HIPAASecurityChecks extends NagPack {
   //    * @param node the IConstruct to evaluate
   //    * @param ignores list of ignores for the resource
   //    */
-  //   private checkCloudTrail(node: CfnResource, ignores: any): void {}
+  private checkCloudTrail(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA-Security-CloudTrailCloudWatchLogsEnabled'
+      ) &&
+      !hipaaSecurityCloudTrailCloudWatchLogsEnabled(node)
+    ) {
+      const ruleId = 'HIPAA-Security-CloudTrailCloudWatchLogsEnabled';
+      const info =
+        'The trail does not have CloudWatch logs enabled - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).';
+      const explanation =
+        'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA-Security-CloudTrailEncryptionEnabled') &&
+      !hipaaSecurityCloudTrailEncryptionEnabled(node)
+    ) {
+      const ruleId = 'HIPAA-Security-CloudTrailEncryptionEnabled';
+      const info =
+        'The trail does not have a KMS key ID or have encryption enabled - (Control ID: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA-Security-CloudTrailLogFileValidationEnabled'
+      ) &&
+      !hipaaSecurityCloudTrailLogFileValidationEnabled(node)
+    ) {
+      const ruleId = 'HIPAA-Security-CloudTrailLogFileValidationEnabled';
+      const info =
+        'The trail does not have log file validation enabled - (Control ID: 164.312(c)(1), 164.312(c)(2)).';
+      const explanation =
+        'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check CloudWatch Resources
