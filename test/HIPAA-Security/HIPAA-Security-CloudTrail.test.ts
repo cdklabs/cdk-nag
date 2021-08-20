@@ -12,7 +12,7 @@ import { HIPAASecurityChecks } from '../../src';
 
 describe('HIPAA Security CloudTrail Compliance Checks', () => {
   describe('AWS CloudTrail', () => {
-    test('HIPAA-Security-CloudTrailCloudWatchLogsEnabled: CloudTrail trails have CloudWatch logs enabled', () => {
+    test('HIPAA.Security-CloudTrailCloudWatchLogsEnabled: CloudTrail trails have CloudWatch logs enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
 
@@ -24,7 +24,7 @@ describe('HIPAA Security CloudTrail Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'HIPAA-Security-CloudTrailCloudWatchLogsEnabled:'
+              'HIPAA.Security-CloudTrailCloudWatchLogsEnabled:'
             ),
           }),
         })
@@ -47,14 +47,14 @@ describe('HIPAA Security CloudTrail Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'HIPAA-Security-CloudTrailCloudWatchLogsEnabled:'
+              'HIPAA.Security-CloudTrailCloudWatchLogsEnabled:'
             ),
           }),
         })
       );
     });
 
-    test('HIPAA-Security-CloudTrailEncryptionEnabled: CloudTrail trails have encryption enabled', () => {
+    test('HIPAA.Security-CloudTrailEncryptionEnabled: CloudTrail trails have encryption enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
 
@@ -72,7 +72,7 @@ describe('HIPAA Security CloudTrail Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'HIPAA-Security-CloudTrailEncryptionEnabled:'
+              'HIPAA.Security-CloudTrailEncryptionEnabled:'
             ),
           }),
         })
@@ -98,14 +98,14 @@ describe('HIPAA Security CloudTrail Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'HIPAA-Security-CloudTrailEncryptionEnabled:'
+              'HIPAA.Security-CloudTrailEncryptionEnabled:'
             ),
           }),
         })
       );
     });
 
-    test('HIPAA-Security-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
+    test('HIPAA.Security-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
 
@@ -124,7 +124,7 @@ describe('HIPAA Security CloudTrail Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'HIPAA-Security-CloudTrailLogFileValidationEnabled:'
+              'HIPAA.Security-CloudTrailLogFileValidationEnabled:'
             ),
           }),
         })
@@ -150,7 +150,7 @@ describe('HIPAA Security CloudTrail Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining(
-              'HIPAA-Security-CloudTrailLogFileValidationEnabled:'
+              'HIPAA.Security-CloudTrailLogFileValidationEnabled:'
             ),
           }),
         })

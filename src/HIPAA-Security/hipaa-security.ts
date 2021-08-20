@@ -70,11 +70,11 @@ export class HIPAASecurityChecks extends NagPack {
     if (
       !this.ignoreRule(
         ignores,
-        'HIPAA-Security-CloudTrailCloudWatchLogsEnabled'
+        'HIPAA.Security-CloudTrailCloudWatchLogsEnabled'
       ) &&
       !hipaaSecurityCloudTrailCloudWatchLogsEnabled(node)
     ) {
-      const ruleId = 'HIPAA-Security-CloudTrailCloudWatchLogsEnabled';
+      const ruleId = 'HIPAA.Security-CloudTrailCloudWatchLogsEnabled';
       const info =
         'The trail does not have CloudWatch logs enabled - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).';
       const explanation =
@@ -84,10 +84,10 @@ export class HIPAASecurityChecks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'HIPAA-Security-CloudTrailEncryptionEnabled') &&
+      !this.ignoreRule(ignores, 'HIPAA.Security-CloudTrailEncryptionEnabled') &&
       !hipaaSecurityCloudTrailEncryptionEnabled(node)
     ) {
-      const ruleId = 'HIPAA-Security-CloudTrailEncryptionEnabled';
+      const ruleId = 'HIPAA.Security-CloudTrailEncryptionEnabled';
       const info =
         'The trail does not have a KMS key ID or have encryption enabled - (Control ID: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
       const explanation =
@@ -99,11 +99,11 @@ export class HIPAASecurityChecks extends NagPack {
     if (
       !this.ignoreRule(
         ignores,
-        'HIPAA-Security-CloudTrailLogFileValidationEnabled'
+        'HIPAA.Security-CloudTrailLogFileValidationEnabled'
       ) &&
       !hipaaSecurityCloudTrailLogFileValidationEnabled(node)
     ) {
-      const ruleId = 'HIPAA-Security-CloudTrailLogFileValidationEnabled';
+      const ruleId = 'HIPAA.Security-CloudTrailLogFileValidationEnabled';
       const info =
         'The trail does not have log file validation enabled - (Control ID: 164.312(c)(1), 164.312(c)(2)).';
       const explanation =
