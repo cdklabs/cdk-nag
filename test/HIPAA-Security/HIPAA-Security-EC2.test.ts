@@ -19,7 +19,7 @@ import { HIPAASecurityChecks } from '../../src';
 describe('HIPAA.Security Compute Checks', () => {
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     //Test whether detailed monitoring is enabled
-    test('hipaaSecurityEC2InstanceDetailedMonitoringEnabled: - EC2 instances have detailed monitoring enabled - (Control IDs: CA-7(a)(b), SI-4(2), SI-4(a)(b)(c)).', () => {
+    test('hipaaSecurityEC2InstanceDetailedMonitoringEnabled: - EC2 instances have detailed monitoring enabled - (Control IDs: 164.312(b)).', () => {
       //Expect a POSITIVE response because the instance does not have detailed monitoring enabled
       const positive = new Stack();
       Aspects.of(positive).add(new HIPAASecurityChecks());
