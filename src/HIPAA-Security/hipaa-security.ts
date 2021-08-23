@@ -67,11 +67,11 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkAutoScaling(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check CloudTrail Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
+  /**
+   * Check CloudTrail Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
   private checkCloudTrail(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(
@@ -148,11 +148,11 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkDynamoDB(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check EC2 Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
+  /**
+   * Check EC2 Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
   private checkEC2(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(
