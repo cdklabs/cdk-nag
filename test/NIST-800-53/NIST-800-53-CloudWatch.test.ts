@@ -22,7 +22,6 @@ describe('Amazon CloudWatch', () => {
       threshold: 100,
       evaluationPeriods: 2,
     }).addAlarmAction();
-    console.log(JSON.stringify(SynthUtils.toCloudFormation(nonCompliant)));
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -76,7 +75,6 @@ describe('Amazon CloudWatch', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
     new LogGroup(nonCompliant, 'rLogGroup');
-    console.log(JSON.stringify(SynthUtils.toCloudFormation(nonCompliant)));
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
