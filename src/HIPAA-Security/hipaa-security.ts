@@ -9,13 +9,13 @@ import {
   hipaaSecurityCloudTrailCloudWatchLogsEnabled,
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
-} from './rules/cloudtrail/index';
+} from './rules/cloudtrail';
 
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
-} from './rules/ec2/index';
+} from './rules/ec2';
 
 /**
  * Check for HIPAA Security compliance.
