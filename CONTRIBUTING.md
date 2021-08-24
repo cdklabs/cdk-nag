@@ -30,7 +30,8 @@ reported the issue. Please try to include as much information as you can. Detail
 - [ ] Testing
   - Unit test added (prefer not to modify an existing test, otherwise, it's probably a breaking change)
 - [ ] Docs
-  - **README**: README and/or documentation topic updated
+  - **README**: README updated if necessary
+  - **RULES**: RULES updated if necessary
 - [ ] Title and Description
   - **Change type**: title prefixed with **fix**, **feat** and module name in parens, which will appear in changelog
   - **Title**: use lower-case and doesn't end with a period
