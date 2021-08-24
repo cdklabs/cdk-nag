@@ -7,6 +7,7 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { CfnReplicationInstance } from '@aws-cdk/aws-dms';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
+
 describe('AWS Database Migration Service (AWS DMS)', () => {
   test('nist80053DMSReplication: DMS replication instances are not public - (Control ID: AC-4)', () => {
     const positive = new Stack();

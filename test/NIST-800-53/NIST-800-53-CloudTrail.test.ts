@@ -10,151 +10,149 @@ import { LogGroup } from '@aws-cdk/aws-logs';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-describe('NIST 800-53 CloudTrail Compliance Checks', () => {
-  describe('AWS CloudTrail', () => {
-    test('NIST.800.53-CloudTrailCloudWatchLogsEnabled: CloudTrail trails have CloudWatch logs enabled', () => {
-      const nonCompliant = new Stack();
-      Aspects.of(nonCompliant).add(new NIST80053Checks());
+describe('AWS CloudTrail', () => {
+  test('NIST.800.53-CloudTrailCloudWatchLogsEnabled: CloudTrail trails have CloudWatch logs enabled', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053Checks());
 
-      const trail = new Trail(nonCompliant, 'rTrail');
-      trail.logAllLambdaDataEvents();
+    const trail = new Trail(nonCompliant, 'rTrail');
+    trail.logAllLambdaDataEvents();
 
-      const messages1 = SynthUtils.synthesize(nonCompliant).messages;
-      expect(messages1).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
-            ),
-          }),
-        })
-      );
+    const messages1 = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages1).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
+          ),
+        }),
+      })
+    );
 
-      const activeCompliant = new Stack();
-      Aspects.of(activeCompliant).add(new NIST80053Checks());
+    const activeCompliant = new Stack();
+    Aspects.of(activeCompliant).add(new NIST80053Checks());
 
-      const myLogs = new LogGroup(activeCompliant, 'rLogGroup');
+    const myLogs = new LogGroup(activeCompliant, 'rLogGroup');
 
-      const trail2 = new Trail(activeCompliant, 'rTrail', {
-        cloudWatchLogGroup: myLogs,
-        sendToCloudWatchLogs: true,
-      });
-
-      trail2.logAllLambdaDataEvents();
-
-      const messages2 = SynthUtils.synthesize(activeCompliant).messages;
-      expect(messages2).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
-            ),
-          }),
-        })
-      );
+    const trail2 = new Trail(activeCompliant, 'rTrail', {
+      cloudWatchLogGroup: myLogs,
+      sendToCloudWatchLogs: true,
     });
 
-    test('NIST.800.53-CloudTrailEncryptionEnabled: CloudTrail trails have encryption enabled', () => {
-      const nonCompliant = new Stack();
-      Aspects.of(nonCompliant).add(new NIST80053Checks());
+    trail2.logAllLambdaDataEvents();
 
-      const myLogs = new LogGroup(nonCompliant, 'rLogGroup');
+    const messages2 = SynthUtils.synthesize(activeCompliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-CloudTrailCloudWatchLogsEnabled:'
+          ),
+        }),
+      })
+    );
+  });
 
-      const trail = new Trail(nonCompliant, 'rTrail', {
-        cloudWatchLogGroup: myLogs,
-        sendToCloudWatchLogs: true,
-      });
+  test('NIST.800.53-CloudTrailEncryptionEnabled: CloudTrail trails have encryption enabled', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053Checks());
 
-      trail.stack;
+    const myLogs = new LogGroup(nonCompliant, 'rLogGroup');
 
-      const messages1 = SynthUtils.synthesize(nonCompliant).messages;
-      expect(messages1).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailEncryptionEnabled:'
-            ),
-          }),
-        })
-      );
-
-      const activeCompliant = new Stack();
-      Aspects.of(activeCompliant).add(new NIST80053Checks());
-
-      const myLogs2 = new LogGroup(activeCompliant, 'rLogGroup');
-
-      const myKey = new Key(activeCompliant, 'rKey');
-
-      const trail2 = new Trail(activeCompliant, 'rTrail', {
-        cloudWatchLogGroup: myLogs2,
-        sendToCloudWatchLogs: true,
-        kmsKey: myKey,
-      });
-
-      trail2.logAllLambdaDataEvents();
-
-      const messages2 = SynthUtils.synthesize(activeCompliant).messages;
-      expect(messages2).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailEncryptionEnabled:'
-            ),
-          }),
-        })
-      );
+    const trail = new Trail(nonCompliant, 'rTrail', {
+      cloudWatchLogGroup: myLogs,
+      sendToCloudWatchLogs: true,
     });
 
-    test('NIST.800.53-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
-      const nonCompliant = new Stack();
-      Aspects.of(nonCompliant).add(new NIST80053Checks());
+    trail.stack;
 
-      const myLogs = new LogGroup(nonCompliant, 'rLogGroup');
+    const messages1 = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages1).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-CloudTrailEncryptionEnabled:'
+          ),
+        }),
+      })
+    );
 
-      const trail = new Trail(nonCompliant, 'rTrail', {
-        cloudWatchLogGroup: myLogs,
-        sendToCloudWatchLogs: true,
-        enableFileValidation: false,
-      });
+    const activeCompliant = new Stack();
+    Aspects.of(activeCompliant).add(new NIST80053Checks());
 
-      trail.stack;
+    const myLogs2 = new LogGroup(activeCompliant, 'rLogGroup');
 
-      const messages1 = SynthUtils.synthesize(nonCompliant).messages;
-      expect(messages1).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailLogFileValidationEnabled:'
-            ),
-          }),
-        })
-      );
+    const myKey = new Key(activeCompliant, 'rKey');
 
-      const activeCompliant = new Stack();
-      Aspects.of(activeCompliant).add(new NIST80053Checks());
-
-      const myLogs2 = new LogGroup(activeCompliant, 'rLogGroup');
-
-      const myKey = new Key(activeCompliant, 'rKey');
-
-      const trail2 = new Trail(activeCompliant, 'rTrail', {
-        cloudWatchLogGroup: myLogs2,
-        sendToCloudWatchLogs: true,
-        kmsKey: myKey,
-      });
-
-      trail2.logAllLambdaDataEvents();
-
-      const messages2 = SynthUtils.synthesize(activeCompliant).messages;
-      expect(messages2).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'NIST.800.53-CloudTrailLogFileValidationEnabled:'
-            ),
-          }),
-        })
-      );
+    const trail2 = new Trail(activeCompliant, 'rTrail', {
+      cloudWatchLogGroup: myLogs2,
+      sendToCloudWatchLogs: true,
+      kmsKey: myKey,
     });
+
+    trail2.logAllLambdaDataEvents();
+
+    const messages2 = SynthUtils.synthesize(activeCompliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-CloudTrailEncryptionEnabled:'
+          ),
+        }),
+      })
+    );
+  });
+
+  test('NIST.800.53-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053Checks());
+
+    const myLogs = new LogGroup(nonCompliant, 'rLogGroup');
+
+    const trail = new Trail(nonCompliant, 'rTrail', {
+      cloudWatchLogGroup: myLogs,
+      sendToCloudWatchLogs: true,
+      enableFileValidation: false,
+    });
+
+    trail.stack;
+
+    const messages1 = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages1).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-CloudTrailLogFileValidationEnabled:'
+          ),
+        }),
+      })
+    );
+
+    const activeCompliant = new Stack();
+    Aspects.of(activeCompliant).add(new NIST80053Checks());
+
+    const myLogs2 = new LogGroup(activeCompliant, 'rLogGroup');
+
+    const myKey = new Key(activeCompliant, 'rKey');
+
+    const trail2 = new Trail(activeCompliant, 'rTrail', {
+      cloudWatchLogGroup: myLogs2,
+      sendToCloudWatchLogs: true,
+      kmsKey: myKey,
+    });
+
+    trail2.logAllLambdaDataEvents();
+
+    const messages2 = SynthUtils.synthesize(activeCompliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-CloudTrailLogFileValidationEnabled:'
+          ),
+        }),
+      })
+    );
   });
 });
