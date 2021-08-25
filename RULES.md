@@ -9,7 +9,7 @@ A list of all the available rules by Rule Pack
 
 ## AwsSolutions
 
-The [AWS Solutions Library](https://aws.amazon.com/solutions/.html) offers a collection of cloud-based solutions for dozens of technical and business problems, vetted for you by AWS. The AwsSolutions Rules Pack contains many of the checks that the are used as part of the vetting process.
+The [AWS Solutions Library](https://aws.amazon.com/solutions/) offers a collection of cloud-based solutions for dozens of technical and business problems, vetted for you by AWS. The AwsSolutions Rules Pack contains many of the checks that the are used as part of the vetting process.
 
 ### Warnings
 
