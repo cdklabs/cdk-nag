@@ -6,7 +6,6 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { MethodLoggingLevel, RestApi } from '@aws-cdk/aws-apigateway';
 import { Aspects, Stack } from '@aws-cdk/core';
-
 import { NIST80053Checks } from '../../src';
 
 describe('Amazon API Gateway', () => {
