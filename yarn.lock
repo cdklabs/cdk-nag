@@ -223,7 +223,20 @@
     "@aws-cdk/core" "1.119.0"
     constructs "^3.3.69"
 
-"@aws-cdk/aws-cloudwatch@1.119.0":
+"@aws-cdk/aws-cloudwatch-actions@^1.110.0":
+  version "1.119.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-cloudwatch-actions/-/aws-cloudwatch-actions-1.119.0.tgz#ec687fc5197d3995e228688328103148bedf1762"
+  integrity sha512-7srVL1x7WpW1Aogs579b9YSBpNIDGtt+Rnp+WkeIUgBTkhWLo6+7loXUBegMFOEBs/7fnuaAWbpLEkUwlO2htw==
+  dependencies:
+    "@aws-cdk/aws-applicationautoscaling" "1.119.0"
+    "@aws-cdk/aws-autoscaling" "1.119.0"
+    "@aws-cdk/aws-cloudwatch" "1.119.0"
+    "@aws-cdk/aws-iam" "1.119.0"
+    "@aws-cdk/aws-sns" "1.119.0"
+    "@aws-cdk/core" "1.119.0"
+    constructs "^3.3.69"
+
+"@aws-cdk/aws-cloudwatch@1.119.0", "@aws-cdk/aws-cloudwatch@^1.110.0":
   version "1.119.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-cloudwatch/-/aws-cloudwatch-1.119.0.tgz#a44a8ff16d265baa216b10b57e0da8c56af6ade6"
   integrity sha512-0keohkpjehJIQBsNIH+rH0HC5Ze/7XIdTuEaQBGZ/1m4cmWl5eFyZ6qHtSWVs+OhVXOWMkYU/ZYFT5GfB2f8sA==
@@ -1724,6 +1737,11 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.9.tgz#97edc9037ea0c38585320b28964dde3b39e4660d"
   integrity sha512-qcUXuemtEu+E5wZSJHNxUXeCZhAfXKQ41D+duX+VYPde7xyEVZci+/oXKJL13tnRs9lR2pr4fod59GT6/X1/yQ==
 
+"@types/json5@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
+  integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
+
 "@types/minimist@^1.2.0":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
@@ -2546,9 +2564,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.130"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.130.tgz#08b18e41ea3342e7bc39567b4ee73cac2b3a6706"
-  integrity sha512-GitHQl8pPzhdfqUZAJ71EW1v97NgendPdsgl403a8nttVQF86p1xJSwiWHNimMP5KUqDMa5Hr9e4wmrCkB92+A==
+  version "3.3.131"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.131.tgz#77453a3e1cb102d66b1aa54c1289b7e3d40d3719"
+  integrity sha512-u2c7EzT7ZIZJs4SW5lXotZkoJOoTaiUJuZr0WWG+hfiyI91MbEe1pgthS2NyrHMJuEfyDzWtLphvPHk6C06qhg==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.12"
@@ -3023,9 +3041,9 @@ ecc-jsbn@~0.1.1:
     safer-buffer "^2.1.0"
 
 electron-to-chromium@^1.3.811:
-  version "1.3.815"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.815.tgz#2372090c909cb52cb0afe1642cffa91cbe08b721"
-  integrity sha512-2QaE8L5l3BDf82ZXcm0TpWOPoCVUwrp3lKiYzgUbdhRAO2sW60ZdKS5T8yq4r7y1ZeiKJXnf5u8n9u3ldnj5Bw==
+  version "1.3.817"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.817.tgz#911b4775b5d9fa0c4729d4694adc81de85d8d8f6"
+  integrity sha512-Vw0Faepf2Id9Kf2e97M/c99qf168xg86JLKDxivvlpBQ9KDtjSeX0v+TiuSE25PqeQfTz+NJs375b64ca3XOIQ==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -3200,10 +3218,10 @@ eslint-module-utils@^2.6.2:
     debug "^3.2.7"
     pkg-dir "^2.0.0"
 
-eslint-plugin-import@^2.24.1:
-  version "2.24.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.24.1.tgz#64aba8b567a1ba9921d5465586e86c491b8e2135"
-  integrity sha512-KSFWhNxPH8OGJwpRJJs+Z7I0a13E2iFQZJIvSnCu6KUs4qmgAm3xN9GYBCSoiGWmwA7gERZPXqYQjcoCROnYhQ==
+eslint-plugin-import@^2.24.2:
+  version "2.24.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.24.2.tgz#2c8cd2e341f3885918ee27d18479910ade7bb4da"
+  integrity sha512-hNVtyhiEtZmpsabL4neEj+6M5DCLgpYyG9nzJY8lZQeQXEn5UPW1DpUdsMHMXsq98dbNm7nt1w9ZMSVpfJdi8Q==
   dependencies:
     array-includes "^3.1.3"
     array.prototype.flat "^1.2.4"
@@ -3219,7 +3237,7 @@ eslint-plugin-import@^2.24.1:
     pkg-up "^2.0.0"
     read-pkg-up "^3.0.0"
     resolve "^1.20.0"
-    tsconfig-paths "^3.10.1"
+    tsconfig-paths "^3.11.0"
 
 eslint-plugin-prettier@^3.4.1:
   version "3.4.1"
@@ -4980,12 +4998,19 @@ json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
 
-json5@2.x, json5@^2.1.2, json5@^2.2.0:
+json5@2.x, json5@^2.1.2:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.0.tgz#2dfefe720c6ba525d9ebd909950f0515316c89a3"
   integrity sha512-f+8cldu7X/y7RAJurMEJmdoKXGB/X550w2Nr3tTbezL6RwEE/iMcm+tZnXeoZtKuOq6ft8+CqzEkrIgx1fPoQA==
   dependencies:
     minimist "^1.2.5"
+
+json5@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.1.tgz#779fb0018604fa854eacbf6252180d83543e3dbe"
+  integrity sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==
+  dependencies:
+    minimist "^1.2.0"
 
 jsonfile@^4.0.0:
   version "4.0.0"
@@ -5193,9 +5218,9 @@ make-error@1.x:
   integrity sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==
 
 make-fetch-happen@^9.0.1:
-  version "9.0.5"
-  resolved "https://registry.yarnpkg.com/make-fetch-happen/-/make-fetch-happen-9.0.5.tgz#e7819afd9c8605f1452df4c1c6dc5c502ca18459"
-  integrity sha512-XN0i/VqHsql30Oq7179spk6vu3IuaPL1jaivNYhBrJtK7tkOuJwMK2IlROiOnJ40b9SvmOo2G86FZyI6LD2EsQ==
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/make-fetch-happen/-/make-fetch-happen-9.1.0.tgz#53085a09e7971433e6765f7971bf63f4e05cb968"
+  integrity sha512-+zopwDy7DNknmwPQplem5lAZX/eCOzSvSNNcSKm5eVwTkOBzoktEfXsa9L23J/GIRhxRsaxzkPEhrJEpE2F4Gg==
   dependencies:
     agentkeepalive "^4.1.3"
     cacache "^15.2.0"
@@ -6952,12 +6977,13 @@ ts-jest@^27.0.5:
     semver "7.x"
     yargs-parser "20.x"
 
-tsconfig-paths@^3.10.1, tsconfig-paths@^3.9.0:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.10.1.tgz#79ae67a68c15289fdf5c51cb74f397522d795ed7"
-  integrity sha512-rETidPDgCpltxF7MjBZlAFPUHv5aHH2MymyPvh+vEyWAED4Eb/WeMbsnD/JDr4OKPOA1TssDHgIcpTN5Kh0p6Q==
+tsconfig-paths@^3.11.0, tsconfig-paths@^3.9.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.11.0.tgz#954c1fe973da6339c78e06b03ce2e48810b65f36"
+  integrity sha512-7ecdYDnIdmv639mmDwslG6KQg1Z9STTz1j7Gcz0xa+nshh/gKDAHcPxRbWOsA3SPp0tXP2leTcY9Kw+NAkfZzA==
   dependencies:
-    json5 "^2.2.0"
+    "@types/json5" "^0.0.29"
+    json5 "^1.0.1"
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
