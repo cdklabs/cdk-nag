@@ -152,6 +152,16 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-cloudwatch-actions",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudwatch",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-codebuild",
       "version": "^1.110.0",
       "type": "peer"
@@ -388,6 +398,16 @@
     },
     {
       "name": "@aws-cdk/aws-cloudtrail",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudwatch-actions",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-cloudwatch",
       "version": "^1.110.0",
       "type": "runtime"
     },

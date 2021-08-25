@@ -9,7 +9,13 @@ import {
   hipaaSecurityCloudTrailCloudWatchLogsEnabled,
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
-} from './rules/cloudtrail/index';
+} from './rules/cloudtrail';
+
+import {
+  hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
+  hipaaSecurityEC2InstancesInVPC,
+  hipaaSecurityEC2InstanceNoPublicIp,
+} from './rules/ec2';
 
 /**
  * Check for HIPAA Security compliance.
@@ -27,7 +33,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkCodeBuild(node, ignores);
       // this.checkDMS(node, ignores);
       // this.checkDynamoDB(node, ignores);
-      // this.checkEC2(node, ignores);
+      this.checkEC2(node, ignores);
       // this.checkECS(node, ignores);
       // this.checkEFS(node, ignores);
       // this.checkElastiCache(node, ignores);
@@ -61,11 +67,11 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkAutoScaling(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check CloudTrail Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
+  /**
+   * Check CloudTrail Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
   private checkCloudTrail(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(
@@ -142,12 +148,55 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkDynamoDB(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check EC2 Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkEC2(node: CfnResource, ignores: any): void {}
+  /**
+   * Check EC2 Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkEC2(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled'
+      ) &&
+      !hipaaSecurityEC2InstanceDetailedMonitoringEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-C2InstanceDetailedMonitoringEnabled';
+      const info =
+        'The EC2 instance does not have detailed monitoring enabled - (Control IDs: 164.312(b)).';
+      const explanation =
+        'Detailed monitoring provides additional monitoring information (such as 1-minute period graphs) on the AWS console.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2InstancesInVPC') &&
+      !hipaaSecurityEC2InstancesInVPC(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EC2InstancesInVPC';
+      const info =
+        'The EC2 instance is not within a VPC - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2CheckNoPublicIPs') &&
+      !hipaaSecurityEC2InstanceNoPublicIp(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EC2CheckNoPublicIPs';
+      const info =
+        'The EC2 instance is associated with a public IP address - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Amazon EC2 instances can contain sensitive information and access control is required for such resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check ECS Resources

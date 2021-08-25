@@ -28,6 +28,8 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloudfront',
     '@aws-cdk/aws-cloudfront-origins',
     '@aws-cdk/aws-cloudtrail',
+    '@aws-cdk/aws-cloudwatch',
+    '@aws-cdk/aws-cloudwatch-actions',
     '@aws-cdk/aws-cognito',
     '@aws-cdk/aws-dax',
     '@aws-cdk/aws-dms',

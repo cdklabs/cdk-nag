@@ -14,7 +14,11 @@ import {
   nist80053CloudTrailCloudWatchLogsEnabled,
   nist80053CloudTrailEncryptionEnabled,
   nist80053CloudTrailLogFileValidationEnabled,
-} from './rules/cloudtrail/index';
+} from './rules/cloudtrail';
+import {
+  nist80053CloudWatchAlarmAction,
+  nist80053CloudWatchLogGroupEncrypted,
+} from './rules/cloudwatch';
 import {
   nist80053CodeBuildCheckEnvVars,
   nist80053CodeBuildURLCheck,
@@ -94,6 +98,7 @@ export class NIST80053Checks extends NagPack {
       this.checkAPIGW(node, ignores);
       this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
+      this.checkCloudWatch(node, ignores);
       this.checkCodeBuild(node, ignores);
       this.checkDMS(node, ignores);
       this.checkDynamoDB(node, ignores);
@@ -169,27 +174,6 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check DMS Resources
-   * @param node the IConstruct to evaluate
-   * @param ignores list of ignores for the resource
-   */
-  private checkDMS(node: CfnResource, ignores: any) {
-    if (
-      !this.ignoreRule(ignores, 'NIST.800.53-DMSReplicationNotPublic') &&
-      !nist80053DMSReplicationNotPublic(node)
-    ) {
-      const ruleId = 'NIST.800.53-DMSReplicationNotPublic';
-      const info =
-        'The DMS replication instance is public - (Control IDs: AC-3).';
-      const explanation =
-        'DMS replication instances can contain sensitive information and access control is required for such accounts.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-  }
-
-  /**
    * Check CloudTrail Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
@@ -243,6 +227,40 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
+   * Check CloudWatch Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkCloudWatch(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-CloudWatchAlarmAction') &&
+      !nist80053CloudWatchAlarmAction(node)
+    ) {
+      const ruleId = 'NIST.800.53-CloudWatchAlarmAction';
+      const info =
+        'The CloudWatch alarm does not have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - (Control IDs: AC-2(4), AU-6(1)(3), AU-7(1), CA-7(a)(b), IR-4(1), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)).';
+      const explanation =
+        'Amazon CloudWatch alarms alert when a metric breaches the threshold for a specified number of evaluation periods. The alarm performs one or more actions based on the value of the metric or expression relative to a threshold over a number of time periods.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-CloudWatchLogGroupEncrypted') &&
+      !nist80053CloudWatchLogGroupEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-CloudWatchLogGroupEncrypted';
+      const info =
+        'The CloudWatch Log Group is not encrypted with a KMS Customer Master Key (CMK) - (Control IDs: AU-9, SC-13, SC-28).';
+      const explanation =
+        'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
    * Check CodeBuild Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
@@ -277,7 +295,28 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * CheckDynamoDB Resources
+   * Check DMS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkDMS(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-DMSReplicationNotPublic') &&
+      !nist80053DMSReplicationNotPublic(node)
+    ) {
+      const ruleId = 'NIST.800.53-DMSReplicationNotPublic';
+      const info =
+        'The DMS replication instance is public - (Control IDs: AC-3).';
+      const explanation =
+        'DMS replication instances can contain sensitive information and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
+   * Check DynamoDB Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
@@ -408,7 +447,7 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check Elasticache Resources
+   * Check ElastiCache Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
    */
