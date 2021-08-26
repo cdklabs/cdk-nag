@@ -243,7 +243,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CloudWatchLogGroupEncrypted';
       const info =
-        'The CloudWatch Log Group is not encrypted with a KMS Customer Master Key (CMK) - (Control IDs: AU-9, SC-13, SC-28).';
+        'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: AU-9, SC-13, SC-28).';
       const explanation =
         'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
       Annotations.of(node).addError(
