@@ -54,10 +54,10 @@
     "json-schema": "^0.3.0",
     "npm-check-updates": "^11",
     "prettier": "^2.3.2",
-    "projen": "^0.27.33",
+    "projen": "^0.27.35",
     "standard-version": "^9",
     "ts-jest": "^27.0.5",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.2"
   },
   "peerDependencies": {
     "@aws-cdk/aws-apigateway": "^1.110.0",
