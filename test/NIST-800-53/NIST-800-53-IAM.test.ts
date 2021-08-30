@@ -13,7 +13,6 @@ import {
   Role,
   AccountRootPrincipal,
 } from '@aws-cdk/aws-iam';
-
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
