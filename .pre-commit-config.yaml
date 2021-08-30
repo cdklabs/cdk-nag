@@ -25,3 +25,15 @@ repos:
               ^.*.json |
               ^API.md 
           )
+  - repo: https://github.com/dontirun/text-prepender
+    rev: v0.1.0
+    hooks:
+      - id: text-prepender
+        exclude: |
+          (?x)(
+              ^.github/|
+              ^.projen/|
+              ^.mergify.yml|
+              ^.*.json |
+              ^API.md 
+          )
