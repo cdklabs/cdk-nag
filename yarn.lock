@@ -1762,9 +1762,9 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "16.7.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.5.tgz#96142b243977b03d99c338fdb09241d286102711"
-  integrity sha512-E7SpxDXoHEpmZ9C1gSqwadhE6zPRtf3g0gJy9Y51DsImnR5TcDs3QEiV/3Q7zOM8LWaZp5Gph71NK6ElVMG1IQ==
+  version "16.7.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.6.tgz#8666478db8095aa66e25b7e469f3e7b53ea2855e"
+  integrity sha512-VESVNFoa/ahYA62xnLBjo5ur6gPsgEE5cNRy8SrdnkZ2nwJSW0kJ4ufbFr2zuU9ALtHM8juY53VcRoTA7htXSg==
 
 "@types/node@^10.17.0", "@types/node@^10.17.60":
   version "10.17.60"
@@ -2584,9 +2584,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.135"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.135.tgz#b694ec32c740f335091c27050da2819f8a1e4062"
-  integrity sha512-IebqTEdGH84OfuG3xocaRS/Zqn+bEpp9BkHuHVaqxWvtz3qtS5I0lmj0iQYb5j9Ksu0lYVBVOzuYt/jPZTNwYQ==
+  version "3.3.136"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.136.tgz#9a311737bb802f7931a1f38c5223d82fa3efd08d"
+  integrity sha512-8qGuZTTXxsV3uUtqbajcQhcuu28bcuYG5jODXlXWLpd4bSo+2dMg5vKLr0dsRm/Q3B7op7io1P0opMzaGdCO5A==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.12"
@@ -6065,10 +6065,10 @@ progress@^2.0.0, progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.27.35:
-  version "0.27.35"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.27.35.tgz#d2851a65ffdebd437c4cd3c48c64d52233fc04af"
-  integrity sha512-bC3r/uneoFeV0AnSXxsPxjBvtpP+kFUN+Yz8l1CCjbcg3QDnZPXWXSt4+yY3WrNRt7gLac4+t8jrYAd8VsLy5A==
+projen@^0.27.36:
+  version "0.27.36"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.27.36.tgz#81ef482a9ca9e1f69c034ec453a0dac6de73445f"
+  integrity sha512-IvRWs7vmilmThXnSGpC9CTaTliWY2fEIeBv6D/wl8VCHVmHLE0WrucTAYxMDYJQxDT3PV2l08BPO68e6o6IO9w==
   dependencies:
     "@iarna/toml" "^2.2.5"
     chalk "^4.1.2"
