@@ -170,6 +170,9 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
     },
   },
 ]);
+project.buildWorkflow.file.addOverride('jobs.build.container', {
+  image: 'jsii/superchain:1-buster-slim-node14',
+});
 project.release.addJobs({
   release: {
     runsOn: 'ubuntu-latest',

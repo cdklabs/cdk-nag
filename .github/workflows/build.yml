@@ -71,4 +71,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     container:
-      image: jsii/superchain
+      image: jsii/superchain:1-buster-slim-node14

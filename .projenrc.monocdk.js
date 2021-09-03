@@ -10,7 +10,7 @@ const project = new AwsCdkConstructLibrary({
   defaultReleaseBranch: 'main',
   name: 'monocdk-nag',
   description:
-    'Check CDK applications for best practices using a combination on available rule packs..',
+    'Check CDK applications for best practices using a combination on available rule packs.',
   repositoryUrl: 'https://github.com/cdklabs/cdk-nag.git',
 
   cdkDependencies: ['monocdk'],
