@@ -11,8 +11,15 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnBucket) {
-    const lock = Stack.of(node).resolve(node.objectLockEnabled);
-    if (!(lock === true)) {
+    const objectLockEnabled = Stack.of(node).resolve(node.objectLockEnabled);
+    const objectLockConfiguration = Stack.of(node).resolve(
+      node.objectLockConfiguration
+    );
+    if (
+      objectLockEnabled !== true ||
+      objectLockConfiguration === undefined ||
+      objectLockConfiguration.objectLockEnabled !== 'Enabled'
+    ) {
       return false;
     }
   }
