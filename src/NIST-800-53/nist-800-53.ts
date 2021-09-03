@@ -130,7 +130,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-APIGWCacheEnabledAndEncrypted';
       const info =
-        'The  API Gateway stage does not have caching enabled and encrypted for all methods - (Control IDs: SC-13, SC-28).';
+        'The API Gateway stage does not have caching enabled and encrypted for all methods - (Control IDs: SC-13, SC-28).';
       const explanation =
         "To help protect data at rest, ensure encryption is enabled for your API Gateway stage's cache. Because sensitive data can be captured for the API method, enable encryption at rest to help protect that data.";
       Annotations.of(node).addError(

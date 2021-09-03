@@ -6,6 +6,12 @@ SPDX-License-Identifier: Apache-2.0
 import { Annotations, CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack } from '../common';
 import {
+  hipaaSecurityAPIGWCacheEnabledAndEncrypted,
+  hipaaSecurityAPIGWExecutionLoggingEnabled,
+  hipaaSecurityAPIGWSSLEnabled,
+  hipaaSecurityAPIGWXrayEnabled,
+} from './rules/apigw';
+import {
   hipaaSecurityCloudTrailCloudWatchLogsEnabled,
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
@@ -26,7 +32,7 @@ export class HIPAASecurityChecks extends NagPack {
     if (node instanceof CfnResource) {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
-      // this.checkAPIGW(node, ignores);
+      this.checkAPIGW(node, ignores);
       // this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
       // this.checkCloudWatch(node, ignores);
@@ -53,12 +59,71 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check API Gateway Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkAPIGW(node: CfnResource, ignores: any): void {}
+  /**
+   * Check API Gateway Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkAPIGW(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-APIGWCacheEnabledAndEncrypted'
+      ) &&
+      !hipaaSecurityAPIGWCacheEnabledAndEncrypted(node)
+    ) {
+      const ruleId = 'HIPAA.Security-APIGWCacheEnabledAndEncrypted';
+      const info =
+        'The API Gateway stage does not have caching enabled and encrypted for all methods - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        "To help protect data at rest, ensure encryption is enabled for your API Gateway stage's cache. Because sensitive data can be captured for the API method, enable encryption at rest to help protect that data.";
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-APIGWExecutionLoggingEnabled'
+      ) &&
+      !hipaaSecurityAPIGWExecutionLoggingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-APIGWExecutionLoggingEnabled';
+      const info =
+        'The API Gateway stage does not have execution logging enabled for all methods - (Control ID: 164.312(b)).';
+      const explanation =
+        'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-APIGWSSLEnabled') &&
+      !hipaaSecurityAPIGWSSLEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-APIGWSSLEnabled';
+      const info =
+        'The API Gateway REST API stage is not configured with SSL certificates - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Ensure Amazon API Gateway REST API stages are configured with SSL certificates to allow backend systems to authenticate that requests originate from API Gateway.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-APIGWXrayEnabled') &&
+      !hipaaSecurityAPIGWXrayEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-APIGWXrayEnabled';
+      const info =
+        'The API Gateway REST API stage does not have X-Ray enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        'AWS X-Ray collects data about requests that your application serves, and provides tools you can use to view, filter, and gain insights into that data to identify issues and opportunities for optimization. Ensure X-Ray is enables so you can see detailed information not only about the request and response, but also about calls that your application makes to downstream AWS resources, microservices, databases and HTTP web APIs.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check Auto Scaling Resources
