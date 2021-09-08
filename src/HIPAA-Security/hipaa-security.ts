@@ -16,7 +16,10 @@ import {
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
 } from './rules/cloudtrail';
-
+import {
+  hipaaSecurityCloudWatchAlarmAction,
+  hipaaSecurityCloudWatchLogGroupEncrypted,
+} from './rules/cloudwatch';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
@@ -35,7 +38,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkAPIGW(node, ignores);
       // this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
-      // this.checkCloudWatch(node, ignores);
+      this.checkCloudWatch(node, ignores);
       // this.checkCodeBuild(node, ignores);
       // this.checkDMS(node, ignores);
       // this.checkDynamoDB(node, ignores);
@@ -185,12 +188,39 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check CloudWatch Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkCloudWatch(node: CfnResource, ignores: any): void {}
+  /**
+   * Check CloudWatch Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkCloudWatch(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-CloudWatchAlarmAction') &&
+      !hipaaSecurityCloudWatchAlarmAction(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CloudWatchAlarmAction';
+      const info =
+        'The CloudWatch alarm does not have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        'Amazon CloudWatch alarms alert when a metric breaches the threshold for a specified number of evaluation periods. The alarm performs one or more actions based on the value of the metric or expression relative to a threshold over a number of time periods.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-CloudWatchLogGroupEncrypted') &&
+      !hipaaSecurityCloudWatchLogGroupEncrypted(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CloudWatchLogGroupEncrypted';
+      const info =
+        'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check CodeBuild Resources
