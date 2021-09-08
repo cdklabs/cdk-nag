@@ -6,15 +6,13 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { NIST80053Checks } from '../../src';
+import { HIPAASecurityChecks } from '../../src';
 
 describe('Amazon CodeBuild', () => {
-  //Test whether CodeBuild resources store sensitive credentials as environment variables
-  test('nist80053CodeBuildCheckEnvVars: - CodeBuild projects DO NOT store sensitive data as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))', () => {
-    //Expect a POSITIVE response because AWS_ACCESS_KEY_ID is defined as a plaintext env var
-    const positive = new Stack();
-    Aspects.of(positive).add(new NIST80053Checks());
-    new CfnProject(positive, 'project1', {
+  test('hipaaSecurityCodeBuildProjectEnvVarAwsCred: - CodeBuild projects do not store AWS credentials as plaintext environment variables - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new CfnProject(nonCompliant, 'rProject1', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -39,19 +37,20 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    const messages = SynthUtils.synthesize(positive).messages;
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CodeBuildProjectEnvVarAwsCred:'
+          ),
         }),
       })
     );
 
-    //Expect a POSITIVE response because AWS_ACCESS_KEY_ID is defined without ensuring that its not plaintext (the default)
-    const positive2 = new Stack();
-    Aspects.of(positive2).add(new NIST80053Checks());
-    new CfnProject(positive2, 'project1', {
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    new CfnProject(nonCompliant2, 'rProject1', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -75,19 +74,20 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    const messages2 = SynthUtils.synthesize(positive2).messages;
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CodeBuildProjectEnvVarAwsCred:'
+          ),
         }),
       })
     );
 
-    //Expect a POSITIVE response because AWS_SECRET_ACCESS_KEY is defined without ensuring that its not plaintext (the default)
-    const positive3 = new Stack();
-    Aspects.of(positive3).add(new NIST80053Checks());
-    new CfnProject(positive3, 'project1', {
+    const nonCompliant3 = new Stack();
+    Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
+    new CfnProject(nonCompliant3, 'rProject1', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -111,21 +111,20 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    const messages3 = SynthUtils.synthesize(positive3).messages;
+    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
     expect(messages3).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CodeBuildProjectEnvVarAwsCred:'
+          ),
         }),
       })
     );
 
-    //Create stack for negative checks
-    const negative = new Stack();
-    Aspects.of(negative).add(new NIST80053Checks());
-
-    //expect a negative response because no environment variables are defined
-    new CfnProject(negative, 'project1', {
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    new CfnProject(compliant, 'rProject1', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -143,8 +142,7 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    //expect a negative response because the credentials are stored using PARAMETER_STORE
-    new CfnProject(negative, 'project2', {
+    new CfnProject(compliant, 'rProject2', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -174,8 +172,7 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    //expect a negative response because the credentials are stored using SECRETS_MANAGER
-    new CfnProject(negative, 'project3', {
+    new CfnProject(compliant, 'rProject3', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -205,23 +202,22 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    //Check cdk-nag response
-    const messages4 = SynthUtils.synthesize(negative).messages;
+    const messages4 = SynthUtils.synthesize(compliant).messages;
     expect(messages4).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CodeBuildCheckEnvVars:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CodeBuildProjectEnvVarAwsCred:'
+          ),
         }),
       })
     );
   });
 
-  //Test whether CodeBuild resources use OAUTH
-  test('nist80053CodeBuildURLCheck: - Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: SA-3(a))', () => {
-    //Expect a POSITIVE response because OAUTH is not used
-    const positive = new Stack();
-    Aspects.of(positive).add(new NIST80053Checks());
-    new CfnProject(positive, 'project1', {
+  test('hipaaSecurityCodeBuildProjectSourceRepoUrl: - Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new CfnProject(nonCompliant, 'rProject1', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -236,19 +232,20 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    const messages = SynthUtils.synthesize(positive).messages;
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CodeBuildURLCheck:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CodeBuildProjectSourceRepoUrl:'
+          ),
         }),
       })
     );
 
-    //Create stack for negative checks
-    const negative = new Stack();
-    Aspects.of(negative).add(new NIST80053Checks());
-    new CfnProject(negative, 'project1', {
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    new CfnProject(compliant, 'rProject1', {
       artifacts: {
         type: 'no_artifacts',
       },
@@ -266,12 +263,13 @@ describe('Amazon CodeBuild', () => {
       },
     });
 
-    //Check cdk-nag response
-    const messages6 = SynthUtils.synthesize(negative).messages;
+    const messages6 = SynthUtils.synthesize(compliant).messages;
     expect(messages6).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CodeBuildURLCheck:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CodeBuildProjectSourceRepoUrl:'
+          ),
         }),
       })
     );
