@@ -16,7 +16,7 @@ import {
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
 } from './rules/cloudtrail';
-
+import { hipaaSecurityDynamoDBPITREnabled } from './rules/dynamodb';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
@@ -38,7 +38,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkCloudWatch(node, ignores);
       // this.checkCodeBuild(node, ignores);
       // this.checkDMS(node, ignores);
-      // this.checkDynamoDB(node, ignores);
+      this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
       // this.checkECS(node, ignores);
       // this.checkEFS(node, ignores);
@@ -206,12 +206,26 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkDMS(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check DynamoDB Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkDynamoDB(node: CfnResource, ignores: any): void {}
+  /**
+   * Check DynamoDB Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkDynamoDB(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-DynamoDBPITREnabled') &&
+      !hipaaSecurityDynamoDBPITREnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-DynamoDBPITREnabled';
+      const info =
+        'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'The recovery maintains continuous backups of your table for the last 35 days.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   /**
    * Check EC2 Resources
