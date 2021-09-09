@@ -22,6 +22,7 @@ import {
   hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
 } from './rules/ec2';
+import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
 
 /**
  * Check for HIPAA Security compliance.
@@ -40,7 +41,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkDMS(node, ignores);
       // this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
-      // this.checkECS(node, ignores);
+      this.checkECS(node, ignores);
       // this.checkEFS(node, ignores);
       // this.checkElastiCache(node, ignores);
       // this.checkElasticBeanstalk(node, ignores);
@@ -263,12 +264,29 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check ECS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkECS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check ECS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkECS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ECSTaskDefinitionUserForHostMode'
+      ) &&
+      !hipaaSecurityECSTaskDefinitionUserForHostMode(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ECSTaskDefinitionUserForHostMode';
+      const info =
+        "The ECS task definition is configured for host networking and has at least one container with definitions with 'privileged' set to false or empty or 'user' set to root or empty - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1)).";
+      const explanation =
+        'If a task definition has elevated privileges it is because you have specifically opted-in to those configurations. This rule checks for unexpected privilege escalation when a task definition has host networking enabled but the customer has not opted-in to elevated privileges.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check EFS Resources
