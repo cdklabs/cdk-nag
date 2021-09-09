@@ -22,6 +22,7 @@ import {
   hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
 } from './rules/ec2';
+import { hipaaSecurityEFSEncrypted } from './rules/efs';
 
 /**
  * Check for HIPAA Security compliance.
@@ -41,7 +42,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
       // this.checkECS(node, ignores);
-      // this.checkEFS(node, ignores);
+      this.checkEFS(node, ignores);
       // this.checkElastiCache(node, ignores);
       // this.checkElasticBeanstalk(node, ignores);
       // this.checkElasticsearch(node, ignores);
@@ -270,12 +271,26 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkECS(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check EFS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkEFS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check EFS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkEFS(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EFSEncrypted') &&
+      !hipaaSecurityEFSEncrypted(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EFSEncrypted';
+      const info =
+        'The EFS does not have encryption at rest enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check ElastiCache Resources
