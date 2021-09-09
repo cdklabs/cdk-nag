@@ -226,7 +226,7 @@ export class HIPAASecurityChecks extends NagPack {
       ) &&
       !hipaaSecurityEC2InstanceDetailedMonitoringEnabled(node)
     ) {
-      const ruleId = 'HIPAA.Security-C2InstanceDetailedMonitoringEnabled';
+      const ruleId = 'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled';
       const info =
         'The EC2 instance does not have detailed monitoring enabled - (Control IDs: 164.312(b)).';
       const explanation =
