@@ -132,6 +132,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-certificatemanager",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-cloud9",
       "version": "^1.110.0",
       "type": "peer"
@@ -378,6 +383,11 @@
     },
     {
       "name": "@aws-cdk/aws-autoscaling",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-certificatemanager",
       "version": "^1.110.0",
       "type": "runtime"
     },

@@ -22,6 +22,16 @@ import {
   hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
 } from './rules/ec2';
+import {
+  hipaaSecurityALBHttpDropInvalidHeaderEnabled,
+  hipaaSecurityALBHttpToHttpsRedirection,
+  hipaaSecurityELBACMCertificateRequired,
+  hipaaSecurityELBCrossZoneBalancingEnabled,
+  hipaaSecurityELBDeletionProtectionEnabled,
+  hipaaSecurityELBLoggingEnabled,
+  hipaaSecurityELBTlsHttpsListenersOnly,
+  hipaaSecurityELBv2ACMCertificateRequired,
+} from './rules/elb';
 
 /**
  * Check for HIPAA Security compliance.
@@ -45,7 +55,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkElastiCache(node, ignores);
       // this.checkElasticBeanstalk(node, ignores);
       // this.checkElasticsearch(node, ignores);
-      // this.checkELB(node, ignores);
+      this.checkELB(node, ignores);
       // this.checkEMR(node, ignores);
       // this.checkIAM(node, ignores);
       // this.checkLambda(node, ignores);
@@ -298,12 +308,126 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkElasticsearch(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check ELB Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkELB(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Elastic Load Balancer Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkELB(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ALBHttpDropInvalidHeaderEnabled'
+      ) &&
+      !hipaaSecurityALBHttpDropInvalidHeaderEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ALBHttpDropInvalidHeaderEnabled';
+      const info =
+        'The ALB does not have invalid HTTP header dropping enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-ALBHttpToHttpsRedirection') &&
+      !hipaaSecurityALBHttpToHttpsRedirection(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ALBHttpToHttpsRedirection';
+      const info =
+        "The ALB's HTTP listeners are not configured to redirect to HTTPS - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).";
+      const explanation =
+        'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-ELBACMCertificateRequired') &&
+      !hipaaSecurityELBACMCertificateRequired(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ELBACMCertificateRequired';
+      const info =
+        'The CLB does not utilize an SSL certificate provided by ACM (Amazon Certificate Manager) - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist and to help protect data at transit, ensure encryption is enabled for your Elastic Load Balancing. Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ELBCrossZoneBalancingEnabled'
+      ) &&
+      !hipaaSecurityELBCrossZoneBalancingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ELBCrossZoneBalancingEnabled';
+      const info =
+        'The CLB does not balance traffic between at least 2 Availability Zones - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).';
+      const explanation =
+        'The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ELBDeletionProtectionEnabled'
+      ) &&
+      !hipaaSecurityELBDeletionProtectionEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ELBDeletionProtectionEnabled';
+      const info =
+        'The ALB, NLB, or GLB does not have deletion protection enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).';
+      const explanation =
+        'Use this feature to prevent your load balancer from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-ELBLoggingEnabled') &&
+      !hipaaSecurityELBLoggingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ELBLoggingEnabled';
+      const info =
+        'The ELB does not have logging enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to The ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.";
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-ELBTlsHttpsListenersOnly') &&
+      !hipaaSecurityELBTlsHttpsListenersOnly(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ELBTlsHttpsListenersOnly';
+      const info =
+        'The CLB does not restrict its listeners to only the SSL and HTTPS protocols - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist, enable encryption in transit to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-ELBv2ACMCertificateRequired') &&
+      !hipaaSecurityELBv2ACMCertificateRequired(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ELBv2ACMCertificateRequired';
+      const info =
+        'The ALB, NLB, or GLB listener does not utilize an SSL certificate provided by ACM (Amazon Certificate Manager) - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist and to help protect data at transit, ensure encryption is enabled for your Elastic Load Balancing. Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check EMR Resources

@@ -23,6 +23,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-apigatewayv2-integrations',
     '@aws-cdk/aws-athena',
     '@aws-cdk/aws-autoscaling',
+    '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/aws-codebuild',
     '@aws-cdk/aws-cloud9',
     '@aws-cdk/aws-cloudfront',
