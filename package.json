@@ -53,8 +53,8 @@
     "jsii-pacmak": "^1.34.0",
     "json-schema": "^0.3.0",
     "npm-check-updates": "^11",
-    "prettier": "^2.3.2",
-    "projen": "^0.27.50",
+    "prettier": "^2.4.0",
+    "projen": "^0.27.51",
     "standard-version": "^9",
     "ts-jest": "^27.0.5",
     "typescript": "^4.4.2"
