@@ -25,6 +25,10 @@ import {
   hipaaSecurityCloudWatchLogGroupEncrypted,
 } from './rules/cloudwatch';
 import {
+  hipaaSecurityCodeBuildProjectEnvVarAwsCred,
+  hipaaSecurityCodeBuildProjectSourceRepoUrl,
+} from './rules/codebuild';
+import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
@@ -42,6 +46,8 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkAPIGW(node, ignores);
       this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
+      // this.checkCloudWatch(node, ignores);
+      this.checkCodeBuild(node, ignores);
       this.checkCloudWatch(node, ignores);
       // this.checkCodeBuild(node, ignores);
       // this.checkDMS(node, ignores);
@@ -259,12 +265,45 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check CodeBuild Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkCodeBuild(node: CfnResource, ignores: any): void {}
+  /**
+   * Check CodeBuild Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkCodeBuild(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-CodeBuildProjectEnvVarAwsCred'
+      ) &&
+      !hipaaSecurityCodeBuildProjectEnvVarAwsCred(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CodeBuildProjectEnvVarAwsCred';
+      const info =
+        'The CodeBuild environment stores sensitive credentials (such as AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY) as plaintext environment variables - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'Do not store these variables in clear text. Storing these variables in clear text leads to unintended data exposure and unauthorized access.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-CodeBuildProjectSourceRepoUrl'
+      ) &&
+      !hipaaSecurityCodeBuildProjectSourceRepoUrl(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CodeBuildProjectSourceRepoUrl';
+      const info =
+        'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'OAUTH is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check DMS Resources
