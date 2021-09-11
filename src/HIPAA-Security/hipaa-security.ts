@@ -21,13 +21,13 @@ import {
   hipaaSecurityCloudTrailLogFileValidationEnabled,
 } from './rules/cloudtrail';
 import {
-  hipaaSecurityCodeBuildProjectEnvVarAwsCred,
-  hipaaSecurityCodeBuildProjectSourceRepoUrl,
-} from './rules/codebuild';
-import {
   hipaaSecurityCloudWatchAlarmAction,
   hipaaSecurityCloudWatchLogGroupEncrypted,
 } from './rules/cloudwatch';
+import {
+  hipaaSecurityCodeBuildProjectEnvVarAwsCred,
+  hipaaSecurityCodeBuildProjectSourceRepoUrl,
+} from './rules/codebuild';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
