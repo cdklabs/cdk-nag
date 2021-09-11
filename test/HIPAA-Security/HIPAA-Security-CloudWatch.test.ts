@@ -8,12 +8,12 @@ import { Ec2Action, Ec2InstanceAction } from '@aws-cdk/aws-cloudwatch-actions';
 import { Key } from '@aws-cdk/aws-kms';
 import { LogGroup } from '@aws-cdk/aws-logs';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { NIST80053Checks } from '../../src';
+import { HIPAASecurityChecks } from '../../src';
 
 describe('Amazon CloudWatch', () => {
-  test('NIST.800.53-CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled', () => {
+  test('HIPAA.Security-CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new NIST80053Checks());
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new Alarm(nonCompliant, 'rAlarm', {
       metric: new Metric({
         namespace: 'MyNamespace',
@@ -26,13 +26,15 @@ describe('Amazon CloudWatch', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CloudWatchAlarmAction:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CloudWatchAlarmAction:'
+          ),
         }),
       })
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new NIST80053Checks());
+    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
     new Alarm(nonCompliant2, 'rAlarm', {
       metric: new Metric({
         namespace: 'MyNamespace',
@@ -46,13 +48,15 @@ describe('Amazon CloudWatch', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CloudWatchAlarmAction:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CloudWatchAlarmAction:'
+          ),
         }),
       })
     );
 
     const activeCompliant = new Stack();
-    Aspects.of(activeCompliant).add(new NIST80053Checks());
+    Aspects.of(activeCompliant).add(new HIPAASecurityChecks());
     new Alarm(activeCompliant, 'rAlarm', {
       metric: new Metric({
         namespace: 'MyNamespace',
@@ -65,29 +69,31 @@ describe('Amazon CloudWatch', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-CloudWatchAlarmAction:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-CloudWatchAlarmAction:'
+          ),
         }),
       })
     );
   });
 
-  test('NIST.800.53-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
+  test('HIPAA.Security-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new NIST80053Checks());
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new LogGroup(nonCompliant, 'rLogGroup');
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-CloudWatchLogGroupEncrypted:'
+            'HIPAA.Security-CloudWatchLogGroupEncrypted:'
           ),
         }),
       })
     );
 
     const activeCompliant = new Stack();
-    Aspects.of(activeCompliant).add(new NIST80053Checks());
+    Aspects.of(activeCompliant).add(new HIPAASecurityChecks());
     new LogGroup(activeCompliant, 'rLogGroup', {
       encryptionKey: new Key(activeCompliant, 'rLogsKey'),
     });
@@ -96,7 +102,7 @@ describe('Amazon CloudWatch', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-CloudWatchLogGroupEncrypted:'
+            'HIPAA.Security-CloudWatchLogGroupEncrypted:'
           ),
         }),
       })

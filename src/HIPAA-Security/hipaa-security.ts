@@ -12,6 +12,10 @@ import {
   hipaaSecurityAPIGWXrayEnabled,
 } from './rules/apigw';
 import {
+  hipaaSecurityAutoscalingGroupELBHealthCheckRequired,
+  hipaaSecurityAutoscalingLaunchConfigPublicIpDisabled,
+} from './rules/autoscaling';
+import {
   hipaaSecurityCloudTrailCloudWatchLogsEnabled,
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
@@ -20,6 +24,10 @@ import {
   hipaaSecurityCodeBuildProjectEnvVarAwsCred,
   hipaaSecurityCodeBuildProjectSourceRepoUrl,
 } from './rules/codebuild';
+import {
+  hipaaSecurityCloudWatchAlarmAction,
+  hipaaSecurityCloudWatchLogGroupEncrypted,
+} from './rules/cloudwatch';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
@@ -36,10 +44,12 @@ export class HIPAASecurityChecks extends NagPack {
       // Get ignores metadata if it exists
       const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
       this.checkAPIGW(node, ignores);
-      // this.checkAutoScaling(node, ignores);
+      this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
       // this.checkCloudWatch(node, ignores);
       this.checkCodeBuild(node, ignores);
+      this.checkCloudWatch(node, ignores);
+      // this.checkCodeBuild(node, ignores);
       // this.checkDMS(node, ignores);
       // this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
@@ -128,12 +138,45 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check Auto Scaling Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkAutoScaling(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Auto Scaling Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkAutoScaling(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-AutoscalingGroupELBHealthCheckRequired'
+      ) &&
+      !hipaaSecurityAutoscalingGroupELBHealthCheckRequired(node)
+    ) {
+      const ruleId = 'HIPAA.Security-AutoscalingGroupELBHealthCheckRequired';
+      const info =
+        'The Auto Scaling group utilizes a load balancer and does not have an ELB health check configured - (Control ID: 164.312(b)).';
+      const explanation =
+        'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability. The load balancer periodically sends pings, attempts connections, or sends requests to test Amazon EC2 instances health in an auto-scaling group. If an instance is not reporting back, traffic is sent to a new Amazon EC2 instance.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-AutoscalingLaunchConfigPublicIpDisabled'
+      ) &&
+      !hipaaSecurityAutoscalingLaunchConfigPublicIpDisabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-AutoscalingLaunchConfigPublicIpDisabled';
+      const info =
+        'The Auto Scaling launch configuration does not have public IP addresses disabled - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(B), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'If you configure your Network Interfaces with a public IP address, then the associated resources to those Network Interfaces are reachable from the internet. EC2 resources should not be publicly accessible, as this may allow unintended access to your applications or servers.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   /**
    * Check CloudTrail Resources
@@ -188,12 +231,39 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check CloudWatch Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkCloudWatch(node: CfnResource, ignores: any): void {}
+  /**
+   * Check CloudWatch Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkCloudWatch(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-CloudWatchAlarmAction') &&
+      !hipaaSecurityCloudWatchAlarmAction(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CloudWatchAlarmAction';
+      const info =
+        'The CloudWatch alarm does not have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        'Amazon CloudWatch alarms alert when a metric breaches the threshold for a specified number of evaluation periods. The alarm performs one or more actions based on the value of the metric or expression relative to a threshold over a number of time periods.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-CloudWatchLogGroupEncrypted') &&
+      !hipaaSecurityCloudWatchLogGroupEncrypted(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CloudWatchLogGroupEncrypted';
+      const info =
+        'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   /**
    * Check CodeBuild Resources
@@ -262,7 +332,7 @@ export class HIPAASecurityChecks extends NagPack {
       ) &&
       !hipaaSecurityEC2InstanceDetailedMonitoringEnabled(node)
     ) {
-      const ruleId = 'HIPAA.Security-C2InstanceDetailedMonitoringEnabled';
+      const ruleId = 'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled';
       const info =
         'The EC2 instance does not have detailed monitoring enabled - (Control IDs: 164.312(b)).';
       const explanation =

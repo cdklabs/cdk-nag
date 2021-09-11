@@ -33,7 +33,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-C2InstanceDetailedMonitoringEnabled:'
+            'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled:'
           ),
         }),
       })
@@ -53,7 +53,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-C2InstanceDetailedMonitoringEnabled:'
+            'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled:'
           ),
         }),
       })
@@ -81,7 +81,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-C2InstanceDetailedMonitoringEnabled:'
+            'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled:'
           ),
         }),
       })
