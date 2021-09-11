@@ -71,7 +71,7 @@ describe('Amazon CloudWatch', () => {
     );
   });
 
-  test('NIST.800.53-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with KMS Customer Master Keys (CMK)', () => {
+  test('NIST.800.53-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
     new LogGroup(nonCompliant, 'rLogGroup');
