@@ -114,7 +114,7 @@ jobs:
           NPM_REGISTRY: registry.npmjs.org
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     container:
-      image: jsii/superchain
+      image: jsii/superchain:node14
   release_pypi:
     name: Publish to PyPI
     needs: release
@@ -134,4 +134,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
     container:
-      image: jsii/superchain
+      image: jsii/superchain:node14
