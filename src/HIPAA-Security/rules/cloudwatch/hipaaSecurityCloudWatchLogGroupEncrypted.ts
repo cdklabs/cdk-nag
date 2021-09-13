@@ -7,7 +7,7 @@ import { CfnLogGroup } from '@aws-cdk/aws-logs';
 import { IConstruct } from '@aws-cdk/core';
 
 /**
- * CloudWatch Log Groups are encrypted with customer managed keys - (Control IDs: AU-9, SC-13, SC-28)
+ * CloudWatch Log Groups are encrypted with customer managed keys - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
