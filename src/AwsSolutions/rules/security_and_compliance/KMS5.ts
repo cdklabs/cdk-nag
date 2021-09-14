@@ -6,7 +6,7 @@ import { CfnKey, KeySpec } from '@aws-cdk/aws-kms';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * KMS Symmetric CMKs have Key Rotation enabled
+ * KMS Symmetric keys have Key Rotation enabled
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
