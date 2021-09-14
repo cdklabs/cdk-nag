@@ -36,11 +36,6 @@ import {
 import { nist80053EFSEncrypted } from './rules/efs';
 import { nist80053ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
-  nist80053ElasticsearchEncryptedAtRest,
-  nist80053ElasticsearchNodeToNodeEncrypted,
-  nist80053ElasticsearchRunningWithinVPC,
-} from './rules/elasticsearch';
-import {
   nist80053ALBHttpDropInvalidHeaderEnabled,
   nist80053ALBHttpToHttpsRedirection,
   nist80053ELBCrossZoneBalancing,
@@ -57,6 +52,11 @@ import {
   nist80053IamUserNoPolicies,
 } from './rules/iam';
 import { nist80053LambdaFunctionsInsideVPC } from './rules/lambda';
+import {
+  nist80053OpenSearchEncryptedAtRest,
+  nist80053OpenSearchNodeToNodeEncrypted,
+  nist80053OpenSearchRunningWithinVPC,
+} from './rules/opensearch';
 import {
   nist80053RDSEnhancedMonitoringEnabled,
   nist80053RDSInstanceBackupEnabled,
@@ -105,11 +105,11 @@ export class NIST80053Checks extends NagPack {
       this.checkEC2(node, ignores);
       this.checkEFS(node, ignores);
       this.checkElastiCache(node, ignores);
-      this.checkElasticsearch(node, ignores);
       this.checkELB(node, ignores);
       this.checkEMR(node, ignores);
       this.checkIAM(node, ignores);
       this.checkLambda(node, ignores);
+      this.checkOpenSearch(node, ignores);
       this.checkRDS(node, ignores);
       this.checkRedshift(node, ignores);
       this.checkS3(node, ignores);
@@ -471,56 +471,6 @@ export class NIST80053Checks extends NagPack {
   }
 
   /**
-   * Check Elasticsearch Resources
-   * @param node the IConstruct to evaluate
-   * @param ignores list of ignores for the resource
-   */
-  private checkElasticsearch(node: CfnResource, ignores: any) {
-    if (
-      !this.ignoreRule(ignores, 'NIST.800.53-ElasticsearchEncryptedAtRest') &&
-      !nist80053ElasticsearchEncryptedAtRest(node)
-    ) {
-      const ruleId = 'NIST.800.53-ElasticsearchEncryptedAtRest';
-      const info =
-        'The Elasticsearch domain does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
-      const explanation =
-        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elasticsearch Service (Amazon ES) domains.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(
-        ignores,
-        'NIST.800.53-ElasticsearchNodeToNodeEncrypted'
-      ) &&
-      !nist80053ElasticsearchNodeToNodeEncrypted(node)
-    ) {
-      const ruleId = 'NIST.800.53-ElasticsearchNodeToNodeEncrypted';
-      const info =
-        'The Elasticsearch domain does not have node-to-node encryption enabled - (Control IDs: SC-7, SC-8, SC-8(1)).';
-      const explanation =
-        'Because sensitive data can exist, enable encryption in transit to help protect that data within your Amazon Elasticsearch Service (Amazon ES) domains.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'NIST.800.53-ElasticsearchRunningWithinVPC') &&
-      !nist80053ElasticsearchRunningWithinVPC(node)
-    ) {
-      const ruleId = 'NIST.800.53-ElasticsearchRunningWithinVPC';
-      const info =
-        'The Elasticsearch domain is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
-      const explanation =
-        'VPCs help secure your AWS resources and provide an extra layer of protection.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-  }
-
-  /**
    * Check Elastic Load Balancer Resources
    * @param node the IConstruct to evaluate
    * @param ignores list of ignores for the resource
@@ -720,6 +670,53 @@ export class NIST80053Checks extends NagPack {
         'The Lambda function is not defined within within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation =
         'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
+
+  /**
+   * Check OpenSearch Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkOpenSearch(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-OpenSearchEncryptedAtRest') &&
+      !nist80053OpenSearchEncryptedAtRest(node)
+    ) {
+      const ruleId = 'NIST.800.53-OpenSearchEncryptedAtRest';
+      const info =
+        'The OpenSearch Service domain does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).';
+      const explanation =
+        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon OpenSearch Service (OpenSearch Service) domains.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-OpenSearchNodeToNodeEncrypted') &&
+      !nist80053OpenSearchNodeToNodeEncrypted(node)
+    ) {
+      const ruleId = 'NIST.800.53-OpenSearchNodeToNodeEncrypted';
+      const info =
+        'The OpenSearch Service domain does not have node-to-node encryption enabled - (Control IDs: SC-7, SC-8, SC-8(1)).';
+      const explanation =
+        'Because sensitive data can exist, enable encryption in transit to help protect that data within your Amazon OpenSearch Service (OpenSearch Service) domains.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'NIST.800.53-OpenSearchRunningWithinVPC') &&
+      !nist80053OpenSearchRunningWithinVPC(node)
+    ) {
+      const ruleId = 'NIST.800.53-OpenSearchRunningWithinVPC';
+      const info =
+        'The OpenSearch Service domain is not running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+      const explanation =
+        'VPCs help secure your AWS resources and provide an extra layer of protection.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

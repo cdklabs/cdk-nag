@@ -6,7 +6,7 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ES domains are provisioned inside a VPC
+ * OpenSearch Service domains are provisioned inside a VPC
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

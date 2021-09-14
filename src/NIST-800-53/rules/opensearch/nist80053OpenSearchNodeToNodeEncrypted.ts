@@ -7,7 +7,7 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Elasticsearch service domains are node to node encrypted - (Control IDs: SC-7, SC-8, SC-8(1))
+ * OpenSearch Service domains are node to node encrypted - (Control IDs: SC-7, SC-8, SC-8(1))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
