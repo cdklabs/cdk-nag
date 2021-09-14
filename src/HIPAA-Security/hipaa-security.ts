@@ -37,6 +37,7 @@ import {
 } from './rules/ec2';
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { hipaaSecurityEFSEncrypted } from './rules/efs';
+import { hipaaSecurityElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 
 /**
  * Check for HIPAA Security compliance.
@@ -58,7 +59,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkEC2(node, ignores);
       this.checkECS(node, ignores);
       this.checkEFS(node, ignores);
-      // this.checkElastiCache(node, ignores);
+      this.checkElastiCache(node, ignores);
       // this.checkElasticBeanstalk(node, ignores);
       // this.checkElasticsearch(node, ignores);
       // this.checkELB(node, ignores);
@@ -445,12 +446,29 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check ElastiCache Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkElastiCache(node: CfnResource, ignores: any): void {}
+  /**
+   * Check ElastiCache Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkElastiCache(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ElasticacheRedisClusterAutomaticBackup'
+      ) &&
+      !hipaaSecurityElastiCacheRedisClusterAutomaticBackup(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ElasticacheRedisClusterAutomaticBackup';
+      const info =
+        'The ElastiCache Redis cluster does not retain automatic backups for at least 15 days - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'Automatic backups can help guard against data loss. If a failure occurs, you can create a new cluster, which restores your data from the most recent backup.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check Elastic Beanstalk Resources
