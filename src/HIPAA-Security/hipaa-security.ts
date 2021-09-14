@@ -20,7 +20,6 @@ import {
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
 } from './rules/cloudtrail';
-import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
 import {
   hipaaSecurityCloudWatchAlarmAction,
   hipaaSecurityCloudWatchLogGroupEncrypted,
@@ -29,6 +28,7 @@ import {
   hipaaSecurityCodeBuildProjectEnvVarAwsCred,
   hipaaSecurityCodeBuildProjectSourceRepoUrl,
 } from './rules/codebuild';
+import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
