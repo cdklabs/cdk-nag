@@ -35,8 +35,8 @@ import {
   hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
 } from './rules/ec2';
-import { hipaaSecurityEFSEncrypted } from './rules/efs';
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
+import { hipaaSecurityEFSEncrypted } from './rules/efs';
 
 /**
  * Check for HIPAA Security compliance.
