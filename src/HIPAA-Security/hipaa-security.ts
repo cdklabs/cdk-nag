@@ -28,6 +28,7 @@ import {
   hipaaSecurityCodeBuildProjectEnvVarAwsCred,
   hipaaSecurityCodeBuildProjectSourceRepoUrl,
 } from './rules/codebuild';
+import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
@@ -46,11 +47,10 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkAPIGW(node, ignores);
       this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
-      // this.checkCloudWatch(node, ignores);
       this.checkCodeBuild(node, ignores);
       this.checkCloudWatch(node, ignores);
       // this.checkCodeBuild(node, ignores);
-      // this.checkDMS(node, ignores);
+      this.checkDMS(node, ignores);
       // this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
       // this.checkECS(node, ignores);
@@ -305,12 +305,26 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check DMS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkDMS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check DMS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkDMS(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-DMSReplicationNotPublic') &&
+      !hipaaSecurityDMSReplicationNotPublic(node)
+    ) {
+      const ruleId = 'HIPAA.Security-DMSReplicationNotPublic';
+      const info =
+        'The DMS replication instance is public - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'DMS replication instances can contain sensitive information and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check DynamoDB Resources
