@@ -445,7 +445,7 @@ export class HIPAASecurityChecks extends NagPack {
       );
     }
   }
- 
+
   /**
    * Check ElastiCache Resources
    * @param node the IConstruct to evaluate
