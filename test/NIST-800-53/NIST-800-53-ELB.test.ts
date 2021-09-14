@@ -323,7 +323,7 @@ describe('Elastic Load Balancing', () => {
     );
   });
 
-  test('NIST.800.53-ALBHttpDropInvalidHeaderEnabled: Load balancers have invalid http header dropping enabled', () => {
+  test('nist80053ALBHttpDropInvalidHeaderEnabled: Load balancers have invalid http header dropping enabled', () => {
     const nonCompliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
@@ -367,7 +367,7 @@ describe('Elastic Load Balancing', () => {
     );
   });
 
-  test('NIST.800.53-ALBHttpToHttpsRedirection: Http ALB listeners are configured to redirect to https', () => {
+  test('nist80053ALBHttpToHttpsRedirection: Http ALB listeners are configured to redirect to https', () => {
     //test for non-compliant application listener
     const nonCompliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
@@ -457,7 +457,7 @@ describe('Elastic Load Balancing', () => {
     );
   });
 
-  test('NIST.800.53-ELBLoggingEnabled: Elastic Load Balancers have logging enabled', () => {
+  test('nist80053ELBLoggingEnabled: Elastic Load Balancers have logging enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
     new LoadBalancer(nonCompliant, 'rELB', {

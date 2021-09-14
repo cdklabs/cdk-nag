@@ -535,7 +535,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-ALBHttpDropInvalidHeaderEnabled';
       const info =
-        'The ALB does not have invalid http header dropping enabled - (Control ID: AC-17(2)).';
+        'The ALB does not have invalid HTTP header dropping enabled - (Control ID: AC-17(2)).';
       const explanation =
         'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
@@ -547,7 +547,8 @@ export class NIST80053Checks extends NagPack {
       !nist80053ALBHttpToHttpsRedirection(node)
     ) {
       const ruleId = 'NIST.800.53-ALBHttpToHttpsRedirection';
-      const info = `The ALB's Http listeners are not configured to redirect to https - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).`;
+      const info =
+        "The ALB's HTTP listeners are not configured to redirect to HTTPS - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23).";
       const explanation =
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.';
       Annotations.of(node).addError(
@@ -614,7 +615,7 @@ export class NIST80053Checks extends NagPack {
       const info =
         'The CLB does not utilize an SSL certificate provided by ACM (Amazon Certificate Manager) - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).';
       const explanation =
-        'Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
+        'Because sensitive data can exist and to help protect data at transit, ensure encryption is enabled for your Elastic Load Balancing. Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

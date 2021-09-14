@@ -7,7 +7,7 @@ import { CfnListener } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ALB HTTP listeners are configured to redirect to HTTPS - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23)
+ * ALB HTTP listeners are configured to redirect to HTTPS - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
