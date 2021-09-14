@@ -251,7 +251,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CloudWatchLogGroupEncrypted';
       const info =
-        'The CloudWatch Log Group is not encrypted with a KMS Customer Master Key (CMK) - (Control IDs: AU-9, SC-13, SC-28).';
+        'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: AU-9, SC-13, SC-28).';
       const explanation =
         'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
       Annotations.of(node).addError(
@@ -285,7 +285,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-CodeBuildURLCheck';
       const info =
-        'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control IDs: SA-3(a).';
+        'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control ID: SA-3(a)).';
       const explanation =
         'OAUTH is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.';
       Annotations.of(node).addError(

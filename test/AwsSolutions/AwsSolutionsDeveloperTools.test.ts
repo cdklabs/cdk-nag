@@ -61,7 +61,7 @@ describe('AWS CodeBuild', () => {
       })
     );
   });
-  test('awsSolutionsCb4: Codebuild projects use a CMK for encryption', () => {
+  test('awsSolutionsCb4: Codebuild projects use an AWS KMS key for encryption', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new AwsSolutionsChecks());
     new Project(positive, 'rBuildProject', {

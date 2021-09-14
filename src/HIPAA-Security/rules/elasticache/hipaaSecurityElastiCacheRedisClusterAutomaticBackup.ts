@@ -6,7 +6,7 @@ import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
 
 /**
- * ElastiCache Redis clusters retain automatic backups for at least 15 days - (Control IDs: CP-9(b), CP-10, SI-12)
+ * ElastiCache Redis clusters retain automatic backups for at least 15 days - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B))
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
