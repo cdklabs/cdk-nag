@@ -38,6 +38,7 @@ import {
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { hipaaSecurityEFSEncrypted } from './rules/efs';
 import { hipaaSecurityElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
+import { hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled } from './rules/elasticbeanstalk';
 import {
   hipaaSecurityALBHttpDropInvalidHeaderEnabled,
   hipaaSecurityALBHttpToHttpsRedirection,
@@ -69,7 +70,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkECS(node, ignores);
       this.checkEFS(node, ignores);
       this.checkElastiCache(node, ignores);
-      // this.checkElasticBeanstalk(node, ignores);
+      this.checkElasticBeanstalk(node, ignores);
       // this.checkElasticsearch(node, ignores);
       this.checkELB(node, ignores);
       // this.checkEMR(node, ignores);
@@ -479,12 +480,30 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check Elastic Beanstalk Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkElasticBeanstalk(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Elastic Beanstalk Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkElasticBeanstalk(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled'
+      ) &&
+      !hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled(node)
+    ) {
+      const ruleId =
+        'HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled';
+      const info =
+        'The Elastic Beanstalk environment does not have enhanced health reporting enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        'AWS Elastic Beanstalk enhanced health reporting enables a more rapid response to changes in the health of the underlying infrastructure. These changes could result in a lack of availability of the application. Elastic Beanstalk enhanced health reporting provides a status descriptor to gauge the severity of the identified issues and identify possible causes to investigate.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check Elasticsearch Resources
