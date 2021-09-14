@@ -56,8 +56,8 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkDMS(node, ignores);
       this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
-      this.checkEFS(node, ignores);
       this.checkECS(node, ignores);
+      this.checkEFS(node, ignores);
       // this.checkElastiCache(node, ignores);
       // this.checkElasticBeanstalk(node, ignores);
       // this.checkElasticsearch(node, ignores);
