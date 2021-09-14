@@ -20,7 +20,6 @@ import {
   hipaaSecurityCloudTrailEncryptionEnabled,
   hipaaSecurityCloudTrailLogFileValidationEnabled,
 } from './rules/cloudtrail';
-import { hipaaSecurityDynamoDBPITREnabled } from './rules/dynamodb';
 import {
   hipaaSecurityCloudWatchAlarmAction,
   hipaaSecurityCloudWatchLogGroupEncrypted,
@@ -30,6 +29,7 @@ import {
   hipaaSecurityCodeBuildProjectSourceRepoUrl,
 } from './rules/codebuild';
 import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
+import { hipaaSecurityDynamoDBPITREnabled } from './rules/dynamodb';
 import {
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstancesInVPC,
