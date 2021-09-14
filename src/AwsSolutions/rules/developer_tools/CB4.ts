@@ -6,7 +6,7 @@ import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Codebuild projects use a CMK for encryption
+ * Codebuild projects use an AWS KMS key for encryption
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
