@@ -61,9 +61,8 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkAPIGW(node, ignores);
       this.checkAutoScaling(node, ignores);
       this.checkCloudTrail(node, ignores);
-      this.checkCodeBuild(node, ignores);
       this.checkCloudWatch(node, ignores);
-      // this.checkCodeBuild(node, ignores);
+      this.checkCodeBuild(node, ignores);
       this.checkDMS(node, ignores);
       this.checkDynamoDB(node, ignores);
       this.checkEC2(node, ignores);
