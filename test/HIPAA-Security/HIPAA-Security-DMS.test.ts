@@ -6,27 +6,28 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { CfnReplicationInstance } from '@aws-cdk/aws-dms';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { NIST80053Checks } from '../../src';
+import { HIPAASecurityChecks } from '../../src';
 
 describe('AWS Database Migration Service (AWS DMS)', () => {
-  test('nist80053DMSReplicationNotPublic: DMS replication instances are not public - (Control ID: AC-4)', () => {
+  test('hipaaSecurityDMSReplicationNotPublic: DMS replication instances are not public - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))', () => {
     const positive = new Stack();
-    Aspects.of(positive).add(new NIST80053Checks());
+    Aspects.of(positive).add(new HIPAASecurityChecks());
     new CfnReplicationInstance(positive, 'rInstance', {
       replicationInstanceClass: 'dms.t2.micro',
-      publiclyAccessible: true,
     });
     const messages = SynthUtils.synthesize(positive).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-DMSReplicationNotPublic:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-DMSReplicationNotPublic:'
+          ),
         }),
       })
     );
 
     const negative = new Stack();
-    Aspects.of(negative).add(new NIST80053Checks());
+    Aspects.of(negative).add(new HIPAASecurityChecks());
     new CfnReplicationInstance(negative, 'rInstance', {
       replicationInstanceClass: 'dms.t2.micro',
       publiclyAccessible: false,
@@ -35,7 +36,9 @@ describe('AWS Database Migration Service (AWS DMS)', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-DMSReplicationNotPublic:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-DMSReplicationNotPublic:'
+          ),
         }),
       })
     );

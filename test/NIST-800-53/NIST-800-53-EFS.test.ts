@@ -6,7 +6,7 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { FileSystem } from '@aws-cdk/aws-efs';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { NIST80053Checks } from '../../src/NIST-800-53/nist-800-53';
+import { NIST80053Checks } from '../../src';
 
 describe('Amazon Elastic File System (Amazon EFS)', () => {
   test('nist80053EFSEncrypted: Elastic File Systems are encrypted', () => {

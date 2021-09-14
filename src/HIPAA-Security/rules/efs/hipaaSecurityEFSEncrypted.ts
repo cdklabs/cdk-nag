@@ -2,17 +2,17 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnProject } from '@aws-cdk/aws-codebuild';
+import { CfnFileSystem } from '@aws-cdk/aws-efs';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Codebuild projects use an AWS KMS key for encryption
+ * Elastic File Systems are configured for encryption at rest - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
-  if (node instanceof CfnProject) {
-    const encryptionKey = Stack.of(node).resolve(node.encryptionKey);
-    if (encryptionKey == undefined || encryptionKey == 'alias/aws/s3') {
+  if (node instanceof CfnFileSystem) {
+    const encrypted = Stack.of(node).resolve(node.encrypted);
+    if (encrypted === false) {
       return false;
     }
   }
