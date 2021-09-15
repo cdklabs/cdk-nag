@@ -6,17 +6,21 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ES domains are provisioned inside a VPC
+ * OpenSearch Service domains have Zone Awareness enabled
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
-    const vpcOptions = Stack.of(node).resolve(node.vpcOptions);
-    if (vpcOptions == undefined) {
+    const elasticsearchClusterConfig = Stack.of(node).resolve(
+      node.elasticsearchClusterConfig
+    );
+    if (elasticsearchClusterConfig == undefined) {
       return false;
     }
-    const subnetIds = Stack.of(node).resolve(vpcOptions.subnetIds);
-    if (subnetIds == undefined || subnetIds.length == 0) {
+    const zoneAwarenessEnabled = Stack.of(node).resolve(
+      elasticsearchClusterConfig.zoneAwarenessEnabled
+    );
+    if (!zoneAwarenessEnabled) {
       return false;
     }
   }

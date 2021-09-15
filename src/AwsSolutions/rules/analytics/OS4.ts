@@ -6,7 +6,7 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ES domains have Zone Awareness enabled
+ * OpenSearch Service domains use dedicated master nodes
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
@@ -17,10 +17,10 @@ export default function (node: IConstruct): boolean {
     if (elasticsearchClusterConfig == undefined) {
       return false;
     }
-    const zoneAwarenessEnabled = Stack.of(node).resolve(
-      elasticsearchClusterConfig.zoneAwarenessEnabled
+    const dedicatedMasterEnabled = Stack.of(node).resolve(
+      elasticsearchClusterConfig.dedicatedMasterEnabled
     );
-    if (!zoneAwarenessEnabled) {
+    if (!dedicatedMasterEnabled) {
       return false;
     }
   }

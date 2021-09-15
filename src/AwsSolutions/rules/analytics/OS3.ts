@@ -6,7 +6,7 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ES domains only grant access via allowlisted IP addresses
+ * OpenSearch Service domains only grant access via allowlisted IP addresses
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

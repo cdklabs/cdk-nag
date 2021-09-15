@@ -7,7 +7,7 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Elasticsearch service domains have encryption at rest enabled - (Control IDs: SC-13, SC-28)
+ * OpenSearch Service domains have encryption at rest enabled - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

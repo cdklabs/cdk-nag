@@ -7,19 +7,17 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Elasticsearch service domains are node to node encrypted - (Control IDs: SC-7, SC-8, SC-8(1))
+ * OpenSearch Service domains are within VPCs - (Control IDs: AC-4, SC-7, SC-7(3))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnDomain) {
-    //Is the node to node encryption property set?
-    const encryptedNodeToNode = Stack.of(node).resolve(
-      node.nodeToNodeEncryptionOptions
-    );
-    if (encryptedNodeToNode != undefined) {
+    //Is the VPC property set?
+    const vpcOptions = Stack.of(node).resolve(node.vpcOptions);
+    if (vpcOptions != undefined) {
       if (
-        encryptedNodeToNode.enabled == undefined ||
-        encryptedNodeToNode.enabled == false
+        vpcOptions.subnetIds == undefined ||
+        vpcOptions.subnetIds.length == 0
       ) {
         return false;
       }

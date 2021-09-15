@@ -299,8 +299,8 @@ describe('AWS Analytics Learning Checks', () => {
       );
     });
   });
-  describe('Amazon Elasticsearch Service', () => {
-    test('awsSolutionsEsh1: ES domains are provisioned inside a VPC', () => {
+  describe('Amazon OpenSearch Service', () => {
+    test('awsSolutionsOs1: OpenSearch Service domains are provisioned inside a VPC', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -310,7 +310,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH1:'),
+            data: expect.stringContaining('AwsSolutions-OS1:'),
           }),
         })
       );
@@ -325,12 +325,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH1:'),
+            data: expect.stringContaining('AwsSolutions-OS1:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh2: ES domains have node-to-node encryption enabled', () => {
+    test('awsSolutionsOs2: OpenSearch Service domains have node-to-node encryption enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -340,7 +340,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH2:'),
+            data: expect.stringContaining('AwsSolutions-OS2:'),
           }),
         })
       );
@@ -355,12 +355,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH2:'),
+            data: expect.stringContaining('AwsSolutions-OS2:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh3: ES domains only grant access via allowlisted IP addresses', () => {
+    test('awsSolutionsOs3: OpenSearch Service domains only grant access via allowlisted IP addresses', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new CfnDomain(positive, 'rDomain', {
@@ -383,7 +383,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH3:'),
+            data: expect.stringContaining('AwsSolutions-OS3:'),
           }),
         })
       );
@@ -415,12 +415,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH3:'),
+            data: expect.stringContaining('AwsSolutions-OS3:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh4: ES domains use dedicated master nodes', () => {
+    test('awsSolutionsOs4: OpenSearch Service domains use dedicated master nodes', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -430,7 +430,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH4:'),
+            data: expect.stringContaining('AwsSolutions-OS4:'),
           }),
         })
       );
@@ -445,12 +445,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH4:'),
+            data: expect.stringContaining('AwsSolutions-OS4:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh5: ES domains do not allow for unsigned requests or anonymous access', () => {
+    test('awsSolutionsOs5: OpenSearch Service domains do not allow for unsigned requests or anonymous access', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -461,7 +461,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH5:'),
+            data: expect.stringContaining('AwsSolutions-OS5:'),
           }),
         })
       );
@@ -485,7 +485,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH5:'),
+            data: expect.stringContaining('AwsSolutions-OS5:'),
           }),
         })
       );
@@ -517,12 +517,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH5:'),
+            data: expect.stringContaining('AwsSolutions-OS5:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh7: ES domains have Zone Awareness enabled', () => {
+    test('awsSolutionsOs7: OpenSearch Service domains have Zone Awareness enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -532,7 +532,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH7:'),
+            data: expect.stringContaining('AwsSolutions-OS7:'),
           }),
         })
       );
@@ -548,12 +548,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH7:'),
+            data: expect.stringContaining('AwsSolutions-OS7:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh8: ES domains have encryption at rest enabled', () => {
+    test('awsSolutionsOs8: OpenSearch Service domains have encryption at rest enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -563,7 +563,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH8:'),
+            data: expect.stringContaining('AwsSolutions-OS8:'),
           }),
         })
       );
@@ -578,12 +578,12 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH8:'),
+            data: expect.stringContaining('AwsSolutions-OS8:'),
           }),
         })
       );
     });
-    test('awsSolutionsEsh9: ES domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
+    test('awsSolutionsOs9: OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Domain(positive, 'rDomain', {
@@ -593,7 +593,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH9:'),
+            data: expect.stringContaining('AwsSolutions-OS9:'),
           }),
         })
       );
@@ -608,7 +608,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH9:'),
+            data: expect.stringContaining('AwsSolutions-OS9:'),
           }),
         })
       );
@@ -623,7 +623,7 @@ describe('AWS Analytics Learning Checks', () => {
       expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ESH9:'),
+            data: expect.stringContaining('AwsSolutions-OS9:'),
           }),
         })
       );

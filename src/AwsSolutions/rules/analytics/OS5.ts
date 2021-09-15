@@ -6,7 +6,7 @@ import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * ES domains do not allow for unsigned requests or anonymous access
+ * OpenSearch Service domains do not allow for unsigned requests or anonymous access
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

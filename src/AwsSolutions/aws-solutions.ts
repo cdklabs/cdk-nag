@@ -8,20 +8,20 @@ import {
   awsSolutionsAth1,
   awsSolutionsEmr2,
   awsSolutionsEmr6,
-  awsSolutionsEsh1,
-  awsSolutionsEsh2,
-  awsSolutionsEsh3,
-  awsSolutionsEsh4,
-  awsSolutionsEsh5,
-  awsSolutionsEsh7,
-  awsSolutionsEsh8,
-  awsSolutionsEsh9,
   awsSolutionsKda3,
   awsSolutionsKds1,
   awsSolutionsKdf1,
   awsSolutionsMsk2,
   awsSolutionsMsk6,
   awsSolutionsMsk3,
+  awsSolutionsOs1,
+  awsSolutionsOs2,
+  awsSolutionsOs3,
+  awsSolutionsOs4,
+  awsSolutionsOs5,
+  awsSolutionsOs7,
+  awsSolutionsOs8,
+  awsSolutionsOs9,
   awsSolutionsQs1,
 } from './rules/analytics';
 import {
@@ -1057,106 +1057,6 @@ export class AwsSolutionsChecks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH1') &&
-      !awsSolutionsEsh1(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH1';
-      const info = 'The ES domain is not provisioned inside a VPC.';
-      const explanation =
-        'Provisioning the domain within a VPC enables better flexibility and control over the clusters access and security as this feature keeps all traffic between the VPC and Elasticsearch domains within the AWS network instead of going over the public Internet.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH2') &&
-      !awsSolutionsEsh2(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH2';
-      const info =
-        'The ES domain does not have node-to-node encryption enabled.';
-      const explanation =
-        'Enabling the node-to-node encryption feature adds an extra layer of data protection on top of the existing ES security features such as HTTPS client to cluster encryption and data-at-rest encryption.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH3') &&
-      !awsSolutionsEsh3(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH3';
-      const info =
-        'The ES domain does not only grant access via allowlisted IP addresses.';
-      const explanation =
-        'Using allowlisted IP addresses helps protect the domain against unauthorized access.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH4') &&
-      !awsSolutionsEsh4(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH4';
-      const info = 'The ES domain does not use dedicated master nodes.';
-      const explanation =
-        'Using dedicated master nodes helps improve environmental stability by offloading all the management tasks from the data nodes.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH5') &&
-      !awsSolutionsEsh5(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH5';
-      const info =
-        'The ES domain does not allow for unsigned requests or anonymous access.';
-      const explanation =
-        'Restricting public access helps prevent unauthorized access and prevents any unsigned requests to be made to the resources.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH7') &&
-      !awsSolutionsEsh7(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH7';
-      const info = 'The ES domain does not have Zone Awareness enabled.';
-      const explanation =
-        'Enabling cross-zone replication (Zone Awareness) increases the availability of the ES domain by allocating the nodes and replicate the data across two AZs in the same region in order to prevent data loss and minimize downtime in the event of node or AZ failure.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH8') &&
-      !awsSolutionsEsh8(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH8';
-      const info = 'The ES domain does not have encryption at rest enabled.';
-      const explanation =
-        'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
-      !this.ignoreRule(ignores, 'AwsSolutions-ESH9') &&
-      !awsSolutionsEsh9(node)
-    ) {
-      const ruleId = 'AwsSolutions-ESH9';
-      const info =
-        'The ES domain does not minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs.';
-      const explanation =
-        'These logs enable operators to gain full insight into the performance of these operations.';
-      Annotations.of(node).addError(
-        this.createMessage(ruleId, info, explanation)
-      );
-    }
-    if (
       !this.ignoreRule(ignores, 'AwsSolutions-KDA3') &&
       !awsSolutionsKda3(node)
     ) {
@@ -1230,6 +1130,110 @@ export class AwsSolutionsChecks extends NagPack {
         'The MSK cluster does not send broker logs to a supported destination.';
       const explanation =
         'Broker logs enable operators to troubleshoot Apache Kafka applications and to analyze their communications with the MSK cluster. The cluster can deliver logs to the following resources: a CloudWatch log group, an S3 bucket, a Kinesis Data Firehose delivery stream.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS1') &&
+      !awsSolutionsOs1(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS1';
+      const info =
+        'The OpenSearch Service domain is not provisioned inside a VPC.';
+      const explanation =
+        'Provisioning the domain within a VPC enables better flexibility and control over the clusters access and security as this feature keeps all traffic between the VPC and OpenSearch domains within the AWS network instead of going over the public Internet.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS2') &&
+      !awsSolutionsOs2(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS2';
+      const info =
+        'The OpenSearch Service domain does not have node-to-node encryption enabled.';
+      const explanation =
+        'Enabling the node-to-node encryption feature adds an extra layer of data protection on top of the existing ES security features such as HTTPS client to cluster encryption and data-at-rest encryption.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS3') &&
+      !awsSolutionsOs3(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS3';
+      const info =
+        'The OpenSearch Service domain does not only grant access via allowlisted IP addresses.';
+      const explanation =
+        'Using allowlisted IP addresses helps protect the domain against unauthorized access.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS4') &&
+      !awsSolutionsOs4(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS4';
+      const info =
+        'The OpenSearch Service domain does not use dedicated master nodes.';
+      const explanation =
+        'Using dedicated master nodes helps improve environmental stability by offloading all the management tasks from the data nodes.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS5') &&
+      !awsSolutionsOs5(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS5';
+      const info =
+        'The OpenSearch Service domain does not allow for unsigned requests or anonymous access.';
+      const explanation =
+        'Restricting public access helps prevent unauthorized access and prevents any unsigned requests to be made to the resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS7') &&
+      !awsSolutionsOs7(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS7';
+      const info =
+        'The OpenSearch Service domain does not have Zone Awareness enabled.';
+      const explanation =
+        'Enabling cross-zone replication (Zone Awareness) increases the availability of the OpenSearch Service domain by allocating the nodes and replicate the data across two AZs in the same region in order to prevent data loss and minimize downtime in the event of node or AZ failure.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS8') &&
+      !awsSolutionsOs8(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS8';
+      const info =
+        'The OpenSearch Service domain does not have encryption at rest enabled.';
+      const explanation =
+        'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'AwsSolutions-OS9') &&
+      !awsSolutionsOs9(node)
+    ) {
+      const ruleId = 'AwsSolutions-OS9';
+      const info =
+        'The OpenSearch Service domain does not minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs.';
+      const explanation =
+        'These logs enable operators to gain full insight into the performance of these operations.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

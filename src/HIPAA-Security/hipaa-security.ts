@@ -49,6 +49,12 @@ import {
   hipaaSecurityELBTlsHttpsListenersOnly,
   hipaaSecurityELBv2ACMCertificateRequired,
 } from './rules/elb';
+import {
+  hipaaSecurityOpenSearchEncryptedAtRest,
+  hipaaSecurityOpenSearchInVPCOnly,
+  hipaaSecurityOpenSearchLogsToCloudWatch,
+  hipaaSecurityOpenSearchNodeToNodeEncryption,
+} from './rules/opensearch';
 
 /**
  * Check for HIPAA Security compliance.
@@ -71,11 +77,11 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkEFS(node, ignores);
       this.checkElastiCache(node, ignores);
       this.checkElasticBeanstalk(node, ignores);
-      // this.checkElasticsearch(node, ignores);
       this.checkELB(node, ignores);
       // this.checkEMR(node, ignores);
       // this.checkIAM(node, ignores);
       // this.checkLambda(node, ignores);
+      this.checkOpenSearch(node, ignores);
       // this.checkRDS(node, ignores);
       // this.checkRedshift(node, ignores);
       // this.checkS3(node, ignores);
@@ -505,13 +511,6 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check Elasticsearch Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkElasticsearch(node: CfnResource, ignores: any): void {}
-
   /**
    * Check Elastic Load Balancer Resources
    * @param node the IConstruct to evaluate
@@ -653,6 +652,69 @@ export class HIPAASecurityChecks extends NagPack {
   //    * @param ignores list of ignores for the resource
   //    */
   //   private checkLambda(node: CfnResource, ignores: any): void {}
+
+  /**
+   * Check OpenSearch Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkOpenSearch(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-OpenSearchEncryptedAtRest') &&
+      !hipaaSecurityOpenSearchEncryptedAtRest(node)
+    ) {
+      const ruleId = 'HIPAA.Security-OpenSearchEncryptedAtRest';
+      const info =
+        'The OpenSearch Service domain does not have encryption at rest enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon OpenSearch Service (OpenSearch Service) domains.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-OpenSearchInVPCOnly') &&
+      !hipaaSecurityOpenSearchInVPCOnly(node)
+    ) {
+      const ruleId = 'HIPAA.Security-OpenSearchInVPCOnly';
+      const info =
+        'The OpenSearch Service domain is not running within a VPC - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'VPCs help secure your AWS resources and provide an extra layer of protection.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-OpenSearchLogsToCloudWatch') &&
+      !hipaaSecurityOpenSearchLogsToCloudWatch(node)
+    ) {
+      const ruleId = 'HIPAA.Security-OpenSearchLogsToCloudWatch';
+      const info =
+        'The OpenSearch Service domain does not stream error logs (ES_APPLICATION_LOGS) to CloudWatch Logs - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).';
+      const explanation =
+        'Ensure Amazon OpenSearch Service domains have error logs enabled and streamed to Amazon CloudWatch Logs for retention and response. Domain error logs can assist with security and access audits, and can help to diagnose availability issues.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-OpenSearchNodeToNodeEncryption'
+      ) &&
+      !hipaaSecurityOpenSearchNodeToNodeEncryption(node)
+    ) {
+      const ruleId = 'HIPAA.Security-OpenSearchNodeToNodeEncryption';
+      const info =
+        'The OpenSearch Service domain does not have node-to-node encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist, enable encryption in transit to help protect that data within your Amazon OpenSearch Service (OpenSearch Service) domains.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check RDS Resources
