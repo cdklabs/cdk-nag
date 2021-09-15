@@ -49,6 +49,7 @@ import {
   hipaaSecurityELBTlsHttpsListenersOnly,
   hipaaSecurityELBv2ACMCertificateRequired,
 } from './rules/elb';
+import { hipaaSecurityEMRKerberosEnabled } from './rules/emr';
 import {
   hipaaSecurityOpenSearchEncryptedAtRest,
   hipaaSecurityOpenSearchInVPCOnly,
@@ -78,7 +79,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkElastiCache(node, ignores);
       this.checkElasticBeanstalk(node, ignores);
       this.checkELB(node, ignores);
-      // this.checkEMR(node, ignores);
+      this.checkEMR(node, ignores);
       // this.checkIAM(node, ignores);
       // this.checkLambda(node, ignores);
       this.checkOpenSearch(node, ignores);
@@ -632,12 +633,26 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check EMR Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkEMR(node: CfnResource, ignores: any): void {}
+  /**
+   * Check EMR Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkEMR(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EMRKerberosEnabled') &&
+      !hipaaSecurityEMRKerberosEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EMRKerberosEnabled';
+      const info =
+        'The EMR cluster does not have Kerberos enabled - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check IAM Resources
