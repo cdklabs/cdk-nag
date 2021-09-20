@@ -55,6 +55,16 @@ import {
   hipaaSecurityOpenSearchLogsToCloudWatch,
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
+import {
+  hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled,
+  hipaaSecurityRDSEnhancedMonitoringEnabled,
+  hipaaSecurityRDSInstanceBackupEnabled,
+  hipaaSecurityRDSInstanceDeletionProtectionEnabled,
+  hipaaSecurityRDSInstanceMultiAZSupport,
+  hipaaSecurityRDSInstancePublicAccess,
+  hipaaSecurityRDSLoggingEnabled,
+  hipaaSecurityRDSStorageEncrypted,
+} from './rules/rds';
 
 /**
  * Check for HIPAA Security compliance.
@@ -82,7 +92,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkIAM(node, ignores);
       // this.checkLambda(node, ignores);
       this.checkOpenSearch(node, ignores);
-      // this.checkRDS(node, ignores);
+      this.checkRDS(node, ignores);
       // this.checkRedshift(node, ignores);
       // this.checkS3(node, ignores);
       // this.checkSageMaker(node, ignores);
@@ -716,12 +726,126 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check RDS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkRDS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check RDS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkRDS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RDSAutomaticMinorVersionUpgradeEnabled'
+      ) &&
+      !hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSAutomaticMinorVersionUpgradeEnabled';
+      const info =
+        'The RDS DB instance does not have automatic minor version upgrades enabled - (Control ID: 164.308(a)(5)(ii)(A)).';
+      const explanation =
+        'Enable automatic minor version upgrades on your Amazon Relational Database Service (RDS) instances to ensure the latest minor version updates to the Relational Database Management System (RDBMS) are installed, which may include security patches and bug fixes.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RDSEnhancedMonitoringEnabled'
+      ) &&
+      !hipaaSecurityRDSEnhancedMonitoringEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSEnhancedMonitoringEnabled';
+      const info =
+        'The RDS DB instance does not enhanced monitoring enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSInstanceBackupEnabled') &&
+      !hipaaSecurityRDSInstanceBackupEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstanceBackupEnabled';
+      const info =
+        'The RDS DB instance does not have backups enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'The backup feature of Amazon RDS creates backups of your databases and transaction logs.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RDSInstanceDeletionProtectionEnabled'
+      ) &&
+      !hipaaSecurityRDSInstanceDeletionProtectionEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstanceDeletionProtectionEnabled';
+      const info =
+        'The RDS DB instance or Aurora DB cluster does not have deletion protection enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).';
+      const explanation =
+        'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS DB instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSInstanceMultiAzSupport') &&
+      !hipaaSecurityRDSInstanceMultiAZSupport(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstanceMultiAzSupport';
+      const info =
+        'The non-Aurora RDS DB instance does not have multi-AZ support enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).';
+      const explanation =
+        'Multi-AZ support in Amazon Relational Database Service (Amazon RDS) provides enhanced availability and durability for database instances. When you provision a Multi-AZ database instance, Amazon RDS automatically creates a primary database instance, and synchronously replicates the data to a standby instance in a different Availability Zone. In case of an infrastructure failure, Amazon RDS performs an automatic failover to the standby so that you can resume database operations as soon as the failover is complete.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSInstancePublicAccess') &&
+      !hipaaSecurityRDSInstancePublicAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstancePublicAccess';
+      const info =
+        'The RDS DB instance allows public access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Amazon RDS database instances can contain sensitive information, and principles and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSLoggingEnabled') &&
+      !hipaaSecurityRDSLoggingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSLoggingEnabled';
+      const info =
+        'The RDS DB instance does not have all CloudWatch log types exported - (Control IDs: 164.308(a)(3)(ii)(A), 164.308(a)(5)(ii)(C)).';
+      const explanation =
+        'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSStorageEncrypted') &&
+      !hipaaSecurityRDSStorageEncrypted(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSStorageEncrypted';
+      const info =
+        'The RDS DB instance or Aurora DB cluster does not have storage encrypted - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in Amazon RDS DB instances and clusters, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check Redshift Resources

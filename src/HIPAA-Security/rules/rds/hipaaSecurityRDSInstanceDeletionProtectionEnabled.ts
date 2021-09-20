@@ -6,23 +6,23 @@ import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * RDS DB instances and Aurora DB clusters have storage encryption enabled
+ *  RDS DB instances and Aurora DB clusters have Deletion Protection enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBCluster) {
-    if (node.storageEncrypted == undefined) {
+    if (node.deletionProtection == undefined) {
       return false;
     }
-    const encrypted = Stack.of(node).resolve(node.storageEncrypted);
-    if (encrypted == false) {
+    const deletionProtection = Stack.of(node).resolve(node.deletionProtection);
+    if (deletionProtection === false) {
       return false;
     }
     return true;
   } else if (node instanceof CfnDBInstance) {
-    const encrypted = Stack.of(node).resolve(node.storageEncrypted);
+    const deletionProtection = Stack.of(node).resolve(node.deletionProtection);
     if (
-      (encrypted == false || encrypted == undefined) &&
+      (deletionProtection == false || deletionProtection == undefined) &&
       (node.engine == undefined ||
         !node.engine.toLowerCase().includes('aurora'))
     ) {

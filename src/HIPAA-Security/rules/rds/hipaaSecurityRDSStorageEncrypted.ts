@@ -6,7 +6,7 @@ import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * RDS DB instances and Aurora DB clusters have storage encryption enabled
+ * RDS DB instances and Aurora DB clusters have storage encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
