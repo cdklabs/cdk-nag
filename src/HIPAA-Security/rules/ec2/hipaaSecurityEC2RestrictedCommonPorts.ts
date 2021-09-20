@@ -9,7 +9,7 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
 
 /**
- * EC2 instances have all common TCP ports restricted for ingress IPv4 traffic - (Control IDs: AC-4, CM-2, SC-7, SC-7(3)).
+ * EC2 instances have all common TCP ports restricted for ingress IPv4 traffic - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))).
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */
