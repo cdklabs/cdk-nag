@@ -32,6 +32,9 @@ describe('AWS Solutions Storage Checks', () => {
           'foo'
         ),
       });
+      new Bucket(negative, 'rBucket2', {
+        serverAccessLogsPrefix: 'foo',
+      });
       const messages2 = SynthUtils.synthesize(negative).messages;
       expect(messages2).not.toContainEqual(
         expect.objectContaining({
