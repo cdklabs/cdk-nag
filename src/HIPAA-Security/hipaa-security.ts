@@ -55,6 +55,16 @@ import {
   hipaaSecurityOpenSearchLogsToCloudWatch,
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
+import {
+  hipaaSecurityS3BucketLevelPublicAccessProhibited,
+  hipaaSecurityS3BucketLoggingEnabled,
+  hipaaSecurityS3BucketPublicReadProhibited,
+  hipaaSecurityS3BucketPublicWriteProhibited,
+  hipaaSecurityS3BucketReplicationEnabled,
+  hipaaSecurityS3BucketServerSideEncryptionEnabled,
+  hipaaSecurityS3BucketVersioningEnabled,
+  hipaaSecurityS3DefaultEncryptionKMS,
+} from './rules/s3';
 
 /**
  * Check for HIPAA Security compliance.
@@ -84,7 +94,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkOpenSearch(node, ignores);
       // this.checkRDS(node, ignores);
       // this.checkRedshift(node, ignores);
-      // this.checkS3(node, ignores);
+      this.checkS3(node, ignores);
       // this.checkSageMaker(node, ignores);
       // this.checkSecretsManager(node, ignores);
       // this.checkSNS(node, ignores);
@@ -730,12 +740,129 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkRedshift(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check S3 Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkS3(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Amazon S3 Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkS3(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketLevelPublicAccessProhibited'
+      ) &&
+      !hipaaSecurityS3BucketLevelPublicAccessProhibited(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketLevelPublicAccessProhibited';
+      const info =
+        'The S3 bucket does not prohibit public access through bucket level settings - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Keep sensitive data safe from unauthorized remote users by preventing public access at the bucket level.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3BucketLoggingEnabled') &&
+      !hipaaSecurityS3BucketLoggingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketLoggingEnabled';
+      const info =
+        'The S3 Bucket does not have server access logs enabled - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).';
+      const explanation =
+        'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketPublicReadProhibited'
+      ) &&
+      !hipaaSecurityS3BucketPublicReadProhibited(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketPublicReadProhibited';
+      const info =
+        'The S3 Bucket does not prohibit public read access through its Block Public Access configurations and bucket ACLs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'The management of access should be consistent with the classification of the data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketPublicWriteProhibited'
+      ) &&
+      !hipaaSecurityS3BucketPublicWriteProhibited(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketPublicWriteProhibited';
+      const info =
+        'The S3 Bucket does not prohibit public write access through its Block Public Access configurations and bucket ACLs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'The management of access should be consistent with the classification of the data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3BucketReplicationEnabled') &&
+      !hipaaSecurityS3BucketReplicationEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketReplicationEnabled';
+      const info =
+        'The S3 Bucket does not have replication enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'Amazon Simple Storage Service (Amazon S3) Cross-Region Replication (CRR) supports maintaining adequate capacity and availability. CRR enables automatic, asynchronous copying of objects across Amazon S3 buckets to help ensure that data availability is maintained.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketServerSideEncryptionEnabled'
+      ) &&
+      !hipaaSecurityS3BucketServerSideEncryptionEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketServerSideEncryptionEnabled';
+      const info =
+        'The S3 Bucket does not have default server-side encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(c)(2), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3BucketVersioningEnabled') &&
+      !hipaaSecurityS3BucketVersioningEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketVersioningEnabled';
+      const info =
+        'The S3 Bucket does not have versioning enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B), 164.312(c)(1), 164.312(c)(2)).';
+      const explanation =
+        'Use versioning to preserve, retrieve, and restore every version of every object stored in your Amazon S3 bucket. Versioning helps you to easily recover from unintended user actions and application failures.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3DefaultEncryptionKMS') &&
+      !hipaaSecurityS3DefaultEncryptionKMS(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3DefaultEncryptionKMS';
+      const info =
+        'The S3 Bucket is not encrypted with a KMS Key by default - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Ensure that encryption is enabled for your Amazon Simple Storage Service (Amazon S3) buckets. Because sensitive data can exist at rest in an Amazon S3 bucket, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check SageMaker Resources
