@@ -55,6 +55,13 @@ import {
   hipaaSecurityOpenSearchLogsToCloudWatch,
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
+import {
+  hipaaSecurityRedshiftBackupEnabled,
+  hipaaSecurityRedshiftClusterConfiguration,
+  hipaaSecurityRedshiftClusterMaintenanceSettings,
+  hipaaSecurityRedshiftClusterPublicAccess,
+  hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+} from './rules/redshift';
 
 /**
  * Check for HIPAA Security compliance.
@@ -83,7 +90,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkLambda(node, ignores);
       this.checkOpenSearch(node, ignores);
       // this.checkRDS(node, ignores);
-      // this.checkRedshift(node, ignores);
+      this.checkRedshift(node, ignores);
       // this.checkS3(node, ignores);
       // this.checkSageMaker(node, ignores);
       // this.checkSecretsManager(node, ignores);
@@ -723,12 +730,87 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkRDS(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check Redshift Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkRedshift(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Redshift Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkRedshift(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RedshiftBackupEnabled') &&
+      !hipaaSecurityRedshiftBackupEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftBackupEnabled';
+      const info =
+        'The Redshift cluster does not have automated snapshots enabled or the retention period is not between 1 and 35 days - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'To help with data back-up processes, ensure your Amazon Redshift clusters have automated snapshots. When automated snapshots are enabled for a cluster, Redshift periodically takes snapshots of that cluster. By default, Redshift takes a snapshot every eight hours or every 5 GB per node of data changes, or whichever comes first.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RedshiftClusterConfiguration'
+      ) &&
+      !hipaaSecurityRedshiftClusterConfiguration(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftClusterConfiguration';
+      const info =
+        'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(b), 164.312(e)(2)(ii)).';
+      const explanation =
+        'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RedshiftClusterMaintenanceSettings'
+      ) &&
+      !hipaaSecurityRedshiftClusterMaintenanceSettings(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftClusterMaintenanceSettings';
+      const info =
+        'The Redshift cluster has version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: 164.308(a)(5)(ii)(A), 164.308(a)(7)(ii)(A)).';
+      const explanation =
+        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RedshiftClusterPublicAccess') &&
+      !hipaaSecurityRedshiftClusterPublicAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftClusterPublicAccess';
+      const info =
+        'The Redshift cluster allows public access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RedshiftEnhancedVPCRoutingEnabled'
+      ) &&
+      !hipaaSecurityRedshiftEnhancedVPCRoutingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftEnhancedVPCRoutingEnabled';
+      const info =
+        'The Redshift cluster does not have enhanced VPC routing enabled - (Control IDs: 164.312(e)(1)).';
+      const explanation =
+        'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check S3 Resources
