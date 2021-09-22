@@ -88,6 +88,9 @@ describe('Amazon Simple Storage Service (S3)', () => {
         'foo'
       ),
     });
+    new Bucket(compliant, 'rBucket2', {
+      serverAccessLogsPrefix: 'foo',
+    });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
