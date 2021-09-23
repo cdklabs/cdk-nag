@@ -61,6 +61,11 @@ import {
   hipaaSecurityOpenSearchLogsToCloudWatch,
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
+import {
+  hipaaSecurityVPCDefaultSecurityGroupClosed,
+  hipaaSecurityVPCNoUnrestrictedRouteToIGW,
+  hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
+} from './rules/vpc';
 
 /**
  * Check for HIPAA Security compliance.
@@ -94,7 +99,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkSageMaker(node, ignores);
       // this.checkSecretsManager(node, ignores);
       // this.checkSNS(node, ignores);
-      // this.checkVPC(node, ignores);
+      this.checkVPC(node, ignores);
     }
   }
 
@@ -818,10 +823,56 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkSNS(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check VPC Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkVPC(node: CfnResource, ignores: any): void {}
+  /**
+   * Check VPC Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkVPC(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-VPCDefaultSecurityGroupClosed'
+      ) &&
+      !hipaaSecurityVPCDefaultSecurityGroupClosed(node)
+    ) {
+      const ruleId = 'HIPAA.Security-VPCDefaultSecurityGroupClosed';
+      const info =
+        "The VPC's default security group allows inbound or outbound traffic - (Control ID: 164.312(e)(1)).";
+      const explanation =
+        'When creating a VPC through CloudFormation, the default security group will always be open. Therefore it is important to always close the default security group after stack creation whenever a VPC is created. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
+      Annotations.of(node).addWarning(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-VPCNoUnrestrictedRouteToIGW') &&
+      !hipaaSecurityVPCNoUnrestrictedRouteToIGW(node)
+    ) {
+      const ruleId = 'HIPAA.Security-VPCNoUnrestrictedRouteToIGW';
+      const info =
+        "The route table may contain one or more unrestricted route(s) to an IGW ('0.0.0.0/0' or '::/0') - (Control ID: 164.312(e)(1)).";
+      const explanation =
+        'Ensure Amazon EC2 route tables do not have unrestricted routes to an internet gateway. Removing or limiting the access to the internet for workloads within Amazon VPCs can reduce unintended access within your environment.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-VPCSubnetAutoAssignPublicIpDisabled'
+      ) &&
+      !hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-VPCSubnetAutoAssignPublicIpDisabled';
+      const info =
+        'The subnet auto-assigns public IP addresses - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 }
