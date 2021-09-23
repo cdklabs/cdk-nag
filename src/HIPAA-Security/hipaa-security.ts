@@ -61,6 +61,7 @@ import {
   hipaaSecurityOpenSearchLogsToCloudWatch,
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
+import { hipaaSecuritySNSEncryptedKMS } from './rules/sns';
 
 /**
  * Check for HIPAA Security compliance.
@@ -93,7 +94,7 @@ export class HIPAASecurityChecks extends NagPack {
       // this.checkS3(node, ignores);
       // this.checkSageMaker(node, ignores);
       // this.checkSecretsManager(node, ignores);
-      // this.checkSNS(node, ignores);
+      this.checkSNS(node, ignores);
       // this.checkVPC(node, ignores);
     }
   }
@@ -811,12 +812,26 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkSecretsManager(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check SNS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkSNS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Amazon SNS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkSNS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-SNSEncryptedKMS') &&
+      !hipaaSecuritySNSEncryptedKMS(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SNSEncryptedKMS';
+      const info =
+        'The SNS topic does not have KMS encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check VPC Resources
