@@ -49,6 +49,12 @@ import {
   hipaaSecurityELBTlsHttpsListenersOnly,
   hipaaSecurityELBv2ACMCertificateRequired,
 } from './rules/elb';
+import { hipaaSecurityEMRKerberosEnabled } from './rules/emr';
+import {
+  hipaaSecurityLambdaConcurrency,
+  hipaaSecurityLambdaDlq,
+  hipaaSecurityLambdaInsideVPC,
+} from './rules/lambda';
 import {
   hipaaSecurityOpenSearchEncryptedAtRest,
   hipaaSecurityOpenSearchInVPCOnly,
@@ -83,9 +89,9 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkElastiCache(node, ignores);
       this.checkElasticBeanstalk(node, ignores);
       this.checkELB(node, ignores);
-      // this.checkEMR(node, ignores);
+      this.checkEMR(node, ignores);
       // this.checkIAM(node, ignores);
-      // this.checkLambda(node, ignores);
+      this.checkLambda(node, ignores);
       this.checkOpenSearch(node, ignores);
       // this.checkRDS(node, ignores);
       // this.checkRedshift(node, ignores);
@@ -637,12 +643,26 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check EMR Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkEMR(node: CfnResource, ignores: any): void {}
+  /**
+   * Check EMR Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkEMR(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EMRKerberosEnabled') &&
+      !hipaaSecurityEMRKerberosEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EMRKerberosEnabled';
+      const info =
+        'The EMR cluster does not have Kerberos enabled - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'The access permissions and authorizations can be managed and incorporated with the principles of least privilege and separation of duties, by enabling Kerberos for Amazon EMR clusters.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check IAM Resources
@@ -651,12 +671,52 @@ export class HIPAASecurityChecks extends NagPack {
   //    */
   //   private checkIAM(node: CfnResource, ignores: any): void {}
 
-  //   /**
-  //    * Check Lambda Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkLambda(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Lambda Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkLambda(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-LambdaConcurrency') &&
+      !hipaaSecurityLambdaConcurrency(node)
+    ) {
+      const ruleId = 'HIPAA.Security-LambdaConcurrency';
+      const info =
+        'The Lambda function is not configured with function-level concurrent execution limits - (Control ID: 164.312(b)).';
+      const explanation =
+        "Ensure that a Lambda function's concurrency high and low limits are established. This can assist in baselining the number of requests that your function is serving at any given time.";
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-LambdaDlq') &&
+      !hipaaSecurityLambdaDlq(node)
+    ) {
+      const ruleId = 'HIPAA.Security-LambdaDlq';
+      const info =
+        'The Lambda function is not configured with a dead-letter configuration - (Control ID: 164.312(b)).';
+      const explanation =
+        'Notify the appropriate personnel through Amazon Simple Queue Service (Amazon SQS) or Amazon Simple Notification Service (Amazon SNS) when a function has failed.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-LambdaInsideVPC') &&
+      !hipaaSecurityLambdaInsideVPC(node)
+    ) {
+      const ruleId = 'HIPAA.Security-LambdaInsideVPC';
+      const info =
+        'The Lambda function is not VPC enabled - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   /**
    * Check OpenSearch Resources
