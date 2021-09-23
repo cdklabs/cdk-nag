@@ -38,7 +38,10 @@ import {
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { hipaaSecurityEFSEncrypted } from './rules/efs';
 import { hipaaSecurityElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
-import { hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled } from './rules/elasticbeanstalk';
+import {
+  hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled,
+  hipaaSecurityElasticBeanstalkManagedUpdatesEnabled,
+} from './rules/elasticbeanstalk';
 import {
   hipaaSecurityALBHttpDropInvalidHeaderEnabled,
   hipaaSecurityALBHttpToHttpsRedirection,
@@ -511,6 +514,22 @@ export class HIPAASecurityChecks extends NagPack {
         'The Elastic Beanstalk environment does not have enhanced health reporting enabled - (Control ID: 164.312(b)).';
       const explanation =
         'AWS Elastic Beanstalk enhanced health reporting enables a more rapid response to changes in the health of the underlying infrastructure. These changes could result in a lack of availability of the application. Elastic Beanstalk enhanced health reporting provides a status descriptor to gauge the severity of the identified issues and identify possible causes to investigate.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled'
+      ) &&
+      !hipaaSecurityElasticBeanstalkManagedUpdatesEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled';
+      const info =
+        'The Elastic Beanstalk environment does not have managed updates enabled - (Control ID: 164.308(a)(5)(ii)(A)).';
+      const explanation =
+        'Enabling managed platform updates for an Amazon Elastic Beanstalk environment ensures that the latest available platform fixes, updates, and features for the environment are installed. Keeping up to date with patch installation is a best practice in securing systems.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
