@@ -12,7 +12,11 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnBucket) {
     const logging = Stack.of(node).resolve(node.loggingConfiguration);
-    if (logging == undefined || logging.destinationBucketName == undefined) {
+    if (
+      logging == undefined ||
+      (logging.destinationBucketName == undefined &&
+        logging.logFilePrefix == undefined)
+    ) {
       return false;
     }
   }

@@ -667,7 +667,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-LambdaFunctionsInsideVPC';
       const info =
-        'The Lambda function is not defined within within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+        'The Lambda function is not VPC enabled - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation =
         'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
       Annotations.of(node).addError(
