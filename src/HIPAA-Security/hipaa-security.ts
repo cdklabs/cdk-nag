@@ -57,6 +57,7 @@ import {
   hipaaSecurityIAMUserGroupMembership,
   hipaaSecurityIAMUserNoPolicies,
 } from './rules/iam';
+import {
   hipaaSecurityLambdaConcurrency,
   hipaaSecurityLambdaDlq,
   hipaaSecurityLambdaInsideVPC,
