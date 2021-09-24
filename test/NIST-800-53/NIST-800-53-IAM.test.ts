@@ -74,21 +74,15 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
   test('NIST.800.53-IAMUserNoPoliciesCheck: IAM policies are not attached at the user level', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
-
     const user = new User(nonCompliant, 'rUser');
     new Group(nonCompliant, 'rGroup').addUser(user);
-
-    const myPolicy = new Policy(nonCompliant, 'rPolicy');
-
+    const myPolicy = new Policy(nonCompliant, 'rPolicy', { users: [user] });
     myPolicy.addStatements(
       new PolicyStatement({
         actions: ['s3:PutObject'],
         resources: [new Bucket(nonCompliant, 'rBucket').arnForObjects('*')],
       })
     );
-
-    myPolicy.attachToUser(user);
-
     const messages1 = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages1).toContainEqual(
       expect.objectContaining({
@@ -100,17 +94,11 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new NIST80053Checks());
-
-    const user3 = new User(nonCompliant2, 'rUser');
-    new Group(nonCompliant2, 'rGroup').addUser(user3);
-
-    user3.addToPolicy(
-      new PolicyStatement({
-        actions: ['s3:PutObject'],
-        resources: [new Bucket(nonCompliant2, 'rBucket').arnForObjects('*')],
-      })
-    );
-
+    new User(nonCompliant2, 'rUser', {
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess'),
+      ],
+    });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
       expect.objectContaining({
@@ -122,7 +110,6 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
 
     const activeCompliant = new Stack();
     Aspects.of(activeCompliant).add(new NIST80053Checks());
-
     const myGroup = new Group(activeCompliant, 'rGroup');
     myGroup.addToPolicy(
       new PolicyStatement({
@@ -130,10 +117,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
         resources: [new Bucket(activeCompliant, 'rBucket').arnForObjects('*')],
       })
     );
-
-    const user2 = new User(activeCompliant, 'rUser');
-    myGroup.addUser(user2);
-
+    new User(activeCompliant, 'rUser');
     const messages3 = SynthUtils.synthesize(activeCompliant).messages;
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
@@ -279,6 +263,30 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
       })
     );
 
+    const nonCompliant4 = new Stack();
+    Aspects.of(nonCompliant4).add(new NIST80053Checks());
+
+    new Role(nonCompliant4, 'rRole', {
+      assumedBy: new AccountRootPrincipal(),
+    }).addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: ['arn:aws:s3:::examplebucket', '*'],
+        actions: ['s3:CreateBucket', '*'],
+      })
+    );
+
+    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
+    expect(messages4).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess:'
+          ),
+        }),
+      })
+    );
+
     const activeCompliant = new Stack();
     Aspects.of(activeCompliant).add(new NIST80053Checks());
 
@@ -286,11 +294,18 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
       new PolicyStatement({
         actions: ['glacier:DescribeJob'],
         resources: ['*'],
+      }),
+      new PolicyStatement({
+        actions: ['glacier:*'],
+        resources: ['*'],
+      }),
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['arn:aws:s3:::examplebucket1/*'],
       })
     );
-
-    const messages4 = SynthUtils.synthesize(activeCompliant).messages;
-    expect(messages4).not.toContainEqual(
+    const messages5 = SynthUtils.synthesize(activeCompliant).messages;
+    expect(messages5).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
