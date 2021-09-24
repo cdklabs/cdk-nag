@@ -51,6 +51,13 @@ import {
 } from './rules/elb';
 import { hipaaSecurityEMRKerberosEnabled } from './rules/emr';
 import {
+  hipaaSecurityIAMNoInlinePolicy,
+  hipaaSecurityIAMPolicyNoStatementsWithAdminAccess,
+  hipaaSecurityIAMPolicyNoStatementsWithFullAccess,
+  hipaaSecurityIAMUserGroupMembership,
+  hipaaSecurityIAMUserNoPolicies,
+} from './rules/iam';
+import {
   hipaaSecurityLambdaConcurrency,
   hipaaSecurityLambdaDlq,
   hipaaSecurityLambdaInsideVPC,
@@ -85,7 +92,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkElasticBeanstalk(node, ignores);
       this.checkELB(node, ignores);
       this.checkEMR(node, ignores);
-      // this.checkIAM(node, ignores);
+      this.checkIAM(node, ignores);
       this.checkLambda(node, ignores);
       this.checkOpenSearch(node, ignores);
       // this.checkRDS(node, ignores);
@@ -659,12 +666,86 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check IAM Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkIAM(node: CfnResource, ignores: any): void {}
+  /**
+   * Check IAM Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkIAM(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-IAMNoInlinePolicy') &&
+      !hipaaSecurityIAMNoInlinePolicy(node)
+    ) {
+      const ruleId = 'HIPAA.Security-IAMNoInlinePolicy';
+      const info =
+        'The IAM Group, User, or Role contains an inline policy - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-IAMPolicyNoStatementsWithAdminAccess'
+      ) &&
+      !hipaaSecurityIAMPolicyNoStatementsWithAdminAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-IAMPolicyNoStatementsWithAdminAccess';
+      const info =
+        'The IAM policy grants admin access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess'
+      ) &&
+      !hipaaSecurityIAMPolicyNoStatementsWithFullAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess';
+      const info =
+        'The IAM policy grants full access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'Ensure IAM Actions are restricted to only those actions that are needed. Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-IAMUserGroupMembership') &&
+      !hipaaSecurityIAMUserGroupMembership(node)
+    ) {
+      const ruleId = 'HIPAA.Security-IAMUserGroupMembership';
+      const info =
+        'The IAM user does not belong to any group(s) - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations, by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-IAMUserNoPolicies') &&
+      !hipaaSecurityIAMUserNoPolicies(node)
+    ) {
+      const ruleId = 'HIPAA.Security-IAMUserNoPolicies';
+      const info =
+        'The IAM policy is attached at the user level - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   /**
    * Check Lambda Resources
