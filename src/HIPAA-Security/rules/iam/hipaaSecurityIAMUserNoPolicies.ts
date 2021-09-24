@@ -4,9 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnPolicy, CfnManagedPolicy, CfnUser } from '@aws-cdk/aws-iam';
 import { IConstruct, Stack } from '@aws-cdk/core';
-
 /**
- * IAM policies are not attached at the user level - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6)
+ * IAM policies are not attached at the user level - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {

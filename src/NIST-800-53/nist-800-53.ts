@@ -46,10 +46,10 @@ import {
 } from './rules/elb';
 import { nist80053EMRKerberosEnabled } from './rules/emr';
 import {
-  nist80053IamGroupMembership,
-  nist80053IamNoInlinePolicy,
-  nist80053IamPolicyNoStatementsWithAdminAccess,
-  nist80053IamUserNoPolicies,
+  nist80053IAMGroupMembership,
+  nist80053IAMNoInlinePolicy,
+  nist80053IAMPolicyNoStatementsWithAdminAccess,
+  nist80053IAMUserNoPolicies,
 } from './rules/iam';
 import { nist80053LambdaFunctionsInsideVPC } from './rules/lambda';
 import {
@@ -601,7 +601,7 @@ export class NIST80053Checks extends NagPack {
   private checkIAM(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMGroupMembershipCheck') &&
-      !nist80053IamGroupMembership(node)
+      !nist80053IAMGroupMembership(node)
     ) {
       const ruleId = 'NIST.800.53-IAMGroupMembershipCheck';
       const info =
@@ -614,7 +614,7 @@ export class NIST80053Checks extends NagPack {
     }
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMNoInlinePolicyCheck') &&
-      !nist80053IamNoInlinePolicy(node)
+      !nist80053IAMNoInlinePolicy(node)
     ) {
       const ruleId = 'NIST.800.53-IAMNoInlinePolicyCheck';
       const info =
@@ -630,11 +630,11 @@ export class NIST80053Checks extends NagPack {
         ignores,
         'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess'
       ) &&
-      !nist80053IamPolicyNoStatementsWithAdminAccess(node)
+      !nist80053IAMPolicyNoStatementsWithAdminAccess(node)
     ) {
       const ruleId = 'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess';
       const info =
-        'The IAM policy grants admin access - (Control IDs AC-2(1), AC-2(j), AC-3, AC-6).';
+        'The IAM policy grants admin access - (Control IDs: AC-2(1), AC-2(j), AC-3, AC-6).';
       const explanation =
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
       Annotations.of(node).addError(
@@ -643,7 +643,7 @@ export class NIST80053Checks extends NagPack {
     }
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMUserNoPoliciesCheck') &&
-      !nist80053IamUserNoPolicies(node)
+      !nist80053IAMUserNoPolicies(node)
     ) {
       const ruleId = 'NIST.800.53-IAMUserNoPoliciesCheck';
       const info =
@@ -667,7 +667,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-LambdaFunctionsInsideVPC';
       const info =
-        'The Lambda function is not defined within within a VPC - (Control IDs: AC-4, SC-7, SC-7(3)).';
+        'The Lambda function is not VPC enabled - (Control IDs: AC-4, SC-7, SC-7(3)).';
       const explanation =
         'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.';
       Annotations.of(node).addError(

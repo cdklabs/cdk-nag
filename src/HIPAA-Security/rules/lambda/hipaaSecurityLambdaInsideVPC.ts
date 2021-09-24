@@ -7,19 +7,17 @@ import { CfnFunction } from '@aws-cdk/aws-lambda';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * Lambda functions are VPC enabled - (Control IDs: AC-4, SC-7, SC-7(3))
+ * Lambda functions are VPC enabled - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnFunction) {
-    //Check for a VPC configuration
     const vpcConfig = Stack.of(node).resolve(node.vpcConfig);
     if (vpcConfig == undefined) {
       return false;
     } else {
       const secgroups = Stack.of(node).resolve(vpcConfig.securityGroupIds);
       const subnets = Stack.of(node).resolve(vpcConfig.subnetIds);
-      //Does this function exist within at least one VPC security group or subnet?
       if (secgroups == undefined || secgroups.length == 0) {
         if (subnets == undefined || subnets.length == 0) {
           return false;
