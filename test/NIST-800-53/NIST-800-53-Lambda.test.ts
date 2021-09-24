@@ -8,7 +8,7 @@ import { CfnFunction } from '@aws-cdk/aws-lambda';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
-describe('Amazon Lambda', () => {
+describe('AWS Lambda', () => {
   //Test whether Lambda functions exist within VPCs
   test('nist80053LambdaFunctionsInsideVPC: - Lambda functions are contained within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
     //Expect a POSITIVE response because no VPC is defined for the lambda function
