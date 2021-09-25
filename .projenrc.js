@@ -61,6 +61,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-rds',
     '@aws-cdk/aws-redshift',
     '@aws-cdk/aws-sagemaker',
+    '@aws-cdk/aws-secretsmanager',
     '@aws-cdk/aws-sns',
     '@aws-cdk/aws-sqs',
     '@aws-cdk/aws-stepfunctions',
