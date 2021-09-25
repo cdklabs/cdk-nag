@@ -69,16 +69,6 @@ import {
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
 import {
-  hipaaSecurityS3BucketLevelPublicAccessProhibited,
-  hipaaSecurityS3BucketLoggingEnabled,
-  hipaaSecurityS3BucketPublicReadProhibited,
-  hipaaSecurityS3BucketPublicWriteProhibited,
-  hipaaSecurityS3BucketReplicationEnabled,
-  hipaaSecurityS3BucketServerSideEncryptionEnabled,
-  hipaaSecurityS3BucketVersioningEnabled,
-  hipaaSecurityS3DefaultEncryptionKMS,
-} from './rules/s3';
-import {
   hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled,
   hipaaSecurityRDSEnhancedMonitoringEnabled,
   hipaaSecurityRDSInstanceBackupEnabled,
@@ -95,7 +85,16 @@ import {
   hipaaSecurityRedshiftClusterPublicAccess,
   hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
 } from './rules/redshift';
-
+import {
+  hipaaSecurityS3BucketLevelPublicAccessProhibited,
+  hipaaSecurityS3BucketLoggingEnabled,
+  hipaaSecurityS3BucketPublicReadProhibited,
+  hipaaSecurityS3BucketPublicWriteProhibited,
+  hipaaSecurityS3BucketReplicationEnabled,
+  hipaaSecurityS3BucketServerSideEncryptionEnabled,
+  hipaaSecurityS3BucketVersioningEnabled,
+  hipaaSecurityS3DefaultEncryptionKMS,
+} from './rules/s3';
 
 /**
  * Check for HIPAA Security compliance.
