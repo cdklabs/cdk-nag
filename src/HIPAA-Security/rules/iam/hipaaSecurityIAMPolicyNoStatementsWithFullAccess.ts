@@ -12,7 +12,7 @@ import {
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * IAM policies do not grant admin access - (Control IDs: AC-2(1), AC-2(j), AC-3, and AC-6)
+ * IAM policies do not grant full access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
@@ -36,8 +36,7 @@ export default function (node: IConstruct): boolean {
  */
 function checkDocument(node: IConstruct, policyDoc: any): boolean {
   const resolvedDoc = Stack.of(node).resolve(policyDoc) as PolicyDocument;
-  const reg =
-    /"Action":\[?(.*,)?"\*"(,.*)?\]?,"Effect":"Allow","Resource":\[?(.*,)?"(?:arn(?::.*(?::)?)?)?\*"(,.*)?\]?/gm;
+  const reg = /"Action":\[?(.*,)?"(?:\w+:)?\*"(,.*)?\]?,"Effect":"Allow"/gm;
   if (JSON.stringify(resolvedDoc).search(reg) != -1) {
     return true;
   }
