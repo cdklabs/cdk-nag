@@ -69,13 +69,6 @@ import {
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
 import {
-  hipaaSecurityRedshiftBackupEnabled,
-  hipaaSecurityRedshiftClusterConfiguration,
-  hipaaSecurityRedshiftClusterMaintenanceSettings,
-  hipaaSecurityRedshiftClusterPublicAccess,
-  hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
-} from './rules/redshift';
-import {
   hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled,
   hipaaSecurityRDSEnhancedMonitoringEnabled,
   hipaaSecurityRDSInstanceBackupEnabled,
@@ -85,7 +78,13 @@ import {
   hipaaSecurityRDSLoggingEnabled,
   hipaaSecurityRDSStorageEncrypted,
 } from './rules/rds';
-
+import {
+  hipaaSecurityRedshiftBackupEnabled,
+  hipaaSecurityRedshiftClusterConfiguration,
+  hipaaSecurityRedshiftClusterMaintenanceSettings,
+  hipaaSecurityRedshiftClusterPublicAccess,
+  hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+} from './rules/redshift';
 
 /**
  * Check for HIPAA Security compliance.
