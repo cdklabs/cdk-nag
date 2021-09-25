@@ -95,6 +95,11 @@ import {
   hipaaSecurityS3BucketVersioningEnabled,
   hipaaSecurityS3DefaultEncryptionKMS,
 } from './rules/s3';
+import {
+  hipaaSecuritySageMakerEndpointConfigurationKMSKeyConfigured,
+  hipaaSecuritySageMakerNotebookInstanceKMSKeyConfigured,
+  hipaaSecuritySageMakerNotebookNoDirectInternetAccess,
+} from './rules/sagemaker';
 
 /**
  * Check for HIPAA Security compliance.
@@ -125,7 +130,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkRDS(node, ignores);
       this.checkRedshift(node, ignores);
       this.checkS3(node, ignores);
-      // this.checkSageMaker(node, ignores);
+      this.checkSageMaker(node, ignores);
       // this.checkSecretsManager(node, ignores);
       // this.checkSNS(node, ignores);
       // this.checkVPC(node, ignores);
@@ -1211,12 +1216,62 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check SageMaker Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkSageMaker(node: CfnResource, ignores: any): void {}
+  /**
+   * Check SageMaker Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkSageMaker(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-SageMakerEndpointConfigurationKMSKeyConfigured'
+      ) &&
+      !hipaaSecuritySageMakerEndpointConfigurationKMSKeyConfigured(node)
+    ) {
+      const ruleId =
+        'HIPAA.Security-SageMakerEndpointConfigurationKMSKeyConfigured';
+      const info =
+        'The SageMaker endpoint is not encrypted with a KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-SageMakerNotebookInstanceKMSKeyConfigured'
+      ) &&
+      !hipaaSecuritySageMakerNotebookInstanceKMSKeyConfigured(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SageMakerNotebookInstanceKMSKeyConfigured';
+      const info =
+        'The SageMaker notebook is not encrypted with a KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in SageMaker notebook, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-SageMakerNotebookNoDirectInternetAccess'
+      ) &&
+      !hipaaSecuritySageMakerNotebookNoDirectInternetAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SageMakerNotebookNoDirectInternetAccess';
+      const info =
+        'The SageMaker notebook does not disable direct internet access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
   //   /**
   //    * Check Secrets Manager Resources

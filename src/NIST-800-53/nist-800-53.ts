@@ -988,7 +988,7 @@ export class NIST80053Checks extends NagPack {
       !nist80053SageMakerNotebookDirectInternetAccessDisabled(node)
     ) {
       const ruleId =
-        'NIST.800.53-SageMakerNotebookDirectInternetAccessDisbabled';
+        'NIST.800.53-SageMakerNotebookDirectInternetAccessDisabled';
       const info =
         'The SageMaker notebook does not disable direct internet access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
       const explanation =
