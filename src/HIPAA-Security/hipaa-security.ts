@@ -23,6 +23,7 @@ import {
 import {
   hipaaSecurityCloudWatchAlarmAction,
   hipaaSecurityCloudWatchLogGroupEncrypted,
+  hipaaSecurityCloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
 import {
   hipaaSecurityCodeBuildProjectEnvVarAwsCred,
@@ -324,6 +325,22 @@ export class HIPAASecurityChecks extends NagPack {
         'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
       const explanation =
         'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-CloudWatchLogGroupRetentionPeriod'
+      ) &&
+      !hipaaSecurityCloudWatchLogGroupRetentionPeriod(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod';
+      const info =
+        'The CloudWatch Log Group does not have an explicit retention period configured - (Control ID: 164.312(b)).';
+      const explanation =
+        'Ensure a minimum duration of event log data is retained for your log groups to help with troubleshooting and forensics investigations. The lack of available past event log data makes it difficult to reconstruct and identify potentially malicious events.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
