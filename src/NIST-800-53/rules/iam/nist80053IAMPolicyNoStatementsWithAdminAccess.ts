@@ -37,7 +37,7 @@ export default function (node: IConstruct): boolean {
 function checkDocument(node: IConstruct, policyDoc: any): boolean {
   const resolvedDoc = Stack.of(node).resolve(policyDoc) as PolicyDocument;
   const reg =
-    /"Action":\[?(.*,)?"\*"(,.*)?\]?,"Effect":"Allow","Resource":"(?:arn(?::.*(?::)?)?)?\*"/gm;
+    /"Action":\[?(.*,)?"\*"(,.*)?\]?,"Effect":"Allow","Resource":\[?(.*,)?"(?:arn(?::.*(?::)?)?)?\*"(,.*)?\]?/gm;
   if (JSON.stringify(resolvedDoc).search(reg) != -1) {
     return true;
   }
