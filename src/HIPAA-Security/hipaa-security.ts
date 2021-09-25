@@ -23,6 +23,7 @@ import {
 import {
   hipaaSecurityCloudWatchAlarmAction,
   hipaaSecurityCloudWatchLogGroupEncrypted,
+  hipaaSecurityCloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
 import {
   hipaaSecurityCodeBuildProjectEnvVarAwsCred,
@@ -42,7 +43,10 @@ import {
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { hipaaSecurityEFSEncrypted } from './rules/efs';
 import { hipaaSecurityElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
-import { hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled } from './rules/elasticbeanstalk';
+import {
+  hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled,
+  hipaaSecurityElasticBeanstalkManagedUpdatesEnabled,
+} from './rules/elasticbeanstalk';
 import {
   hipaaSecurityALBHttpDropInvalidHeaderEnabled,
   hipaaSecurityALBHttpToHttpsRedirection,
@@ -72,6 +76,45 @@ import {
   hipaaSecurityOpenSearchLogsToCloudWatch,
   hipaaSecurityOpenSearchNodeToNodeEncryption,
 } from './rules/opensearch';
+import {
+  hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled,
+  hipaaSecurityRDSEnhancedMonitoringEnabled,
+  hipaaSecurityRDSInstanceBackupEnabled,
+  hipaaSecurityRDSInstanceDeletionProtectionEnabled,
+  hipaaSecurityRDSInstanceMultiAZSupport,
+  hipaaSecurityRDSInstancePublicAccess,
+  hipaaSecurityRDSLoggingEnabled,
+  hipaaSecurityRDSStorageEncrypted,
+} from './rules/rds';
+import {
+  hipaaSecurityRedshiftBackupEnabled,
+  hipaaSecurityRedshiftClusterConfiguration,
+  hipaaSecurityRedshiftClusterMaintenanceSettings,
+  hipaaSecurityRedshiftClusterPublicAccess,
+  hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+} from './rules/redshift';
+import {
+  hipaaSecurityS3BucketLevelPublicAccessProhibited,
+  hipaaSecurityS3BucketLoggingEnabled,
+  hipaaSecurityS3BucketPublicReadProhibited,
+  hipaaSecurityS3BucketPublicWriteProhibited,
+  hipaaSecurityS3BucketReplicationEnabled,
+  hipaaSecurityS3BucketServerSideEncryptionEnabled,
+  hipaaSecurityS3BucketVersioningEnabled,
+  hipaaSecurityS3DefaultEncryptionKMS,
+} from './rules/s3';
+import {
+  hipaaSecuritySageMakerEndpointConfigurationKMSKeyConfigured,
+  hipaaSecuritySageMakerNotebookInstanceKMSKeyConfigured,
+  hipaaSecuritySageMakerNotebookNoDirectInternetAccess,
+} from './rules/sagemaker';
+import { hipaaSecuritySecretsManagerUsingKMSKey } from './rules/secretsmanager';
+import { hipaaSecuritySNSEncryptedKMS } from './rules/sns';
+import {
+  hipaaSecurityVPCDefaultSecurityGroupClosed,
+  hipaaSecurityVPCNoUnrestrictedRouteToIGW,
+  hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
+} from './rules/vpc';
 
 /**
  * Check for HIPAA Security compliance.
@@ -99,13 +142,13 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkIAM(node, ignores);
       this.checkLambda(node, ignores);
       this.checkOpenSearch(node, ignores);
-      // this.checkRDS(node, ignores);
-      // this.checkRedshift(node, ignores);
-      // this.checkS3(node, ignores);
-      // this.checkSageMaker(node, ignores);
-      // this.checkSecretsManager(node, ignores);
-      // this.checkSNS(node, ignores);
-      // this.checkVPC(node, ignores);
+      this.checkRDS(node, ignores);
+      this.checkRedshift(node, ignores);
+      this.checkS3(node, ignores);
+      this.checkSageMaker(node, ignores);
+      this.checkSecretsManager(node, ignores);
+      this.checkSNS(node, ignores);
+      this.checkVPC(node, ignores);
     }
   }
 
@@ -296,6 +339,22 @@ export class HIPAASecurityChecks extends NagPack {
         'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
       const explanation =
         'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-CloudWatchLogGroupRetentionPeriod'
+      ) &&
+      !hipaaSecurityCloudWatchLogGroupRetentionPeriod(node)
+    ) {
+      const ruleId = 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod';
+      const info =
+        'The CloudWatch Log Group does not have an explicit retention period configured - (Control ID: 164.312(b)).';
+      const explanation =
+        'Ensure a minimum duration of event log data is retained for your log groups to help with troubleshooting and forensics investigations. The lack of available past event log data makes it difficult to reconstruct and identify potentially malicious events.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -574,6 +633,22 @@ export class HIPAASecurityChecks extends NagPack {
         'The Elastic Beanstalk environment does not have enhanced health reporting enabled - (Control ID: 164.312(b)).';
       const explanation =
         'AWS Elastic Beanstalk enhanced health reporting enables a more rapid response to changes in the health of the underlying infrastructure. These changes could result in a lack of availability of the application. Elastic Beanstalk enhanced health reporting provides a status descriptor to gauge the severity of the identified issues and identify possible causes to investigate.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled'
+      ) &&
+      !hipaaSecurityElasticBeanstalkManagedUpdatesEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled';
+      const info =
+        'The Elastic Beanstalk environment does not have managed updates enabled - (Control ID: 164.308(a)(5)(ii)(A)).';
+      const explanation =
+        'Enabling managed platform updates for an Amazon Elastic Beanstalk environment ensures that the latest available platform fixes, updates, and features for the environment are installed. Keeping up to date with patch installation is a best practice in securing systems.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -913,52 +988,482 @@ export class HIPAASecurityChecks extends NagPack {
     }
   }
 
-  //   /**
-  //    * Check RDS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkRDS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check RDS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkRDS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RDSAutomaticMinorVersionUpgradeEnabled'
+      ) &&
+      !hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSAutomaticMinorVersionUpgradeEnabled';
+      const info =
+        'The RDS DB instance does not have automatic minor version upgrades enabled - (Control ID: 164.308(a)(5)(ii)(A)).';
+      const explanation =
+        'Enable automatic minor version upgrades on your Amazon Relational Database Service (RDS) instances to ensure the latest minor version updates to the Relational Database Management System (RDBMS) are installed, which may include security patches and bug fixes.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RDSEnhancedMonitoringEnabled'
+      ) &&
+      !hipaaSecurityRDSEnhancedMonitoringEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSEnhancedMonitoringEnabled';
+      const info =
+        'The RDS DB instance does not enhanced monitoring enabled - (Control ID: 164.312(b)).';
+      const explanation =
+        'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSInstanceBackupEnabled') &&
+      !hipaaSecurityRDSInstanceBackupEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstanceBackupEnabled';
+      const info =
+        'The RDS DB instance does not have backups enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'The backup feature of Amazon RDS creates backups of your databases and transaction logs.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RDSInstanceDeletionProtectionEnabled'
+      ) &&
+      !hipaaSecurityRDSInstanceDeletionProtectionEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstanceDeletionProtectionEnabled';
+      const info =
+        'The RDS DB instance or Aurora DB cluster does not have deletion protection enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).';
+      const explanation =
+        'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS DB instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSInstanceMultiAzSupport') &&
+      !hipaaSecurityRDSInstanceMultiAZSupport(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstanceMultiAzSupport';
+      const info =
+        'The non-Aurora RDS DB instance does not have multi-AZ support enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).';
+      const explanation =
+        'Multi-AZ support in Amazon Relational Database Service (Amazon RDS) provides enhanced availability and durability for database instances. When you provision a Multi-AZ database instance, Amazon RDS automatically creates a primary database instance, and synchronously replicates the data to a standby instance in a different Availability Zone. In case of an infrastructure failure, Amazon RDS performs an automatic failover to the standby so that you can resume database operations as soon as the failover is complete.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSInstancePublicAccess') &&
+      !hipaaSecurityRDSInstancePublicAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSInstancePublicAccess';
+      const info =
+        'The RDS DB instance allows public access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Amazon RDS database instances can contain sensitive information, and principles and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSLoggingEnabled') &&
+      !hipaaSecurityRDSLoggingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSLoggingEnabled';
+      const info =
+        'The RDS DB instance does not have all CloudWatch log types exported - (Control IDs: 164.308(a)(3)(ii)(A), 164.308(a)(5)(ii)(C)).';
+      const explanation =
+        'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RDSStorageEncrypted') &&
+      !hipaaSecurityRDSStorageEncrypted(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RDSStorageEncrypted';
+      const info =
+        'The RDS DB instance or Aurora DB cluster does not have storage encrypted - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in Amazon RDS DB instances and clusters, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
-  //   /**
-  //    * Check Redshift Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkRedshift(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Redshift Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkRedshift(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RedshiftBackupEnabled') &&
+      !hipaaSecurityRedshiftBackupEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftBackupEnabled';
+      const info =
+        'The Redshift cluster does not have automated snapshots enabled or the retention period is not between 1 and 35 days - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'To help with data back-up processes, ensure your Amazon Redshift clusters have automated snapshots. When automated snapshots are enabled for a cluster, Redshift periodically takes snapshots of that cluster. By default, Redshift takes a snapshot every eight hours or every 5 GB per node of data changes, or whichever comes first.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RedshiftClusterConfiguration'
+      ) &&
+      !hipaaSecurityRedshiftClusterConfiguration(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftClusterConfiguration';
+      const info =
+        'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(b), 164.312(e)(2)(ii)).';
+      const explanation =
+        'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RedshiftClusterMaintenanceSettings'
+      ) &&
+      !hipaaSecurityRedshiftClusterMaintenanceSettings(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftClusterMaintenanceSettings';
+      const info =
+        'The Redshift cluster has version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: 164.308(a)(5)(ii)(A), 164.308(a)(7)(ii)(A)).';
+      const explanation =
+        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-RedshiftClusterPublicAccess') &&
+      !hipaaSecurityRedshiftClusterPublicAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftClusterPublicAccess';
+      const info =
+        'The Redshift cluster allows public access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-RedshiftEnhancedVPCRoutingEnabled'
+      ) &&
+      !hipaaSecurityRedshiftEnhancedVPCRoutingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-RedshiftEnhancedVPCRoutingEnabled';
+      const info =
+        'The Redshift cluster does not have enhanced VPC routing enabled - (Control IDs: 164.312(e)(1)).';
+      const explanation =
+        'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
-  //   /**
-  //    * Check S3 Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkS3(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Amazon S3 Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkS3(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketLevelPublicAccessProhibited'
+      ) &&
+      !hipaaSecurityS3BucketLevelPublicAccessProhibited(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketLevelPublicAccessProhibited';
+      const info =
+        'The S3 bucket does not prohibit public access through bucket level settings - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Keep sensitive data safe from unauthorized remote users by preventing public access at the bucket level.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3BucketLoggingEnabled') &&
+      !hipaaSecurityS3BucketLoggingEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketLoggingEnabled';
+      const info =
+        'The S3 Bucket does not have server access logs enabled - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).';
+      const explanation =
+        'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketPublicReadProhibited'
+      ) &&
+      !hipaaSecurityS3BucketPublicReadProhibited(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketPublicReadProhibited';
+      const info =
+        'The S3 Bucket does not prohibit public read access through its Block Public Access configurations and bucket ACLs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'The management of access should be consistent with the classification of the data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketPublicWriteProhibited'
+      ) &&
+      !hipaaSecurityS3BucketPublicWriteProhibited(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketPublicWriteProhibited';
+      const info =
+        'The S3 Bucket does not prohibit public write access through its Block Public Access configurations and bucket ACLs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'The management of access should be consistent with the classification of the data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3BucketReplicationEnabled') &&
+      !hipaaSecurityS3BucketReplicationEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketReplicationEnabled';
+      const info =
+        'The S3 Bucket does not have replication enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).';
+      const explanation =
+        'Amazon Simple Storage Service (Amazon S3) Cross-Region Replication (CRR) supports maintaining adequate capacity and availability. CRR enables automatic, asynchronous copying of objects across Amazon S3 buckets to help ensure that data availability is maintained.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-S3BucketServerSideEncryptionEnabled'
+      ) &&
+      !hipaaSecurityS3BucketServerSideEncryptionEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketServerSideEncryptionEnabled';
+      const info =
+        'The S3 Bucket does not have default server-side encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(c)(2), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3BucketVersioningEnabled') &&
+      !hipaaSecurityS3BucketVersioningEnabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3BucketVersioningEnabled';
+      const info =
+        'The S3 Bucket does not have versioning enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B), 164.312(c)(1), 164.312(c)(2)).';
+      const explanation =
+        'Use versioning to preserve, retrieve, and restore every version of every object stored in your Amazon S3 bucket. Versioning helps you to easily recover from unintended user actions and application failures.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-S3DefaultEncryptionKMS') &&
+      !hipaaSecurityS3DefaultEncryptionKMS(node)
+    ) {
+      const ruleId = 'HIPAA.Security-S3DefaultEncryptionKMS';
+      const info =
+        'The S3 Bucket is not encrypted with a KMS Key by default - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Ensure that encryption is enabled for your Amazon Simple Storage Service (Amazon S3) buckets. Because sensitive data can exist at rest in an Amazon S3 bucket, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
-  //   /**
-  //    * Check SageMaker Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkSageMaker(node: CfnResource, ignores: any): void {}
+  /**
+   * Check SageMaker Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkSageMaker(node: CfnResource, ignores: any) {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-SageMakerEndpointConfigurationKMSKeyConfigured'
+      ) &&
+      !hipaaSecuritySageMakerEndpointConfigurationKMSKeyConfigured(node)
+    ) {
+      const ruleId =
+        'HIPAA.Security-SageMakerEndpointConfigurationKMSKeyConfigured';
+      const info =
+        'The SageMaker endpoint is not encrypted with a KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-SageMakerNotebookInstanceKMSKeyConfigured'
+      ) &&
+      !hipaaSecuritySageMakerNotebookInstanceKMSKeyConfigured(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SageMakerNotebookInstanceKMSKeyConfigured';
+      const info =
+        'The SageMaker notebook is not encrypted with a KMS key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in SageMaker notebook, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-SageMakerNotebookNoDirectInternetAccess'
+      ) &&
+      !hipaaSecuritySageMakerNotebookNoDirectInternetAccess(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SageMakerNotebookNoDirectInternetAccess';
+      const info =
+        'The SageMaker notebook does not disable direct internet access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
-  //   /**
-  //    * Check Secrets Manager Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkSecretsManager(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Secrets Manager Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkSecretsManager(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-SecretsManagerUsingKMSKey') &&
+      !hipaaSecuritySecretsManagerUsingKMSKey(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SecretsManagerUsingKMSKey';
+      const info =
+        'The secret is not encrypted with a KMS Customer managed key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'To help protect data at rest, ensure encryption with AWS Key Management Service (AWS KMS) is enabled for AWS Secrets Manager secrets. Because sensitive data can exist at rest in Secrets Manager secrets, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
-  //   /**
-  //    * Check SNS Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkSNS(node: CfnResource, ignores: any): void {}
+  /**
+   * Check Amazon SNS Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkSNS(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-SNSEncryptedKMS') &&
+      !hipaaSecuritySNSEncryptedKMS(node)
+    ) {
+      const ruleId = 'HIPAA.Security-SNSEncryptedKMS';
+      const info =
+        'The SNS topic does not have KMS encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).';
+      const explanation =
+        'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 
-  //   /**
-  //    * Check VPC Resources
-  //    * @param node the IConstruct to evaluate
-  //    * @param ignores list of ignores for the resource
-  //    */
-  //   private checkVPC(node: CfnResource, ignores: any): void {}
+  /**
+   * Check VPC Resources
+   * @param node the IConstruct to evaluate
+   * @param ignores list of ignores for the resource
+   */
+  private checkVPC(node: CfnResource, ignores: any): void {
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-VPCDefaultSecurityGroupClosed'
+      ) &&
+      !hipaaSecurityVPCDefaultSecurityGroupClosed(node)
+    ) {
+      const ruleId = 'HIPAA.Security-VPCDefaultSecurityGroupClosed';
+      const info =
+        "The VPC's default security group allows inbound or outbound traffic - (Control ID: 164.312(e)(1)).";
+      const explanation =
+        'When creating a VPC through CloudFormation, the default security group will always be open. Therefore it is important to always close the default security group after stack creation whenever a VPC is created. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.';
+      Annotations.of(node).addWarning(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-VPCNoUnrestrictedRouteToIGW') &&
+      !hipaaSecurityVPCNoUnrestrictedRouteToIGW(node)
+    ) {
+      const ruleId = 'HIPAA.Security-VPCNoUnrestrictedRouteToIGW';
+      const info =
+        "The route table may contain one or more unrestricted route(s) to an IGW ('0.0.0.0/0' or '::/0') - (Control ID: 164.312(e)(1)).";
+      const explanation =
+        'Ensure Amazon EC2 route tables do not have unrestricted routes to an internet gateway. Removing or limiting the access to the internet for workloads within Amazon VPCs can reduce unintended access within your environment.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(
+        ignores,
+        'HIPAA.Security-VPCSubnetAutoAssignPublicIpDisabled'
+      ) &&
+      !hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled(node)
+    ) {
+      const ruleId = 'HIPAA.Security-VPCSubnetAutoAssignPublicIpDisabled';
+      const info =
+        'The subnet auto-assigns public IP addresses - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+  }
 }
