@@ -6,16 +6,19 @@ import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * RDS DB instances are not publicly accessible - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))
+ *  Non-Aurora RDS DB instances have multi-AZ support enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBInstance) {
-    const publicAccess = Stack.of(node).resolve(node.publiclyAccessible);
-    if (publicAccess === true || publicAccess == undefined) {
+    const multiAz = Stack.of(node).resolve(node.multiAz);
+    if (
+      !multiAz &&
+      (node.engine == undefined ||
+        !node.engine.toLowerCase().includes('aurora'))
+    ) {
       return false;
     }
-    return true;
   }
   return true;
 }
