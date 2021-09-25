@@ -6,7 +6,7 @@ import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * RDS instances are not publicly accessible - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))
+ * RDS DB instances are not publicly accessible - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
