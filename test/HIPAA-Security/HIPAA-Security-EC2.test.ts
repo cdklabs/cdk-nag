@@ -32,7 +32,6 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
       machineImage: MachineImage.latestAmazonLinux(),
     });
-    console.log(JSON.stringify(SynthUtils.toCloudFormation(nonCompliant)));
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
