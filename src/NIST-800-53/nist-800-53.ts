@@ -1024,7 +1024,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-SNSEncryptedKMS';
       const info =
-        'The SNS topic does not have KMS encryption enabled - (Control ID: SC-13, SC-28).';
+        'The SNS topic does not have KMS encryption enabled - (Control IDs: SC-13, SC-28).';
       const explanation =
         'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
