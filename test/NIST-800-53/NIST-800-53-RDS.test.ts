@@ -22,7 +22,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('Amazon Relational Database Service (RDS)', () => {
-  test('NIST.800.53-RDSLoggingEnabled: RDS Instances have all CloudWatch logging exports enabled', () => {
+  test('NIST.800.53-RDSLoggingEnabled: RDS DB instances have all CloudWatch logging exports enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
     new DatabaseInstance(nonCompliant, 'rDbInstance', {
@@ -216,7 +216,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53-RDSInstanceDeletionProtectionEnabled: RDS instances and Aurora clusters have deletion protection enabled', () => {
+  test('NIST.800.53-RDSInstanceDeletionProtectionEnabled: RDS DB instances and Aurora DB clusters have deletion protection enabled', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new AuroraCluster(positive, 'rDbCluster', {
@@ -283,7 +283,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53-RDSStorageEncrypted: RDS instances and Aurora clusters have storage encrypted', () => {
+  test('NIST.800.53-RDSStorageEncrypted: RDS DB instances and Aurora DB clusters have storage encrypted', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new AuroraCluster(positive, 'rDbCluster', {
@@ -345,7 +345,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53-RDSEnhancedMonitoring: RDS instances have enhanced monitoring enabled', () => {
+  test('NIST.800.53-RDSEnhancedMonitoring: RDS DB instances have enhanced monitoring enabled', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new CfnDBInstance(positive, 'rDbInstance', {
@@ -380,42 +380,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53-RDSEnhancedMonitoring: RDS instances have enhanced monitoring enabled', () => {
-    const positive = new Stack();
-    Aspects.of(positive).add(new NIST80053Checks());
-    new CfnDBInstance(positive, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
-      monitoringInterval: 0,
-    });
-    const messages2 = SynthUtils.synthesize(positive).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53-RDSEnhancedMonitoringEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const negative = new Stack();
-    Aspects.of(negative).add(new NIST80053Checks());
-    new CfnDBInstance(negative, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
-      monitoringInterval: 15,
-    });
-    const messages3 = SynthUtils.synthesize(negative).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53-RDSEnhancedMonitoringEnabled:'
-          ),
-        }),
-      })
-    );
-  });
-  test('NIST.800.53-RDSInstanceMultiAzSupport: RDS instances have multi-AZ support', () => {
+  test('NIST.800.53-RDSInstanceMultiAzSupport: Non-Aurora RDS DB instances have multi-AZ support enabled', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     const vpc = new Vpc(positive, 'rVpc');
@@ -458,7 +423,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53-DBInstanceBackupEnabled: RDS instances have backups enabled', () => {
+  test('NIST.800.53-RDSInstanceBackupEnabled: RDS DB instances have backups enabled', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     new CfnDBInstance(positive, 'rDbInstance', {
@@ -509,7 +474,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53-RDSInstancePublicAccess: RDS instances do not allow public access', () => {
+  test('NIST.800.53-RDSInstancePublicAccess: RDS DB instances do not allow public access', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053Checks());
     const vpc = new Vpc(positive, 'rVpc');
