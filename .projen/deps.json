@@ -327,6 +327,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-secretsmanager",
+      "version": "^1.110.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-sns",
       "version": "^1.110.0",
       "type": "peer"
@@ -578,6 +583,11 @@
     },
     {
       "name": "@aws-cdk/aws-sagemaker",
+      "version": "^1.110.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-secretsmanager",
       "version": "^1.110.0",
       "type": "runtime"
     },
