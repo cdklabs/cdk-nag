@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnPolicy, CfnManagedPolicy } from '@aws-cdk/aws-iam';
+import { CfnPolicy, CfnManagedPolicy, CfnUser } from '@aws-cdk/aws-iam';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
@@ -12,11 +12,15 @@ import { IConstruct, Stack } from '@aws-cdk/core';
 export default function (node: IConstruct): boolean {
   if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
     const policyUsers = Stack.of(node).resolve(node.users);
-
     if (policyUsers != undefined) {
       return false;
     }
+  } else if (node instanceof CfnUser) {
+    const policies = Stack.of(node).resolve(node.policies);
+    const managedPolicyArns = Stack.of(node).resolve(node.managedPolicyArns);
+    if (policies != undefined || managedPolicyArns != undefined) {
+      return false;
+    }
   }
-
   return true;
 }

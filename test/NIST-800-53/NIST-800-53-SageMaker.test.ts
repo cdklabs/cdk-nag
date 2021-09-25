@@ -97,7 +97,7 @@ describe('Amazon SageMaker', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-SageMakerNotebookDirectInternetAccessDisbabled:'
+            'NIST.800.53-SageMakerNotebookDirectInternetAccessDisabled:'
           ),
         }),
       })
@@ -118,7 +118,7 @@ describe('Amazon SageMaker', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53-SageMakerNotebookDirectInternetAccessDisbabled:'
+            'NIST.800.53-SageMakerNotebookDirectInternetAccessDisabled:'
           ),
         }),
       })
