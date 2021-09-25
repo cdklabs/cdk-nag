@@ -32,9 +32,13 @@ import {
 import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
 import { hipaaSecurityDynamoDBPITREnabled } from './rules/dynamodb';
 import {
+  hipaaSecurityEC2EBSOptimizedInstance,
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
-  hipaaSecurityEC2InstancesInVPC,
   hipaaSecurityEC2InstanceNoPublicIp,
+  hipaaSecurityEC2InstanceProfileAttached,
+  hipaaSecurityEC2InstancesInVPC,
+  hipaaSecurityEC2RestrictedCommonPorts,
+  hipaaSecurityEC2RestrictedSSH,
 } from './rules/ec2';
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { hipaaSecurityEFSEncrypted } from './rules/efs';
@@ -446,6 +450,19 @@ export class HIPAASecurityChecks extends NagPack {
    */
   private checkEC2(node: CfnResource, ignores: any): void {
     if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2EBSOptimizedInstance') &&
+      !hipaaSecurityEC2EBSOptimizedInstance(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EC2EBSOptimizedInstance';
+      const info =
+        "The EC2 instance type 'supports' EBS optimization and does not have EBS optimization enabled - (Control ID: 164.308(a)(7)(i)).";
+      const explanation =
+        'An optimized instance in Amazon Elastic Block Store (Amazon EBS) provides additional, dedicated capacity for Amazon EBS I/O operations. This optimization provides the most efficient performance for your EBS volumes by minimizing contention between Amazon EBS I/O operations and other traffic from your instance.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
       !this.ignoreRule(
         ignores,
         'HIPAA.Security-EC2InstanceDetailedMonitoringEnabled'
@@ -457,6 +474,32 @@ export class HIPAASecurityChecks extends NagPack {
         'The EC2 instance does not have detailed monitoring enabled - (Control IDs: 164.312(b)).';
       const explanation =
         'Detailed monitoring provides additional monitoring information (such as 1-minute period graphs) on the AWS console.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2CheckNoPublicIPs') &&
+      !hipaaSecurityEC2InstanceNoPublicIp(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EC2CheckNoPublicIPs';
+      const info =
+        'The EC2 instance is associated with a public IP address - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+      const explanation =
+        'Amazon EC2 instances can contain sensitive information and access control is required for such resources.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2InstanceProfileAttached') &&
+      !hipaaSecurityEC2InstanceProfileAttached(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EC2InstanceProfileAttached';
+      const info =
+        'The EC2 instance does not have an instance profile attached - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).';
+      const explanation =
+        'EC2 instance profiles pass an IAM role to an EC2 instance. Attaching an instance profile to your instances can assist with least privilege and permissions management.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -475,14 +518,27 @@ export class HIPAASecurityChecks extends NagPack {
       );
     }
     if (
-      !this.ignoreRule(ignores, 'HIPAA.Security-EC2CheckNoPublicIPs') &&
-      !hipaaSecurityEC2InstanceNoPublicIp(node)
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2RestrictedCommonPorts') &&
+      !hipaaSecurityEC2RestrictedCommonPorts(node)
     ) {
-      const ruleId = 'HIPAA.Security-EC2CheckNoPublicIPs';
+      const ruleId = 'HIPAA.Security-EC2RestrictedCommonPorts';
       const info =
-        'The EC2 instance is associated with a public IP address - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
+        'The EC2 instance allows unrestricted inbound IPv4 TCP traffic on common ports (20, 21, 3389, 3306, 4333) - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).';
       const explanation =
-        'Amazon EC2 instances can contain sensitive information and access control is required for such resources.';
+        'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems. By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.';
+      Annotations.of(node).addError(
+        this.createMessage(ruleId, info, explanation)
+      );
+    }
+    if (
+      !this.ignoreRule(ignores, 'HIPAA.Security-EC2RestrictedSSH') &&
+      !hipaaSecurityEC2RestrictedSSH(node)
+    ) {
+      const ruleId = 'HIPAA.Security-EC2RestrictedSSH';
+      const info =
+        'The Security Group allows unrestricted SSH access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1).';
+      const explanation =
+        'Not allowing ingress (or remote) traffic from 0.0.0.0/0 or ::/0 to port 22 on your resources helps to restrict remote access.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );

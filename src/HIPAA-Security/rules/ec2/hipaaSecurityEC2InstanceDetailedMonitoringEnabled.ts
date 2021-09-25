@@ -8,7 +8,7 @@ import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { IConstruct, Stack } from '@aws-cdk/core';
 
 /**
- * EC2 instances have detailed monitoring enabled - (Control IDs: 164.312(b))
+ * EC2 instances have detailed monitoring enabled - (Control ID: 164.312(b))
  * @param node the CfnResource to check
  */
 export default function (node: IConstruct): boolean {
