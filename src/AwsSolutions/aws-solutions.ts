@@ -399,7 +399,7 @@ export class AwsSolutionsChecks extends NagPack {
     ) {
       const ruleId = 'AwsSolutions-RDS2';
       const info =
-        'The RDS instance or Aurora cluster does not have storage encryption enabled.';
+        'The RDS instance or Aurora DB cluster does not have storage encryption enabled.';
       const explanation =
         'Storage encryption helps protect data-at-rest by encrypting the underlying storage, automated backups, read replicas, and snapshots for the database.';
       Annotations.of(node).addError(
@@ -425,7 +425,7 @@ export class AwsSolutionsChecks extends NagPack {
     ) {
       const ruleId = 'AwsSolutions-RDS10';
       const info =
-        'The RDS instance or Aurora cluster does not have deletion protection enabled.';
+        'The RDS instance or Aurora DB cluster does not have deletion protection enabled.';
       const explanation =
         'The deletion protection feature helps protect the database from being accidentally deleted.';
       Annotations.of(node).addError(
@@ -438,7 +438,7 @@ export class AwsSolutionsChecks extends NagPack {
     ) {
       const ruleId = 'AwsSolutions-RDS11';
       const info =
-        'The RDS instance or Aurora cluster uses the default endpoint port.';
+        'The RDS instance or Aurora DB cluster uses the default endpoint port.';
       const explanation =
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. MySQL/Aurora port 3306, SQL Server port 1433, PostgreSQL port 5432, etc).';
       Annotations.of(node).addError(
