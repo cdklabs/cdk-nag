@@ -44,7 +44,7 @@ import { AwsSolutionsChecks } from '../../src';
 
 describe('AWS Solutions Databases Checks', () => {
   describe('Amazon Relational Database Service (Amazon RDS) and Amazon Aurora', () => {
-    test('awsSolutionsRds2: RDS instances and Aurora clusters have storage encryption enabled', () => {
+    test('awsSolutionsRds2: RDS DB instances and Aurora DB clusters have storage encryption enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new AuroraCluster(positive, 'rDbCluster', {
@@ -143,7 +143,7 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
     });
-    test('awsSolutionsRds10: RDS instances and Aurora clusters have deletion protection enabled', () => {
+    test('awsSolutionsRds10: RDS DB instances and Aurora DB clusters have deletion protection enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new AuroraCluster(positive, 'rDbCluster', {
@@ -204,7 +204,7 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
     });
-    test('awsSolutionsRds11: RDS instances and Aurora clusters do not use the default endpoint ports', () => {
+    test('awsSolutionsRds11: RDS DB instances and Aurora DB clusters do not use the default endpoint ports', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new AuroraCluster(positive, 'rDbCluster', {
@@ -265,7 +265,7 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
     });
-    test('awsSolutionsRds13: RDS instances and are configured for automated backups', () => {
+    test('awsSolutionsRds13: RDS DB instances and are configured for automated backups', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new RdsInstance(positive, 'rDbInstance', {

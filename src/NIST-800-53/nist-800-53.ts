@@ -46,10 +46,10 @@ import {
 } from './rules/elb';
 import { nist80053EMRKerberosEnabled } from './rules/emr';
 import {
-  nist80053IamGroupMembership,
-  nist80053IamNoInlinePolicy,
-  nist80053IamPolicyNoStatementsWithAdminAccess,
-  nist80053IamUserNoPolicies,
+  nist80053IAMGroupMembership,
+  nist80053IAMNoInlinePolicy,
+  nist80053IAMPolicyNoStatementsWithAdminAccess,
+  nist80053IAMUserNoPolicies,
 } from './rules/iam';
 import { nist80053LambdaFunctionsInsideVPC } from './rules/lambda';
 import {
@@ -601,7 +601,7 @@ export class NIST80053Checks extends NagPack {
   private checkIAM(node: CfnResource, ignores: any): void {
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMGroupMembershipCheck') &&
-      !nist80053IamGroupMembership(node)
+      !nist80053IAMGroupMembership(node)
     ) {
       const ruleId = 'NIST.800.53-IAMGroupMembershipCheck';
       const info =
@@ -614,7 +614,7 @@ export class NIST80053Checks extends NagPack {
     }
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMNoInlinePolicyCheck') &&
-      !nist80053IamNoInlinePolicy(node)
+      !nist80053IAMNoInlinePolicy(node)
     ) {
       const ruleId = 'NIST.800.53-IAMNoInlinePolicyCheck';
       const info =
@@ -630,11 +630,11 @@ export class NIST80053Checks extends NagPack {
         ignores,
         'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess'
       ) &&
-      !nist80053IamPolicyNoStatementsWithAdminAccess(node)
+      !nist80053IAMPolicyNoStatementsWithAdminAccess(node)
     ) {
       const ruleId = 'NIST.800.53-IAMPolicyNoStatementsWithAdminAccess';
       const info =
-        'The IAM policy grants admin access - (Control IDs AC-2(1), AC-2(j), AC-3, AC-6).';
+        'The IAM policy grants admin access - (Control IDs: AC-2(1), AC-2(j), AC-3, AC-6).';
       const explanation =
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.';
       Annotations.of(node).addError(
@@ -643,7 +643,7 @@ export class NIST80053Checks extends NagPack {
     }
     if (
       !this.ignoreRule(ignores, 'NIST.800.53-IAMUserNoPoliciesCheck') &&
-      !nist80053IamUserNoPolicies(node)
+      !nist80053IAMUserNoPolicies(node)
     ) {
       const ruleId = 'NIST.800.53-IAMUserNoPoliciesCheck';
       const info =
@@ -735,7 +735,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSEnhancedMonitoringEnabled';
       const info =
-        'The RDS DB Instance does not enhanced monitoring enabled - (Control ID: CA-7(a)(b)).';
+        'The RDS DB instance does not enhanced monitoring enabled - (Control ID: CA-7(a)(b)).';
       const explanation =
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.';
       Annotations.of(node).addError(
@@ -748,7 +748,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSInstanceBackupEnabled';
       const info =
-        'The RDS DB Instance does not have backups enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
+        'The RDS DB instance does not have backups enabled - (Control IDs: CP-9(b), CP-10, SI-12).';
       const explanation =
         'The backup feature of Amazon RDS creates backups of your databases and transaction logs.';
       Annotations.of(node).addError(
@@ -764,9 +764,9 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSInstanceDeletionProtectionEnabled';
       const info =
-        'The RDS DB Instance or Aurora Cluster does not have deletion protection enabled - (Control ID: SC-5).';
+        'The RDS DB instance or Aurora DB cluster does not have deletion protection enabled - (Control ID: SC-5).';
       const explanation =
-        'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
+        'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS DB instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
@@ -777,7 +777,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSInstanceMultiAzSupport';
       const info =
-        'The RDS DB Instance does not have multi-AZ support - (Control IDs: CP-10, SC-5, SC-36).';
+        'The non-Aurora RDS DB instance does not have multi-AZ support enabled - (Control IDs: CP-10, SC-5, SC-36).';
       const explanation =
         'Multi-AZ support in Amazon Relational Database Service (Amazon RDS) provides enhanced availability and durability for database instances. When you provision a Multi-AZ database instance, Amazon RDS automatically creates a primary database instance, and synchronously replicates the data to a standby instance in a different Availability Zone. In case of an infrastructure failure, Amazon RDS performs an automatic failover to the standby so that you can resume database operations as soon as the failover is complete.';
       Annotations.of(node).addError(
@@ -790,7 +790,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSInstancePublicAccess';
       const info =
-        'The RDS DB Instance allows public access - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
+        'The RDS DB instance allows public access - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).';
       const explanation =
         'Amazon RDS database instances can contain sensitive information, and principles and access control is required for such accounts.';
       Annotations.of(node).addError(
@@ -803,7 +803,7 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSLoggingEnabled';
       const info =
-        'The RDS DB Instance does not have all CloudWatch log types exported - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
+        'The RDS DB instance does not have all CloudWatch log types exported - (Control IDs: AC-2(4), AC-2(g), AU-2(a)(d), AU-3, AU-12(a)(c)).';
       const explanation =
         'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.';
       Annotations.of(node).addError(
@@ -816,9 +816,9 @@ export class NIST80053Checks extends NagPack {
     ) {
       const ruleId = 'NIST.800.53-RDSStorageEncrypted';
       const info =
-        'The RDS DB Instance or Aurora Cluster does not have storage encrypted - (Control IDs: SC-13, SC-28).';
+        'The RDS DB instance or Aurora DB cluster does not have storage encrypted - (Control IDs: SC-13, SC-28).';
       const explanation =
-        'Because sensitive data can exist at rest in Amazon RDS instances and clusters, enable encryption at rest to help protect that data.';
+        'Because sensitive data can exist at rest in Amazon RDS DB instances and clusters, enable encryption at rest to help protect that data.';
       Annotations.of(node).addError(
         this.createMessage(ruleId, info, explanation)
       );
