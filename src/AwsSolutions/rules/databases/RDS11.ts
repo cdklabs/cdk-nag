@@ -6,7 +6,7 @@ import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- *  RDS instances and Aurora clusters do not use the default endpoint ports
+ *  RDS DB instances and Aurora DB clusters do not use the default endpoint ports
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
