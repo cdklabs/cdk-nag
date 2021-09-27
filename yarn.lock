@@ -2589,9 +2589,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.153"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.153.tgz#acff23b11149ce0a2ef222a2f300e8b007ac3a74"
-  integrity sha512-8gxgf3HclADl8HG+92lzEYjMDArSH3be9ZXCYHh6RY7V7jTitpyTBQYgBSObrnCRNODwbqeBGQZwWizumS0AsQ==
+  version "3.3.154"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.154.tgz#6a91db04b380020e5061c469b7537c816396950a"
+  integrity sha512-pV3jvJ7KRViN2boZc+hMQ5zDaOOK0QIXk0iCwyKIuLhzjcVIoYJS+cGZ+NhbuVyUNomjsar1BLSL76iXev7+Wg==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.13"
@@ -4191,9 +4191,9 @@ is-generator-fn@^2.0.0:
   integrity sha512-cTIB4yPYL/Grw0EaSzASzg6bBy9gqCofvWN8okThAYIxKJZC+udlRAmGbM0XLeniEJSs8uEgHPGuHSe1XsOLSQ==
 
 is-glob@^4.0.0, is-glob@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.1.tgz#7567dbe9f2f5e2467bc77ab83c4a29482407a5dc"
-  integrity sha512-5G0tKtBTFImOqDnLB2hG6Bp2qcKEFduo4tZu9MT/H6NQv/ghhy30o55ufafxJ/LdH79LLs2Kfrn85TLKyA7BUg==
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.2.tgz#859fc2e731e58c902f99fcabccb75a7dd07d29d8"
+  integrity sha512-ZZTOjRcDjuAAAv2cTBQP/lL59ZTArx77+7UzHdWW/XB1mrfp7DEaVpKmZ0XIzx+M7AxfhKcqV+nMetUQmFifwg==
   dependencies:
     is-extglob "^2.1.1"
 
@@ -6071,10 +6071,10 @@ progress@^2.0.0, progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.28.29:
-  version "0.28.29"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.28.29.tgz#ed19dd29327ef5765739b4c3691f072304a246ce"
-  integrity sha512-jddj6+KPLa+hJbcwaVneW45/Nfhx6/sb6quWs6Ac67XBGJPYLjNriVTzkLc/sbh7MuFAgHxeZua9PM36542j6w==
+projen@^0.28.30:
+  version "0.28.30"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.28.30.tgz#cbe1a2bc0efdb7f6e3ad313b53dde542f57b11a4"
+  integrity sha512-QvqCeKxf3/dhgAzDllpCD52JzSuskfic6kCfjG9AlXnY7Ae8f3gC7Fy4Ke4lGxzCXrHJQp/2yvQQKhGpKS938A==
   dependencies:
     "@iarna/toml" "^2.2.5"
     chalk "^4.1.2"
