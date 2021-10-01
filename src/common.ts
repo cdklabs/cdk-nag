@@ -2,7 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { IAspect, IConstruct } from '@aws-cdk/core';
+import { IAspect, IConstruct, Annotations } from '@aws-cdk/core';
+
+const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 
 /**
  * Interface for creating a Nag rule set
@@ -12,6 +14,14 @@ export interface NagPackProps {
    * Whether or not to enable extended explanatory descriptions on warning and error messages.
    */
   readonly verbose?: boolean;
+}
+
+/**
+ * The level of the message that the rule applies
+ */
+export enum NagMessageLevel {
+  WARN,
+  ERROR,
 }
 
 /**
@@ -27,9 +37,49 @@ export abstract class NagPack implements IAspect {
 
   /**
    * All aspects can visit an IConstruct.
-   *
    */
   public abstract visit(node: IConstruct): void;
+
+  /**
+   * Create a suppressible rule based on the provided logic
+   * @param ruleId the id of the rule to ignore
+   * @param rule  the function logic for the rule
+   * @param level the annotations message level to apply to the rule if triggered
+   * @param ignores ignores listed in cdkNag metadata
+   * @param info why the rule was triggered
+   * @param explanation why the rule exists
+   * @param node the IConstruct to evaluate
+   */
+  public applyRule(
+    ruleId: string,
+    rule: (node: IConstruct) => boolean,
+    level: NagMessageLevel,
+    ignores: any,
+    info: string,
+    explanation: string,
+    node: IConstruct
+  ): void {
+    try {
+      if (!this.ignoreRule(ignores, ruleId) && !rule(node)) {
+        const message = this.createMessage(ruleId, info, explanation);
+        if (level == NagMessageLevel.ERROR) {
+          Annotations.of(node).addError(message);
+        } else if (level == NagMessageLevel.WARN) {
+          Annotations.of(node).addWarning(message);
+        }
+      }
+    } catch (error) {
+      if (!this.ignoreRule(ignores, VALIDATION_FAILURE_ID)) {
+        const information = `'${ruleId}' failed to validate. This is generally caused by a parameter referencing an intrinsic function.'`;
+        const message = this.createMessage(
+          VALIDATION_FAILURE_ID,
+          information,
+          (error as Error).message
+        );
+        Annotations.of(node).addWarning(message);
+      }
+    }
+  }
 
   /**
    * Check whether a specific rule should be ignored
