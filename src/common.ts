@@ -43,20 +43,20 @@ export abstract class NagPack implements IAspect {
   /**
    * Create a suppressible rule based on the provided logic
    * @param ruleId the id of the rule to ignore
-   * @param rule  the function logic for the rule
-   * @param level the annotations message level to apply to the rule if triggered
-   * @param ignores ignores listed in cdkNag metadata
    * @param info why the rule was triggered
    * @param explanation why the rule exists
+   * @param level the annotations message level to apply to the rule if triggered
+   * @param rule  the function logic for the rule
+   * @param ignores ignores listed in cdkNag metadata
    * @param node the IConstruct to evaluate
    */
   public applyRule(
     ruleId: string,
-    rule: (node: IConstruct) => boolean,
-    level: NagMessageLevel,
-    ignores: any,
     info: string,
     explanation: string,
+    level: NagMessageLevel,
+    rule: (node: IConstruct) => boolean,
+    ignores: any,
     node: IConstruct
   ): void {
     try {
