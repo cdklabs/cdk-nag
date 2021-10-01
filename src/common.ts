@@ -17,6 +17,42 @@ export interface NagPackProps {
 }
 
 /**
+ * Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method
+ */
+
+export interface IApplyRule {
+  /**
+   * The id of the rule to ignore
+   */
+  ruleId: string;
+  /**
+   * Why the rule was triggered
+   */
+  info: string;
+  /**
+   * Why the rule exists
+   */
+  explanation: string;
+  /**
+   * The annotations message level to apply to the rule if triggered
+   */
+  level: NagMessageLevel;
+  /**
+   * Ignores listed in cdkNag metadata
+   */
+  ignores: any;
+  /**
+   * The CfnResource to check
+   */
+  node: CfnResource;
+  /**
+   * The callback to the rule
+   * @param node the CfnResource to check
+   */
+  rule(node: CfnResource): boolean;
+}
+
+/**
  * The level of the message that the rule applies
  */
 export enum NagMessageLevel {
@@ -40,43 +76,32 @@ export abstract class NagPack implements IAspect {
    */
   public abstract visit(node: IConstruct): void;
 
-  /**
-   * Create a suppressible rule based on the provided logic
-   * @param ruleId the id of the rule to ignore
-   * @param info why the rule was triggered
-   * @param explanation why the rule exists
-   * @param level the annotations message level to apply to the rule if triggered
-   * @param rule  the function logic for the rule
-   * @param ignores ignores listed in cdkNag metadata
-   * @param node the CfnResource to check
-   */
-  public applyRule(
-    ruleId: string,
-    info: string,
-    explanation: string,
-    level: NagMessageLevel,
-    rule: (node: CfnResource) => boolean,
-    ignores: any,
-    node: CfnResource
-  ): void {
+  public applyRule(params: IApplyRule): void {
     try {
-      if (!this.ignoreRule(ignores, ruleId) && !rule(node)) {
-        const message = this.createMessage(ruleId, info, explanation);
-        if (level == NagMessageLevel.ERROR) {
-          Annotations.of(node).addError(message);
-        } else if (level == NagMessageLevel.WARN) {
-          Annotations.of(node).addWarning(message);
+      if (
+        !this.ignoreRule(params.ignores, params.ruleId) &&
+        !params.rule(params.node)
+      ) {
+        const message = this.createMessage(
+          params.ruleId,
+          params.info,
+          params.explanation
+        );
+        if (params.level == NagMessageLevel.ERROR) {
+          Annotations.of(params.node).addError(message);
+        } else if (params.level == NagMessageLevel.WARN) {
+          Annotations.of(params.node).addWarning(message);
         }
       }
     } catch (error) {
-      if (!this.ignoreRule(ignores, VALIDATION_FAILURE_ID)) {
-        const information = `'${ruleId}' failed to validate. This is generally caused by a parameter referencing an intrinsic function.'`;
+      if (!this.ignoreRule(params.ignores, VALIDATION_FAILURE_ID)) {
+        const information = `'${params.ruleId}' failed to validate. This is generally caused by a parameter referencing an intrinsic function.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,
           information,
           (error as Error).message
         );
-        Annotations.of(node).addWarning(message);
+        Annotations.of(params.node).addWarning(message);
       }
     }
   }

@@ -17,6 +17,20 @@ Name|Description
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule set.
 
 
+**Interfaces**
+
+Name|Description
+----|-----------
+[IApplyRule](#cdk-nag-iapplyrule)|Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
+
+
+**Enums**
+
+Name|Description
+----|-----------
+[NagMessageLevel](#cdk-nag-nagmessagelevel)|The level of the message that the rule applies.
+
+
 
 ## class AwsSolutionsChecks  <a id="cdk-nag-awssolutionschecks"></a>
 
@@ -167,34 +181,18 @@ Name | Type | Description
 ### Methods
 
 
-#### createMessage(ruleId, info, explanation) <a id="cdk-nag-nagpack-createmessage"></a>
+#### applyRule(params) <a id="cdk-nag-nagpack-applyrule"></a>
 
-The message to output to the console when a rule is triggered.
 
-```ts
-createMessage(ruleId: string, info: string, explanation: string): string
-```
-
-* **ruleId** (<code>string</code>)  the id of the rule.
-* **info** (<code>string</code>)  why the rule was triggered.
-* **explanation** (<code>string</code>)  why the rule exists.
-
-__Returns__:
-* <code>string</code>
-
-#### ignoreRule(ignores, ruleId) <a id="cdk-nag-nagpack-ignorerule"></a>
-
-Check whether a specific rule should be ignored.
 
 ```ts
-ignoreRule(ignores: any, ruleId: string): boolean
+applyRule(params: IApplyRule): void
 ```
 
-* **ignores** (<code>any</code>)  ignores listed in cdkNag metadata.
-* **ruleId** (<code>string</code>)  the id of the rule to ignore.
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  *No description*
 
-__Returns__:
-* <code>boolean</code>
+
+
 
 #### visit(node) <a id="cdk-nag-nagpack-visit"></a>
 
@@ -211,6 +209,41 @@ visit(node: IConstruct): void
 
 
 
+## interface IApplyRule  <a id="cdk-nag-iapplyrule"></a>
+
+
+Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**explanation** | <code>string</code> | Why the rule exists.
+**ignores** | <code>any</code> | Ignores listed in cdkNag metadata.
+**info** | <code>string</code> | Why the rule was triggered.
+**level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
+**node** | <code>[CfnResource](#aws-cdk-core-cfnresource)</code> | The CfnResource to check.
+**ruleId** | <code>string</code> | The id of the rule to ignore.
+
+### Methods
+
+
+#### rule(node) <a id="cdk-nag-iapplyrule-rule"></a>
+
+The callback to the rule.
+
+```ts
+rule(node: CfnResource): boolean
+```
+
+* **node** (<code>[CfnResource](#aws-cdk-core-cfnresource)</code>)  the CfnResource to check.
+
+__Returns__:
+* <code>boolean</code>
+
+
+
 ## struct NagPackProps  <a id="cdk-nag-nagpackprops"></a>
 
 
@@ -222,5 +255,15 @@ Name | Type | Description
 -----|------|-------------
 **verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning and error messages.<br/>__*Optional*__
 
+
+
+## enum NagMessageLevel  <a id="cdk-nag-nagmessagelevel"></a>
+
+The level of the message that the rule applies.
+
+Name | Description
+-----|-----
+**WARN** |
+**ERROR** |
 
 
