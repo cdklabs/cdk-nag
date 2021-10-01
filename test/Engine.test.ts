@@ -173,3 +173,23 @@ describe('Testing rule explanations', () => {
     );
   });
 });
+
+describe('Testing rule exception handling', () => {
+  test('Resource with Intrinsic Function', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    const vpc2 = new Vpc(stack, 'rVpc2');
+    test.addIngressRule(Peer.ipv4(vpc2.vpcCidrBlock), Port.allTraffic());
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('CdkNagValidationFailure:'),
+        }),
+      })
+    );
+  });
+});
