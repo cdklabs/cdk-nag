@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnInstance } from '@aws-cdk/aws-ec2';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 const EBS_OPTIMIZED_SUPPORTED = [
   'c1.xlarge',
@@ -31,7 +31,7 @@ const DEFAULT_TYPE = 'm1.small';
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-optimized.html#previous
  *  @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnInstance) {
     const instanceType = node.instanceType ? node.instanceType : DEFAULT_TYPE;
     const ebsOptimized = Stack.of(node).resolve(node.ebsOptimized);

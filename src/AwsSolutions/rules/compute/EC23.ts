@@ -3,13 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnSecurityGroup, CfnSecurityGroupIngress } from '@aws-cdk/aws-ec2';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * EC2 security groups do not allow for 0.0.0.0/0 or ::/0 inbound access
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnSecurityGroup) {
     const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
     if (ingressRules != undefined) {

@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnRoute } from '@aws-cdk/aws-ec2';
-import { IConstruct } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
 
 /**
  * Route tables do not have unrestricted routes ('0.0.0.0/0' or '::/0') to IGWs - (Control ID: 164.312(e)(1))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnRoute) {
     if (node.gatewayId != undefined) {
       if (

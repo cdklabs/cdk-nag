@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnNotebookInstance } from '@aws-cdk/aws-sagemaker';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * SageMaker notebook instances utilize KMS keys for encryption at rest - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnNotebookInstance) {
     //Does this notebook have a KMS key ID?
     const kmsKey = Stack.of(node).resolve(node.kmsKeyId);

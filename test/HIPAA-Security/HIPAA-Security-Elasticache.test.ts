@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
 describe('Amazon ElastiCache', () => {
-  test('HIPAA.Security-ElasticacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
+  test('HIPAA.Security-ElastiCacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new CfnCacheCluster(nonCompliant, 'rAec', {
@@ -23,7 +23,7 @@ describe('Amazon ElastiCache', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticacheRedisClusterAutomaticBackup:'
+            'HIPAA.Security-ElastiCacheRedisClusterAutomaticBackup:'
           ),
         }),
       })
@@ -41,7 +41,7 @@ describe('Amazon ElastiCache', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticacheRedisClusterAutomaticBackup:'
+            'HIPAA.Security-ElastiCacheRedisClusterAutomaticBackup:'
           ),
         }),
       })
@@ -67,7 +67,7 @@ describe('Amazon ElastiCache', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticacheRedisClusterAutomaticBackup:'
+            'HIPAA.Security-ElastiCacheRedisClusterAutomaticBackup:'
           ),
         }),
       })

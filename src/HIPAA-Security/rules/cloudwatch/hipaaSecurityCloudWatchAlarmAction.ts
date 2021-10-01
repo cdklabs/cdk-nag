@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnAlarm } from '@aws-cdk/aws-cloudwatch';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - (Control ID: 164.312(b))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnAlarm) {
     const actionsEnabled = Stack.of(node).resolve(node.actionsEnabled);
     if (actionsEnabled === false) {

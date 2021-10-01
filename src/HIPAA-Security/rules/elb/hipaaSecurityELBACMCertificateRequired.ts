@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * CLBs use ACM-managed certificates - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnLoadBalancer) {
     //For each listener, ensure that it's utilizing an ACM SSL/HTTPS cert
     const listeners = Stack.of(node).resolve(node.listeners);

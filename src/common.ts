@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { IAspect, IConstruct, Annotations } from '@aws-cdk/core';
+import { IAspect, IConstruct, Annotations, CfnResource } from '@aws-cdk/core';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 
@@ -48,16 +48,16 @@ export abstract class NagPack implements IAspect {
    * @param level the annotations message level to apply to the rule if triggered
    * @param rule  the function logic for the rule
    * @param ignores ignores listed in cdkNag metadata
-   * @param node the IConstruct to evaluate
+   * @param node the CfnResource to check
    */
   public applyRule(
     ruleId: string,
     info: string,
     explanation: string,
     level: NagMessageLevel,
-    rule: (node: IConstruct) => boolean,
+    rule: (node: CfnResource) => boolean,
     ignores: any,
-    node: IConstruct
+    node: CfnResource
   ): void {
     try {
       if (!this.ignoreRule(ignores, ruleId) && !rule(node)) {
@@ -87,7 +87,7 @@ export abstract class NagPack implements IAspect {
    * @param ruleId the id of the rule to ignore
    * @returns boolean
    */
-  public ignoreRule(ignores: any, ruleId: string): boolean {
+  private ignoreRule(ignores: any, ruleId: string): boolean {
     if (ignores) {
       for (let ignore of ignores) {
         if (
@@ -110,7 +110,7 @@ export abstract class NagPack implements IAspect {
    * @param explanation why the rule exists
    * @returns string
    */
-  public createMessage(
+  private createMessage(
     ruleId: string,
     info: string,
     explanation: string

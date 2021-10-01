@@ -3,13 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnStage } from '@aws-cdk/aws-apigateway';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * All methods in API Gateway stages have caching enabled and encrypted - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnStage) {
     if (node.methodSettings == undefined) {
       return false;

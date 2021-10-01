@@ -18,7 +18,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053Checks } from '../../src';
 
 describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
-  test('NIST.800.53-IAMGroupMembershipCheck: IAM users are assigned to at least one group', () => {
+  test('NIST.800.53-IAMGroupMembership: IAM users are assigned to at least one group', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -30,7 +30,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages1).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMGroupMembershipCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMGroupMembership:'),
         }),
       })
     );
@@ -45,7 +45,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMGroupMembershipCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMGroupMembership:'),
         }),
       })
     );
@@ -65,13 +65,13 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMGroupMembershipCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMGroupMembership:'),
         }),
       })
     );
   });
 
-  test('NIST.800.53-IAMUserNoPoliciesCheck: IAM policies are not attached at the user level', () => {
+  test('NIST.800.53-IAMUserNoPolicies: IAM policies are not attached at the user level', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
     const user = new User(nonCompliant, 'rUser');
@@ -87,7 +87,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages1).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMUserNoPolicies:'),
         }),
       })
     );
@@ -103,7 +103,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMUserNoPolicies:'),
         }),
       })
     );
@@ -122,13 +122,13 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMUserNoPoliciesCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMUserNoPolicies:'),
         }),
       })
     );
   });
 
-  test('NIST.800.53-IAMNoInlinePolicyCheck: There are no inline IAM policies, only managed', () => {
+  test('NIST.800.53-IAMNoInlinePolicy: There are no inline IAM policies, only managed', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053Checks());
 
@@ -145,7 +145,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages1).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicy:'),
         }),
       })
     );
@@ -164,7 +164,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicy:'),
         }),
       })
     );
@@ -181,7 +181,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicyCheck:'),
+          data: expect.stringContaining('NIST.800.53-IAMNoInlinePolicy:'),
         }),
       })
     );

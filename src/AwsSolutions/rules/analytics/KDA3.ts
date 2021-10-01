@@ -3,13 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnApplicationV2 } from '@aws-cdk/aws-kinesisanalytics';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * Kinesis Data Analytics Flink Applications have checkpointing enabled
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnApplicationV2) {
     if (node.runtimeEnvironment.toLowerCase().startsWith('flink')) {
       const applicationConfiguration = Stack.of(node).resolve(

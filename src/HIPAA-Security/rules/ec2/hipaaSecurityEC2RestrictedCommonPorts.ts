@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
 
@@ -13,7 +13,7 @@ const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnSecurityGroup) {
     const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
     if (ingressRules != undefined) {

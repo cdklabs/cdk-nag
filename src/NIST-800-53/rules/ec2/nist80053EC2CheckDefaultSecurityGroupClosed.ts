@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnVPC } from '@aws-cdk/aws-ec2';
-import { IConstruct } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
 
 /**
  * VPCs have their default security group closed - (Control IDs: AC-4, SC-7, SC-7(3)).
@@ -12,7 +12,7 @@ import { IConstruct } from '@aws-cdk/core';
  * https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html#DefaultSecurityGroup
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnVPC) {
     return false;
   }
