@@ -95,7 +95,7 @@ export abstract class NagPack implements IAspect {
       }
     } catch (error) {
       if (!this.ignoreRule(params.ignores, VALIDATION_FAILURE_ID)) {
-        const information = `'${params.ruleId}' failed to validate. This is generally caused by a parameter referencing an intrinsic function.'`;
+        const information = `'${params.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,
           information,
@@ -113,19 +113,28 @@ export abstract class NagPack implements IAspect {
    * @returns boolean
    */
   private ignoreRule(ignores: any, ruleId: string): boolean {
-    if (ignores) {
-      for (let ignore of ignores) {
-        if (
-          ignore.id &&
-          ignore.reason &&
-          JSON.stringify(ignore.reason).length >= 10 &&
-          ignore.id == ruleId
-        ) {
-          return true;
+    try {
+      if (ignores) {
+        for (let ignore of ignores) {
+          if (
+            ignore.id &&
+            ignore.reason &&
+            JSON.stringify(ignore.reason).length >= 10
+          ) {
+            if (ignore.id == ruleId) {
+              return true;
+            }
+          } else {
+            throw Error();
+          }
         }
       }
+      return false;
+    } catch {
+      throw Error(
+        'Improperly formatted cdk_nag rule suppression detected. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.'
+      );
     }
-    return false;
   }
 
   /**
