@@ -20,7 +20,5 @@ const project = new AwsCdkConstructLibrary({
     module: 'monocdk_nag',
   },
 });
-project.package.addField('resolutions', {
-  'trim-newlines': '3.0.1',
-});
+
 project.synth();
