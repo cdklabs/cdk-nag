@@ -86,16 +86,16 @@ const project = new AwsCdkConstructLibrary({
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
-  depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+  depsUpgradeOptions: {
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
       secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
       container: {
-        image: 'jsii/superchain:node14',
+        image: 'jsii/superchain:1-buster-slim-node12',
       },
     },
-  }),
+  },
   buildWorkflow: true,
   release: true,
 });
@@ -110,9 +110,6 @@ project.eslint.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.package.addField('resolutions', {
-  'trim-newlines': '3.0.1',
-});
 project.buildWorkflow.file.addOverride('jobs.build.steps', [
   {
     name: 'Checkout',
@@ -121,6 +118,11 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
       ref: '${{ github.event.pull_request.head.ref }}',
       repository: '${{ github.event.pull_request.head.repo.full_name }}',
     },
+  },
+  {
+    name: 'Setup Node.js',
+    uses: 'actions/setup-node@v2.2.0',
+    with: { 'node-version': '12.20.0' },
   },
   {
     name: 'Install dependencies',
@@ -173,7 +175,7 @@ project.buildWorkflow.file.addOverride('jobs.build.steps', [
   },
 ]);
 project.buildWorkflow.file.addOverride('jobs.build.container', {
-  image: 'jsii/superchain:node14',
+  image: 'jsii/superchain:1-buster-slim-node12',
 });
 project.release.addJobs({
   release: {
@@ -199,6 +201,11 @@ project.release.addJobs({
       {
         name: 'Set git identity',
         run: 'git config user.name "Automation"\ngit config user.email "github-actions@github.com"',
+      },
+      {
+        name: 'Setup Node.js',
+        uses: 'actions/setup-node@v2.2.0',
+        with: { 'node-version': '12.20.0' },
       },
       {
         name: 'Install dependencies',
@@ -256,7 +263,7 @@ project.release.addJobs({
       },
     ],
     container: {
-      image: 'jsii/superchain:node14',
+      image: 'jsii/superchain:1-buster-slim-node12',
     },
   },
 });
