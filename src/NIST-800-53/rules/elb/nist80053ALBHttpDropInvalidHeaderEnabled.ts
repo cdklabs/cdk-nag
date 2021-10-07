@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * Application Load Balancers are enabled to drop invalid headers - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23)
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnLoadBalancer) {
     const type = Stack.of(node).resolve(node.type);
     if (type == undefined || type == 'application') {

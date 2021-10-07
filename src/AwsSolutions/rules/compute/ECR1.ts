@@ -3,13 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnRegistryPolicy, CfnRepository } from '@aws-cdk/aws-ecr';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * ECR Repositories do not allow open access
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnRegistryPolicy) {
     const policyText = Stack.of(node).resolve(node.policyText);
     return checkStatement(policyText);

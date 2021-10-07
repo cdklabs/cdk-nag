@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnFunction } from '@aws-cdk/aws-lambda';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * Lambda functions are VPC enabled - (Control IDs: AC-4, SC-7, SC-7(3))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnFunction) {
     //Check for a VPC configuration
     const vpcConfig = Stack.of(node).resolve(node.vpcConfig);

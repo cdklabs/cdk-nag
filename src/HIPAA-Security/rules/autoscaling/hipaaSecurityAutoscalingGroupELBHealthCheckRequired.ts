@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * Auto Scaling groups which are associated with load balancers utilize ELB health checks - (Control ID: 164.312(b))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnAutoScalingGroup) {
     //get all associated CLBs
     const classicLBs = Stack.of(node).resolve(node.loadBalancerNames);

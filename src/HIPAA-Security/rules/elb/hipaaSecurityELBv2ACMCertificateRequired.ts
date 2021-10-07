@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnListener } from '@aws-cdk/aws-elasticloadbalancingv2';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * ALB, NLB, and GLB listeners use ACM-managed certificates - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnListener) {
     const certificates = Stack.of(node).resolve(node.certificates);
     if (certificates == undefined) {

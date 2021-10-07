@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * CLBs use at least two AZs with the Cross-Zone Load Balancing feature enabled - (Control IDs: SC-5, CP-10)
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnLoadBalancer) {
     if (node.crossZone == undefined) {
       return false;

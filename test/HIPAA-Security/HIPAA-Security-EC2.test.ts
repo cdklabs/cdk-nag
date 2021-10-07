@@ -132,7 +132,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     );
   });
 
-  test('hipaaSecurityEC2InstanceNoPublicIp: - EC2 instances do not have public IPs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))', () => {
+  test('hipaaSecurityEC2InstanceNoPublicIps: - EC2 instances do not have public IPs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new CfnInstance(nonCompliant, 'rInstance', {
@@ -148,7 +148,9 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('HIPAA.Security-EC2CheckNoPublicIPs:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-EC2InstanceNoPublicIps:'
+          ),
         }),
       })
     );
@@ -177,7 +179,9 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('HIPAA.Security-EC2CheckNoPublicIPs:'),
+          data: expect.stringContaining(
+            'HIPAA.Security-EC2InstanceNoPublicIps:'
+          ),
         }),
       })
     );

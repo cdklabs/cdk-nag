@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * OpenSearch Service domains have encryption at rest enabled - (Control IDs: SC-13, SC-28)
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (node instanceof CfnDomain) {
     //Is the encryption at rest property set?
     const encryptionAtRestOptions = Stack.of(node).resolve(

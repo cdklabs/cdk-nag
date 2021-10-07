@@ -9,13 +9,13 @@ import {
   CfnPolicy,
   CfnManagedPolicy,
 } from '@aws-cdk/aws-iam';
-import { IConstruct, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
  * IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission
  * @param node the CfnResource to check
  */
-export default function (node: IConstruct): boolean {
+export default function (node: CfnResource): boolean {
   if (
     node instanceof CfnGroup ||
     node instanceof CfnUser ||
