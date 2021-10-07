@@ -2,7 +2,13 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { IAspect, IConstruct, Annotations, CfnResource } from '@aws-cdk/core';
+import {
+  IAspect,
+  IConstruct,
+  Annotations,
+  CfnResource,
+  Stack,
+} from '@aws-cdk/core';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 
@@ -151,5 +157,25 @@ export abstract class NagPack implements IAspect {
   ): string {
     let message = `${ruleId}: ${info}`;
     return this.verbose ? `${message} ${explanation}` : message;
+  }
+}
+
+/**
+ * Return a value if resolves to a primitive data type, otherwise throw an error
+ * https://developer.mozilla.org/en-US/docs/Glossary/Primitive
+ * @param node the CfnResource to check
+ * @param parameter the value to attempt to resolve
+ * @returns any
+ */
+export function resolveIfPrimitive(node: CfnResource, parameter: any): any {
+  const resolvedValue = Stack.of(node).resolve(parameter);
+  if (resolvedValue === Object(resolvedValue)) {
+    throw Error(
+      `The parameter resolved to to a non-primitive value "${JSON.stringify(
+        resolvedValue
+      )}", therefore the rule could not be validated.`
+    );
+  } else {
+    return resolvedValue;
   }
 }
