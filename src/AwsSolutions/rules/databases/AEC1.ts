@@ -10,14 +10,7 @@ import { CfnResource } from '@aws-cdk/core';
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
-  if (node instanceof CfnCacheCluster) {
-    if (
-      node.cacheSubnetGroupName == undefined ||
-      node.cacheSubnetGroupName.length == 0
-    ) {
-      return false;
-    }
-  } else if (node instanceof CfnReplicationGroup) {
+  if (node instanceof CfnCacheCluster || node instanceof CfnReplicationGroup) {
     if (
       node.cacheSubnetGroupName == undefined ||
       node.cacheSubnetGroupName.length == 0

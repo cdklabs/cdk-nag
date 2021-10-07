@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-redshift';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Redshift clusters have a retention period for automated snapshots configured
@@ -11,9 +12,13 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCluster) {
+    const automatedSnapshotRetentionPeriod = resolveIfPrimitive(
+      node,
+      node.automatedSnapshotRetentionPeriod
+    );
     if (
-      node.automatedSnapshotRetentionPeriod != undefined &&
-      node.automatedSnapshotRetentionPeriod == 0
+      automatedSnapshotRetentionPeriod != undefined &&
+      automatedSnapshotRetentionPeriod == 0
     ) {
       return false;
     }

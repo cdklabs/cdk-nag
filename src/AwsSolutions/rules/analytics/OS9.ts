@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs
@@ -26,7 +27,7 @@ export default function (node: CfnResource): boolean {
       if (resolvedLog == undefined) {
         return false;
       }
-      const enabled = Stack.of(node).resolve(resolvedLog.enabled);
+      const enabled = resolveIfPrimitive(node, resolvedLog.enabled);
       if (!enabled) {
         return false;
       }

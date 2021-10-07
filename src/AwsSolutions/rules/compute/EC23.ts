@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnSecurityGroup, CfnSecurityGroupIngress } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * EC2 security groups do not allow for 0.0.0.0/0 or ::/0 inbound access
@@ -15,25 +16,26 @@ export default function (node: CfnResource): boolean {
     if (ingressRules != undefined) {
       for (const rule of ingressRules) {
         const resolvedRule = Stack.of(node).resolve(rule);
-        if (
-          resolvedRule.cidrIp != undefined &&
-          resolvedRule.cidrIp.includes('/0')
-        ) {
+        const resolvedcidrIp = resolveIfPrimitive(node, resolvedRule.cidrIp);
+        const resolvedcidrIpv6 = resolveIfPrimitive(
+          node,
+          resolvedRule.cidrIpv6
+        );
+        if (resolvedcidrIp != undefined && resolvedcidrIp.includes('/0')) {
           return false;
         }
-        if (
-          resolvedRule.cidrIpv6 != undefined &&
-          resolvedRule.cidrIpv6.includes('/0')
-        ) {
+        if (resolvedcidrIpv6 != undefined && resolvedcidrIpv6.includes('/0')) {
           return false;
         }
       }
     }
   } else if (node instanceof CfnSecurityGroupIngress) {
-    if (node.cidrIp != undefined && node.cidrIp.includes('/0')) {
+    const resolvedcidrIp = resolveIfPrimitive(node, node.cidrIp);
+    const resolvedcidrIpv6 = resolveIfPrimitive(node, node.cidrIpv6);
+    if (resolvedcidrIp != undefined && resolvedcidrIp.includes('/0')) {
       return false;
     }
-    if (node.cidrIpv6 != undefined && node.cidrIpv6.includes('/0')) {
+    if (resolvedcidrIpv6 != undefined && resolvedcidrIpv6.includes('/0')) {
       return false;
     }
   }

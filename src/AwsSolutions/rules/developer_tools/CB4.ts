@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnProject } from '@aws-cdk/aws-codebuild';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Codebuild projects use an AWS KMS key for encryption
@@ -11,7 +12,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnProject) {
-    const encryptionKey = Stack.of(node).resolve(node.encryptionKey);
+    const encryptionKey = resolveIfPrimitive(node, node.encryptionKey);
     if (encryptionKey == undefined || encryptionKey == 'alias/aws/s3') {
       return false;
     }

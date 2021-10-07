@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnWorkGroup } from '@aws-cdk/aws-athena';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../..';
 
 /**
  * Athena workgroups encrypt query results
@@ -25,13 +26,15 @@ export default function (node: CfnResource): boolean {
         workGroupConfigurationUpdates.resultConfigurationUpdates
       );
       if (resultConfigurationUpdates != undefined) {
-        const removeEncryptionConfiguration = Stack.of(node).resolve(
+        const removeEncryptionConfiguration = resolveIfPrimitive(
+          node,
           resultConfigurationUpdates.removeEncryptionConfiguration
         );
         const encryptionConfiguration = Stack.of(node).resolve(
           resultConfigurationUpdates.encryptionConfiguration
         );
-        const enforceWorkGroupConfiguration = Stack.of(node).resolve(
+        const enforceWorkGroupConfiguration = resolveIfPrimitive(
+          node,
           workGroupConfigurationUpdates.enforceWorkGroupConfiguration
         );
         if (
@@ -47,7 +50,8 @@ export default function (node: CfnResource): boolean {
         }
       }
     } else {
-      const enforceWorkGroupConfiguration = Stack.of(node).resolve(
+      const enforceWorkGroupConfiguration = resolveIfPrimitive(
+        node,
         workGroupConfiguration.enforceWorkGroupConfiguration
       );
       if (!enforceWorkGroupConfiguration) {
@@ -56,12 +60,14 @@ export default function (node: CfnResource): boolean {
       const resultConfiguration = Stack.of(node).resolve(
         workGroupConfiguration.resultConfiguration
       );
+
       if (resultConfiguration == undefined) {
         return false;
       }
       const encryptionConfiguration = Stack.of(node).resolve(
         resultConfiguration.encryptionConfiguration
       );
+
       if (encryptionConfiguration == undefined) {
         return false;
       }

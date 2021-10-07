@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnStateMachine, LogLevel } from '@aws-cdk/aws-stepfunctions';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Step Function log "ALL" events to CloudWatch Logs
@@ -17,7 +18,7 @@ export default function (node: CfnResource): boolean {
     if (loggingConfiguration == undefined) {
       return false;
     }
-    const level = Stack.of(node).resolve(loggingConfiguration.level);
+    const level = resolveIfPrimitive(node, loggingConfiguration.level);
     if (level == undefined || level != LogLevel.ALL) {
       return false;
     }

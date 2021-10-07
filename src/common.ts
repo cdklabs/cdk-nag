@@ -161,11 +161,11 @@ export abstract class NagPack implements IAspect {
 }
 
 /**
- * Return a value if resolves to a primitive data type, otherwise throw an error
+ * Use in cases where a primitive value must be known to pass a rule
  * https://developer.mozilla.org/en-US/docs/Glossary/Primitive
  * @param node the CfnResource to check
  * @param parameter the value to attempt to resolve
- * @returns any
+ * @returns Return a value if resolves to a primitive data type, otherwise throw an error.
  */
 export function resolveIfPrimitive(node: CfnResource, parameter: any): any {
   const resolvedValue = Stack.of(node).resolve(parameter);

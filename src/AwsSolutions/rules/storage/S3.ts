@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * S3 Buckets should have default encryption enabled
@@ -27,10 +28,16 @@ export default function (node: CfnResource): boolean {
       const defaultEncryption = Stack.of(node).resolve(
         rule.serverSideEncryptionByDefault
       );
+      if (defaultEncryption == undefined) {
+        return false;
+      }
+      const sseAlgorithm = resolveIfPrimitive(
+        node,
+        defaultEncryption.sseAlgorithm
+      );
       if (
-        defaultEncryption == undefined ||
-        (defaultEncryption.sseAlgorithm.toLowerCase() != 'aes256' &&
-          defaultEncryption.sseAlgorithm.toLowerCase() != 'aws:kms')
+        sseAlgorithm.toLowerCase() != 'aes256' &&
+        sseAlgorithm.toLowerCase() != 'aws:kms'
       ) {
         return false;
       }

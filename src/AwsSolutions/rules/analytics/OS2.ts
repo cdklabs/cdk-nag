@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * OpenSearch Service domains have node-to-node encryption enabled
@@ -17,7 +18,10 @@ export default function (node: CfnResource): boolean {
     if (nodeToNodeEncryptionOptions == undefined) {
       return false;
     }
-    const enabled = Stack.of(node).resolve(nodeToNodeEncryptionOptions.enabled);
+    const enabled = resolveIfPrimitive(
+      node,
+      nodeToNodeEncryptionOptions.enabled
+    );
     if (!enabled) {
       return false;
     }

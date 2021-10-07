@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-redshift';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Redshift clusters use custom user names vice the default (awsuser)
@@ -11,7 +12,8 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCluster) {
-    if (node.masterUsername == 'awsuser') {
+    const masterUsername = resolveIfPrimitive(node, node.masterUsername);
+    if (masterUsername == 'awsuser') {
       return false;
     }
   }

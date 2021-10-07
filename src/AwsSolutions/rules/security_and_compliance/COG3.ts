@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnUserPool } from '@aws-cdk/aws-cognito';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Cognito user pools have AdvancedSecurityMode set to ENFORCED
@@ -15,7 +16,8 @@ export default function (node: CfnResource): boolean {
     if (userPoolAddOns == undefined) {
       return false;
     }
-    const advancedSecurityMode = Stack.of(node).resolve(
+    const advancedSecurityMode = resolveIfPrimitive(
+      node,
       userPoolAddOns.advancedSecurityMode
     );
     if (

@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnUserPool, Mfa } from '@aws-cdk/aws-cognito';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Cognito user pools require MFA
@@ -11,7 +12,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnUserPool) {
-    const mfaConfiguration = Stack.of(node).resolve(node.mfaConfiguration);
+    const mfaConfiguration = resolveIfPrimitive(node, node.mfaConfiguration);
     if (mfaConfiguration == undefined || mfaConfiguration != Mfa.REQUIRED) {
       return false;
     }

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Codebuild projects have privileged mode disabled
@@ -12,7 +13,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnProject) {
     const environment = Stack.of(node).resolve(node.environment);
-    const privilegedMode = Stack.of(node).resolve(environment.privilegedMode);
+    const privilegedMode = resolveIfPrimitive(node, environment.privilegedMode);
     if (privilegedMode != undefined && privilegedMode) {
       return false;
     }

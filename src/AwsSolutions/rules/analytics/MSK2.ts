@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster, ClientBrokerEncryption } from '@aws-cdk/aws-msk';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * MSK clusters only uses TLS communication between clients and brokers
@@ -17,7 +18,8 @@ export default function (node: CfnResource): boolean {
         encryptionInfo.encryptionInTransit
       );
       if (encryptionInTransit != undefined) {
-        const clientBroker = Stack.of(node).resolve(
+        const clientBroker = resolveIfPrimitive(
+          node,
           encryptionInTransit.clientBroker
         );
         if (

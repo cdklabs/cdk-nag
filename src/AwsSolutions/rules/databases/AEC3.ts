@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * ElastiCache Redis clusters have both encryption in transit and at rest enabled
@@ -17,8 +18,8 @@ export default function (node: CfnResource): boolean {
     ) {
       return false;
     }
-    const rest = Stack.of(node).resolve(node.atRestEncryptionEnabled);
-    const transit = Stack.of(node).resolve(node.transitEncryptionEnabled);
+    const rest = resolveIfPrimitive(node, node.atRestEncryptionEnabled);
+    const transit = resolveIfPrimitive(node, node.transitEncryptionEnabled);
     if (rest == false || transit == false) {
       return false;
     }

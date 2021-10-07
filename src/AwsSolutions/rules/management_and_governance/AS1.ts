@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Auto Scaling Groups have configured cooldown periods
@@ -11,7 +12,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnAutoScalingGroup) {
-    const cooldown = Stack.of(node).resolve(node.cooldown);
+    const cooldown = resolveIfPrimitive(node, node.cooldown);
     if (cooldown != undefined && parseInt(cooldown) == 0) {
       return false;
     }

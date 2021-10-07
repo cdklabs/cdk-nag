@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Auto Scaling Groups have properly configured health checks
@@ -11,8 +12,9 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnAutoScalingGroup) {
-    const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
-    const healthCheckGracePeriod = Stack.of(node).resolve(
+    const healthCheckType = resolveIfPrimitive(node, node.healthCheckType);
+    const healthCheckGracePeriod = resolveIfPrimitive(
+      node,
       node.healthCheckGracePeriod
     );
     if (

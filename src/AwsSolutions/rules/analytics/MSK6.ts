@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-msk';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * MSK clusters send broker logs to a supported destination
@@ -19,7 +20,7 @@ export default function (node: CfnResource): boolean {
     let enabled = false;
     const s3 = Stack.of(node).resolve(resolvedBrokerLogs.s3);
     if (s3 != undefined) {
-      const s3Enabled = Stack.of(node).resolve(s3.enabled);
+      const s3Enabled = resolveIfPrimitive(node, s3.enabled);
       if (s3Enabled) {
         enabled = true;
       }
@@ -28,7 +29,8 @@ export default function (node: CfnResource): boolean {
       resolvedBrokerLogs.cloudWatchLogs
     );
     if (cloudWatchLogs != undefined) {
-      const cloudWatchLogsEnabled = Stack.of(node).resolve(
+      const cloudWatchLogsEnabled = resolveIfPrimitive(
+        node,
         cloudWatchLogs.enabled
       );
       if (cloudWatchLogsEnabled) {
@@ -37,7 +39,7 @@ export default function (node: CfnResource): boolean {
     }
     const firehose = Stack.of(node).resolve(resolvedBrokerLogs.firehose);
     if (firehose != undefined) {
-      const firehoseEnabled = Stack.of(node).resolve(firehose.enabled);
+      const firehoseEnabled = resolveIfPrimitive(node, firehose.enabled);
       if (firehoseEnabled) {
         enabled = true;
       }

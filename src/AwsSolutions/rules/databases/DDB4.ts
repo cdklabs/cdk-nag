@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-dax';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * DAX clusters have server-side encryption enabled
@@ -15,7 +16,7 @@ export default function (node: CfnResource): boolean {
       return false;
     }
     const sseSpecification = Stack.of(node).resolve(node.sseSpecification);
-    const enabled = Stack.of(node).resolve(sseSpecification.sseEnabled);
+    const enabled = resolveIfPrimitive(node, sseSpecification.sseEnabled);
     if (!enabled) {
       return false;
     }

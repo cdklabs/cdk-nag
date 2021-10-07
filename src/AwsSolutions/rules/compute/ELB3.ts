@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CLBs have connection draining enabled.
@@ -16,7 +17,8 @@ export default function (node: CfnResource): boolean {
     }
     const draining = Stack.of(node).resolve(node.connectionDrainingPolicy);
     const resolvedDraining = Stack.of(node).resolve(draining);
-    if (!(resolvedDraining.enabled == true)) {
+    const enabled = resolveIfPrimitive(node, resolvedDraining.enabled);
+    if (enabled !== true) {
       return false;
     }
   }

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * ELB listeners should be configured for secure (HTTPs or SSL) protocols for client communication.
@@ -14,20 +15,25 @@ export default function (node: CfnResource): boolean {
     const listeners = Stack.of(node).resolve(node.listeners);
     for (const listener of listeners) {
       const resolvedListener = Stack.of(node).resolve(listener);
-      if (resolvedListener.protocol.toLowerCase() == 'ssl') {
+      const protocol = resolveIfPrimitive(node, resolvedListener.protocol);
+      const instanceProtocol = resolveIfPrimitive(
+        node,
+        resolvedListener.instanceProtocol
+      );
+      if (protocol.toLowerCase() == 'ssl') {
         if (
           !(
-            resolvedListener.instanceProtocol == undefined ||
-            resolvedListener.instanceProtocol.toLowerCase() == 'ssl'
+            instanceProtocol == undefined ||
+            instanceProtocol.toLowerCase() == 'ssl'
           )
         ) {
           return false;
         }
-      } else if (resolvedListener.protocol.toLowerCase() == 'https') {
+      } else if (protocol.toLowerCase() == 'https') {
         if (
           !(
-            resolvedListener.instanceProtocol == undefined ||
-            resolvedListener.instanceProtocol.toLowerCase() == 'https'
+            instanceProtocol == undefined ||
+            instanceProtocol.toLowerCase() == 'https'
           )
         ) {
           return false;

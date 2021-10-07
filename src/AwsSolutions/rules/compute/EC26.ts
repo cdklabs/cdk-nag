@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnVolume } from '@aws-cdk/aws-ec2';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * EBS volumes have encryption enabled
@@ -11,8 +12,8 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnVolume) {
-    const encryption = Stack.of(node).resolve(node.encrypted);
-    if (encryption == undefined || encryption == false) {
+    const encryption = resolveIfPrimitive(node, node.encrypted);
+    if (encryption !== true) {
       return false;
     }
   }

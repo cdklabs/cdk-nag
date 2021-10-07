@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * OpenSearch Service domains have Zone Awareness enabled
@@ -17,7 +18,8 @@ export default function (node: CfnResource): boolean {
     if (elasticsearchClusterConfig == undefined) {
       return false;
     }
-    const zoneAwarenessEnabled = Stack.of(node).resolve(
+    const zoneAwarenessEnabled = resolveIfPrimitive(
+      node,
       elasticsearchClusterConfig.zoneAwarenessEnabled
     );
     if (!zoneAwarenessEnabled) {

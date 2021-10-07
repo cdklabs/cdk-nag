@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CLBs use at least two AZs with the Cross-Zone Load Balancing feature enabled.
@@ -24,8 +25,8 @@ export default function (node: CfnResource): boolean {
     } else if (node.subnets.length < 2) {
       return false;
     }
-    const crossZone = Stack.of(node).resolve(node.crossZone);
-    if (crossZone != true) {
+    const crossZone = resolveIfPrimitive(node, node.crossZone);
+    if (crossZone !== true) {
       return false;
     }
   }

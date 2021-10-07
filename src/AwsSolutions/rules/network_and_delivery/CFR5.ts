@@ -8,6 +8,7 @@ import {
   SecurityPolicyProtocol,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CloudFront distributions do not use SSLv3 or TLSv1 for communication to the origin
@@ -24,10 +25,11 @@ export default function (node: CfnResource): boolean {
           const customOriginConfig = Stack.of(node).resolve(
             resolvedOrigin.customOriginConfig
           );
-          if (
-            customOriginConfig.originProtocolPolicy !=
-            OriginProtocolPolicy.HTTPS_ONLY
-          ) {
+          const originProtocolPolicy = resolveIfPrimitive(
+            node,
+            customOriginConfig.originProtocolPolicy
+          );
+          if (originProtocolPolicy != OriginProtocolPolicy.HTTPS_ONLY) {
             return false;
           }
           if (customOriginConfig.originSslProtocols == undefined) {
