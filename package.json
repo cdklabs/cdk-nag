@@ -227,6 +227,9 @@
       "rootDir": "src"
     }
   },
+  "resolutions": {
+    "ansi-regex": "^5.0.1"
+  },
   "prettier": {
     "singleQuote": true,
     "semi": true,
