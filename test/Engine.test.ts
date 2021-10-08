@@ -12,8 +12,19 @@ import {
   Vpc,
 } from '@aws-cdk/aws-ec2';
 import { CfnBucket } from '@aws-cdk/aws-s3';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { AwsSolutionsChecks, NagMessageLevel, NagPack } from '../src';
+import {
+  Aspects,
+  CfnParameter,
+  CfnResource,
+  IConstruct,
+  Stack,
+} from '@aws-cdk/core';
+import {
+  AwsSolutionsChecks,
+  NagMessageLevel,
+  NagPack,
+  resolveIfPrimitive,
+} from '../src';
 
 describe('Testing rule suppression with complete metadata', () => {
   test('Test single rule suppression', () => {
@@ -232,5 +243,21 @@ describe('Testing rule exception handling', () => {
         }),
       })
     );
+  });
+  test('Encoded Intrinsic function with resolveIfPrimitive error handling', () => {
+    const stack = new Stack();
+    const param = new CfnParameter(stack, 'pParam', {
+      type: 'Number',
+      default: 42,
+    });
+    const bucket = new CfnBucket(stack, 'rBucket', {
+      bucketName: param.valueAsString,
+    });
+    expect(() => {
+      resolveIfPrimitive(bucket, bucket.bucketName);
+    }).toThrowError('{"Ref":"pParam"}');
+    expect(() => {
+      resolveIfPrimitive(bucket, bucket.objectLockEnabled);
+    }).not.toThrowError();
   });
 });
