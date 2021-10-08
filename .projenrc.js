@@ -99,6 +99,9 @@ const project = new AwsCdkConstructLibrary({
   buildWorkflow: true,
   release: true,
 });
+project.package.addField('resolutions', {
+  'ansi-regex': '^5.0.1',
+});
 project.package.addField('prettier', {
   singleQuote: true,
   semi: true,
