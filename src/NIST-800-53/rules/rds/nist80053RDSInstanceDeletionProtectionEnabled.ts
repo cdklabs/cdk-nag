@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  *  RDS DB instances and Aurora DB clusters have Deletion Protection enabled - (Control ID: SC-5)
@@ -14,17 +15,23 @@ export default function (node: CfnResource): boolean {
     if (node.deletionProtection == undefined) {
       return false;
     }
-    const deletionProtection = Stack.of(node).resolve(node.deletionProtection);
-    if (deletionProtection === false) {
+    const deletionProtection = resolveIfPrimitive(
+      node,
+      node.deletionProtection
+    );
+    if (deletionProtection == false) {
       return false;
     }
     return true;
   } else if (node instanceof CfnDBInstance) {
-    const deletionProtection = Stack.of(node).resolve(node.deletionProtection);
+    const deletionProtection = resolveIfPrimitive(
+      node,
+      node.deletionProtection
+    );
+    const engine = resolveIfPrimitive(node, node.engine);
     if (
       (deletionProtection == false || deletionProtection == undefined) &&
-      (node.engine == undefined ||
-        !node.engine.toLowerCase().includes('aurora'))
+      (engine == undefined || !engine.toLowerCase().includes('aurora'))
     ) {
       return false;
     }

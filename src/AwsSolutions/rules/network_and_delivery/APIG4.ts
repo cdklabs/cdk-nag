@@ -4,7 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { AuthorizationType, CfnMethod } from '@aws-cdk/aws-apigateway';
 import { CfnRoute } from '@aws-cdk/aws-apigatewayv2';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * APIs implement authorization
@@ -12,9 +13,10 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnMethod || node instanceof CfnRoute) {
+    const authorizationType = resolveIfPrimitive(node, node.authorizationType);
     if (
-      node.authorizationType == undefined ||
-      Stack.of(node).resolve(node.authorizationType) == AuthorizationType.NONE
+      authorizationType == undefined ||
+      authorizationType == AuthorizationType.NONE
     ) {
       return false;
     }

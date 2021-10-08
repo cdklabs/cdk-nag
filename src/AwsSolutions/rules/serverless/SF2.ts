@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnStateMachine } from '@aws-cdk/aws-stepfunctions';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Step Function have X-Ray tracing enabled
@@ -17,7 +18,7 @@ export default function (node: CfnResource): boolean {
     if (tracingConfiguration == undefined) {
       return false;
     }
-    const enabled = Stack.of(node).resolve(tracingConfiguration.enabled);
+    const enabled = resolveIfPrimitive(node, tracingConfiguration.enabled);
     if (!enabled) {
       return false;
     }

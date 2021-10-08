@@ -4,7 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnLaunchConfiguration } from '@aws-cdk/aws-autoscaling';
 import { CfnInstance } from '@aws-cdk/aws-ec2';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * EC2 Instances have detailed monitoring enabled
@@ -12,13 +13,13 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnInstance) {
-    const monitoring = Stack.of(node).resolve(node.monitoring);
-    if (monitoring == undefined || monitoring == false) {
+    const monitoring = resolveIfPrimitive(node, node.monitoring);
+    if (monitoring !== true) {
       return false;
     }
   } else if (node instanceof CfnLaunchConfiguration) {
-    const monitoring = Stack.of(node).resolve(node.instanceMonitoring);
-    if (monitoring != undefined && monitoring == false) {
+    const monitoring = resolveIfPrimitive(node, node.instanceMonitoring);
+    if (monitoring === false) {
       return false;
     }
   }

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnReplicationGroup, CfnCacheCluster } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * ElastiCache clusters do not use the default endpoint ports
@@ -11,22 +12,25 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCacheCluster) {
-    if (node.port == undefined) {
+    const port = resolveIfPrimitive(node, node.port);
+    if (port == undefined) {
       return false;
     }
-    const engine = node.engine.toLowerCase();
-    if (engine == 'redis' && node.port == 6379) {
+    const engine = resolveIfPrimitive(node, node.engine);
+    if (engine.toLowerCase() == 'redis' && port == 6379) {
       return false;
-    } else if (engine == 'memcached' && node.port == 11211) {
+    } else if (engine.toLowerCase() == 'memcached' && port == 11211) {
       return false;
     }
   } else if (node instanceof CfnReplicationGroup) {
-    if (node.port == undefined) {
+    const port = resolveIfPrimitive(node, node.port);
+    if (port == undefined) {
       return false;
     }
+    const engine = resolveIfPrimitive(node, node.engine);
     if (
-      (node.engine == undefined || node.engine.toLowerCase() == 'redis') &&
-      node.port == 6379
+      (engine == undefined || engine.toLowerCase() == 'redis') &&
+      port == 6379
     ) {
       return false;
     }

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnTable } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * DynamoDB tables have Point-in-time Recovery enabled
@@ -15,24 +16,10 @@ export default function (node: CfnResource): boolean {
       return false;
     }
     const pitr = Stack.of(node).resolve(node.pointInTimeRecoverySpecification);
-    const enabled = Stack.of(node).resolve(pitr.pointInTimeRecoveryEnabled);
+    const enabled = resolveIfPrimitive(node, pitr.pointInTimeRecoveryEnabled);
     if (!enabled) {
       return false;
     }
   }
-  //  else if (node instanceof CfnGlobalTable) {
-  //   if (node.pointInTimeRecoverySpecification == undefined) {
-  //     return false;
-  //   }
-  //   const pitr = Tokenization.isResolvable(
-  //     node.pointInTimeRecoverySpecification,
-  //   )
-  //     ? Stack.of(node).resolve(node.pointInTimeRecoverySpecification)
-  //     : node.pointInTimeRecoverySpecification;
-  //   const enabled = Stack.of(node).resolve(pitr.pointInTimeRecoveryEnabled);
-  //   if (!enabled) {
-  //     return false;
-  //   }
-  // }
   return true;
 }

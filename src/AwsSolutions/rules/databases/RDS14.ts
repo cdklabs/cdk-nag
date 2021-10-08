@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBCluster } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * RDS Aurora serverless clusters have Log Exports enabled
@@ -11,9 +12,10 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBCluster) {
-    const engine = node.engine.toLowerCase();
+    const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
+    const backtrackWindow = resolveIfPrimitive(node, node.backtrackWindow);
     if (engine == 'aurora' || engine == 'aurora-mysql') {
-      if (node.backtrackWindow == undefined || node.backtrackWindow == 0) {
+      if (backtrackWindow == undefined || backtrackWindow == 0) {
         return false;
       }
     }

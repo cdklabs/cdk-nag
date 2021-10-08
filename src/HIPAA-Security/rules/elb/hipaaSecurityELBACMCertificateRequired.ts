@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CLBs use ACM-managed certificates - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))
@@ -18,7 +19,10 @@ export default function (node: CfnResource): boolean {
       //Iterate through listeners, checking if secured ACM certs are used
       for (const listener of listeners) {
         const resolvedListener = Stack.of(node).resolve(listener);
-        const listenerARN = resolvedListener.sslCertificateId;
+        const listenerARN = resolveIfPrimitive(
+          node,
+          resolvedListener.sslCertificateId
+        );
         //Use the ARN to check if this is an ACM managed cert
         if (listenerARN == undefined) {
           return false;

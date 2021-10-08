@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBCluster } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled
@@ -11,11 +12,13 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBCluster) {
+    const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
+    const engineMode = resolveIfPrimitive(node, node.engineMode).toLowerCase();
     if (
-      node.engineMode != undefined &&
-      node.engineMode.toLowerCase() == 'serverless' &&
-      (node.engine.toLowerCase() == 'aurora' ||
-        node.engine.toLowerCase() == 'aurora-mysql')
+      engineMode != undefined &&
+      engineMode.toLowerCase() == 'serverless' &&
+      (engine.toLowerCase() == 'aurora' ||
+        engine.toLowerCase() == 'aurora-mysql')
     ) {
       if (node.enableCloudwatchLogsExports == undefined) {
         return false;

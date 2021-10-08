@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * S3 Buckets prohibit public access through bucket level settings - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))
@@ -11,15 +12,33 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnBucket) {
-    const publicAccessBlockConfiguration = Stack.of(node).resolve(
+    if (node.publicAccessBlockConfiguration == undefined) {
+      return false;
+    }
+    const publicAccess = Stack.of(node).resolve(
       node.publicAccessBlockConfiguration
     );
+    const blockPublicAcls = resolveIfPrimitive(
+      node,
+      publicAccess.blockPublicAcls
+    );
+    const blockPublicPolicy = resolveIfPrimitive(
+      node,
+      publicAccess.blockPublicPolicy
+    );
+    const ignorePublicAcls = resolveIfPrimitive(
+      node,
+      publicAccess.ignorePublicAcls
+    );
+    const restrictPublicBuckets = resolveIfPrimitive(
+      node,
+      publicAccess.restrictPublicBuckets
+    );
     if (
-      publicAccessBlockConfiguration === undefined ||
-      publicAccessBlockConfiguration.blockPublicAcls !== true ||
-      publicAccessBlockConfiguration.blockPublicPolicy !== true ||
-      publicAccessBlockConfiguration.ignorePublicAcls !== true ||
-      publicAccessBlockConfiguration.restrictPublicBuckets !== true
+      blockPublicAcls !== true ||
+      blockPublicPolicy !== true ||
+      ignorePublicAcls !== true ||
+      restrictPublicBuckets !== true
     ) {
       return false;
     }

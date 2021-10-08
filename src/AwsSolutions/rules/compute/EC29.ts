@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnInstance } from '@aws-cdk/aws-ec2';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * EC2 Instances outside of an ASG have Termination Protection enabled
@@ -11,10 +12,11 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnInstance) {
-    const disableApiTermination = Stack.of(node).resolve(
+    const disableApiTermination = resolveIfPrimitive(
+      node,
       node.disableApiTermination
     );
-    if (disableApiTermination == undefined || disableApiTermination == false) {
+    if (disableApiTermination !== true) {
       return false;
     }
   }

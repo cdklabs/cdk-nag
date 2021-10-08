@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnApplicationV2 } from '@aws-cdk/aws-kinesisanalytics';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Kinesis Data Analytics Flink Applications have checkpointing enabled
@@ -30,8 +31,12 @@ export default function (node: CfnResource): boolean {
       if (checkpointConfiguration == undefined) {
         return false;
       }
-      if (checkpointConfiguration.configurationType == 'CUSTOM') {
-        const enabled = Stack.of(node).resolve(
+      if (
+        resolveIfPrimitive(node, checkpointConfiguration.configurationType) ==
+        'CUSTOM'
+      ) {
+        const enabled = resolveIfPrimitive(
+          node,
           checkpointConfiguration.checkpointingEnabled
         );
         if (!enabled) {

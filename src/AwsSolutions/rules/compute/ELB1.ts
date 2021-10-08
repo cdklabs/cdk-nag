@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CLBs are not used for incoming HTTP/HTTPS traffic. Use ALBs instead.
@@ -14,9 +15,10 @@ export default function (node: CfnResource): boolean {
     const listeners = Stack.of(node).resolve(node.listeners);
     for (const listener of listeners) {
       const resolvedListener = Stack.of(node).resolve(listener);
+      const protocol = resolveIfPrimitive(node, resolvedListener.protocol);
       if (
-        resolvedListener.protocol.toLowerCase() == 'http' ||
-        resolvedListener.protocol.toLowerCase() == 'https'
+        protocol.toLowerCase() == 'http' ||
+        protocol.toLowerCase() == 'https'
       ) {
         return false;
       }

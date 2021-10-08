@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * EC2 instances do not have public IPs - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))
@@ -17,11 +18,11 @@ export default function (node: CfnResource): boolean {
       //Iterate through network interfaces, checking if public IPs are enabled
       for (const networkInterface of networkInterfaces) {
         const resolvedInterface = Stack.of(node).resolve(networkInterface);
-        if (resolvedInterface.associatePublicIpAddress != undefined) {
-          if (resolvedInterface.associatePublicIpAddress == true) {
-            return false;
-          }
-        } else {
+        const associatePublicIpAddress = resolveIfPrimitive(
+          node,
+          resolvedInterface.associatePublicIpAddress
+        );
+        if (associatePublicIpAddress === true) {
           return false;
         }
       }

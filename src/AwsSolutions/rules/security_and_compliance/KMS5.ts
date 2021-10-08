@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnKey, KeySpec } from '@aws-cdk/aws-kms';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * KMS Symmetric keys have Key Rotation enabled
@@ -13,8 +14,11 @@ export default function (node: CfnResource): boolean {
   if (node instanceof CfnKey) {
     const keySpec = Stack.of(node).resolve(node.keySpec);
     if (keySpec == undefined || keySpec == KeySpec.SYMMETRIC_DEFAULT) {
-      const enableKeyRotation = Stack.of(node).resolve(node.enableKeyRotation);
-      if (enableKeyRotation == undefined || !enableKeyRotation) {
+      const enableKeyRotation = resolveIfPrimitive(
+        node,
+        node.enableKeyRotation
+      );
+      if (enableKeyRotation !== true) {
         return false;
       }
     }

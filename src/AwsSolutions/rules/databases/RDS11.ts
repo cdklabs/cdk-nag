@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  *  RDS DB instances and Aurora DB clusters do not use the default endpoint ports
@@ -14,12 +15,10 @@ export default function (node: CfnResource): boolean {
     if (node.port == undefined) {
       return false;
     }
-    const port = Stack.of(node).resolve(node.port);
-    const engine = node.engine.toLowerCase();
-    if (
-      node.engineMode == undefined ||
-      node.engineMode.toLowerCase() == 'provisioned'
-    ) {
+    const port = resolveIfPrimitive(node, node.port);
+    const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
+    const engineMode = resolveIfPrimitive(node, node.engineMode);
+    if (engineMode == undefined || engineMode.toLowerCase() == 'provisioned') {
       if (engine.includes('aurora') && port == 3306) {
         return false;
       }
@@ -36,8 +35,8 @@ export default function (node: CfnResource): boolean {
     if (node.engine == undefined) {
       return false;
     }
-    const port = Stack.of(node).resolve(node.port);
-    const engine = node.engine.toLowerCase();
+    const port = resolveIfPrimitive(node, node.port);
+    const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
     if (port == undefined) {
       if (!engine.includes('aurora')) {
         return false;

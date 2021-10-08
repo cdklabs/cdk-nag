@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnUserPool } from '@aws-cdk/aws-cognito';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Cognito user pools have password policies that minimally specify a password length of at least 8 characters, as well as requiring uppercase, numeric, and special characters
@@ -20,29 +21,35 @@ export default function (node: CfnResource): boolean {
       return false;
     }
 
-    const minimumLength = Stack.of(node).resolve(passwordPolicy.minimumLength);
+    const minimumLength = resolveIfPrimitive(
+      node,
+      passwordPolicy.minimumLength
+    );
     if (minimumLength == undefined || minimumLength < 8) {
       return false;
     }
 
-    const requireUppercase = Stack.of(node).resolve(
+    const requireUppercase = resolveIfPrimitive(
+      node,
       passwordPolicy.requireUppercase
     );
-    if (minimumLength == undefined || !requireUppercase) {
+    if (requireUppercase !== true) {
       return false;
     }
 
-    const requireNumbers = Stack.of(node).resolve(
+    const requireNumbers = resolveIfPrimitive(
+      node,
       passwordPolicy.requireNumbers
     );
-    if (requireNumbers == undefined || !requireNumbers) {
+    if (requireNumbers !== true) {
       return false;
     }
 
-    const requireSymbols = Stack.of(node).resolve(
+    const requireSymbols = resolveIfPrimitive(
+      node,
       passwordPolicy.requireSymbols
     );
-    if (requireSymbols == undefined || !requireSymbols) {
+    if (requireSymbols !== true) {
       return false;
     }
   }

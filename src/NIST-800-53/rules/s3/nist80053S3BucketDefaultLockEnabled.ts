@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * S3 Buckets have object lock enabled - (Control ID: SC-28)
@@ -11,14 +12,15 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnBucket) {
-    const objectLockEnabled = Stack.of(node).resolve(node.objectLockEnabled);
+    const objectLockEnabled = resolveIfPrimitive(node, node.objectLockEnabled);
     const objectLockConfiguration = Stack.of(node).resolve(
       node.objectLockConfiguration
     );
     if (
       objectLockEnabled !== true ||
       objectLockConfiguration === undefined ||
-      objectLockConfiguration.objectLockEnabled !== 'Enabled'
+      resolveIfPrimitive(node, objectLockConfiguration.objectLockEnabled) !==
+        'Enabled'
     ) {
       return false;
     }

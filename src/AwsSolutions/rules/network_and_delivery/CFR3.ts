@@ -7,6 +7,7 @@ import {
   CfnStreamingDistribution,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CloudFront distributions have access logging enabled
@@ -26,7 +27,7 @@ export default function (node: CfnResource): boolean {
       return false;
     }
     const logging = Stack.of(node).resolve(distributionConfig.logging);
-    const enabled = Stack.of(node).resolve(logging.enabled);
+    const enabled = resolveIfPrimitive(node, logging.enabled);
     if (!enabled) {
       return false;
     }

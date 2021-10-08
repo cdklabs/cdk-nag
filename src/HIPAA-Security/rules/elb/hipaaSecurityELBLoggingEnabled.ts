@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnLoadBalancer as CfnLoadBalancerV2 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * ELBs have access logs enabled - (Control ID: 164.312(b))
@@ -18,7 +19,7 @@ export default function (node: CfnResource): boolean {
     const accessLoggingPolicy = Stack.of(node).resolve(
       node.accessLoggingPolicy
     );
-    const enabled = Stack.of(node).resolve(accessLoggingPolicy.enabled);
+    const enabled = resolveIfPrimitive(node, accessLoggingPolicy.enabled);
 
     if (enabled == false) {
       return false;

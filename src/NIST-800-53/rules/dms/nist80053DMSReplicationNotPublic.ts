@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnReplicationInstance } from '@aws-cdk/aws-dms';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * DMS replication instances are not public - (Control ID: AC-4)
@@ -11,7 +12,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnReplicationInstance) {
-    const publicAccess = Stack.of(node).resolve(node.publiclyAccessible);
+    const publicAccess = resolveIfPrimitive(node, node.publiclyAccessible);
     if (publicAccess !== false) {
       return false;
     }

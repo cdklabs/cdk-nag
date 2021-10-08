@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Security Groups have descriptions
@@ -11,7 +12,7 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnSecurityGroup) {
-    const description = node.groupDescription;
+    const description = resolveIfPrimitive(node, node.groupDescription);
     if (description.length < 2) {
       return false;
     }

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDistribution } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * CloudFront distributions may require Geo restrictions
@@ -21,7 +22,11 @@ export default function (node: CfnResource): boolean {
       const geoRestrictions = Stack.of(node).resolve(
         restrictions.geoRestriction
       );
-      if (geoRestrictions.restrictionType == 'none') {
+      const restrictionType = resolveIfPrimitive(
+        node,
+        geoRestrictions.restrictionType
+      );
+      if (restrictionType == 'none') {
         return false;
       }
     }

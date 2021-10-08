@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 const EBS_OPTIMIZED_SUPPORTED = [
   'c1.xlarge',
@@ -33,7 +34,9 @@ const DEFAULT_TYPE = 'm1.small';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnInstance) {
-    const instanceType = node.instanceType ? node.instanceType : DEFAULT_TYPE;
+    const instanceType = node.instanceType
+      ? resolveIfPrimitive(node, node.instanceType)
+      : DEFAULT_TYPE;
     const ebsOptimized = Stack.of(node).resolve(node.ebsOptimized);
     if (
       EBS_OPTIMIZED_SUPPORTED.includes(instanceType) &&

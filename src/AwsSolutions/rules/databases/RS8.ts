@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-redshift';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Redshift clusters are not publicly accessible
@@ -11,7 +12,10 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCluster) {
-    const publiclyAccessible = Stack.of(node).resolve(node.publiclyAccessible);
+    const publiclyAccessible = resolveIfPrimitive(
+      node,
+      node.publiclyAccessible
+    );
     if (publiclyAccessible === true) {
       return false;
     }

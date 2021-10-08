@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * OpenSearch Service domains use dedicated master nodes
@@ -17,7 +18,8 @@ export default function (node: CfnResource): boolean {
     if (elasticsearchClusterConfig == undefined) {
       return false;
     }
-    const dedicatedMasterEnabled = Stack.of(node).resolve(
+    const dedicatedMasterEnabled = resolveIfPrimitive(
+      node,
       elasticsearchClusterConfig.dedicatedMasterEnabled
     );
     if (!dedicatedMasterEnabled) {

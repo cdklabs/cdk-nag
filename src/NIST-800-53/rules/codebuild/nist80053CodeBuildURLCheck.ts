@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: SA-3(a))
@@ -18,7 +19,7 @@ export default function (node: CfnResource): boolean {
     if (projectAuth == undefined) {
       return false;
     } else {
-      const projectAuthType = projectAuth.type;
+      const projectAuthType = resolveIfPrimitive(node, projectAuth.type);
       if (projectAuthType != 'OAUTH') {
         return false;
       }

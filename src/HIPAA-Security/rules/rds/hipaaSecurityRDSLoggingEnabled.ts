@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * RDS DB instances are configured to export all possible log types to CloudWatch - (Control IDs: 164.308(a)(3)(ii)(A), 164.308(a)(5)(ii)(C))
@@ -11,7 +12,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBInstance) {
-    const dbType = JSON.stringify(Stack.of(node).resolve(node.engine));
+    const dbType = JSON.stringify(resolveIfPrimitive(node, node.engine));
     const dbLogs = JSON.stringify(
       Stack.of(node).resolve(node.enableCloudwatchLogsExports)
     );

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-redshift';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Redshift clusters do not use the default endpoint port
@@ -11,7 +12,8 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnCluster) {
-    if (node.port == undefined || node.port == 5439) {
+    const port = resolveIfPrimitive(node, node.port);
+    if (port == undefined || port == 5439) {
       return false;
     }
   }
