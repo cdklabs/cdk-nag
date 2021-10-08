@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * S3 Buckets have versioningConfiguration enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B), 164.312(c)(1), 164.312(c)(2))
@@ -16,7 +17,7 @@ export default function (node: CfnResource): boolean {
     );
     if (
       versioningConfiguration === undefined ||
-      versioningConfiguration.status === 'Suspended'
+      resolveIfPrimitive(node, versioningConfiguration.status) === 'Suspended'
     ) {
       return false;
     }

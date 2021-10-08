@@ -4,7 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnFunction } from '@aws-cdk/aws-lambda';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Lambda functions are configured with function-level concurrent execution limits - (Control ID: 164.312(b))
@@ -12,7 +13,8 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnFunction) {
-    const reservedConcurrentExecutions = Stack.of(node).resolve(
+    const reservedConcurrentExecutions = resolveIfPrimitive(
+      node,
       node.reservedConcurrentExecutions
     );
     if (

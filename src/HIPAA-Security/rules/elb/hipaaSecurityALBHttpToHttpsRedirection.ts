@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnListener } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * ALB HTTP listeners are configured to redirect to HTTPS - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))
@@ -13,7 +14,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnListener) {
     let found = false;
-    const protocol = Stack.of(node).resolve(node.protocol);
+    const protocol = resolveIfPrimitive(node, node.protocol);
     const actions = Stack.of(node).resolve(node.defaultActions);
 
     if (protocol == 'HTTP') {

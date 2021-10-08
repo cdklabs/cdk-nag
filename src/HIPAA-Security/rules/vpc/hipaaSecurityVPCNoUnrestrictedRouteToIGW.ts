@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnRoute } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Route tables do not have unrestricted routes ('0.0.0.0/0' or '::/0') to IGWs - (Control ID: 164.312(e)(1))
@@ -13,15 +14,23 @@ import { CfnResource } from '@aws-cdk/core';
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnRoute) {
     if (node.gatewayId != undefined) {
+      const destinationCidrBlock = resolveIfPrimitive(
+        node,
+        node.destinationCidrBlock
+      );
+      const destinationIpv6CidrBlock = resolveIfPrimitive(
+        node,
+        node.destinationIpv6CidrBlock
+      );
       if (
-        node.destinationCidrBlock != undefined &&
-        node.destinationCidrBlock.includes('/0')
+        destinationCidrBlock != undefined &&
+        destinationCidrBlock.includes('/0')
       ) {
         return false;
       }
       if (
-        node.destinationIpv6CidrBlock != undefined &&
-        node.destinationIpv6CidrBlock.includes('/0')
+        destinationIpv6CidrBlock != undefined &&
+        destinationIpv6CidrBlock.includes('/0')
       ) {
         return false;
       }

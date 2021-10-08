@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnSecret } from '@aws-cdk/aws-secretsmanager';
 import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  * Secrets are encrypted with KMS Customer managed keys - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))
@@ -12,7 +13,8 @@ import { CfnResource } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnSecret) {
-    if (node.kmsKeyId === undefined || node.kmsKeyId === 'aws/secretsmanager') {
+    const kmsKeyId = resolveIfPrimitive(node, node.kmsKeyId);
+    if (kmsKeyId === undefined || kmsKeyId === 'aws/secretsmanager') {
       return false;
     }
   }
