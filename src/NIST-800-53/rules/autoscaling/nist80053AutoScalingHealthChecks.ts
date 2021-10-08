@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { CfnResource, Stack } from '@aws-cdk/core';
-
+import { resolveIfPrimitive } from '../../../common';
 /**
  * Auto Scaling groups which are associated with load balancers utilize ELB health checks - (Control IDs: SC-5)
  * @param node the CfnResource to check
@@ -20,7 +20,7 @@ export default function (node: CfnResource): boolean {
       (otherLBs != undefined && otherLBs.length > 0) ||
       (classicLBs != undefined && classicLBs.length > 0)
     ) {
-      const healthCheckType = Stack.of(node).resolve(node.healthCheckType);
+      const healthCheckType = resolveIfPrimitive(node, node.healthCheckType);
       //Do we use ELB health checks?
       if (healthCheckType != undefined) {
         if (healthCheckType != 'ELB') {

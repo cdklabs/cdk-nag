@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource } from '@aws-cdk/core';
+import { resolveIfPrimitive } from '../../../common';
 
 /**
  *  Non-Aurora RDS DB instances have multi-AZ support enabled - (Control IDs: CP-10, SC-5, SC-36)
@@ -11,11 +12,11 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnDBInstance) {
-    const multiAz = Stack.of(node).resolve(node.multiAz);
+    const multiAz = resolveIfPrimitive(node, node.multiAz);
+    const engine = resolveIfPrimitive(node, node.engine);
     if (
       !multiAz &&
-      (node.engine == undefined ||
-        !node.engine.toLowerCase().includes('aurora'))
+      (engine == undefined || !engine.toLowerCase().includes('aurora'))
     ) {
       return false;
     }
