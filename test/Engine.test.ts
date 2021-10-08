@@ -224,7 +224,6 @@ describe('Testing rule exception handling', () => {
         { id: 'CdkNagValidationFailure', reason: 'at least 10 characters' },
       ],
     });
-    console.log(typeof { Ref: 'pDbPort' });
     const messages = SynthUtils.synthesize(stack).messages;
     expect(messages).not.toContainEqual(
       expect.objectContaining({
