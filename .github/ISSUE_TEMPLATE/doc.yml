@@ -1,0 +1,19 @@
+name: Documentation Issue
+description: Issue in the reference documentation or developer guide
+title: "doc: short issue description"
+labels: [feature-request, documentation, needs-triage]
+body:
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Describe your issue?
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        This is a 📕 documentation issue
