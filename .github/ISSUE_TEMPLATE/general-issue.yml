@@ -1,0 +1,54 @@
+name: General Issue
+description: Create a new issue
+title: "short issue description"
+labels: [needs-triage, guidance]
+body:
+
+  - type: input
+    id: issue
+    attributes:
+      label: General Issue
+      description: |
+        For support questions, please first reference our [documentation](https://github.com/cdklabs/cdk-nag#usage).
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: The Question
+      description: |
+        Ask your question here. Include any details relevant. Make sure you are not falling prey to the [X/Y problem](http://xyproblem.info)!
+    validations:
+      required: true
+
+  - type: input
+    id: cdk-nag-version
+    attributes:
+      label: cdk-nag version
+      description: What version of cdk-nag are you using?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      multiple: true
+      options:
+        - Typescript
+        - Python
+        - .NET
+        - Java
+        - Go
+    validations:
+      required: true
+
+  - type: textarea
+    id: other
+    attributes:
+      label: Other information
+      description: |
+        e.g. detailed explanation, stacktraces, related issues, suggestions how to fix, links for us to have context, eg. associated pull-request, stackoverflow, slack, etc
+    validations:
+      required: false
