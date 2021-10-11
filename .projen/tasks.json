@@ -49,7 +49,7 @@
       "description": "compiles the test code",
       "steps": [
         {
-          "exec": "tsc --noEmit --project tsconfig.jest.json"
+          "exec": "tsc --noEmit --project tsconfig.dev.json"
         }
       ]
     },

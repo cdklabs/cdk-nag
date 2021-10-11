@@ -138,20 +138,18 @@ import {
 export class AwsSolutionsChecks extends NagPack {
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
-      // Get ignores metadata if it exists
-      const ignores = node.getMetadata('cdk_nag')?.rules_to_suppress;
-      this.checkCompute(node, ignores);
-      this.checkStorage(node, ignores);
-      this.checkDatabases(node, ignores);
-      this.checkNetworkDelivery(node, ignores);
-      this.checkManagementGovernance(node, ignores);
-      this.checkMachineLearning(node, ignores);
-      this.checkAnalytics(node, ignores);
-      this.checkSecurityCompliance(node, ignores);
-      this.checkServerless(node, ignores);
-      this.checkApplicationIntegration(node, ignores);
-      this.checkMediaServices(node, ignores);
-      this.checkDeveloperTools(node, ignores);
+      this.checkCompute(node);
+      this.checkStorage(node);
+      this.checkDatabases(node);
+      this.checkNetworkDelivery(node);
+      this.checkManagementGovernance(node);
+      this.checkMachineLearning(node);
+      this.checkAnalytics(node);
+      this.checkSecurityCompliance(node);
+      this.checkServerless(node);
+      this.checkApplicationIntegration(node);
+      this.checkMediaServices(node);
+      this.checkDeveloperTools(node);
     }
   }
 
@@ -160,7 +158,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkCompute(node: CfnResource, ignores: any): void {
+  private checkCompute(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-EC23',
       info: 'The Security Group allows for 0.0.0.0/0 or ::/0 inbound access.',
@@ -168,7 +166,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Large port ranges, when open, expose instances to unwanted attacks. More than that, they make traceability of vulnerabilities very difficult. For instance, your web servers may only require 80 and 443 ports to be open, but not all. One of the most common mistakes observed is when  all ports for 0.0.0.0/0 range are open in a rush to access the instance. EC2 instances must expose only to those ports enabled on the corresponding security group level.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEc23,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -178,7 +175,6 @@ export class AwsSolutionsChecks extends NagPack {
         "With EBS encryption, you aren't required to build, maintain, and secure your own key management infrastructure. EBS encryption uses KMS keys when creating encrypted volumes and snapshots. This helps protect data at rest.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEc26,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -188,7 +184,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Descriptions help simplify operations and remove any opportunities for operator errors.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEc27,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -198,7 +193,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Monitoring data helps make better decisions on architecting and managing compute resources.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEc28,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -208,7 +202,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Termination Protection safety feature enabled in order to protect the instances from being accidentally terminated.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEc29,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -218,7 +211,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Removing * principals in an ECR Repository helps protect against unauthorized access.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEcr1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -228,7 +220,6 @@ export class AwsSolutionsChecks extends NagPack {
         'CloudWatch Container Insights allow operators to gain a better perspective on how the cluster’s applications and microservices are performing.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEcs4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -238,7 +229,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Container logging allows operators to view and aggregate the logs from the container.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEcs7,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -248,7 +238,6 @@ export class AwsSolutionsChecks extends NagPack {
         'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of The CLB for enhanced incoming traffic distribution, better performance and lower costs.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -258,7 +247,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Access logs allow operators to to analyze traffic patterns and identify and troubleshoot security issues.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb2a,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -268,7 +256,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Access logs allow operators to to analyze traffic patterns and identify and troubleshoot security issues.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb2e,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -278,7 +265,6 @@ export class AwsSolutionsChecks extends NagPack {
         'With Connection Draining feature enabled, if an EC2 backend instance fails health checks The CLB will not send any new requests to the unhealthy instance. However, it will still allow existing (in-flight) requests to complete for the duration of the configured timeout.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -288,7 +274,6 @@ export class AwsSolutionsChecks extends NagPack {
         'CLBs can distribute the traffic evenly across all backend instances. To use Cross-Zone Load Balancing at optimal level, the system should maintain an equal EC2 capacity distribution in each of the AZs registered with the load balancer.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -298,7 +283,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The HTTPs or SSL protocols enable secure communication by encrypting the communication between the client and the load balancer.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb5,
-      ignores: ignores,
       node: node,
     });
   }
@@ -308,7 +292,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkStorage(node: CfnResource, ignores: any): void {
+  private checkStorage(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-S1',
       info: 'The S3 Bucket has server access logs disabled.',
@@ -316,7 +300,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The bucket should have server access logging enabled to provide detailed records for the requests that are made to the bucket.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsS1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -326,7 +309,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The bucket should have public access restricted and blocked to prevent unauthorized access.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsS2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -336,7 +318,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The bucket should minimally have SSE enabled to help protect data-at-rest.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsS3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -346,7 +327,6 @@ export class AwsSolutionsChecks extends NagPack {
         'By using an encrypted file system, data and metadata are automatically encrypted before being written to the file system. Similarly, as data and metadata are read, they are automatically decrypted before being presented to the application. These processes are handled transparently by EFS without requiring modification of applications.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEfs1,
-      ignores: ignores,
       node: node,
     });
   }
@@ -356,7 +336,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkDatabases(node: CfnResource, ignores: any): void {
+  private checkDatabases(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-RDS2',
       info: 'The RDS instance or Aurora DB cluster does not have storage encryption enabled.',
@@ -364,7 +344,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Storage encryption helps protect data-at-rest by encrypting the underlying storage, automated backups, read replicas, and snapshots for the database.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -374,7 +353,6 @@ export class AwsSolutionsChecks extends NagPack {
         "With IAM Database Authentication enabled, the system doesn't have to use a password when connecting to the MySQL/PostgreSQL database instances, instead it uses an authentication token.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds6,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -384,7 +362,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The deletion protection feature helps protect the database from being accidentally deleted.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds10,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -394,7 +371,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. MySQL/Aurora port 3306, SQL Server port 1433, PostgreSQL port 5432, etc).',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds11,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -403,7 +379,6 @@ export class AwsSolutionsChecks extends NagPack {
       explanation: 'Automated backups allow for point-in-time recovery.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds13,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -413,7 +388,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Backtrack helps order to rewind cluster tables to a specific time, without using backups.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds14,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -423,7 +397,6 @@ export class AwsSolutionsChecks extends NagPack {
         'This allows operators to use CloudWatch to view logs to help diagnose problems in the database.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds16,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -433,7 +406,6 @@ export class AwsSolutionsChecks extends NagPack {
         'DynamoDB continuous backups represent an additional layer of insurance against accidental loss of data on top of on-demand backups. The DynamoDB service can back up the data with per-second granularity and restore it to any single second from the time PITR was enabled up to the prior 35 days.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsDdb3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -443,7 +415,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Data in cache, configuration data and log files should be encrypted using Server-Side Encryption in order to protect from unauthorized access to the underlying storage.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDdb4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -453,7 +424,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Provisioning the cluster within a VPC allows for better flexibility and control over the cache clusters security, availability, traffic routing and more.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAec1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -463,7 +433,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Encryption in transit helps secure communications to the cluster. Encryption at rest helps protect data at rest from unauthorized access.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAec3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -473,7 +442,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The cluster should use a Multi-AZ deployment configuration for high availability.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAec4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -483,7 +451,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. Redis port 6379 and Memcached port 11211).',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAec5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -493,7 +460,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Redis authentication tokens enable Redis to require a token (password) before allowing clients to execute commands, thereby improving data security.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAec6,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -503,7 +469,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The cluster should use a Multi-AZ deployment configuration for high availability.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsN1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -513,7 +478,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The Neptune service regularly releases engine updates. Enabling Auto Minor Version Upgrade will allow the service to automatically apply these upgrades to DB Instances.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsN2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -523,7 +487,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The retention period represents the number of days to retain automated snapshots. A minimum retention period of 7 days is recommended but can be adjust to meet system requirements.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsN3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -533,7 +496,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsN4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -543,7 +505,6 @@ export class AwsSolutionsChecks extends NagPack {
         "With IAM Database Authentication enabled, the system doesn't have to use a password when connecting to the cluster.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsN5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -553,7 +514,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling the "require_ssl" parameter secures data-in-transit by encrypting the connection between the clients and the Redshift clusters.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -563,7 +523,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Provisioning the cluster within a VPC allows for better flexibility and control over the Redshift clusters security, availability, traffic routing and more.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -573,7 +532,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using a custom master user name instead of the default master user name (i.e. "awsuser") provides an additional layer of defense against non-targeted attacks.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -583,7 +541,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. Redshift port 5439).',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -593,7 +550,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Audit logging helps operators troubleshoot issues and ensure security.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -602,7 +558,6 @@ export class AwsSolutionsChecks extends NagPack {
       explanation: 'Encrypting data-at-rest protects data confidentiality.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs6,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -612,7 +567,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Disabling public accessibility helps minimize security risks.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs8,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -622,7 +576,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Version Upgrade must enabled to enable the cluster to automatically receive upgrades during the maintenance window.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs9,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -632,7 +585,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The retention period represents the number of days to retain automated snapshots. A positive retention period should be set to configure this feature.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs10,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -642,7 +594,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDoc1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -652,7 +603,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Port obfuscation (using a non default endpoint port) adds an additional layer of defense against non-targeted attacks (i.e. MongoDB port 27017).',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDoc2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -662,7 +612,6 @@ export class AwsSolutionsChecks extends NagPack {
         "Secrets Manager enables operators to replace hardcoded credentials in your code, including passwords, with an API call to Secrets Manager to retrieve the secret programmatically. This helps ensure the secret can't be compromised by someone examining system code, because the secret no longer exists in the code. Also, operators can configure Secrets Manager to automatically rotate the secret for you according to a specified schedule. This enables you to replace long-term secrets with short-term ones, significantly reducing the risk of compromise.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDoc3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -672,7 +621,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The retention period represents the number of days to retain automated snapshots. A minimum retention period of 7 days is recommended but can be adjust to meet system requirements.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDoc4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -682,7 +630,6 @@ export class AwsSolutionsChecks extends NagPack {
         'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDoc5,
-      ignores: ignores,
       node: node,
     });
   }
@@ -692,7 +639,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkNetworkDelivery(node: CfnResource, ignores: any): void {
+  private checkNetworkDelivery(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-VPC3',
       info: 'A Network ACL or Network ACL entry has been implemented.',
@@ -700,7 +647,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Network ACLs should be used sparingly for the following reasons: they can be complex to manage, they are stateless, every IP address must be explicitly opened in each (inbound/outbound) direction, and they affect a complete subnet. Use security groups when possible as they are stateful and easier to manage.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsVpc3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -710,7 +656,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Geo restriction may need to be enabled for the distribution in order to allow or deny a country in order to allow or restrict users in specific locations from accessing content.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsCfr1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -720,7 +665,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The Web Application Firewall can help protect against application-layer attacks that can compromise the security of the system or place unnecessary load on them.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsCfr2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -730,7 +674,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling access logs helps operators track all viewer requests for the content delivered through the Content Delivery Network.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCfr3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -740,7 +683,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Vulnerabilities have been and continue to be discovered in the deprecated SSL and TLS protocols. Using a security policy with minimum TLSv1.1 or TLSv1.2 and appropriate security ciphers for HTTPS helps protect viewer connections.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCfr5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -750,7 +692,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Origin access identities help with security by restricting any direct access to objects through S3 URLs.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCfr6,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -760,7 +701,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling access logs helps operators view who accessed an API and how the caller accessed the API.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsApig1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -770,7 +710,6 @@ export class AwsSolutionsChecks extends NagPack {
         'In most cases an API needs to have an authentication and authorization implementation strategy. This includes using such approaches as IAM, Cognito User Pools, Custom authorizer, etc.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsApig4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -780,7 +719,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling CloudWatch logs at the stage level helps operators to track and analyze execution behavior at the API stage level.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsApig6,
-      ignores: ignores,
       node: node,
     });
   }
@@ -790,7 +728,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkManagementGovernance(node: CfnResource, ignores: any): void {
+  private checkManagementGovernance(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-AS1',
       info: 'The Auto Scaling Group does not have a cooldown period.',
@@ -798,7 +736,6 @@ export class AwsSolutionsChecks extends NagPack {
         'A cooldown period temporarily suspends any scaling activities in order to allow the newly launched EC2 instance(s) some time to start handling the application traffic.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAs1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -808,7 +745,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The health check feature enables the service to detect whether its registered EC2 instances are healthy or not.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAs2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -818,7 +754,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Notifications on EC2 instance launch, launch error, termination, and termination errors allow operators to gain better insights into systems attributes such as activity and health.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAs3,
-      ignores: ignores,
       node: node,
     });
   }
@@ -828,7 +763,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkMachineLearning(node: CfnResource, ignores: any): void {
+  private checkMachineLearning(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-SM1',
       info: 'The SageMaker notebook instance is not provisioned inside a VPC.',
@@ -836,7 +771,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Provisioning the notebook instances inside a VPC enables the notebook to access VPC-only resources such as EFS file systems.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSm1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -846,7 +780,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Encrypting storage volumes helps protect SageMaker data-at-rest.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSm2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -856,7 +789,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Disabling public accessibility helps minimize security risks.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSm3,
-      ignores: ignores,
       node: node,
     });
   }
@@ -866,7 +798,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkAnalytics(node: CfnResource, ignores: any): void {
+  private checkAnalytics(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-ATH1',
       info: 'The Athena workgroup does not encrypt query results.',
@@ -874,7 +806,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Encrypting query results stored in S3 helps secure data to meet compliance requirements for data-at-rest encryption.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsAth1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -884,7 +815,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Uploading logs to S3 enables the system to keep the logging data for historical purposes or to track and analyze the clusters behavior.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEmr2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -894,7 +824,6 @@ export class AwsSolutionsChecks extends NagPack {
         'SSH clients can use an EC2 key pair to authenticate to cluster instances. Alternatively, with EMR release version 5.10.0 or later, solutions can configure Kerberos to authenticate users and SSH connections to the master node.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsEmr6,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -904,7 +833,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Checkpoints are backups of application state that KDA automatically creates periodically and uses to restore from faults.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsKda3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -914,7 +842,6 @@ export class AwsSolutionsChecks extends NagPack {
         "Data is encrypted before it's written to the Kinesis stream storage layer, and decrypted after it’s retrieved from storage. This allows the system to meet strict regulatory requirements and enhance the security of system data.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKds1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -924,7 +851,6 @@ export class AwsSolutionsChecks extends NagPack {
         'This allows the system to meet strict regulatory requirements and enhance the security of system data.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKdf1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -934,7 +860,6 @@ export class AwsSolutionsChecks extends NagPack {
         'TLS only communication secures data-in-transit by encrypting the connection between the clients and brokers.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsMsk2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -944,7 +869,6 @@ export class AwsSolutionsChecks extends NagPack {
         'TLS communication secures data-in-transit by encrypting the connection between brokers.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsMsk3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -954,7 +878,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Broker logs enable operators to troubleshoot Apache Kafka applications and to analyze their communications with the MSK cluster. The cluster can deliver logs to the following resources: a CloudWatch log group, an S3 bucket, a Kinesis Data Firehose delivery stream.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsMsk6,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -964,7 +887,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Provisioning the domain within a VPC enables better flexibility and control over the clusters access and security as this feature keeps all traffic between the VPC and OpenSearch domains within the AWS network instead of going over the public Internet.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -974,7 +896,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling the node-to-node encryption feature adds an extra layer of data protection on top of the existing ES security features such as HTTPS client to cluster encryption and data-at-rest encryption.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -984,7 +905,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using allowlisted IP addresses helps protect the domain against unauthorized access.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -994,7 +914,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using dedicated master nodes helps improve environmental stability by offloading all the management tasks from the data nodes.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1004,7 +923,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Restricting public access helps prevent unauthorized access and prevents any unsigned requests to be made to the resources.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1014,7 +932,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling cross-zone replication (Zone Awareness) increases the availability of the OpenSearch Service domain by allocating the nodes and replicate the data across two AZs in the same region in order to prevent data loss and minimize downtime in the event of node or AZ failure.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs7,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1024,7 +941,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Encrypting data-at-rest protects data confidentiality and prevents unauthorized users from accessing sensitive information.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs8,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1034,7 +950,6 @@ export class AwsSolutionsChecks extends NagPack {
         'These logs enable operators to gain full insight into the performance of these operations.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsOs9,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1044,7 +959,6 @@ export class AwsSolutionsChecks extends NagPack {
         'SSL secures communications to data sources, especially when using public networks. Using SSL with QuickSight requires the use of certificates signed by a publicly-recognized certificate authority.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsQs1,
-      ignores: ignores,
       node: node,
     });
   }
@@ -1054,7 +968,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkSecurityCompliance(node: CfnResource, ignores: any): void {
+  private checkSecurityCompliance(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-IAM4',
       info: 'The IAM user, role, or group uses AWS managed policies.',
@@ -1062,7 +976,6 @@ export class AwsSolutionsChecks extends NagPack {
         'An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsIam4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1072,7 +985,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsIam5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1082,7 +994,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Strong password policies increase system security by encouraging users to create reliable and secure passwords.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCog1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1092,7 +1003,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Multi-factor authentication (MFA) increases security for the application by adding another authentication method, and not relying solely on user name and password.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsCog2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1102,7 +1012,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Advanced security features enable the system to detect and act upon malicious sign-in attempts.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCog3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1112,7 +1021,6 @@ export class AwsSolutionsChecks extends NagPack {
         'In many cases applications do not warrant unauthenticated guest access applications. Metadata explaining the use case allows for transparency to operators.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCog7,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1122,7 +1030,6 @@ export class AwsSolutionsChecks extends NagPack {
         'KMS Key Rotation allow a system to set an yearly rotation schedule for a KMS key so when a AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKms5,
-      ignores: ignores,
       node: node,
     });
   }
@@ -1132,7 +1039,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkServerless(node: CfnResource, ignores: any): void {
+  private checkServerless(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-SF1',
       info: 'The Step Function does not log "ALL" events to CloudWatch Logs.',
@@ -1140,7 +1047,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Logging "ALL" events to CloudWatch logs help operators troubleshoot and audit systems.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSf1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1150,7 +1056,6 @@ export class AwsSolutionsChecks extends NagPack {
         'X-ray provides an end-to-end view of how an application is performing. This helps operators to discover performance issues, detect permission problems, and track requests made to and from other AWS services.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSf2,
-      ignores: ignores,
       node: node,
     });
   }
@@ -1160,7 +1065,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkApplicationIntegration(node: CfnResource, ignores: any): void {
+  private checkApplicationIntegration(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-SNS2',
       info: 'The SNS Topic does not have server-side encryption enabled.',
@@ -1168,7 +1073,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Server side encryption adds additional protection of sensitive data delivered as messages to subscribers.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSns2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1178,7 +1082,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Server side encryption adds additional protection of sensitive data delivered as messages to subscribers.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSqs2,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1188,7 +1091,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using a DLQ helps maintain the queue flow and avoid losing data by detecting and mitigating failures and service disruptions on time.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsSqs3,
-      ignores: ignores,
       node: node,
     });
   }
@@ -1198,7 +1100,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkMediaServices(node: CfnResource, ignores: any): void {
+  private checkMediaServices(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-MS1',
       info: 'The MediaStore container does not have container access logging enabled.',
@@ -1206,7 +1108,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The container should have access logging enabled to provide detailed records for the requests that are made to the container.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsMs1,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1216,7 +1117,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using a combination of MediaStore metrics and CloudWatch alarms helps operators gain better insights into container operations.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsMs4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1226,7 +1126,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using a container policy helps follow the standard security advice of granting least privilege, or granting only the permissions required to allow needed access to the container.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsMs7,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1236,7 +1135,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using a CORS policy helps follow the standard security advice of granting least privilege, or granting only the permissions required to allow needed access to the container.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsMs8,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1246,7 +1144,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Many use cases warrant the usage of lifecycle configurations to manage container objects during their lifetime.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsMs10,
-      ignores: ignores,
       node: node,
     });
   }
@@ -1256,7 +1153,7 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkDeveloperTools(node: CfnResource, ignores: any): void {
+  private checkDeveloperTools(node: CfnResource): void {
     this.applyRule({
       ruleId: 'AwsSolutions-CB3',
       info: 'The CodeBuild project has privileged mode enabled.',
@@ -1264,7 +1161,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Privileged grants elevated rights to the system, which introduces additional risk. Privileged mode should only be set to true only if the build project is used to build Docker images. Otherwise, a build that attempts to interact with the Docker daemon fails.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsCb3,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1274,7 +1170,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Using an AWS KMS key helps follow the standard security advice of granting least privilege to objects generated by the project.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCb4,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1284,7 +1179,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Explaining differences/edits to Docker images helps operators better understand system dependencies.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsCb5,
-      ignores: ignores,
       node: node,
     });
     this.applyRule({
@@ -1294,7 +1188,6 @@ export class AwsSolutionsChecks extends NagPack {
         'SSM adds an additional layer of protection as it allows operators to control access through IAM permissions and does not require opening inbound ports.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsC91,
-      ignores: ignores,
       node: node,
     });
   }

@@ -23,6 +23,20 @@ export interface NagPackProps {
 }
 
 /**
+ * Interface for creating a  rule suppression
+ */
+export interface NagPackSuppression {
+  /**
+   * The id of the rule to ignore
+   */
+  readonly id: string;
+  /**
+   * The reason to ignore the rule (minimum 10 characters)
+   */
+  readonly reason: string;
+}
+
+/**
  * Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method
  */
 
@@ -44,11 +58,7 @@ export interface IApplyRule {
    */
   level: NagMessageLevel;
   /**
-   * Ignores listed in cdkNag metadata
-   */
-  ignores: any;
-  /**
-   * The CfnResource to check
+   * Ignores listed in cdk-nag metadata
    */
   node: CfnResource;
   /**
@@ -67,6 +77,76 @@ export enum NagMessageLevel {
 }
 
 /**
+ * Add cdk-nag suppressions to the Stack
+ * @param stack the Stack to apply the suppression to
+ * @param suppressions a list of suppressions to apply to the stack
+ */
+export function addStackSuppressions(
+  stack: Stack,
+  suppressions: NagPackSuppression[]
+): void {
+  const newSuppressions = [];
+  for (const suppression of suppressions) {
+    if (suppression.reason.length >= 10) {
+      newSuppressions.push(suppression);
+    } else {
+      throw Error(
+        `${stack.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
+      );
+    }
+  }
+  const currentSuppressions = stack.templateOptions.metadata?.cdk_nag;
+  if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
+    newSuppressions.unshift(...currentSuppressions.rules_to_suppress);
+  }
+  if (stack.templateOptions.metadata) {
+    stack.templateOptions.metadata.cdk_nag = {
+      rules_to_suppress: newSuppressions,
+    };
+  } else {
+    stack.templateOptions.metadata = {
+      cdk_nag: { rules_to_suppress: newSuppressions },
+    };
+  }
+}
+
+/**
+ * Add cdk-nag suppressions to the Construct if it is a CfnResource
+ * @param construct the IConstruct to apply the suppression to
+ * @param suppressions a list of suppressions to apply to the resource
+ * @param applyToChildren apply the suppressions to this construct and all of its children if they exist (default:false)
+ */
+export function addResourceSuppressions(
+  construct: IConstruct,
+  suppressions: NagPackSuppression[],
+  applyToChildren: boolean = false
+): void {
+  const newSuppressions = [];
+  for (const suppression of suppressions) {
+    if (suppression.reason.length >= 10) {
+      newSuppressions.push(suppression);
+    } else {
+      throw Error(
+        `${construct.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
+      );
+    }
+  }
+  const constructs = applyToChildren ? construct.node.findAll() : [construct];
+  for (const child of constructs) {
+    if (child.node.defaultChild instanceof CfnResource) {
+      const resource = child.node.defaultChild as CfnResource;
+      const currentSuppressions = resource.getMetadata('cdk_nag');
+      if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
+        newSuppressions.unshift(...currentSuppressions.rules_to_suppress);
+      }
+      resource.addMetadata('cdk_nag', {
+        rules_to_suppress: newSuppressions,
+      });
+    }
+  }
+}
+
+/**
  * Base class for all rule sets
  */
 export abstract class NagPack implements IAspect {
@@ -82,10 +162,20 @@ export abstract class NagPack implements IAspect {
    */
   public abstract visit(node: IConstruct): void;
 
+  /**
+   * Create a rule to be used in the NagPack
+   * @param params The @IApplyRule interface with rule details
+   */
   public applyRule(params: IApplyRule): void {
+    let resourceIgnores = params.node.getMetadata('cdk_nag')?.rules_to_suppress;
+    resourceIgnores ??= [];
+    let stackIgnores = Stack.of(params.node).templateOptions.metadata?.cdk_nag
+      ?.rules_to_suppress;
+    stackIgnores ??= [];
+    const allIgnores = resourceIgnores.concat(stackIgnores);
     try {
       if (
-        !this.ignoreRule(params.ignores, params.ruleId) &&
+        !this.ignoreRule(allIgnores, params.ruleId) &&
         !params.rule(params.node)
       ) {
         const message = this.createMessage(
@@ -100,7 +190,7 @@ export abstract class NagPack implements IAspect {
         }
       }
     } catch (error) {
-      if (!this.ignoreRule(params.ignores, VALIDATION_FAILURE_ID)) {
+      if (!this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID)) {
         const information = `'${params.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,
@@ -118,29 +208,25 @@ export abstract class NagPack implements IAspect {
    * @param ruleId the id of the rule to ignore
    * @returns boolean
    */
-  private ignoreRule(ignores: any, ruleId: string): boolean {
-    try {
-      if (ignores) {
-        for (let ignore of ignores) {
-          if (
-            ignore.id &&
-            ignore.reason &&
-            JSON.stringify(ignore.reason).length >= 10
-          ) {
-            if (ignore.id == ruleId) {
-              return true;
-            }
-          } else {
-            throw Error();
-          }
+  private ignoreRule(ignores: NagPackSuppression[], ruleId: string): boolean {
+    for (let ignore of ignores) {
+      if (
+        ignore.id &&
+        ignore.reason &&
+        JSON.stringify(ignore.reason).length >= 10
+      ) {
+        if (ignore.id == ruleId) {
+          return true;
         }
+      } else {
+        throw Error(
+          `Improperly formatted cdk_nag rule suppression detected: ${JSON.stringify(
+            ignore
+          )}. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
+        );
       }
-      return false;
-    } catch {
-      throw Error(
-        'Improperly formatted cdk_nag rule suppression detected. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.'
-      );
     }
+    return false;
   }
 
   /**

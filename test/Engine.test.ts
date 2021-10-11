@@ -11,6 +11,7 @@ import {
   SecurityGroup,
   Vpc,
 } from '@aws-cdk/aws-ec2';
+import { PolicyStatement, User } from '@aws-cdk/aws-iam';
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import {
   Aspects,
@@ -20,13 +21,15 @@ import {
   Stack,
 } from '@aws-cdk/core';
 import {
+  addResourceSuppressions,
+  addStackSuppressions,
   AwsSolutionsChecks,
   NagMessageLevel,
   NagPack,
   resolveIfPrimitive,
 } from '../src';
 
-describe('Testing rule suppression with complete metadata', () => {
+describe('Testing rule suppression system', () => {
   test('Test single rule suppression', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
@@ -77,6 +80,36 @@ describe('Testing rule suppression with complete metadata', () => {
       1
     );
   });
+  test('Test addResourceSuppressions function does not overrite aws:cdk:path', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const testCfn = test.node.defaultChild as CfnSecurityGroup;
+    testCfn.cfnOptions.metadata = {
+      'aws:cdk:path': 'Default/test/SecurityGroup/Resource',
+    };
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+    const synthed = SynthUtils.synthesize(stack);
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          'aws:cdk:path': stringLike('*Resource*'),
+          cdk_nag: {
+            rules_to_suppress: [
+              { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+            ],
+          },
+        },
+      },
+      1
+    );
+  });
   test('Test multi rule suppression', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
@@ -109,21 +142,186 @@ describe('Testing rule suppression with complete metadata', () => {
       })
     );
   });
-  test('Throw error on improperly formatted suppression', () => {
+  test('Test supressions with addResourceSuppressions function on a CfnResource based Construct', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     const test = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
+      description: '',
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const testCfn = test.node.defaultChild as CfnSecurityGroup;
-    testCfn.addMetadata('cdk_nag', {
-      rules_to_suppress: [{}],
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-EC23:'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-EC27:'),
+        }),
+      })
+    );
+  });
+  test('addResourceSuppressions function does not override previous suppressions on a CfnResource based Construct', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+      description: '',
     });
-    expect(() => {
-      SynthUtils.synthesize(stack);
-    }).toThrowError(
-      'Improperly formatted cdk_nag rule suppression detected. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.'
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+    ]);
+    const synthed = SynthUtils.synthesize(stack);
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          cdk_nag: {
+            rules_to_suppress: [
+              { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+              { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+            ],
+          },
+        },
+      },
+      1
+    );
+  });
+  test('addStackSuppressions function does not override previous suppressions on a Stack', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    stack.templateOptions.metadata = { foo: 'bar' };
+    addStackSuppressions(stack, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+    addStackSuppressions(stack, [
+      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+    ]);
+    expect(stack.templateOptions.metadata).toMatchObject({
+      foo: 'bar',
+      cdk_nag: {
+        rules_to_suppress: [
+          { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+          { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+        ],
+      },
+    });
+  });
+  test('addResourceSuppressions function enabled for dependant constructs', () => {
+    const stack = new Stack();
+    const user = new User(stack, 'rUser');
+    user.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:PutObject'],
+        resources: ['*'],
+      })
+    );
+    addResourceSuppressions(
+      user,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'The user is allowed to put objects on all prefixes in the specified bucket.',
+        },
+      ],
+      true
+    );
+    const synthed = SynthUtils.synthesize(stack);
+    expect(synthed).toHaveResourceLike(
+      'AWS::IAM::Policy',
+      {
+        Metadata: {
+          cdk_nag: {
+            rules_to_suppress: [
+              {
+                id: 'AwsSolutions-IAM5',
+                reason:
+                  'The user is allowed to put objects on all prefixes in the specified bucket.',
+              },
+            ],
+          },
+        },
+      },
+      1
+    );
+  });
+  test('addResourceSuppressions function disabled for dependant constructs', () => {
+    const stack = new Stack();
+    const user = new User(stack, 'rUser');
+    user.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:PutObject'],
+        resources: ['*'],
+      })
+    );
+    addResourceSuppressions(user, [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'The user is allowed to put objects on all prefixes in the specified bucket.',
+      },
+    ]);
+    const synthed = SynthUtils.synthesize(stack);
+    expect(synthed).not.toHaveResourceLike(
+      'AWS::IAM::Policy',
+      {
+        Metadata: {
+          cdk_nag: {
+            rules_to_suppress: [
+              {
+                id: 'AwsSolutions-IAM5',
+                reason:
+                  'The user is allowed to put objects on all prefixes in the specified bucket.',
+              },
+            ],
+          },
+        },
+      },
+      1
+    );
+  });
+  test('combined supressions with addResourceSuppressions and addStackSuppressions', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    addStackSuppressions(stack, [
+      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+    ]);
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+      description: '',
+    });
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-EC23:'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-EC27:'),
+        }),
+      })
     );
   });
 });
@@ -195,7 +393,6 @@ describe('Testing rule exception handling', () => {
             }
             return false;
           },
-          ignores: node.getMetadata('cdk_nag')?.rules_to_suppress,
           node: node,
         });
       }
