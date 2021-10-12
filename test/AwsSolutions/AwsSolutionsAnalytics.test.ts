@@ -321,8 +321,8 @@ describe('AWS Analytics Learning Checks', () => {
       );
 
       const positive2 = new Stack();
-      Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
       const messages2 = SynthUtils.synthesize(positive2).messages;
@@ -388,7 +388,7 @@ describe('AWS Analytics Learning Checks', () => {
         version: ElasticsearchVersion.V7_10,
         nodeToNodeEncryption: true,
       });
-      new Domain(negative, 'rDomain', {
+      new Domain(negative, 'rDomain2', {
         version: EngineVersion.OPENSEARCH_1_0,
         nodeToNodeEncryption: true,
       });
@@ -430,15 +430,15 @@ describe('AWS Analytics Learning Checks', () => {
       );
 
       const positive2 = new Stack();
-      Aspects.of(positive).add(new AwsSolutionsChecks());
-      new CfnDomain(positive, 'rDomain', {
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new CfnDomain(positive2, 'rDomain', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
           statements: [
             new PolicyStatement({
               effect: Effect.ALLOW,
               principals: [
-                new Role(positive, 'rRole', {
+                new Role(positive2, 'rRole', {
                   assumedBy: new AccountRootPrincipal(),
                 }),
               ],
@@ -755,8 +755,8 @@ describe('AWS Analytics Learning Checks', () => {
       );
 
       const positive2 = new Stack();
-      Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
       const messages2 = SynthUtils.synthesize(positive2).messages;
@@ -852,7 +852,7 @@ describe('AWS Analytics Learning Checks', () => {
         version: ElasticsearchVersion.V7_10,
         logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
       });
-      new Domain(negative, 'rDomain', {
+      new Domain(negative, 'rDomain2', {
         version: EngineVersion.OPENSEARCH_1_0,
         logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
       });

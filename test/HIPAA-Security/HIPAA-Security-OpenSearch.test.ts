@@ -34,8 +34,8 @@ describe('Amazon OpenSearch', () => {
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    new CfnDomain(nonCompliant, 'rDomain', {});
+    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    new CfnDomain(nonCompliant2, 'rDomain', {});
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
       expect.objectContaining({
