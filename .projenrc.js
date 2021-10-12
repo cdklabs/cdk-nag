@@ -9,7 +9,7 @@ const {
 const project = new AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '1.110.0',
+  cdkVersion: '1.123.0',
   defaultReleaseBranch: 'main',
   name: 'cdk-nag',
   description:
@@ -57,6 +57,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-mediastore',
     '@aws-cdk/aws-msk',
     '@aws-cdk/aws-neptune',
+    '@aws-cdk/aws-opensearchservice',
     '@aws-cdk/aws-quicksight',
     '@aws-cdk/aws-rds',
     '@aws-cdk/aws-redshift',
