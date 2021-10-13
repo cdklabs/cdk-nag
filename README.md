@@ -60,46 +60,70 @@ Aspects.of(app).add(new AwsSolutionsChecks());
   <summary>Example 1) Default Construct</summary>
 
 ```typescript
-const test = new SecurityGroup(this, 'test', {
-  vpc: new Vpc(this, 'vpc'),
-});
-test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-const testCfn = test.node.defaultChild as CfnSecurityGroup;
-testCfn.addMetadata('cdk_nag', {
-  rules_to_suppress: [
-    { id: 'AwsSolutions-EC23', reason: 'at least 10 characters' },
-  ],
-});
+import { SecurityGroup, Vpc, Peer, Port } from '@aws-cdk/aws-ec2';
+import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { addResourceSuppressions } from 'cdk-nag';
+
+export class CdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    const test = new SecurityGroup(this, 'test', {
+      vpc: new Vpc(this, 'vpc'),
+    });
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+  }
+}
 ```
 
 </details>
 
 <details>
-  <summary>Example 2) Dependent Constructs</summary>
+  <summary>Example 2) Child Constructs</summary>
 
 ```typescript
-const user = new User(this, 'rUser');
-user.addToPolicy(
-  new PolicyStatement({
-    actions: ['s3:PutObject'],
-    resources: [new Bucket(this, 'rBucket').arnForObjects('*')],
-  })
-);
-const cfnUser = user.node.children;
-for (const child of cfnUser) {
-  const resource = child.node.defaultChild as CfnResource;
-  if (resource != undefined && resource.cfnResourceType == 'AWS::IAM::Policy') {
-    resource.addMetadata('cdk_nag', {
-      rules_to_suppress: [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason:
-            'The user is allowed to put objects on all prefixes in the specified bucket.',
-        },
-      ],
-    });
+import { User, PolicyStatement } from '@aws-cdk/aws-iam';
+import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { addResourceSuppressions } from 'cdk-nag';
+
+export class CdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    const user = new User(this, 'rUser');
+    user.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:PutObject'],
+        resources: ['arn:aws:s3:::bucket_name/*'],
+      })
+    );
+    // Enable adding suppressions to child constructs
+    addResourceSuppressions(
+      user,
+      [{ id: 'AwsSolutions-IAM5', reason: 'lorem ipsum' }],
+      true
+    );
   }
 }
+```
+
+</details>
+
+<details>
+  <summary>Example 3) Stack Level </summary>
+
+```typescript
+import { App, Aspects } from '@aws-cdk/core';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks, addStackSuppressions } from 'cdk-nag';
+
+const app = new App();
+const stack = new CdkTestStack(app, 'CdkNagDemo');
+Aspects.of(app).add(new AwsSolutionsChecks());
+addStackSuppressions(stack, [
+  { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+]);
 ```
 
 </details>
