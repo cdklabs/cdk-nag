@@ -168,10 +168,10 @@ export abstract class NagPack implements IAspect {
    */
   public applyRule(params: IApplyRule): void {
     let resourceIgnores = params.node.getMetadata('cdk_nag')?.rules_to_suppress;
-    resourceIgnores ??= [];
+    resourceIgnores = resourceIgnores ? resourceIgnores : [];
     let stackIgnores = Stack.of(params.node).templateOptions.metadata?.cdk_nag
       ?.rules_to_suppress;
-    stackIgnores ??= [];
+    stackIgnores = stackIgnores ? stackIgnores : [];
     const allIgnores = resourceIgnores.concat(stackIgnores);
     try {
       if (
