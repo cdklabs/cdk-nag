@@ -203,10 +203,10 @@ describe('Testing rule suppression system', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     stack.templateOptions.metadata = { foo: 'bar' };
-    addStackSuppressions(stack, [
+    NagSuppressions.addStackSuppressions(stack, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
-    addStackSuppressions(stack, [
+    NagSuppressions.addStackSuppressions(stack, [
       { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
     ]);
     expect(stack.templateOptions.metadata).toMatchObject({

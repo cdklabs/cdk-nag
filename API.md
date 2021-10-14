@@ -8,6 +8,7 @@ Name|Description
 [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
 [NIST80053Checks](#cdk-nag-nist80053checks)|Check for NIST 800-53 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule sets.
+[NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 
 
 **Structs**
@@ -15,7 +16,7 @@ Name|Description
 Name|Description
 ----|-----------
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule set.
-[NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a  rule suppression.
+[NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
 
 
 **Interfaces**
@@ -215,6 +216,56 @@ visit(node: IConstruct): void
 
 
 
+## class NagSuppressions  <a id="cdk-nag-nagsuppressions"></a>
+
+Helper class with methods to add cdk-nag suppressions to cdk resources.
+
+
+### Initializer
+
+
+
+
+```ts
+new NagSuppressions()
+```
+
+
+
+### Methods
+
+
+#### *static* addResourceSuppressions(construct, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressions"></a>
+
+Add cdk-nag suppressions to the Construct if it is a CfnResource.
+
+```ts
+static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
+```
+
+* **construct** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  the IConstruct to apply the suppression to.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the resource.
+* **applyToChildren** (<code>boolean</code>)  apply the suppressions to this construct and all of its children if they exist (default:false).
+
+
+
+
+#### *static* addStackSuppressions(stack, suppressions) <a id="cdk-nag-nagsuppressions-addstacksuppressions"></a>
+
+Add cdk-nag suppressions to the Stack.
+
+```ts
+static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression>): void
+```
+
+* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  the Stack to apply the suppression to.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the stack.
+
+
+
+
+
+
 ## interface IApplyRule  <a id="cdk-nag-iapplyrule"></a>
 
 
@@ -266,7 +317,7 @@ Name | Type | Description
 ## struct NagPackSuppression  <a id="cdk-nag-nagpacksuppression"></a>
 
 
-Interface for creating a  rule suppression.
+Interface for creating a rule suppression.
 
 
 
