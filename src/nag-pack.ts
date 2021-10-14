@@ -108,7 +108,7 @@ export abstract class NagPack implements IAspect {
             const message = this.createMessage(
               SUPPRESSION_ID,
               `${params.ruleId} was triggered but suppressed.`,
-              reason
+              `Provided reason: "${reason}"`
             );
             Annotations.of(params.node).addInfo(message);
           }
