@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnLaunchConfiguration } from '@aws-cdk/aws-autoscaling';
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * EC2 instances have detailed monitoring enabled - (Control IDs: CA-7(a)(b), SI-4(2), SI-4(a)(b)(c)).

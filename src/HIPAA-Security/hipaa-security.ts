@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnResource, IConstruct } from '@aws-cdk/core';
-import { NagPack, NagMessageLevel } from '../common';
+import { NagPack, NagMessageLevel } from '../nag-pack';
 import {
   hipaaSecurityAPIGWCacheEnabledAndEncrypted,
   hipaaSecurityAPIGWExecutionLoggingEnabled,

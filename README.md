@@ -62,7 +62,7 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from '@aws-cdk/aws-ec2';
 import { Construct, Stack, StackProps } from '@aws-cdk/core';
-import { addResourceSuppressions } from 'cdk-nag';
+import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -71,7 +71,7 @@ export class CdkTestStack extends Stack {
       vpc: new Vpc(this, 'vpc'),
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
   }
@@ -86,7 +86,7 @@ export class CdkTestStack extends Stack {
 ```typescript
 import { User, PolicyStatement } from '@aws-cdk/aws-iam';
 import { Construct, Stack, StackProps } from '@aws-cdk/core';
-import { addResourceSuppressions } from 'cdk-nag';
+import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -99,7 +99,7 @@ export class CdkTestStack extends Stack {
       })
     );
     // Enable adding suppressions to child constructs
-    addResourceSuppressions(
+    NagSuppressions.addResourceSuppressions(
       user,
       [{ id: 'AwsSolutions-IAM5', reason: 'lorem ipsum' }],
       true
@@ -114,16 +114,35 @@ export class CdkTestStack extends Stack {
   <summary>Example 3) Stack Level </summary>
 
 ```typescript
-import { App, Aspects } from '@aws-cdk/core';
-import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks, addStackSuppressions } from 'cdk-nag';
+import {
+  Instance,
+  InstanceType,
+  InstanceClass,
+  MachineImage,
+  Vpc,
+  CfnInstance,
+} from '@aws-cdk/aws-ec2';
+import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { NagSuppressions } from 'cdk-nag';
 
-const app = new App();
-const stack = new CdkTestStack(app, 'CdkNagDemo');
-Aspects.of(app).add(new AwsSolutionsChecks());
-addStackSuppressions(stack, [
-  { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-]);
+export class CdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    const instance = new Instance(this, 'rInstance', {
+      vpc: new Vpc(this, 'rVpc'),
+      instanceType: new InstanceType(InstanceClass.T3),
+      machineImage: MachineImage.latestAmazonLinux(),
+    });
+    const cfnIns = instance.node.defaultChild as CfnInstance;
+    cfnIns.addPropertyOverride('DisableApiTermination', true);
+    NagSuppressions.addResourceSuppressions(instance, [
+      {
+        id: 'AwsSolutions-EC29',
+        reason: 'Remediated through property override.',
+      },
+    ]);
+  }
+}
 ```
 
 </details>

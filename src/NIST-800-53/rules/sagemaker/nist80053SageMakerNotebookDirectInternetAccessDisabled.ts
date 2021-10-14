@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnNotebookInstance } from '@aws-cdk/aws-sagemaker';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * SageMaker notebook instances have direct internet access disabled - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))

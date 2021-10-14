@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnFunction } from '@aws-cdk/aws-lambda';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * Lambda functions are configured with function-level concurrent execution limits - (Control ID: 164.312(b))

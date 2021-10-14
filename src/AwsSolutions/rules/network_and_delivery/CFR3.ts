@@ -7,7 +7,7 @@ import {
   CfnStreamingDistribution,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * CloudFront distributions have access logging enabled

@@ -21,8 +21,7 @@ import {
   Stack,
 } from '@aws-cdk/core';
 import {
-  addResourceSuppressions,
-  addStackSuppressions,
+  NagSuppressions,
   AwsSolutionsChecks,
   NagMessageLevel,
   NagPack,
@@ -91,7 +90,7 @@ describe('Testing rule suppression system', () => {
     testCfn.cfnOptions.metadata = {
       'aws:cdk:path': 'Default/test/SecurityGroup/Resource',
     };
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
     const synthed = SynthUtils.synthesize(stack);
@@ -150,7 +149,7 @@ describe('Testing rule suppression system', () => {
       description: '',
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
       { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
     ]);
@@ -178,10 +177,10 @@ describe('Testing rule suppression system', () => {
       description: '',
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
     ]);
     const synthed = SynthUtils.synthesize(stack);
@@ -229,7 +228,7 @@ describe('Testing rule suppression system', () => {
         resources: ['*'],
       })
     );
-    addResourceSuppressions(
+    NagSuppressions.addResourceSuppressions(
       user,
       [
         {
@@ -268,7 +267,7 @@ describe('Testing rule suppression system', () => {
         resources: ['*'],
       })
     );
-    addResourceSuppressions(user, [
+    NagSuppressions.addResourceSuppressions(user, [
       {
         id: 'AwsSolutions-IAM5',
         reason:
@@ -297,7 +296,7 @@ describe('Testing rule suppression system', () => {
   test('combined supressions with addResourceSuppressions and addStackSuppressions', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
-    addStackSuppressions(stack, [
+    NagSuppressions.addStackSuppressions(stack, [
       { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
     ]);
     const test = new SecurityGroup(stack, 'rSg', {
@@ -305,7 +304,7 @@ describe('Testing rule suppression system', () => {
       description: '',
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
@@ -332,7 +331,7 @@ describe('Testing rule suppression system', () => {
       description: '',
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
@@ -352,7 +351,7 @@ describe('Testing rule suppression system', () => {
       description: '',
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    addResourceSuppressions(test, [
+    NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
