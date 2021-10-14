@@ -210,7 +210,17 @@ export abstract class NagPack implements IAspect {
         }
       }
     } catch (error) {
-      if (!this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID)) {
+      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID);
+      if (reason) {
+        if (this.logIgnores === true) {
+          const message = this.createMessage(
+            SUPPRESSION_ID,
+            `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
+            reason
+          );
+          Annotations.of(params.node).addInfo(message);
+        }
+      } else {
         const information = `'${params.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,

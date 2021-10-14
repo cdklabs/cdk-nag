@@ -481,6 +481,25 @@ describe('Testing rule exception handling', () => {
       })
     );
   });
+  test('Suppressed validation error is logged with suppressed rule logging', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new BadPack({ logIgnores: true }));
+    new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+      rules_to_suppress: [
+        { id: 'CdkNagValidationFailure', reason: 'at least 10 characters' },
+      ],
+    });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagSuppression: CdkNagValidationFailure'
+          ),
+        }),
+      })
+    );
+  });
   test('Encoded Intrinsic function with resolveIfPrimitive error handling', () => {
     const stack = new Stack();
     const param = new CfnParameter(stack, 'pParam', {
