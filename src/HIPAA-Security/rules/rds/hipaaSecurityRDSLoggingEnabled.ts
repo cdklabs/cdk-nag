@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * RDS DB instances are configured to export all possible log types to CloudWatch - (Control IDs: 164.308(a)(3)(ii)(A), 164.308(a)(5)(ii)(C))

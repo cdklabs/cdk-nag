@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnUserPool, Mfa } from '@aws-cdk/aws-cognito';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * Cognito user pools require MFA

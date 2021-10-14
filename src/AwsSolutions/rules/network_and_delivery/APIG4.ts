@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { AuthorizationType, CfnMethod } from '@aws-cdk/aws-apigateway';
 import { CfnRoute } from '@aws-cdk/aws-apigatewayv2';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * APIs implement authorization

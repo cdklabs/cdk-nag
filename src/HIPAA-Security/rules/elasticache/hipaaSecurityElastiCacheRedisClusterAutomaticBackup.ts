@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * ElastiCache Redis clusters retain automatic backups for at least 15 days - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B))

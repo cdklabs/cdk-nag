@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from '@aws-cdk/aws-redshift';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * Redshift clusters do not allow public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))

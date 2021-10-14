@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnKey, KeySpec } from '@aws-cdk/aws-kms';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * KMS Symmetric keys have Key Rotation enabled

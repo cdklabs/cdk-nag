@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * RDS DB instances have backup enabled - (Control IDs: CP-9(b), CP-10, SI-12)

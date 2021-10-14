@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1))

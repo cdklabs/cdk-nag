@@ -8,7 +8,7 @@ import {
   SecurityPolicyProtocol,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * CloudFront distributions do not use SSLv3 or TLSv1 for communication to the origin
