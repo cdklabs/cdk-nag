@@ -324,6 +324,46 @@ describe('Testing rule suppression system', () => {
       })
     );
   });
+  test('suppressed rule logging enabled', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks({ logIgnores: true }));
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+      description: '',
+    });
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('CdkNagSuppression: AwsSolutions-EC23'),
+        }),
+      })
+    );
+  });
+  test('suppressed rule logging disabled', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+      description: '',
+    });
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    addResourceSuppressions(test, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('CdkNagSuppression: AwsSolutions-EC23'),
+        }),
+      })
+    );
+  });
 });
 
 describe('Testing rule explanations', () => {
