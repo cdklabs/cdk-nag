@@ -43,8 +43,8 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 
 ```typescript
 import { App, Aspects } from 'monocdk';
+import { CdkTestStack } from '../lib/my-stack';
 import { AwsSolutionsChecks } from 'monocdk-nag';
-import { MyStack } from '../lib/my-stack';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
@@ -114,6 +114,28 @@ export class CdkTestStack extends Stack {
   <summary>Example 3) Stack Level </summary>
 
 ```typescript
+import { App, Aspects } from '@aws-cdk/core';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
+
+const app = new App();
+const stack = new CdkTestStack(app, 'CdkNagDemo');
+Aspects.of(app).add(new AwsSolutionsChecks());
+NagSuppressions.addStackSuppressions(stack, [
+  { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+]);
+```
+
+</details>
+
+## Rules and Property Overrides
+
+In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by the cdk_nag. In this case you should remediate the issue and suppress the issue like in the following example.
+
+<details>
+  <summary>Example) Property Overrides</summary>
+
+```typescript
 import {
   Instance,
   InstanceType,
@@ -143,33 +165,6 @@ export class CdkTestStack extends Stack {
     ]);
   }
 }
-```
-
-</details>
-
-## Rules and Property Overrides
-
-In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by the cdk_nag. In this case you should remediate the issue and suppress the issue like in the following example.
-
-<details>
-  <summary>Example) Property Overrides</summary>
-
-```typescript
-const instance = new Instance(stack, 'rInstance', {
-  vpc: new Vpc(stack, 'rVpc'),
-  instanceType: new InstanceType(InstanceClass.T3),
-  machineImage: MachineImage.latestAmazonLinux(),
-});
-const cfnIns = instance.node.defaultChild as CfnInstance;
-cfnIns.addPropertyOverride('DisableApiTermination', true);
-cfnIns.addMetadata('cdk_nag', {
-  rules_to_suppress: [
-    {
-      id: 'AwsSolutions-EC29',
-      reason: 'Remediated through property override ',
-    },
-  ],
-});
 ```
 
 </details>
