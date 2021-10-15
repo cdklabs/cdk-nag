@@ -6,8 +6,8 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { CfnWorkGroup } from '@aws-cdk/aws-athena';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import {
-  CfnDomain,
-  Domain,
+  CfnDomain as LegacyCfnDomain,
+  Domain as LegacyDomain,
   ElasticsearchVersion,
 } from '@aws-cdk/aws-elasticsearch';
 import { CfnCluster } from '@aws-cdk/aws-emr';
@@ -29,6 +29,11 @@ import {
   KafkaVersion,
   ClientBrokerEncryption,
 } from '@aws-cdk/aws-msk';
+import {
+  CfnDomain,
+  Domain,
+  EngineVersion,
+} from '@aws-cdk/aws-opensearchservice';
 import { CfnDataSource } from '@aws-cdk/aws-quicksight';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
@@ -303,7 +308,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs1: OpenSearch Service domains are provisioned inside a VPC', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
       const messages = SynthUtils.synthesize(positive).messages;
@@ -315,14 +320,32 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
 
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS1:'),
+          }),
+        })
+      );
+
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new Domain(negative, 'rDomain', {
+      new LegacyDomain(negative, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         vpc: new Vpc(negative, 'rVpc'),
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      new Domain(negative, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        vpc: new Vpc(negative, 'rVpc2'),
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS1:'),
@@ -333,7 +356,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs2: OpenSearch Service domains have node-to-node encryption enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
       const messages = SynthUtils.synthesize(positive).messages;
@@ -345,14 +368,32 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
 
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS2:'),
+          }),
+        })
+      );
+
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new Domain(negative, 'rDomain', {
+      new LegacyDomain(negative, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         nodeToNodeEncryption: true,
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      new Domain(negative, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        nodeToNodeEncryption: true,
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS2:'),
@@ -363,7 +404,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs3: OpenSearch Service domains only grant access via allowlisted IP addresses', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new CfnDomain(positive, 'rDomain', {
+      new LegacyCfnDomain(positive, 'rDomain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -388,9 +429,36 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
 
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new CfnDomain(positive2, 'rDomain', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(positive2, 'rRole', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS3:'),
+          }),
+        })
+      );
+
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new CfnDomain(negative, 'rDomain', {
+      new LegacyCfnDomain(negative, 'rDomain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -411,8 +479,29 @@ describe('AWS Analytics Learning Checks', () => {
           ],
         }).toJSON(),
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      new CfnDomain(negative, 'rDomain2', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(negative, 'rRole2', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+              conditions: {
+                IpAddress: {
+                  'aws:sourceIp': ['42.42.42.42'],
+                },
+              },
+            }),
+          ],
+        }).toJSON(),
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS3:'),
@@ -423,7 +512,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs4: OpenSearch Service domains use dedicated master nodes', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
       const messages = SynthUtils.synthesize(positive).messages;
@@ -435,14 +524,32 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
 
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS4:'),
+          }),
+        })
+      );
+
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new Domain(negative, 'rDomain', {
+      new LegacyDomain(negative, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         capacity: { masterNodes: 42 },
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      new Domain(negative, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        capacity: { masterNodes: 42 },
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS4:'),
@@ -453,7 +560,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs5: OpenSearch Service domains do not allow for unsigned requests or anonymous access', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         accessPolicies: [],
       });
@@ -468,7 +575,22 @@ describe('AWS Analytics Learning Checks', () => {
 
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
-      new CfnDomain(positive2, 'rDomain', {
+      new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        accessPolicies: [],
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS5:'),
+          }),
+        })
+      );
+
+      const positive3 = new Stack();
+      Aspects.of(positive3).add(new AwsSolutionsChecks());
+      new LegacyCfnDomain(positive3, 'rDomain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -481,8 +603,32 @@ describe('AWS Analytics Learning Checks', () => {
         }).toJSON(),
       });
 
-      const messages2 = SynthUtils.synthesize(positive2).messages;
-      expect(messages2).toContainEqual(
+      const messages3 = SynthUtils.synthesize(positive3).messages;
+      expect(messages3).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS5:'),
+          }),
+        })
+      );
+
+      const positive4 = new Stack();
+      Aspects.of(positive4).add(new AwsSolutionsChecks());
+      new CfnDomain(positive4, 'rDomain', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [new AnyPrincipal()],
+              resources: ['*'],
+            }),
+          ],
+        }).toJSON(),
+      });
+
+      const messages4 = SynthUtils.synthesize(positive4).messages;
+      expect(messages4).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS5:'),
@@ -492,7 +638,7 @@ describe('AWS Analytics Learning Checks', () => {
 
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new CfnDomain(negative, 'rDomain', {
+      new LegacyCfnDomain(negative, 'rDomain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -513,8 +659,29 @@ describe('AWS Analytics Learning Checks', () => {
           ],
         }).toJSON(),
       });
-      const messages3 = SynthUtils.synthesize(negative).messages;
-      expect(messages3).not.toContainEqual(
+      new CfnDomain(negative, 'rDomain2', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(negative, 'rRole2', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+              conditions: {
+                IpAddress: {
+                  'aws:sourceIp': ['42.42.42.42'],
+                },
+              },
+            }),
+          ],
+        }).toJSON(),
+      });
+      const messages5 = SynthUtils.synthesize(negative).messages;
+      expect(messages5).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS5:'),
@@ -525,7 +692,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs7: OpenSearch Service domains have Zone Awareness enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
       const messages = SynthUtils.synthesize(positive).messages;
@@ -537,15 +704,34 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
 
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS7:'),
+          }),
+        })
+      );
+
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new Domain(negative, 'rDomain', {
+      new LegacyDomain(negative, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         capacity: { masterNodes: 42 },
         zoneAwareness: { enabled: true },
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      new Domain(negative, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        capacity: { masterNodes: 42 },
+        zoneAwareness: { enabled: true },
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS7:'),
@@ -556,7 +742,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs8: OpenSearch Service domains have encryption at rest enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
       const messages = SynthUtils.synthesize(positive).messages;
@@ -568,14 +754,32 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
 
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      const messages2 = SynthUtils.synthesize(positive2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS8:'),
+          }),
+        })
+      );
+
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new Domain(negative, 'rDomain', {
+      new LegacyDomain(negative, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         encryptionAtRest: { enabled: true },
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      new Domain(negative, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        encryptionAtRest: { enabled: true },
+      });
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS8:'),
@@ -586,7 +790,7 @@ describe('AWS Analytics Learning Checks', () => {
     test('awsSolutionsOs9: OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
-      new Domain(positive, 'rDomain', {
+      new LegacyDomain(positive, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
       const messages = SynthUtils.synthesize(positive).messages;
@@ -601,11 +805,40 @@ describe('AWS Analytics Learning Checks', () => {
       const positive2 = new Stack();
       Aspects.of(positive2).add(new AwsSolutionsChecks());
       new Domain(positive2, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      const messages2 = SynthUtils.synthesize(positive).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS9:'),
+          }),
+        })
+      );
+
+      const positive3 = new Stack();
+      Aspects.of(positive3).add(new AwsSolutionsChecks());
+      new LegacyDomain(positive3, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         logging: { slowIndexLogEnabled: true },
       });
-      const messages2 = SynthUtils.synthesize(positive2).messages;
-      expect(messages2).toContainEqual(
+      const messages3 = SynthUtils.synthesize(positive3).messages;
+      expect(messages3).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-OS9:'),
+          }),
+        })
+      );
+
+      const positive4 = new Stack();
+      Aspects.of(positive4).add(new AwsSolutionsChecks());
+      new Domain(positive4, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        logging: { slowIndexLogEnabled: true },
+      });
+      const messages4 = SynthUtils.synthesize(positive4).messages;
+      expect(messages4).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS9:'),
@@ -615,12 +848,16 @@ describe('AWS Analytics Learning Checks', () => {
 
       const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
-      new Domain(negative, 'rDomain', {
+      new LegacyDomain(negative, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
         logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
       });
-      const messages3 = SynthUtils.synthesize(negative).messages;
-      expect(messages3).not.toContainEqual(
+      new Domain(negative, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+      });
+      const messages5 = SynthUtils.synthesize(negative).messages;
+      expect(messages5).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-OS9:'),
