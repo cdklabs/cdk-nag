@@ -6,7 +6,7 @@ Name|Description
 ----|-----------
 [AwsSolutionsChecks](#cdk-nag-awssolutionschecks)|Check Best practices based on AWS Solutions Security Matrix.
 [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
-[NIST80053Checks](#cdk-nag-nist80053checks)|Check for NIST 800-53 compliance.
+[NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule sets.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 
@@ -114,11 +114,11 @@ visit(node: IConstruct): void
 
 
 
-## class NIST80053Checks  <a id="cdk-nag-nist80053checks"></a>
+## class NIST80053R4Checks  <a id="cdk-nag-nist80053r4checks"></a>
 
-Check for NIST 800-53 compliance.
+Check for NIST 800-53 rev 4 compliance.
 
-Based on the NIST 800-53 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
+Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
 
 __Implements__: [IAspect](#aws-cdk-core-iaspect)
 __Extends__: [NagPack](#cdk-nag-nagpack)
@@ -129,7 +129,7 @@ __Extends__: [NagPack](#cdk-nag-nagpack)
 
 
 ```ts
-new NIST80053Checks(props?: NagPackProps)
+new NIST80053R4Checks(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
@@ -140,7 +140,7 @@ new NIST80053Checks(props?: NagPackProps)
 ### Methods
 
 
-#### visit(node) <a id="cdk-nag-nist80053checks-visit"></a>
+#### visit(node) <a id="cdk-nag-nist80053r4checks-visit"></a>
 
 All aspects can visit an IConstruct.
 
@@ -160,7 +160,7 @@ visit(node: IConstruct): void
 Base class for all rule sets.
 
 __Implements__: [IAspect](#aws-cdk-core-iaspect)
-__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053Checks](#cdk-nag-nist80053checks)
+__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks)
 
 ### Initializer
 
