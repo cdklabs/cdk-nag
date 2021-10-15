@@ -87,8 +87,8 @@ import {
 import { nist80053r4SNSEncryptedKMS } from './rules/sns';
 
 /**
- * Check for NIST 800-53 Rev 4 compliance.
- * Based on the NIST 800-53 Rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
+ * Check for NIST 800-53 rev 4 compliance.
+ * Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
  */
 export class NIST80053R4Checks extends NagPack {
   public visit(node: IConstruct): void {

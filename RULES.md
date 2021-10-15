@@ -272,7 +272,7 @@ Unimplemented rules from the AWS HIPAA Security Conformance Pack.
 | [vpc-vpn-2-tunnels-up](https://docs.aws.amazon.com/config/latest/developerguide/vpc-vpn-2-tunnels-up.html)                                                                       | Site-to-Site VPN tunnels have an UP status                                                                                                             | 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)                                                                                                                          |
 | [wafv2-logging-enabled](https://docs.aws.amazon.com/config/latest/developerguide/wafv2-logging-enabled.html)                                                                     | Logging is enabled on AWS Web Application Firewall (WAFV2) regional and global web access control lists (ACLs).                                        | 164.312(b)                                                                                                                                                      |
 
-## NIST 800-53 Rev 4
+## NIST 800-53 rev 4
 
 The [Operational Best Practices for NIST 800-53 rev 4](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html) Conformance Pack offers a collection of AWS Config Rules that enable customers to align to a subset of the NIST 800-53 standards. The NIST 800-53 Rules Pack implements many of the checks within the conformance pack.
 
