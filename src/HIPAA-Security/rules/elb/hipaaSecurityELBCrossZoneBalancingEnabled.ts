@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * CLBs use at least two AZs with the Cross-Zone Load Balancing feature enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))

@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * RDS DB instances and Aurora DB clusters have storage encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))

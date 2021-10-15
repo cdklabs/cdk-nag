@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * RDS DB instances are not publicly accessible - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnDomain as LegacyCfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
  * OpenSearch Service domains use dedicated master nodes

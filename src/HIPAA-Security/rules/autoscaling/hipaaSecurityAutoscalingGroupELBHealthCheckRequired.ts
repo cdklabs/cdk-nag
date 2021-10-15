@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../common';
+import { resolveIfPrimitive } from '../../../nag-pack';
 /**
  * Auto Scaling groups which are associated with load balancers utilize ELB health checks - (Control ID: 164.312(b))
  * @param node the CfnResource to check

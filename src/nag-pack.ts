@@ -9,23 +9,29 @@ import {
   CfnResource,
   Stack,
 } from '@aws-cdk/core';
+import { NagPackSuppression } from './nag-suppressions';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
+const SUPPRESSION_ID = 'CdkNagSuppression';
 
 /**
  * Interface for creating a Nag rule set
  */
 export interface NagPackProps {
   /**
-   * Whether or not to enable extended explanatory descriptions on warning and error messages.
+   * Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).
    */
   readonly verbose?: boolean;
+
+  /**
+   * Whether or not to log triggered rules that have been suppressed as informational messages (default: false).
+   */
+  readonly logIgnores?: boolean;
 }
 
 /**
  * Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method
  */
-
 export interface IApplyRule {
   /**
    * The id of the rule to ignore
@@ -44,11 +50,7 @@ export interface IApplyRule {
    */
   level: NagMessageLevel;
   /**
-   * Ignores listed in cdkNag metadata
-   */
-  ignores: any;
-  /**
-   * The CfnResource to check
+   * Ignores listed in cdk-nag metadata
    */
   node: CfnResource;
   /**
@@ -71,10 +73,15 @@ export enum NagMessageLevel {
  */
 export abstract class NagPack implements IAspect {
   protected verbose: boolean;
+  protected logIgnores: boolean;
 
   constructor(props?: NagPackProps) {
     this.verbose =
       props == undefined || props.verbose == undefined ? false : props.verbose;
+    this.logIgnores =
+      props == undefined || props.logIgnores == undefined
+        ? false
+        : props.logIgnores;
   }
 
   /**
@@ -82,25 +89,54 @@ export abstract class NagPack implements IAspect {
    */
   public abstract visit(node: IConstruct): void;
 
+  /**
+   * Create a rule to be used in the NagPack
+   * @param params The @IApplyRule interface with rule details
+   */
   public applyRule(params: IApplyRule): void {
+    let resourceIgnores = params.node.getMetadata('cdk_nag')?.rules_to_suppress;
+    resourceIgnores = resourceIgnores ? resourceIgnores : [];
+    let stackIgnores = Stack.of(params.node).templateOptions.metadata?.cdk_nag
+      ?.rules_to_suppress;
+    stackIgnores = stackIgnores ? stackIgnores : [];
+    const allIgnores = resourceIgnores.concat(stackIgnores);
     try {
-      if (
-        !this.ignoreRule(params.ignores, params.ruleId) &&
-        !params.rule(params.node)
-      ) {
-        const message = this.createMessage(
-          params.ruleId,
-          params.info,
-          params.explanation
-        );
-        if (params.level == NagMessageLevel.ERROR) {
-          Annotations.of(params.node).addError(message);
-        } else if (params.level == NagMessageLevel.WARN) {
-          Annotations.of(params.node).addWarning(message);
+      if (!params.rule(params.node)) {
+        const reason = this.ignoreRule(allIgnores, params.ruleId);
+        if (reason) {
+          if (this.logIgnores === true) {
+            const message = this.createMessage(
+              SUPPRESSION_ID,
+              `${params.ruleId} was triggered but suppressed.`,
+              `Provided reason: "${reason}"`
+            );
+            Annotations.of(params.node).addInfo(message);
+          }
+        } else {
+          const message = this.createMessage(
+            params.ruleId,
+            params.info,
+            params.explanation
+          );
+          if (params.level == NagMessageLevel.ERROR) {
+            Annotations.of(params.node).addError(message);
+          } else if (params.level == NagMessageLevel.WARN) {
+            Annotations.of(params.node).addWarning(message);
+          }
         }
       }
     } catch (error) {
-      if (!this.ignoreRule(params.ignores, VALIDATION_FAILURE_ID)) {
+      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID);
+      if (reason) {
+        if (this.logIgnores === true) {
+          const message = this.createMessage(
+            SUPPRESSION_ID,
+            `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
+            reason
+          );
+          Annotations.of(params.node).addInfo(message);
+        }
+      } else {
         const information = `'${params.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,
@@ -116,31 +152,27 @@ export abstract class NagPack implements IAspect {
    * Check whether a specific rule should be ignored
    * @param ignores ignores listed in cdkNag metadata
    * @param ruleId the id of the rule to ignore
-   * @returns boolean
+   * @returns the reason the rule was ignored, or an empty string
    */
-  private ignoreRule(ignores: any, ruleId: string): boolean {
-    try {
-      if (ignores) {
-        for (let ignore of ignores) {
-          if (
-            ignore.id &&
-            ignore.reason &&
-            JSON.stringify(ignore.reason).length >= 10
-          ) {
-            if (ignore.id == ruleId) {
-              return true;
-            }
-          } else {
-            throw Error();
-          }
+  private ignoreRule(ignores: NagPackSuppression[], ruleId: string): string {
+    for (let ignore of ignores) {
+      if (
+        ignore.id &&
+        ignore.reason &&
+        JSON.stringify(ignore.reason).length >= 10
+      ) {
+        if (ignore.id == ruleId) {
+          return ignore.reason;
         }
+      } else {
+        throw Error(
+          `Improperly formatted cdk_nag rule suppression detected: ${JSON.stringify(
+            ignore
+          )}. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
+        );
       }
-      return false;
-    } catch {
-      throw Error(
-        'Improperly formatted cdk_nag rule suppression detected. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.'
-      );
     }
+    return '';
   }
 
   /**
