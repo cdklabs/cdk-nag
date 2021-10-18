@@ -833,7 +833,7 @@ export class HIPAASecurityChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'HIPAA.Security-RedshiftClusterMaintenanceSettings',
-      info: 'The Redshift cluster has version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: 164.308(a)(5)(ii)(A), 164.308(a)(7)(ii)(A)).',
+      info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: 164.308(a)(5)(ii)(A), 164.308(a)(7)(ii)(A)).',
       explanation:
         'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.',
       level: NagMessageLevel.ERROR,
