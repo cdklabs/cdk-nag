@@ -21,6 +21,7 @@ See [RULES](./RULES.md) for more information on all the available packs.
 1. [AWS Solutions](./RULES.md#awssolutions)
 2. [HIPAA Security](./RULES.md#hipaa-security)
 3. [NIST 800-53 rev 4](./RULES.md#nist-800-53-rev-4)
+4. [NIST 800-53 rev 5](./RULES.md#nist-800-53-rev-5)
 
 ## Usage
 
