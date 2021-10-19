@@ -49,7 +49,6 @@ import {
   nist80053r5ELBTlsHttpsListenersOnly,
   nist80053r5ELBv2ACMCertificateRequired,
 } from './rules/elb';
-// import {} from './rules/emr';
 // import {} from './rules/iam';
 // import {} from './rules/lambda';
 // import {} from './rules/opensearch';
@@ -80,7 +79,6 @@ export class NIST80053R5Checks extends NagPack {
       this.checkElastiCache(node);
       this.checkElasticBeanstalk(node);
       this.checkELB(node);
-      this.checkEMR(node);
       this.checkIAM(node);
       this.checkLambda(node);
       this.checkOpenSearch(node);
@@ -459,13 +457,6 @@ export class NIST80053R5Checks extends NagPack {
       node: node,
     });
   }
-
-  /**
-   * Check EMR Resources
-   * @param _node the CfnResource to check
-   * @param ignores list of ignores for the resource
-   */
-  private checkEMR(_node: CfnResource) {}
 
   /**
    * Check IAM Resources
