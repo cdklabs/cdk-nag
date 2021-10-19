@@ -33,7 +33,7 @@ import {
   nist80053r5EC2InstancesInVPC,
   nist80053r5EC2RestrictedSSH,
 } from './rules/ec2';
-// import {} from './rules/ecs';
+import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
 // import {} from './rules/efs';
 // import {} from './rules/elasticache';
 // import {} from './rules/elasticbeanstalk';
@@ -303,10 +303,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check ECS Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkECS(_node: CfnResource): void {}
+  private checkECS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ECSTaskDefinitionUserForHostMode',
+      info: "The ECS task definition is configured for host networking and has at least one container with definitions with 'privileged' set to false or empty or 'user' set to root or empty - (Control IDs: AC-3, AC-5b, CM-5(1)(a)).",
+      explanation:
+        'If a task definition has elevated privileges it is because you have specifically opted-in to those configurations. This rule checks for unexpected privilege escalation when a task definition has host networking enabled but the customer has not opted-in to elevated privileges.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ECSTaskDefinitionUserForHostMode,
+      node: node,
+    });
+  }
 
   /**
    * Check EFS Resources
