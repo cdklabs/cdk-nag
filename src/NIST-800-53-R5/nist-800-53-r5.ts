@@ -24,7 +24,7 @@ import {
   nist80053r5CloudWatchLogGroupEncrypted,
   nist80053r5CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
-// import {} from './rules/dms';
+import { nist80053r5DMSReplicationNotPublic } from './rules/dms';
 // import {} from './rules/dynamodb';
 // import {} from './rules/ec2';
 // import {} from './rules/ecs';
@@ -210,10 +210,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check DMS Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkDMS(_node: CfnResource) {}
+  private checkDMS(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-DMSReplicationNotPublic',
+      info: 'The DMS replication instance is public - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'DMS replication instances can contain sensitive information and access control is required for such accounts.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5DMSReplicationNotPublic,
+      node: node,
+    });
+  }
 
   /**
    * Check DynamoDB Resources
