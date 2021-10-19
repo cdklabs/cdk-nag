@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
 describe('AWS Elastic Beanstalk', () => {
-  test('HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled: -  Elastic Beanstalk environments have enhanced health reporting enabled - (Control ID: 164.312(b))', () => {
+  test('HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled: - Elastic Beanstalk environments have enhanced health reporting enabled - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-6, SC-36(1)(a), SI-2a)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new CfnEnvironment(nonCompliant, 'rBeanstalk', {
@@ -71,7 +71,7 @@ describe('AWS Elastic Beanstalk', () => {
     );
   });
 
-  test('HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled: -  Elastic Beanstalk environments have managed updates enabled - (Control ID: 164.308(a)(5)(ii)(A))', () => {
+  test('HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled: - Elastic Beanstalk environments have managed updates enabled - (Control IDs: SI-2c, SI-2d, SI-2(2), SI-2(5))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new CfnEnvironment(nonCompliant, 'rBeanstalk', {

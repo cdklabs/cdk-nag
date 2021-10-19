@@ -36,7 +36,10 @@ import {
 import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { nist80053r5EFSEncrypted } from './rules/efs';
 import { nist80053r5ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
-// import {} from './rules/elasticbeanstalk';
+import {
+  nist80053r5ElasticBeanstalkEnhancedHealthReportingEnabled,
+  nist80053r5ElasticBeanstalkManagedUpdatesEnabled,
+} from './rules/elasticbeanstalk';
 // import {} from './rules/elb';
 // import {} from './rules/emr';
 // import {} from './rules/iam';
@@ -354,10 +357,29 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Elastic Beanstalk Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkElasticBeanstalk(_node: CfnResource): void {}
+  private checkElasticBeanstalk(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ElasticBeanstalkEnhancedHealthReportingEnabled',
+      info: 'The Elastic Beanstalk environment does not have enhanced health reporting enabled - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-6, SC-36(1)(a), SI-2a).',
+      explanation:
+        'AWS Elastic Beanstalk enhanced health reporting enables a more rapid response to changes in the health of the underlying infrastructure. These changes could result in a lack of availability of the application. Elastic Beanstalk enhanced health reporting provides a status descriptor to gauge the severity of the identified issues and identify possible causes to investigate.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ElasticBeanstalkEnhancedHealthReportingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ElasticBeanstalkManagedUpdatesEnabled',
+      info: 'The Elastic Beanstalk environment does not have managed updates enabled - (Control IDs: SI-2c, SI-2d, SI-2(2), SI-2(5)).',
+      explanation:
+        'Enabling managed platform updates for an Amazon Elastic Beanstalk environment ensures that the latest available platform fixes, updates, and features for the environment are installed. Keeping up to date with patch installation is a best practice in securing systems.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ElasticBeanstalkManagedUpdatesEnabled,
+      node: node,
+    });
+  }
 
   /**
    * Check Elastic Load Balancer Resources
