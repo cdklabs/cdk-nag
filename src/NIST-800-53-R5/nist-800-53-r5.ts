@@ -24,7 +24,6 @@ import {
   nist80053r5CloudWatchLogGroupEncrypted,
   nist80053r5CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
-// import {} from './rules/codebuild';
 // import {} from './rules/dms';
 // import {} from './rules/dynamodb';
 // import {} from './rules/ec2';
@@ -56,7 +55,6 @@ export class NIST80053R5Checks extends NagPack {
       this.checkAutoScaling(node);
       this.checkCloudTrail(node);
       this.checkCloudWatch(node);
-      this.checkCodeBuild(node);
       this.checkDMS(node);
       this.checkDynamoDB(node);
       this.checkEC2(node);
@@ -209,13 +207,6 @@ export class NIST80053R5Checks extends NagPack {
       node: node,
     });
   }
-
-  /**
-   * Check CodeBuild Resources
-   * @param _node the CfnResource to check
-   * @param ignores list of ignores for the resource
-   */
-  private checkCodeBuild(_node: CfnResource): void {}
 
   /**
    * Check DMS Resources
