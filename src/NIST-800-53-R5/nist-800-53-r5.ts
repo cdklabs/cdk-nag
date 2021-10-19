@@ -34,7 +34,7 @@ import {
   nist80053r5EC2RestrictedSSH,
 } from './rules/ec2';
 import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
-// import {} from './rules/efs';
+import { nist80053r5EFSEncrypted } from './rules/efs';
 // import {} from './rules/elasticache';
 // import {} from './rules/elasticbeanstalk';
 // import {} from './rules/elb';
@@ -320,10 +320,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check EFS Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkEFS(_node: CfnResource) {}
+  private checkEFS(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EFSEncrypted',
+      info: 'The EFS does not have encryption at rest enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EFSEncrypted,
+      node: node,
+    });
+  }
 
   /**
    * Check ElastiCache Resources
