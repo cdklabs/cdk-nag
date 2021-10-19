@@ -49,7 +49,13 @@ import {
   nist80053r5ELBTlsHttpsListenersOnly,
   nist80053r5ELBv2ACMCertificateRequired,
 } from './rules/elb';
-// import {} from './rules/iam';
+import {
+  nist80053r5IAMNoInlinePolicy,
+  nist80053r5IAMPolicyNoStatementsWithAdminAccess,
+  nist80053r5IAMPolicyNoStatementsWithFullAccess,
+  nist80053r5IAMUserGroupMembership,
+  nist80053r5IAMUserNoPolicies,
+} from './rules/iam';
 // import {} from './rules/lambda';
 // import {} from './rules/opensearch';
 // import {} from './rules/rds';
@@ -460,10 +466,56 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check IAM Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkIAM(_node: CfnResource): void {}
+  private checkIAM(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-IAMNoInlinePolicy',
+      info: 'The IAM Group, User, or Role contains an inline policy - (Control IDs: AC-2i.2, AC-2(1), AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-6, AC-6(3), AC-24, CM-5(1)(a), CM-6a, CM-9b, MP-2, SC-23(3)).',
+      explanation:
+        'AWS recommends to use managed policies instead of inline policies. The managed policies allow reusability, versioning and rolling back, and delegating permissions management.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5IAMNoInlinePolicy,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-IAMPolicyNoStatementsWithAdminAccess',
+      info: 'The IAM policy grants admin access - (Control IDs: AC-2i.2, AC-2(1), AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-5b, AC-6, AC-6(2), AC-6(3), AC-6(10), AC-24, CM-5(1)(a), CM-6a, CM-9b, MP-2, SC-23(3), SC-25).',
+      explanation:
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5IAMPolicyNoStatementsWithAdminAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess',
+      info: 'The IAM policy grants full access - (Control IDs: AC-3, AC-5b, AC-6(2), AC-6(10), CM-5(1)(a)).',
+      explanation:
+        'Ensure IAM Actions are restricted to only those actions that are needed. Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5IAMPolicyNoStatementsWithFullAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-IAMUserGroupMembership',
+      info: 'The IAM user does not belong to any group(s) - (Control IDs: AC-2i.2, AC-2(1), AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-6, AC-6(3), AC-24, CM-5(1)(a), CM-6a, CM-9b, MP-2, SC-23(3)).',
+      explanation:
+        'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5IAMUserGroupMembership,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-IAMUserNoPolicies',
+      info: 'The IAM policy is attached at the user level - (Control IDs: AC-2i.2, AC-2(1), AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-6, AC-6(3), AC-24, CM-5(1)(a), CM-6a, CM-9b, MP-2, SC-23(3), SC-25).',
+      explanation:
+        'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5IAMUserNoPolicies,
+      node: node,
+    });
+  }
 
   /**
    * Check Lambda Resources
