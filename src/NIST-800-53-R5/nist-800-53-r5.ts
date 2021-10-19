@@ -4,8 +4,12 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnResource, IConstruct } from '@aws-cdk/core';
-import { NagPack } from '../nag-pack';
-// import {} from './rules/apigw';
+import { NagMessageLevel, NagPack } from '../nag-pack';
+import {
+  nist80053r5APIGWCacheEnabledAndEncrypted,
+  nist80053r5APIGWExecutionLoggingEnabled,
+  nist80053r5APIGWSSLEnabled,
+} from './rules/apigw';
 // import {} from './rules/autoscaling';
 // import {} from './rules/cloudtrail';
 // import {} from './rules/cloudwatch';
@@ -66,10 +70,38 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check API Gateway Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkAPIGW(_node: CfnResource): void {}
+  private checkAPIGW(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-APIGWCacheEnabledAndEncrypted',
+      info: 'The API Gateway stage does not have caching enabled and encrypted for all methods - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        "To help protect data at rest, ensure encryption is enabled for your API Gateway stage's cache. Because sensitive data can be captured for the API method, enable encryption at rest to help protect that data.",
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5APIGWCacheEnabledAndEncrypted,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-APIGWExecutionLoggingEnabled',
+      info: 'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-4(17), SI-7(8)).',
+      explanation:
+        'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5APIGWExecutionLoggingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-APIGWSSLEnabled',
+      info: 'The API Gateway REST API stage is not configured with SSL certificates - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Ensure Amazon API Gateway REST API stages are configured with SSL certificates to allow backend systems to authenticate that requests originate from API Gateway.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5APIGWSSLEnabled,
+      node: node,
+    });
+  }
 
   /**
    * Check Auto Scaling Resources
