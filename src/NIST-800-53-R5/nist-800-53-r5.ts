@@ -19,7 +19,11 @@ import {
   nist80053r5CloudTrailEncryptionEnabled,
   nist80053r5CloudTrailLogFileValidationEnabled,
 } from './rules/cloudtrail';
-// import {} from './rules/cloudwatch';
+import {
+  nist80053r5CloudWatchAlarmAction,
+  nist80053r5CloudWatchLogGroupEncrypted,
+  nist80053r5CloudWatchLogGroupRetentionPeriod,
+} from './rules/cloudwatch';
 // import {} from './rules/codebuild';
 // import {} from './rules/dms';
 // import {} from './rules/dynamodb';
@@ -173,10 +177,38 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check CloudWatch Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkCloudWatch(_node: CfnResource): void {}
+  private checkCloudWatch(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-CloudWatchAlarmAction',
+      info: 'The CloudWatch alarm does not have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - (Control IDs: AU-6(1), AU-6(5), AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-36(1)(a), SI-2a, SI-4(12), SI-5b, SI-5(1)).',
+      explanation:
+        'Amazon CloudWatch alarms alert when a metric breaches the threshold for a specified number of evaluation periods. The alarm performs one or more actions based on the value of the metric or expression relative to a threshold over a number of time periods.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5CloudWatchAlarmAction,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-CloudWatchLogGroupEncrypted',
+      info: 'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5CloudWatchLogGroupEncrypted,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod',
+      info: 'The CloudWatch Log Group does not have an explicit retention period configured - (Control IDs: AC-16b, AT-4b, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-10, AU-11(1), AU-11, AU-12(1), AU-12(2), AU-12(3), AU-14a, AU-14b, CA-7b, PM-14a.1, PM-14b, PM-21b, PM-31, SC-28(2), SI-4(17), SI-12).',
+      explanation:
+        'Ensure a minimum duration of event log data is retained for your log groups to help with troubleshooting and forensics investigations. The lack of available past event log data makes it difficult to reconstruct and identify potentially malicious events.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5CloudWatchLogGroupRetentionPeriod,
+      node: node,
+    });
+  }
 
   /**
    * Check CodeBuild Resources
