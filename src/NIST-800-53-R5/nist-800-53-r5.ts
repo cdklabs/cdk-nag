@@ -35,7 +35,7 @@ import {
 } from './rules/ec2';
 import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { nist80053r5EFSEncrypted } from './rules/efs';
-// import {} from './rules/elasticache';
+import { nist80053r5ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 // import {} from './rules/elasticbeanstalk';
 // import {} from './rules/elb';
 // import {} from './rules/emr';
@@ -337,10 +337,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check ElastiCache Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkElastiCache(_node: CfnResource) {}
+  private checkElastiCache(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ElastiCacheRedisClusterAutomaticBackup',
+      info: 'The ElastiCache Redis cluster does not retain automatic backups for at least 15 days - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'Automatic backups can help guard against data loss. If a failure occurs, you can create a new cluster, which restores your data from the most recent backup.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ElastiCacheRedisClusterAutomaticBackup,
+      node: node,
+    });
+  }
 
   /**
    * Check Elastic Beanstalk Resources
