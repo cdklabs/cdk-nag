@@ -20,57 +20,14 @@ import {
 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { HIPAASecurityChecks } from '../../src';
+import { NIST80053R5Checks } from '../../src';
 
 describe('Elastic Load Balancing', () => {
-  test('hipaaSecurityALBHttpDropInvalidHeaderEnabled: - Load balancers have invalid HTTP header dropping enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
+  test('NIST.800.53.R5-ALBHttpToHttpsRedirection: - HTTP ALB listeners are configured to redirect to HTTPS - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2)', () => {
     const nonCompliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    const alb1 = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
-      vpc: new Vpc(nonCompliant, 'rVPC'),
-    });
-    alb1.logAccessLogs(new Bucket(nonCompliant, 'rLogsBucket'));
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-ALBHttpDropInvalidHeaderEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack(undefined, undefined, {
-      env: { region: 'us-east-1' },
-    });
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
-    const alb = new ApplicationLoadBalancer(compliant, 'rALB', {
-      vpc: new Vpc(compliant, 'rVPC'),
-    });
-    alb.logAccessLogs(new Bucket(compliant, 'rLogsBucket'));
-    alb.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
-    new NetworkLoadBalancer(compliant, 'rNLB', {
-      vpc: new Vpc(compliant, 'rVPC2'),
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-ALBHttpDropInvalidHeaderEnabled:'
-          ),
-        }),
-      })
-    );
-  });
-  test('hipaaSecurityALBHttpToHttpsRedirection: - HTTP ALB listeners are configured to redirect to HTTPS - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13, SC-23)', () => {
-    const nonCompliant = new Stack(undefined, undefined, {
-      env: { region: 'us-east-1' },
-    });
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     const myBalancer = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
       vpc: new Vpc(nonCompliant, 'rVPC'),
     });
@@ -91,7 +48,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ALBHttpToHttpsRedirection:'
+            'NIST.800.53.R5-ALBHttpToHttpsRedirection:'
           ),
         }),
       })
@@ -100,7 +57,7 @@ describe('Elastic Load Balancing', () => {
     const compliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     const myBalancer2 = new ApplicationLoadBalancer(compliant, 'rELB', {
       vpc: new Vpc(compliant, 'rVPC'),
     });
@@ -120,15 +77,16 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ALBHttpToHttpsRedirection:'
+            'NIST.800.53.R5-ALBHttpToHttpsRedirection:'
           ),
         }),
       })
     );
   });
-  test('hipaaSecurityELBACMCertificateRequired: - CLBs use ACM certificates - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
+
+  test('NIST.800.53.R5-ELBACMCertificateRequired: - CLBs use ACM-managed certificates - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SC-23(5), SI-1a.2, SI-1a.2, SI-1c.2)', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new CfnLoadBalancer(nonCompliant, 'rELB', {
       listeners: [
         {
@@ -144,14 +102,14 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBACMCertificateRequired:'
+            'NIST.800.53.R5-ELBACMCertificateRequired:'
           ),
         }),
       })
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     new CfnLoadBalancer(nonCompliant2, 'rELB', {
       listeners: [
         {
@@ -166,14 +124,14 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBACMCertificateRequired:'
+            'NIST.800.53.R5-ELBACMCertificateRequired:'
           ),
         }),
       })
     );
 
     const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     new CfnLoadBalancer(compliant, 'rELB', {
       listeners: [],
     });
@@ -192,15 +150,16 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBACMCertificateRequired:'
+            'NIST.800.53.R5-ELBACMCertificateRequired:'
           ),
         }),
       })
     );
   });
-  test('hipaaSecurityELBCrossZoneLoadBalancingEnabled: - CLBs are load balanced across AZs - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
+
+  test('NIST.800.53.R5-ELBCrossZoneLoadBalancingEnabled: - CLBs use at least two AZs with the Cross-Zone Load Balancing feature enabled - (Control IDs: CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), CP-2(6), CP-6(2), CP-10, SC-5(2), SC-6, SC-22, SC-36, SI-13(5))', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new LoadBalancer(nonCompliant, 'rELB', {
       vpc: new Vpc(nonCompliant, 'rVPC'),
       crossZone: false,
@@ -210,7 +169,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled:'
+            'NIST.800.53.R5-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -218,7 +177,7 @@ describe('Elastic Load Balancing', () => {
     const nonCompliant2 = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     new CfnLoadBalancer(nonCompliant2, 'rCfnElb', {
       listeners: [
         { instancePort: '42', loadBalancerPort: '42', protocol: 'TCP' },
@@ -231,7 +190,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled:'
+            'NIST.800.53.R5-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -240,7 +199,7 @@ describe('Elastic Load Balancing', () => {
     const compliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     new LoadBalancer(compliant, 'rELB', {
       vpc: new Vpc(compliant, 'rVPC'),
       crossZone: true,
@@ -257,15 +216,16 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled:'
+            'NIST.800.53.R5-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
     );
   });
-  test('hipaaSecurityELBDeletionProtectionEnabled: - ALB, NLB, and GLBs have deletion protection enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
+
+  test('NIST.800.53.R5-ELBDeletionProtectionEnabled: - ALBs, NLBs, and GLBs have deletion protection enabled - (Control IDs: CA-7(4)(c), CM-2a, CM-2(2), CM-3a, CM-8(6), CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), SA-15a.4, SC-5(2), SC-22)', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new CfnLoadBalancerV2(nonCompliant, 'rELB', {
       loadBalancerAttributes: [],
     });
@@ -274,14 +234,14 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBDeletionProtectionEnabled:'
+            'NIST.800.53.R5-ELBDeletionProtectionEnabled:'
           ),
         }),
       })
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     new CfnLoadBalancerV2(nonCompliant2, 'rELB', {
       loadBalancerAttributes: [
         {
@@ -295,14 +255,14 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBDeletionProtectionEnabled:'
+            'NIST.800.53.R5-ELBDeletionProtectionEnabled:'
           ),
         }),
       })
     );
 
     const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant3).add(new NIST80053R5Checks());
     new CfnLoadBalancerV2(nonCompliant3, 'rELB', {
       loadBalancerAttributes: [
         {
@@ -316,14 +276,14 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBDeletionProtectionEnabled:'
+            'NIST.800.53.R5-ELBDeletionProtectionEnabled:'
           ),
         }),
       })
     );
 
     const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     new CfnLoadBalancerV2(compliant, 'rELB', {
       loadBalancerAttributes: [
         {
@@ -337,15 +297,16 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBDeletionProtectionEnabled:'
+            'NIST.800.53.R5-ELBDeletionProtectionEnabled:'
           ),
         }),
       })
     );
   });
-  test('hipaaSecurityELBLoggingEnabled: - Elastic Load Balancers have logging enabled - (Control ID: 164.312(b))', () => {
+
+  test('NIST.800.53.R5-ELBLoggingEnabled: - ELBs have access logs enabled - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-4(17), SI-7(8))', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new LoadBalancer(nonCompliant, 'rELB', {
       vpc: new Vpc(nonCompliant, 'rVPC'),
       accessLoggingPolicy: {
@@ -357,13 +318,13 @@ describe('Elastic Load Balancing', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('HIPAA.Security-ELBLoggingEnabled:'),
+          data: expect.stringContaining('NIST.800.53.R5-ELBLoggingEnabled:'),
         }),
       })
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     const alb2 = new ApplicationLoadBalancer(nonCompliant2, 'rALB', {
       vpc: new Vpc(nonCompliant2, 'rVPC'),
     });
@@ -375,7 +336,7 @@ describe('Elastic Load Balancing', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('HIPAA.Security-ELBLoggingEnabled:'),
+          data: expect.stringContaining('NIST.800.53.R5-ELBLoggingEnabled:'),
         }),
       })
     );
@@ -383,7 +344,7 @@ describe('Elastic Load Balancing', () => {
     const compliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     const alb = new ApplicationLoadBalancer(compliant, 'rALB', {
       vpc: new Vpc(compliant, 'rVPC'),
     });
@@ -403,16 +364,17 @@ describe('Elastic Load Balancing', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('HIPAA.Security-ELBLoggingEnabled:'),
+          data: expect.stringContaining('NIST.800.53.R5-ELBLoggingEnabled:'),
         }),
       })
     );
   });
-  test('hipaaSecurityELBTlsHttpsListenersOnly: - CLB listeners are configured for secure (HTTPs or SSL) protocols for client communication - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
+
+  test('NIST.800.53.R5-ELBTlsHttpsListenersOnly: - CLB listeners are configured for secure (HTTPs or SSL) protocols for client communication - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1a.2, SI-1a.2, SI-1c.2, SI-1c.2)', () => {
     const nonCompliant = new Stack();
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     const lb = new LoadBalancer(nonCompliant, 'rELB', {
       vpc: new Vpc(nonCompliant, 'rVPC'),
     });
@@ -433,7 +395,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBTlsHttpsListenersOnly:'
+            'NIST.800.53.R5-ELBTlsHttpsListenersOnly:'
           ),
         }),
       })
@@ -443,13 +405,13 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBTlsHttpsListenersOnly:'
+            'NIST.800.53.R5-ELBTlsHttpsListenersOnly:'
           ),
         }),
       })
     );
     const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     const lb3 = new LoadBalancer(compliant, 'rELB', {
       vpc: new Vpc(compliant, 'rVPC'),
     });
@@ -470,15 +432,16 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBTlsHttpsListenersOnly:'
+            'NIST.800.53.R5-ELBTlsHttpsListenersOnly:'
           ),
         }),
       })
     );
   });
-  test('hipaaSecurityELBv2ACMCertificateRequired: - ALB, NLB, and GLB listeners use ACM-managed certificates - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))', () => {
+
+  test('NIST.800.53.R5-ELBv2ACMCertificateRequired: - ALB, NLB, and GLB listeners use ACM-managed certificates - (Control IDs: SC-8(1), SC-23(5))', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new ApplicationLoadBalancer(nonCompliant, 'rALB', {
       vpc: new Vpc(nonCompliant, 'rVPC'),
     }).addListener('rALBListener', {
@@ -493,14 +456,14 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBv2ACMCertificateRequired:'
+            'NIST.800.53.R5-ELBv2ACMCertificateRequired:'
           ),
         }),
       })
     );
 
     const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     new ApplicationLoadBalancer(compliant, 'rALB', {
       vpc: new Vpc(compliant, 'rVPC'),
     }).addListener('rALBListener', {
@@ -518,7 +481,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBv2ACMCertificateRequired:'
+            'NIST.800.53.R5-ELBv2ACMCertificateRequired:'
           ),
         }),
       })

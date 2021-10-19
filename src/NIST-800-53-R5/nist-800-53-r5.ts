@@ -40,7 +40,15 @@ import {
   nist80053r5ElasticBeanstalkEnhancedHealthReportingEnabled,
   nist80053r5ElasticBeanstalkManagedUpdatesEnabled,
 } from './rules/elasticbeanstalk';
-// import {} from './rules/elb';
+import {
+  nist80053r5ALBHttpToHttpsRedirection,
+  nist80053r5ELBACMCertificateRequired,
+  nist80053r5ELBCrossZoneLoadBalancingEnabled,
+  nist80053r5ELBDeletionProtectionEnabled,
+  nist80053r5ELBLoggingEnabled,
+  nist80053r5ELBTlsHttpsListenersOnly,
+  nist80053r5ELBv2ACMCertificateRequired,
+} from './rules/elb';
 // import {} from './rules/emr';
 // import {} from './rules/iam';
 // import {} from './rules/lambda';
@@ -383,10 +391,74 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Elastic Load Balancer Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkELB(_node: CfnResource): void {}
+  private checkELB(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ALBHttpToHttpsRedirection',
+      info: "The ALB's HTTP listeners are not configured to redirect to HTTPS - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).",
+      explanation:
+        'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ALBHttpToHttpsRedirection,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ELBACMCertificateRequired',
+      info: 'The CLB does not utilize an SSL certificate provided by ACM (Amazon Certificate Manager) - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SC-23(5), SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Because sensitive data can exist and to help protect data at transit, ensure encryption is enabled for your Elastic Load Balancing. Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ELBACMCertificateRequired,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ELBCrossZoneLoadBalancingEnabled',
+      info: 'The CLB does not balance traffic between at least 2 Availability Zones - (Control IDs: CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), CP-2(6), CP-6(2), CP-10, SC-5(2), SC-6, SC-22, SC-36, SI-13(5)).',
+      explanation:
+        "Enable cross-zone load balancing for your Classic Load Balancers (CLBs) to help maintain adequate capacity and availability. The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone. It also improves your application's ability to handle the loss of one or more instances.",
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ELBCrossZoneLoadBalancingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ELBDeletionProtectionEnabled',
+      info: 'The ALB, NLB, or GLB does not have deletion protection enabled - (Control IDs: CA-7(4)(c), CM-2a, CM-2(2), CM-3a, CM-8(6), CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), SA-15a.4, SC-5(2), SC-22).',
+      explanation:
+        'This rule ensures that Elastic Load Balancing has deletion protection enabled. Use this feature to prevent your load balancer from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ELBDeletionProtectionEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ELBLoggingEnabled',
+      info: 'The ELB does not have logging enabled - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-4(17), SI-7(8)).',
+      explanation:
+        "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to The ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.",
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ELBLoggingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ELBTlsHttpsListenersOnly',
+      info: 'The CLB does not restrict its listeners to only the SSL and HTTPS protocols - (Control IDs: AC-4, AC-4(22), AC-17(2), AC-24(1), AU-9(3), CA-9b, IA-5(1)(c), PM-17b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1a.2, SI-1a.2, SI-1c.2, SI-1c.2).',
+      explanation:
+        'Ensure that your Classic Load Balancers (CLBs) are configured with SSL or HTTPS listeners. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ELBTlsHttpsListenersOnly,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ELBv2ACMCertificateRequired',
+      info: 'The ALB, NLB, or GLB listener does not utilize an SSL certificate provided by ACM (Amazon Certificate Manager) - (Control IDs: SC-8(1), SC-23(5)).',
+      explanation:
+        'Because sensitive data can exist and to help protect data at transit, ensure encryption is enabled for your Elastic Load Balancing. Use AWS Certificate Manager to manage, provision and deploy public and private SSL/TLS certificates with AWS services and internal resources.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ELBv2ACMCertificateRequired,
+      node: node,
+    });
+  }
 
   /**
    * Check EMR Resources

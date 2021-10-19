@@ -51,7 +51,7 @@ import {
   hipaaSecurityALBHttpDropInvalidHeaderEnabled,
   hipaaSecurityALBHttpToHttpsRedirection,
   hipaaSecurityELBACMCertificateRequired,
-  hipaaSecurityELBCrossZoneBalancingEnabled,
+  hipaaSecurityELBCrossZoneLoadBalancingEnabled,
   hipaaSecurityELBDeletionProtectionEnabled,
   hipaaSecurityELBLoggingEnabled,
   hipaaSecurityELBTlsHttpsListenersOnly,
@@ -532,12 +532,12 @@ export class HIPAASecurityChecks extends NagPack {
       node: node,
     });
     this.applyRule({
-      ruleId: 'HIPAA.Security-ELBCrossZoneBalancingEnabled',
+      ruleId: 'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled',
       info: 'The CLB does not balance traffic between at least 2 Availability Zones - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).',
       explanation:
         'The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone.',
       level: NagMessageLevel.ERROR,
-      rule: hipaaSecurityELBCrossZoneBalancingEnabled,
+      rule: hipaaSecurityELBCrossZoneLoadBalancingEnabled,
       node: node,
     });
     this.applyRule({
