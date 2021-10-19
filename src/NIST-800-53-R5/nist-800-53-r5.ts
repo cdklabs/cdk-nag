@@ -10,7 +10,10 @@ import {
   nist80053r5APIGWExecutionLoggingEnabled,
   nist80053r5APIGWSSLEnabled,
 } from './rules/apigw';
-// import {} from './rules/autoscaling';
+import {
+  nist80053r5AutoscalingGroupELBHealthCheckRequired,
+  nist80053r5AutoscalingLaunchConfigPublicIpDisabled,
+} from './rules/autoscaling';
 // import {} from './rules/cloudtrail';
 // import {} from './rules/cloudwatch';
 // import {} from './rules/codebuild';
@@ -105,10 +108,29 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Auto Scaling Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkAutoScaling(_node: CfnResource): void {}
+  private checkAutoScaling(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-AutoscalingGroupELBHealthCheckRequired',
+      info: 'The Auto Scaling group (which is associated with a load balancer) does not utilize ELB healthchecks - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, CM-6a, CM-9b, PM-14a.1, PM-14b, PM-31, SC-6, SC-36(1)(a), SI-2a).',
+      explanation:
+        'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability. The load balancer periodically sends pings, attempts connections, or sends requests to test Amazon EC2 instances health in an auto-scaling group. If an instance is not reporting back, traffic is sent to a new Amazon EC2 instance.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5AutoscalingGroupELBHealthCheckRequired,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-AutoscalingLaunchConfigPublicIpDisabled',
+      info: 'The Auto Scaling launch configuration does not have public IP addresses disabled - (Control IDs: AC-3, AC-4(21), CM-6a, SC-7(3)).',
+      explanation:
+        'If you configure your Network Interfaces with a public IP address, then the associated resources to those Network Interfaces are reachable from the internet. EC2 resources should not be publicly accessible, as this may allow unintended access to your applications or servers.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5AutoscalingLaunchConfigPublicIpDisabled,
+      node: node,
+    });
+  }
 
   /**
    * Check CloudTrail Resources
