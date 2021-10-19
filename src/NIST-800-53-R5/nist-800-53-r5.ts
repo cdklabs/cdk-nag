@@ -25,7 +25,7 @@ import {
   nist80053r5CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
 import { nist80053r5DMSReplicationNotPublic } from './rules/dms';
-// import {} from './rules/dynamodb';
+import { nist80053r5DynamoDBPITREnabled } from './rules/dynamodb';
 // import {} from './rules/ec2';
 // import {} from './rules/ecs';
 // import {} from './rules/efs';
@@ -227,10 +227,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check DynamoDB Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkDynamoDB(_node: CfnResource) {}
+  private checkDynamoDB(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-DynamoDBPITREnabled',
+      info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: CP-1(2), CP-2(5), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'The recovery maintains continuous backups of your table for the last 35 days.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5DynamoDBPITREnabled,
+      node: node,
+    });
+  }
 
   /**
    * Check EC2 Resources
