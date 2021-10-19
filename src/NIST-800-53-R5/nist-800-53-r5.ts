@@ -14,7 +14,11 @@ import {
   nist80053r5AutoscalingGroupELBHealthCheckRequired,
   nist80053r5AutoscalingLaunchConfigPublicIpDisabled,
 } from './rules/autoscaling';
-// import {} from './rules/cloudtrail';
+import {
+  nist80053r5CloudTrailCloudWatchLogsEnabled,
+  nist80053r5CloudTrailEncryptionEnabled,
+  nist80053r5CloudTrailLogFileValidationEnabled,
+} from './rules/cloudtrail';
 // import {} from './rules/cloudwatch';
 // import {} from './rules/codebuild';
 // import {} from './rules/dms';
@@ -134,10 +138,38 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check CloudTrail Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkCloudTrail(_node: CfnResource): void {}
+  private checkCloudTrail(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-CloudTrailCloudWatchLogsEnabled',
+      info: 'The trail does not have CloudWatch logs enabled - (Control IDs: AC-2(4), AC-3(1), AC-3(10), AC-4(26), AC-6(9), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-4(1), AU-6(1), AU-6(3), AU-6(4), AU-6(5), AU-6(6), AU-6(9), AU-7(1), AU-8b, AU-9(7), AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), AU-16, CA-7b, CM-5(1)(b), CM-6a, CM-9b, IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-1(1)(c), SI-3(8)(b), SI-4(2), SI-4(17), SI-4(20), SI-7(8), SI-10(1)(c)).',
+      explanation:
+        'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5CloudTrailCloudWatchLogsEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-CloudTrailEncryptionEnabled',
+      info: 'The trail does not have encryption enabled - (Control IDs: AU-9(3), CM-6a, CM-9b, CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5CloudTrailEncryptionEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-CloudTrailLogFileValidationEnabled',
+      info: 'The trail does not have log file validation enabled - (Control IDs: AU-9a, CM-6a, CM-9b, PM-11b, PM-17b, SA-1(1), SA-10(1), SC-16(1), SI-1a.2, SI-1a.2, SI-1c.2, SI-4d, SI-7a, SI-7(1), SI-7(3), SI-7(7)).',
+      explanation:
+        'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5CloudTrailLogFileValidationEnabled,
+      node: node,
+    });
+  }
 
   /**
    * Check CloudWatch Resources
