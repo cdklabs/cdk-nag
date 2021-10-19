@@ -26,7 +26,13 @@ import {
 } from './rules/cloudwatch';
 import { nist80053r5DMSReplicationNotPublic } from './rules/dms';
 import { nist80053r5DynamoDBPITREnabled } from './rules/dynamodb';
-// import {} from './rules/ec2';
+import {
+  nist80053r5EC2EBSOptimizedInstance,
+  nist80053r5EC2InstanceNoPublicIp,
+  nist80053r5EC2InstanceProfileAttached,
+  nist80053r5EC2InstancesInVPC,
+  nist80053r5EC2RestrictedSSH,
+} from './rules/ec2';
 // import {} from './rules/ecs';
 // import {} from './rules/efs';
 // import {} from './rules/elasticache';
@@ -244,10 +250,56 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check EC2 Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkEC2(_node: CfnResource): void {}
+  private checkEC2(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2EBSOptimizedInstance',
+      info: "The EC2 instance type 'supports' EBS optimization and does not have EBS optimization enabled - (Control IDs: CP-2(5), CP-9a, CP-9b, CP-9c, CP-10, SC-5(2)).",
+      explanation:
+        'An optimized instance in Amazon Elastic Block Store (Amazon EBS) provides additional, dedicated capacity for Amazon EBS I/O operations. This optimization provides the most efficient performance for your EBS volumes by minimizing contention between Amazon EBS I/O operations and other traffic from your instance.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2EBSOptimizedInstance,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2InstanceNoPublicIp',
+      info: 'The EC2 instance is associated with a public IP address - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'Manage access to the AWS Cloud by ensuring Amazon Elastic Compute Cloud (Amazon EC2) instances cannot be publicly accessed. Amazon EC2 instances can contain sensitive information and access control is required for such accounts.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2InstanceNoPublicIp,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2InstanceProfileAttached',
+      info: 'The EC2 instance does not have an instance profile attached - (Control IDs: AC-3, CM-5(1)(a), CM-6a).',
+      explanation:
+        'EC2 instance profiles pass an IAM role to an EC2 instance. Attaching an instance profile to your instances can assist with least privilege and permissions management.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2InstanceProfileAttached,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2InstancesInVPC',
+      info: 'The EC2 instance is not within a VPC - (Control IDs: AC-2(6), AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-25).',
+      explanation:
+        'Deploy Amazon Elastic Compute Cloud (Amazon EC2) instances within an Amazon Virtual Private Cloud (Amazon VPC) to enable secure communication between an instance and other services within the amazon VPC, without requiring an internet gateway, NAT device, or VPN connection. All traffic remains securely within the AWS Cloud. Because of their logical isolation, domains that reside within anAmazon VPC have an extra layer of security when compared to domains that use public endpoints. Assign Amazon EC2 instances to an Amazon VPC to properly manage access.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2InstancesInVPC,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2RestrictedSSH',
+      info: 'The Security Group allows unrestricted SSH access - (Control IDs: AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-9b, SC-7a, SC-7c, SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28)).',
+      explanation:
+        'Not allowing ingress (or remote) traffic from 0.0.0.0/0 or ::/0 to port 22 on your resources helps to restrict remote access.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2RestrictedSSH,
+      node: node,
+    });
+  }
 
   /**
    * Check ECS Resources
