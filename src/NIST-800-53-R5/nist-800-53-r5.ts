@@ -84,7 +84,16 @@ import {
   nist80053r5RedshiftClusterPublicAccess,
   nist80053r5RedshiftEnhancedVPCRoutingEnabled,
 } from './rules/redshift';
-// import {} from './rules/s3';
+import {
+  nist80053r5S3BucketLevelPublicAccessProhibited,
+  nist80053r5S3BucketLoggingEnabled,
+  nist80053r5S3BucketPublicReadProhibited,
+  nist80053r5S3BucketPublicWriteProhibited,
+  nist80053r5S3BucketReplicationEnabled,
+  nist80053r5S3BucketServerSideEncryptionEnabled,
+  nist80053r5S3BucketVersioningEnabled,
+  nist80053r5S3DefaultEncryptionKMS,
+} from './rules/s3';
 // import {} from './rules/sagemaker';
 // import {} from './rules/secretsmanager';
 // import {} from './rules/sns';
@@ -755,10 +764,83 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Amazon S3 Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkS3(_node: CfnResource): void {}
+  private checkS3(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketLevelPublicAccessProhibited',
+      info: 'The S3 bucket does not prohibit public access through bucket level settings - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'Keep sensitive data safe from unauthorized remote users by preventing public access at the bucket level.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketLevelPublicAccessProhibited,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketLoggingEnabled',
+      info: 'The S3 Buckets does not have server access logs enabled - (Control IDs: AC-2(4), AC-3(1), AC-3(10), AC-4(26), AC-6(9), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), CM-6a, CM-9b, IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-1(1)(c), SI-3(8)(b), SI-4(2), SI-4(17), SI-4(20), SI-7(8), SI-10(1)(c)).',
+      explanation:
+        'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketLoggingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketPublicReadProhibited',
+      info: 'The S3 Bucket does not prohibit public read access through its Block Public Access configurations and bucket ACLs - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-6a, CM-9b, MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'The management of access should be consistent with the classification of the data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketPublicReadProhibited,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketPublicWriteProhibited',
+      info: 'The S3 Bucket does not prohibit public write access through its Block Public Access configurations and bucket ACLs - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-6a, CM-9b, MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'The management of access should be consistent with the classification of the data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketPublicWriteProhibited,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketReplicationEnabled',
+      info: 'The S3 Bucket does not have replication enabled - (Control IDs: AU-9(2), CM-6a, CM-9b, CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'Amazon Simple Storage Service (Amazon S3) Cross-Region Replication (CRR) supports maintaining adequate capacity and availability. CRR enables automatic, asynchronous copying of objects across Amazon S3 buckets to help ensure that data availability is maintained.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketReplicationEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketServerSideEncryptionEnabled',
+      info: 'The S3 Bucket does not have default server-side encryption enabled - (Control IDs: AU-9(3), CM-6a, CM-9b, CP-9d, CP-9(8), PM-11b, SC-8(3), SC-8(4), SC-13a, SC-16(1), SC-28(1), SI-19(4)).',
+      explanation:
+        'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketServerSideEncryptionEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3BucketVersioningEnabled',
+      info: 'The S3 Bucket does not have versioning enabled - (Control IDs: AU-9(2), CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), PM-11b, PM-17b, SC-5(2), SC-16(1), SI-1a.2, SI-1a.2, SI-1c.2, SI-13(5)).',
+      explanation:
+        'Use versioning to preserve, retrieve, and restore every version of every object stored in your Amazon S3 bucket. Versioning helps you to easily recover from unintended user actions and application failures.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3BucketVersioningEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-S3DefaultEncryptionKMS',
+      info: 'The S3 Bucket is not encrypted with a KMS Key by default - (Control IDs: AU-9(3), CP-9d, CP-9(8), SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'Ensure that encryption is enabled for your Amazon Simple Storage Service (Amazon S3) buckets. Because sensitive data can exist at rest in an Amazon S3 bucket, enable encryption at rest to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5S3DefaultEncryptionKMS,
+      node: node,
+    });
+  }
 
   /**
    * Check SageMaker Resources
