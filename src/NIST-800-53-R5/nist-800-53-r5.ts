@@ -99,7 +99,7 @@ import {
   nist80053r5SageMakerNotebookInstanceKMSKeyConfigured,
   nist80053r5SageMakerNotebookNoDirectInternetAccess,
 } from './rules/sagemaker';
-// import {} from './rules/secretsmanager';
+import { nist80053r5SecretsManagerUsingKMSKey } from './rules/secretsmanager';
 // import {} from './rules/sns';
 // import {} from './rules/vpc';
 
@@ -883,10 +883,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Secrets Manager Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkSecretsManager(_node: CfnResource): void {}
+  private checkSecretsManager(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-SecretsManagerUsingKMSKey',
+      info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'To help protect data at rest, ensure encryption with AWS Key Management Service (AWS KMS) is enabled for AWS Secrets Manager secrets. Because sensitive data can exist at rest in Secrets Manager secrets, enable encryption at rest to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SecretsManagerUsingKMSKey,
+      node: node,
+    });
+  }
 
   /**
    * Check Amazon SNS Resources
