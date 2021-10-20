@@ -56,7 +56,11 @@ import {
   nist80053r5IAMUserGroupMembership,
   nist80053r5IAMUserNoPolicies,
 } from './rules/iam';
-// import {} from './rules/lambda';
+import {
+  nist80053r5LambdaConcurrency,
+  nist80053r5LambdaDlq,
+  nist80053r5LambdaInsideVPC,
+} from './rules/lambda';
 // import {} from './rules/opensearch';
 // import {} from './rules/rds';
 // import {} from './rules/redshift';
@@ -519,10 +523,38 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Lambda Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkLambda(_node: CfnResource) {}
+  private checkLambda(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-LambdaConcurrency',
+      info: 'The Lambda function is not configured with function-level concurrent execution limits - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-6).',
+      explanation:
+        "Ensure that a Lambda function's concurrency high and low limits are established. This can assist in baselining the number of requests that your function is serving at any given time.",
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5LambdaConcurrency,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-LambdaDlq',
+      info: 'The Lambda function is not configured with a dead-letter configuration - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-36(1)(a), SI-2a).',
+      explanation:
+        'Notify the appropriate personnel through Amazon Simple Queue Service (Amazon SQS) or Amazon Simple Notification Service (Amazon SNS) when a function has failed.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5LambdaDlq,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-LambdaInsideVPC',
+      info: 'The Lambda function is not VPC enabled - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-25).',
+      explanation:
+        'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5LambdaInsideVPC,
+      node: node,
+    });
+  }
 
   /**
    * Check OpenSearch Resources
