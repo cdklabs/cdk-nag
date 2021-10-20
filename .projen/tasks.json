@@ -44,12 +44,24 @@
         }
       ]
     },
+    "test:compile": {
+      "name": "test:compile",
+      "description": "compiles the test code",
+      "steps": [
+        {
+          "exec": "tsc --noEmit --project tsconfig.dev.json"
+        }
+      ]
+    },
     "test": {
       "name": "test",
       "description": "Run tests",
       "steps": [
         {
           "exec": "rm -fr lib/"
+        },
+        {
+          "spawn": "test:compile"
         },
         {
           "exec": "jest --passWithNoTests --all --updateSnapshot"
