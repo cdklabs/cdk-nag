@@ -100,7 +100,7 @@ import {
   nist80053r5SageMakerNotebookNoDirectInternetAccess,
 } from './rules/sagemaker';
 import { nist80053r5SecretsManagerUsingKMSKey } from './rules/secretsmanager';
-// import {} from './rules/sns';
+import { nist80053r5SNSEncryptedKMS } from './rules/sns';
 // import {} from './rules/vpc';
 
 /**
@@ -900,10 +900,20 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Amazon SNS Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkSNS(_node: CfnResource): void {}
+  private checkSNS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-SNSEncryptedKMS',
+      info: 'The SNS topic does not have KMS encryption enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1)).',
+      explanation:
+        'To help protect data at rest, ensure that your Amazon Simple Notification Service (Amazon SNS) topics require encryption using AWS Key Management Service (AWS KMS) Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SNSEncryptedKMS,
+      node: node,
+    });
+  }
 
   /**
    * Check VPC Resources
