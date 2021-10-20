@@ -61,7 +61,12 @@ import {
   nist80053r5LambdaDlq,
   nist80053r5LambdaInsideVPC,
 } from './rules/lambda';
-// import {} from './rules/opensearch';
+import {
+  nist80053r5OpenSearchEncryptedAtRest,
+  nist80053r5OpenSearchInVPCOnly,
+  nist80053r5OpenSearchLogsToCloudWatch,
+  nist80053r5OpenSearchNodeToNodeEncryption,
+} from './rules/opensearch';
 // import {} from './rules/rds';
 // import {} from './rules/redshift';
 // import {} from './rules/s3';
@@ -558,10 +563,47 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check OpenSearch Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkOpenSearch(_node: CfnResource) {}
+  private checkOpenSearch(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-OpenSearchEncryptedAtRest',
+      info: 'The OpenSearch Service domain does not have encryption at rest enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon OpenSearch Service (OpenSearch Service) domains.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5OpenSearchEncryptedAtRest,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-OpenSearchInVPCOnly',
+      info: 'The OpenSearch Service domain is not running within a VPC - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-25).',
+      explanation:
+        'VPCs help secure your AWS resources and provide an extra layer of protection.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5OpenSearchInVPCOnly,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-OpenSearchLogsToCloudWatch',
+      info: 'The OpenSearch Service domain does not stream error logs (ES_APPLICATION_LOGS) to CloudWatch Logs - (Control ID: AU-10).',
+      explanation:
+        'Ensure Amazon OpenSearch Service domains have error logs enabled and streamed to Amazon CloudWatch Logs for retention and response. Domain error logs can assist with security and access audits, and can help to diagnose availability issues.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5OpenSearchLogsToCloudWatch,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-OpenSearchNodeToNodeEncryption',
+      info: 'The OpenSearch Service domain does not have node-to-node encryption enabled - (Control IDs: AC-4, AC-4(22), AC-24(1), AU-9(3), CA-9b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Because sensitive data can exist, enable encryption in transit to help protect that data within your Amazon OpenSearch Service (OpenSearch Service) domains.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5OpenSearchNodeToNodeEncryption,
+      node: node,
+    });
+  }
 
   /**
    * Check RDS Resources
