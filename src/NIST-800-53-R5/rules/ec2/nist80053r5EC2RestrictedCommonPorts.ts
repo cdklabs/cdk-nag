@@ -10,7 +10,7 @@ import { resolveIfPrimitive } from '../../../nag-pack';
 const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
 
 /**
- * EC2 instances have all common TCP ports restricted for ingress IPv4 traffic - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)))
+ * EC2 instances have all common TCP ports restricted for ingress IPv4 traffic - (Control IDs: AC-4(21), AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-2a, CM-2(2), CM-6a, CM-7b, CM-8(6), CM-9b, SC-7a, SC-7c, SC-7(5), SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28))
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */

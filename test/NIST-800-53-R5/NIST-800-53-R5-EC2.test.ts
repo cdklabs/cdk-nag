@@ -197,6 +197,143 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     );
   });
 
+  test('NIST.800.53.R5-EC2RestrictedCommonPorts: - EC2 instances have all common TCP ports restricted for ingress IPv4 traffic - (Control IDs: AC-4(21), AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-2a, CM-2(2), CM-6a, CM-7b, CM-8(6), CM-9b, SC-7a, SC-7c, SC-7(5), SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
+    new CfnSecurityGroup(nonCompliant, 'rSecurityGroup', {
+      groupDescription: 'security group tcp port 20 open',
+      securityGroupIngress: [
+        {
+          fromPort: 20,
+          ipProtocol: 'tcp',
+          cidrIp: '0.0.0.0/0',
+        },
+      ],
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-EC2RestrictedCommonPorts:'
+          ),
+        }),
+      })
+    );
+
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
+    new CfnSecurityGroup(nonCompliant2, 'rSecurityGroup', {
+      groupDescription: 'security group with SSH unrestricted',
+      securityGroupIngress: [
+        {
+          fromPort: 21,
+          ipProtocol: 'tcp',
+          cidrIp: '0.0.0.0/0',
+        },
+      ],
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-EC2RestrictedCommonPorts:'
+          ),
+        }),
+      })
+    );
+
+    const nonCompliant3 = new Stack();
+    Aspects.of(nonCompliant3).add(new NIST80053R5Checks());
+    new SecurityGroup(nonCompliant3, 'rSg', {
+      vpc: new Vpc(nonCompliant3, 'rVpc'),
+    }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+    expect(messages3).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-EC2RestrictedCommonPorts:'
+          ),
+        }),
+      })
+    );
+
+    const nonCompliant4 = new Stack();
+    Aspects.of(nonCompliant4).add(new NIST80053R5Checks());
+    new CfnSecurityGroup(nonCompliant4, 'rSecurityGroup', {
+      groupDescription: 'security group with port 21 open',
+      securityGroupIngress: [
+        {
+          fromPort: 1,
+          toPort: 10000,
+          ipProtocol: 'tcp',
+          cidrIp: '0.0.0.0/0',
+        },
+      ],
+    });
+    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
+    expect(messages4).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-EC2RestrictedCommonPorts:'
+          ),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R5Checks());
+    new CfnSecurityGroup(compliant, 'rSecurityGroup1', {
+      groupDescription: 'security group with no rules',
+      securityGroupIngress: [],
+    });
+    new CfnSecurityGroup(compliant, 'rSecurityGroup2', {
+      groupDescription:
+        'security group with SSH ingress allowed for a specific IP address',
+      securityGroupIngress: [
+        {
+          fromPort: 21,
+          ipProtocol: 'tcp',
+          cidrIp: '72.21.210.165',
+        },
+      ],
+    });
+    new CfnSecurityGroup(compliant, 'rSecurityGroup3', {
+      groupDescription:
+        'security group with an open-world ingress rule for HTTP traffic',
+      securityGroupIngress: [
+        {
+          fromPort: 80,
+          ipProtocol: 'tcp',
+          cidrIp: '0.0.0.0/0',
+        },
+      ],
+    });
+    new CfnSecurityGroup(compliant, 'rSecurityGroup4', {
+      groupDescription: 'security group allowing unrestricted udp traffic',
+      securityGroupIngress: [
+        {
+          fromPort: 21,
+          ipProtocol: 'udp',
+          cidrIp: '0.0.0.0/0',
+        },
+      ],
+    });
+    const messages5 = SynthUtils.synthesize(compliant).messages;
+    expect(messages5).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-EC2RestrictedCommonPorts:'
+          ),
+        }),
+      })
+    );
+  });
+
   test('NIST.800.53.R5-EC2RestrictedSSH: - Security Groups do not allow for unrestricted SSH traffic - (Control IDs: AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-9b, SC-7a, SC-7c, SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());

@@ -31,6 +31,7 @@ import {
   nist80053r5EC2InstanceNoPublicIp,
   nist80053r5EC2InstanceProfileAttached,
   nist80053r5EC2InstancesInVPC,
+  nist80053r5EC2RestrictedCommonPorts,
   nist80053r5EC2RestrictedSSH,
 } from './rules/ec2';
 import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
@@ -320,6 +321,15 @@ export class NIST80053R5Checks extends NagPack {
         'Deploy Amazon Elastic Compute Cloud (Amazon EC2) instances within an Amazon Virtual Private Cloud (Amazon VPC) to enable secure communication between an instance and other services within the amazon VPC, without requiring an internet gateway, NAT device, or VPN connection. All traffic remains securely within the AWS Cloud. Because of their logical isolation, domains that reside within anAmazon VPC have an extra layer of security when compared to domains that use public endpoints. Assign Amazon EC2 instances to an Amazon VPC to properly manage access.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5EC2InstancesInVPC,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2RestrictedCommonPorts',
+      info: 'The EC2 instance allows unrestricted inbound IPv4 TCP traffic on one or more common ports (by default these ports include 20, 21, 3389, 3309, 3306, 4333) - (Control IDs: AC-4(21), AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-2a, CM-2(2), CM-6a, CM-7b, CM-8(6), CM-9b, SC-7a, SC-7c, SC-7(5), SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28)).',
+      explanation:
+        'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems. By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2RestrictedCommonPorts,
       node: node,
     });
     this.applyRule({
