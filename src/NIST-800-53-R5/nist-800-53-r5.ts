@@ -77,7 +77,13 @@ import {
   nist80053r5RDSMultiAZSupport,
   nist80053r5RDSStorageEncrypted,
 } from './rules/rds';
-// import {} from './rules/redshift';
+import {
+  nist80053r5RedshiftBackupEnabled,
+  nist80053r5RedshiftClusterConfiguration,
+  nist80053r5RedshiftClusterMaintenanceSettings,
+  nist80053r5RedshiftClusterPublicAccess,
+  nist80053r5RedshiftEnhancedVPCRoutingEnabled,
+} from './rules/redshift';
 // import {} from './rules/s3';
 // import {} from './rules/sagemaker';
 // import {} from './rules/secretsmanager';
@@ -696,10 +702,56 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check Redshift Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkRedshift(_node: CfnResource): void {}
+  private checkRedshift(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftBackupEnabled',
+      info: 'The Redshift cluster does not have automated snapshots enabled or the retention period is not between 1 and 35 days - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Redshift clusters have automated snapshots. When automated snapshots are enabled for a cluster, Redshift periodically takes snapshots of that cluster. By default, Redshift takes a snapshot every eight hours or every 5 GB per node of data changes, or whichever comes first.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftBackupEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftClusterConfiguration',
+      info: 'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: AC-2(4), AC-3(1), AC-3(10), AC-4(26), AC-6(9), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-9(3), AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), CP-9d, IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-1(1)(c), SI-3(8)(b), SI-4(2), SI-4(17), SI-4(20), SI-7(8), SI-10(1)(c), SI-19(4)).',
+      explanation:
+        'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftClusterConfiguration,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftClusterMaintenanceSettings',
+      info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: CM-2b, CM-2b.1, CM-2b.2, CM-2b.3, CM-3(3), CP-9a, CP-9b, CP-9c, SC-5(2), SI-2c, SI-2d, SI-2(2), SI-2(5)).',
+      explanation:
+        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.                                                                                                                                                                                                                                                                                                                                                              ',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftClusterMaintenanceSettings,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftClusterPublicAccess',
+      info: 'The Redshift cluster allows public access - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftClusterPublicAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftEnhancedVPCRoutingEnabled',
+      info: 'The Redshift cluster does not have enhanced VPC routing enabled - (Control IDs: AC-4(21), SC-7b).',
+      explanation:
+        'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftEnhancedVPCRoutingEnabled,
+      node: node,
+    });
+  }
 
   /**
    * Check Amazon S3 Resources
