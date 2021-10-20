@@ -94,7 +94,11 @@ import {
   nist80053r5S3BucketVersioningEnabled,
   nist80053r5S3DefaultEncryptionKMS,
 } from './rules/s3';
-// import {} from './rules/sagemaker';
+import {
+  nist80053r5SageMakerEndpointConfigurationKMSKeyConfigured,
+  nist80053r5SageMakerNotebookInstanceKMSKeyConfigured,
+  nist80053r5SageMakerNotebookNoDirectInternetAccess,
+} from './rules/sagemaker';
 // import {} from './rules/secretsmanager';
 // import {} from './rules/sns';
 // import {} from './rules/vpc';
@@ -844,10 +848,38 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check SageMaker Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkSageMaker(_node: CfnResource) {}
+  private checkSageMaker(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-SageMakerEndpointConfigurationKMSKeyConfigured',
+      info: 'The SageMaker resource endpoint is not encrypted with a KMS key - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SageMakerEndpointConfigurationKMSKeyConfigured,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-SageMakerNotebookInstanceKMSKeyConfigured',
+      info: 'The SageMaker notebook is not encrypted with a KMS key - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
+      explanation:
+        'Because sensitive data can exist at rest in SageMaker notebook, enable encryption at rest to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SageMakerNotebookInstanceKMSKeyConfigured,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-SageMakerNotebookNoDirectInternetAccess',
+      info: 'The SageMaker notebook does not disable direct internet access - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SageMakerNotebookNoDirectInternetAccess,
+      node: node,
+    });
+  }
 
   /**
    * Check Secrets Manager Resources
