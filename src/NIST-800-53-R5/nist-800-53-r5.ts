@@ -101,7 +101,11 @@ import {
 } from './rules/sagemaker';
 import { nist80053r5SecretsManagerUsingKMSKey } from './rules/secretsmanager';
 import { nist80053r5SNSEncryptedKMS } from './rules/sns';
-// import {} from './rules/vpc';
+import {
+  nist80053r5VPCDefaultSecurityGroupClosed,
+  nist80053r5VPCNoUnrestrictedRouteToIGW,
+  nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
+} from './rules/vpc';
 
 /**
  * Check for NIST 800-53 rev 5 compliance.
@@ -917,8 +921,36 @@ export class NIST80053R5Checks extends NagPack {
 
   /**
    * Check VPC Resources
-   * @param _node the CfnResource to check
+   * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
    */
-  private checkVPC(_node: CfnResource): void {}
+  private checkVPC(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-VPCDefaultSecurityGroupClosed',
+      info: "The VPC's default security group allows inbound or outbound traffic - (Control IDs: AC-4(21), AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-6a, CM-9b, SC-7a, SC-7c, SC-7(5), SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28)).",
+      explanation:
+        'Amazon Elastic Compute Cloud (Amazon EC2) security groups can help in the management of network access by providing stateful filtering of ingress and egress network traffic to AWS resources. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.',
+      level: NagMessageLevel.WARN,
+      rule: nist80053r5VPCDefaultSecurityGroupClosed,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-VPCNoUnrestrictedRouteToIGW',
+      info: "The route table may contain one or more unrestricted route(s) to an IGW ('0.0.0.0/0' or '::/0') - (Control IDs: AC-4(21), CM-7b).",
+      explanation:
+        'Ensure Amazon EC2 route tables do not have unrestricted routes to an internet gateway. Removing or limiting the access to the internet for workloads within Amazon VPCs can reduce unintended access within your environment.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5VPCNoUnrestrictedRouteToIGW,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-VPCSubnetAutoAssignPublicIpDisabled',
+      info: 'The subnet auto-assigns public IP addresses - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
+      node: node,
+    });
+  }
 }
