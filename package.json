@@ -8,7 +8,6 @@
   "scripts": {
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
-    "test:compile": "npx projen test:compile",
     "test": "npx projen test",
     "build": "npx projen build",
     "test:watch": "npx projen test:watch",
@@ -45,7 +44,7 @@
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "^3.4.1",
-    "jest": "^27.3.0",
+    "jest": "^27.3.1",
     "jest-junit": "^12",
     "jsii": "^1.39.0",
     "jsii-diff": "^1.39.0",
@@ -54,7 +53,7 @@
     "json-schema": "^0.3.0",
     "npm-check-updates": "^11",
     "prettier": "^2.4.1",
-    "projen": "^0.30.3",
+    "projen": "^0.31.0",
     "standard-version": "^9",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
