@@ -401,7 +401,7 @@ Unimplemented rules from the AWS NIST 800-53 rev 4 Conformance Pack
 
 ## NIST 800-53 rev 5
 
-The [Operational Best Practices for NIST 800-53 rev 5](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html) Conformance Pack offers a collection of AWS Config Rules that enable customers to align to a subset of the NIST 800-53 standards. The NIST 800-53 Rules Pack implements many of the checks within the conformance pack.
+The [Operational Best Practices for NIST 800-53 rev 5](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_5.html) Conformance Pack offers a collection of AWS Config Rules that enable customers to align to a subset of the NIST 800-53 standards. The NIST 800-53 Rules Pack implements many of the checks within the conformance pack.
 
 ### Warnings
 
