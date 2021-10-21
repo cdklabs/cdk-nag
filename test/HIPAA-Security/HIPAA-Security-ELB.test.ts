@@ -23,7 +23,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
 describe('Elastic Load Balancing', () => {
-  test('hipaaSecurityhipaaSecurityALBHttpDropInvalidHeaderEnabled: - Load balancers have invalid HTTP header dropping enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
+  test('hipaaSecurityALBHttpDropInvalidHeaderEnabled: - Load balancers have invalid HTTP header dropping enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
     const nonCompliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
     });
@@ -198,7 +198,7 @@ describe('Elastic Load Balancing', () => {
       })
     );
   });
-  test('hipaaSecurityELBCrossZoneBalancingEnabled: - CLBs are load balanced across AZs - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
+  test('hipaaSecurityELBCrossZoneLoadBalancingEnabled: - CLBs are load balanced across AZs - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new LoadBalancer(nonCompliant, 'rELB', {
@@ -210,7 +210,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBCrossZoneBalancingEnabled:'
+            'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -231,7 +231,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBCrossZoneBalancingEnabled:'
+            'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -257,7 +257,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ELBCrossZoneBalancingEnabled:'
+            'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })

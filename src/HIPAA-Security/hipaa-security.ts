@@ -51,7 +51,7 @@ import {
   hipaaSecurityALBHttpDropInvalidHeaderEnabled,
   hipaaSecurityALBHttpToHttpsRedirection,
   hipaaSecurityELBACMCertificateRequired,
-  hipaaSecurityELBCrossZoneBalancingEnabled,
+  hipaaSecurityELBCrossZoneLoadBalancingEnabled,
   hipaaSecurityELBDeletionProtectionEnabled,
   hipaaSecurityELBLoggingEnabled,
   hipaaSecurityELBTlsHttpsListenersOnly,
@@ -532,12 +532,12 @@ export class HIPAASecurityChecks extends NagPack {
       node: node,
     });
     this.applyRule({
-      ruleId: 'HIPAA.Security-ELBCrossZoneBalancingEnabled',
+      ruleId: 'HIPAA.Security-ELBCrossZoneLoadBalancingEnabled',
       info: 'The CLB does not balance traffic between at least 2 Availability Zones - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).',
       explanation:
         'The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone.',
       level: NagMessageLevel.ERROR,
-      rule: hipaaSecurityELBCrossZoneBalancingEnabled,
+      rule: hipaaSecurityELBCrossZoneLoadBalancingEnabled,
       node: node,
     });
     this.applyRule({
@@ -833,7 +833,7 @@ export class HIPAASecurityChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'HIPAA.Security-RedshiftClusterMaintenanceSettings',
-      info: 'The Redshift cluster has version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: 164.308(a)(5)(ii)(A), 164.308(a)(7)(ii)(A)).',
+      info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: 164.308(a)(5)(ii)(A), 164.308(a)(7)(ii)(A)).',
       explanation:
         'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.',
       level: NagMessageLevel.ERROR,

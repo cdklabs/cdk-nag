@@ -7,7 +7,7 @@ import { CfnEnvironment } from '@aws-cdk/aws-elasticbeanstalk';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
-describe('Amazon ElastiCache', () => {
+describe('AWS Elastic Beanstalk', () => {
   test('HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled: -  Elastic Beanstalk environments have enhanced health reporting enabled - (Control ID: 164.312(b))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 export * from './AwsSolutions/aws-solutions';
 export * from './NIST-800-53-R4/nist-800-53-r4';
+export * from './NIST-800-53-R5/nist-800-53-r5';
 export * from './HIPAA-Security/hipaa-security';
 export * from './nag-pack';
 export * from './nag-suppressions';

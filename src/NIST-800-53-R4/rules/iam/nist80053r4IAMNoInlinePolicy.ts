@@ -6,7 +6,7 @@ import { CfnRole, CfnUser, CfnGroup, CfnPolicy } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
 /**
- * IAM Group, User, and Roles do not contain inline policies - (Control ID: AC-6)
+ * IAM Groups, Users, and Roles do not contain inline policies - (Control ID: AC-6)
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
