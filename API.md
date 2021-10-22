@@ -294,7 +294,7 @@ static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPac
 
 #### *static* addResourceSuppressionsByPath(stack, path, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressionsbypath"></a>
 
-Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource).
+Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource.
 
 ```ts
 static addResourceSuppressionsByPath(stack: Stack, path: string, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
