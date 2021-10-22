@@ -279,13 +279,29 @@ new NagSuppressions()
 
 #### *static* addResourceSuppressions(construct, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressions"></a>
 
-Add cdk-nag suppressions to the Construct if it is a CfnResource.
+Add cdk-nag suppressions to the construct if it is a CfnResource.
 
 ```ts
 static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
 * **construct** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  the IConstruct to apply the suppression to.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the resource.
+* **applyToChildren** (<code>boolean</code>)  apply the suppressions to this construct and all of its children if they exist (default:false).
+
+
+
+
+#### *static* addResourceSuppressionsByPath(stack, path, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressionsbypath"></a>
+
+Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource.
+
+```ts
+static addResourceSuppressionsByPath(stack: Stack, path: string, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
+```
+
+* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  the Stack the construct belongs to.
+* **path** (<code>string</code>)  the path of the construct in the provided stack.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the resource.
 * **applyToChildren** (<code>boolean</code>)  apply the suppressions to this construct and all of its children if they exist (default:false).
 
