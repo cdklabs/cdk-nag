@@ -199,6 +199,34 @@ describe('Testing rule suppression system', () => {
       1
     );
   });
+  test('Test supressions with addResourceSuppressionByPath function on a CfnResource based Construct', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+      description: '',
+    });
+    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    NagSuppressions.addResourceSuppressionsByPath(stack, test.node.path, [
+      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-EC23:'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-EC27:'),
+        }),
+      })
+    );
+  });
   test('addStackSuppressions function does not override previous suppressions on a Stack', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());

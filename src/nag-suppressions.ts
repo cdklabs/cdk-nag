@@ -57,7 +57,7 @@ export class NagSuppressions {
   }
 
   /**
-   * Add cdk-nag suppressions to the Construct if it is a CfnResource
+   * Add cdk-nag suppressions to the construct if it is a CfnResource
    * @param construct the IConstruct to apply the suppression to
    * @param suppressions a list of suppressions to apply to the resource
    * @param applyToChildren apply the suppressions to this construct and all of its children if they exist (default:false)
@@ -69,6 +69,8 @@ export class NagSuppressions {
   ): void {
     const newSuppressions = [];
     for (const suppression of suppressions) {
+      console.log(construct.node.id);
+      console.log(construct.node.path);
       if (suppression.reason.length >= 10) {
         newSuppressions.push(suppression);
       } else {
@@ -88,6 +90,35 @@ export class NagSuppressions {
         resource.addMetadata('cdk_nag', {
           rules_to_suppress: newSuppressions,
         });
+      }
+    }
+  }
+
+  /**
+   * Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource)
+   * @param stack the Stack the construct belongs to
+   * @param path the path of the construct in the provided stack
+   * @param suppressions a list of suppressions to apply to the resource
+   * @param applyToChildren apply the suppressions to this construct and all of its children if they exist (default:false)
+   */
+  static addResourceSuppressionsByPath(
+    stack: Stack,
+    path: string,
+    suppressions: NagPackSuppression[],
+    applyToChildren: boolean = false
+  ): void {
+    console.log(stack.stackName);
+    for (const child of stack.node.findAll()) {
+      const fixedPath = path.replace(/^\//, '');
+      if (
+        child.node.path === fixedPath ||
+        child.node.path + '/Resource' === fixedPath
+      ) {
+        NagSuppressions.addResourceSuppressions(
+          child,
+          suppressions,
+          applyToChildren
+        );
       }
     }
   }
