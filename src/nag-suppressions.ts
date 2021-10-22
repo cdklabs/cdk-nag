@@ -93,7 +93,7 @@ export class NagSuppressions {
   }
 
   /**
-   * Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource)
+   * Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource
    * @param stack the Stack the construct belongs to
    * @param path the path of the construct in the provided stack
    * @param suppressions a list of suppressions to apply to the resource
