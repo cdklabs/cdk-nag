@@ -6,7 +6,7 @@ const { AwsCdkConstructLibrary } = require('projen');
 const project = new AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '1.110.0',
+  cdkVersion: '1.123.0',
   defaultReleaseBranch: 'main',
   name: 'monocdk-nag',
   description:
