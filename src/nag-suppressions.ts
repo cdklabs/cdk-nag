@@ -69,8 +69,6 @@ export class NagSuppressions {
   ): void {
     const newSuppressions = [];
     for (const suppression of suppressions) {
-      console.log(construct.node.id);
-      console.log(construct.node.path);
       if (suppression.reason.length >= 10) {
         newSuppressions.push(suppression);
       } else {
@@ -107,7 +105,6 @@ export class NagSuppressions {
     suppressions: NagPackSuppression[],
     applyToChildren: boolean = false
   ): void {
-    console.log(stack.stackName);
     for (const child of stack.node.findAll()) {
       const fixedPath = path.replace(/^\//, '');
       if (
