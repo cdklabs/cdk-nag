@@ -17,7 +17,7 @@ import {
 import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
-describe('Amazon OpenSearch', () => {
+describe('Amazon OpenSearch Service', () => {
   test('hipaaSecurityOpenSearchEncryptedAtRest: - OpenSearch Service domains have encryption at rest enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());

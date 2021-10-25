@@ -13,7 +13,7 @@ import {
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R5Checks } from '../../src';
 
-describe('Amazon Elastic Container Service (Amazon ECS', () => {
+describe('Amazon Elastic Container Service (Amazon ECS)', () => {
   test("NIST.800.53.R5-ECSTaskDefinitionUserForHostMode: - Containers in ECS task definitions configured for host networking have 'privileged' set to true and a non-empty non-root 'user' - (Control IDs: AC-3, AC-5b, CM-5(1)(a))", () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());

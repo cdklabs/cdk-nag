@@ -13,7 +13,7 @@ import {
 import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
-describe('Amazon Elastic Container Service (Amazon ECS', () => {
+describe('Amazon Elastic Container Service (Amazon ECS)', () => {
   test("hipaaSecurityECSTaskDefinitionUserForHostMode: - Containers in ECS task definitions configured for host networking have 'privileged' set to true and a non-empty non-root 'user' - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1)).", () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
