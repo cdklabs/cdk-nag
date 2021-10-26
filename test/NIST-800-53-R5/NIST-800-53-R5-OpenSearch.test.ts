@@ -17,7 +17,7 @@ import {
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R5Checks } from '../../src';
 
-describe('Amazon OpenSearch', () => {
+describe('Amazon OpenSearch Service', () => {
   test('NIST.800.53.R5-OpenSearchEncryptedAtRest: - OpenSearch Service domains have encryption at rest enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());

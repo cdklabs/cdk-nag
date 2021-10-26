@@ -9,7 +9,7 @@ import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
-describe('Amazon OpenSearch', () => {
+describe('Amazon OpenSearch Service', () => {
   test('nist80053r4OpenSearchNodeToNodeEncrypted: - OpenSearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());

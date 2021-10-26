@@ -87,7 +87,7 @@ describe('AWS CloudTrail', () => {
     );
   });
 
-  test('NIST.800.53.R5-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
+  test('NIST.800.53.R5-CloudTrailLogFileValidationEnabled: CloudTrail trails have log file validation enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     const myLogs = new LogGroup(nonCompliant, 'rLogGroup');
