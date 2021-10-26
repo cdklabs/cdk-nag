@@ -103,7 +103,7 @@ describe('AWS CloudTrail', () => {
     );
   });
 
-  test('HIPAA.Security-CloudTrailLogFileValidationEnabled: Cloud Trails have log file validation enabled', () => {
+  test('HIPAA.Security-CloudTrailLogFileValidationEnabled: CloudTrail trails have log file validation enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
 

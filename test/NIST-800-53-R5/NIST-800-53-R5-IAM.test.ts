@@ -309,7 +309,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     );
   });
 
-  test('NIST.800.53.R5-IAMUserGroupMembership: - IAM users are assigned to at least one group - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)', () => {
+  test('NIST.800.53.R5-IAMUserGroupMembership: - IAM users are assigned to at least one group - (Control IDs: AC-2i.2, AC-2(1), AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-6, AC-6(3), AC-24, CM-5(1)(a), CM-6a, CM-9b, MP-2, SC-23(3))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new User(nonCompliant, 'rUser');
@@ -339,7 +339,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     );
   });
 
-  test('NIST.800.53.R5-IAMUserNoPolicies: - IAM policies are not attached at the user level - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1))', () => {
+  test('NIST.800.53.R5-IAMUserNoPolicies: - IAM policies are not attached at the user level - (Control IDs: AC-2i.2, AC-2(1), AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-6, AC-6(3), AC-24, CM-5(1)(a), CM-6a, CM-9b, MP-2, SC-23(3), SC-25)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new Policy(nonCompliant, 'rPolicy', {

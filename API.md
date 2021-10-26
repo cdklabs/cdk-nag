@@ -10,6 +10,7 @@ Name|Description
 [NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule sets.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
+[PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 
 
 **Structs**
@@ -202,7 +203,7 @@ visit(node: IConstruct): void
 Base class for all rule sets.
 
 __Implements__: [IAspect](#aws-cdk-core-iaspect)
-__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks)
+__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks), [PCIDSS321Checks](#cdk-nag-pcidss321checks)
 
 ### Initializer
 
@@ -318,6 +319,45 @@ static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression
 
 * **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  the Stack to apply the suppression to.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the stack.
+
+
+
+
+
+
+## class PCIDSS321Checks  <a id="cdk-nag-pcidss321checks"></a>
+
+Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
+
+__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Extends__: [NagPack](#cdk-nag-nagpack)
+
+### Initializer
+
+
+
+
+```ts
+new PCIDSS321Checks(props?: NagPackProps)
+```
+
+* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
+  * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
+
+
+### Methods
+
+
+#### visit(node) <a id="cdk-nag-pcidss321checks-visit"></a>
+
+All aspects can visit an IConstruct.
+
+```ts
+visit(node: IConstruct): void
+```
+
+* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
 
 
 
