@@ -18,6 +18,7 @@ import {
 } from '@aws-cdk/aws-ec2';
 import { Repository } from '@aws-cdk/aws-ecr';
 import { Cluster as EcsCluster, ExecuteCommandLogging } from '@aws-cdk/aws-ecs';
+import { CfnEnvironment } from '@aws-cdk/aws-elasticbeanstalk';
 import {
   CfnLoadBalancer,
   LoadBalancer,
@@ -35,6 +36,215 @@ import { Aspects, Size, Stack } from '@aws-cdk/core';
 import { AwsSolutionsChecks } from '../../src';
 
 describe('AWS Solutions Compute Checks', () => {
+  describe('AWS Elastic Beanstalk', () => {
+    test('AwsSolutions-EB1: Elastic Beanstalk environments are configured to use a specific VPC', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant, 'rBeanstalk', {
+        applicationName: 'foo',
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB1:'),
+          }),
+        })
+      );
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant2, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:ec2:vpc',
+            optionName: 'VPCId',
+          },
+        ],
+      });
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB1:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new CfnEnvironment(compliant, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:ec2:vpc',
+            optionName: 'VPCId',
+            value: 'foo',
+          },
+        ],
+      });
+      const messages3 = SynthUtils.synthesize(compliant).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB1:'),
+          }),
+        })
+      );
+    });
+    test('AwsSolutions-EB3: Elastic Beanstalk environments have managed updates enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant, 'rBeanstalk', {
+        applicationName: 'foo',
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB3:'),
+          }),
+        })
+      );
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant2, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'ManagedActionsEnabled',
+            value: 'false',
+          },
+        ],
+      });
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB3:'),
+          }),
+        })
+      );
+
+      const nonCompliant3 = new Stack();
+      Aspects.of(nonCompliant3).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant3, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'ManagedActionsEnabled',
+          },
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'PreferredStartTime',
+            value: 'Tue:09:00',
+          },
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions:platformupdate',
+            optionName: 'UpdateLevel',
+          },
+        ],
+      });
+      const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+      expect(messages3).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB3:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new CfnEnvironment(compliant, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'ManagedActionsEnabled',
+          },
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'PreferredStartTime',
+            value: 'Tue:09:00',
+          },
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions:platformupdate',
+            optionName: 'UpdateLevel',
+            value: 'minor',
+          },
+        ],
+      });
+      const messages4 = SynthUtils.synthesize(compliant).messages;
+      expect(messages4).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB3:'),
+          }),
+        })
+      );
+    });
+    test('AwsSolutions-EB4: EC2 instances in Elastic Beanstalk environments upload rotated logs to S3', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant, 'rBeanstalk', {
+        applicationName: 'foo',
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB4:'),
+          }),
+        })
+      );
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      new CfnEnvironment(nonCompliant2, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:elasticbeanstalk:hostmanager',
+            optionName: 'LogPublicationControl',
+          },
+        ],
+      });
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB4:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new CfnEnvironment(compliant, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:elasticbeanstalk:hostmanager',
+            optionName: 'LogPublicationControl',
+            value: 'true',
+          },
+        ],
+      });
+      const messages3 = SynthUtils.synthesize(compliant).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-EB4:'),
+          }),
+        })
+      );
+    });
+  });
   describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     test('awsSolutionsEc23: EC2 security groups do not allow for 0.0.0.0/0 or ::/0 inbound access', () => {
       const positive = new Stack();

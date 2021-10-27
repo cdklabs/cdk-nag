@@ -30,6 +30,9 @@ import {
   awsSolutionsSqs3,
 } from './rules/application_integration';
 import {
+  awsSolutionsEb1,
+  awsSolutionsEb3,
+  awsSolutionsEb4,
   awsSolutionsEc23,
   awsSolutionsEc26,
   awsSolutionsEc27,
@@ -159,6 +162,33 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkCompute(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'AwsSolutions-EB1',
+      info: 'The Elastic Beanstalk environment is not configured to use a specific VPC.',
+      explanation:
+        'Use a non-default in order to seperate your environment from default resources.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsEb1,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-EB3',
+      info: 'The Elastic Beanstalk environment does not have managed updates enabled.',
+      explanation:
+        'Enable managed platform updates for beanstalk environments in order to receive bug fixes, software updates and new features. Managed platform updates perform immutable environment updates.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsEb3,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-EB4',
+      info: 'The Elastic Beanstalk environment does not upload EC2 Instance logs to S3.',
+      explanation:
+        'Beanstalk environment logs should be retained and uploaded to Amazon S3 in order to keep the logging data for future audits, historical purposes or to track and analyze the EB application environment behavior for a long period of time.',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsEb4,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'AwsSolutions-EC23',
       info: 'The Security Group allows for 0.0.0.0/0 or ::/0 inbound access.',
