@@ -342,6 +342,43 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
     });
+    test('AwsSolutions-RDS15: RDS Aurora DB clusters have Deletion Protection enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new AuroraCluster(nonCompliant, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
+        }),
+        instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RDS15:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      const vpc = new Vpc(compliant, 'rVpc');
+      new AuroraCluster(compliant, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
+        }),
+        instanceProps: { vpc: vpc },
+        deletionProtection: true,
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RDS15:'),
+          }),
+        })
+      );
+    });
     test('awsSolutionsRds16: RDS Aurora serverless clusters have all available Log Exports enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());

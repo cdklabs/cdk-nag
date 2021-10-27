@@ -8,6 +8,7 @@ export { default as awsSolutionsRds10 } from './RDS10';
 export { default as awsSolutionsRds11 } from './RDS11';
 export { default as awsSolutionsRds13 } from './RDS13';
 export { default as awsSolutionsRds14 } from './RDS14';
+export { default as awsSolutionsRds15 } from './RDS15';
 export { default as awsSolutionsRds16 } from './RDS16';
 export { default as awsSolutionsDdb3 } from './DDB3';
 export { default as awsSolutionsDdb4 } from './DDB4';

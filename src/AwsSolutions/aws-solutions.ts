@@ -70,6 +70,7 @@ import {
   awsSolutionsRds11,
   awsSolutionsRds13,
   awsSolutionsRds14,
+  awsSolutionsRds15,
   awsSolutionsRds16,
   awsSolutionsRds2,
   awsSolutionsRds6,
@@ -418,6 +419,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Backtrack helps order to rewind cluster tables to a specific time, without using backups.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds14,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-RDS15',
+      info: 'The RDS Aurora cluster does not have deletion protection enabled.',
+      explanation:
+        'Backtrack helps order to rewind cluster tables to a specific time, without using backups.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsRds15,
       node: node,
     });
     this.applyRule({
