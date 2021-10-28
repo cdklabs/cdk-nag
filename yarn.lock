@@ -907,6 +907,13 @@
     "@aws-cdk/core" "1.129.0"
     constructs "^3.3.69"
 
+"@aws-cdk/aws-timestream@^1.123.0":
+  version "1.129.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-timestream/-/aws-timestream-1.129.0.tgz#dd88682a065de5213af87dc9954be55d895f7b1c"
+  integrity sha512-VI6ye/PTBAhtLsJsD5QijAkgLHbW+2HDOydtyOZlStzfW2wJh0Cq+SI+6pKADp3d2Lt+saVSxlYjfYkS2nCsAQ==
+  dependencies:
+    "@aws-cdk/core" "1.129.0"
+
 "@aws-cdk/aws-wafv2@^1.123.0":
   version "1.129.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-wafv2/-/aws-wafv2-1.129.0.tgz#196c0750780140d18dfb8486bd89dfd2dc565f2e"

@@ -352,6 +352,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-timestream",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-wafv2",
       "version": "^1.123.0",
       "type": "peer"
@@ -613,6 +618,11 @@
     },
     {
       "name": "@aws-cdk/aws-stepfunctions",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-timestream",
       "version": "^1.123.0",
       "type": "runtime"
     },

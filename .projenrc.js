@@ -67,6 +67,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-sqs',
     '@aws-cdk/aws-stepfunctions',
     '@aws-cdk/aws-s3',
+    '@aws-cdk/aws-timestream',
     '@aws-cdk/aws-wafv2',
     '@aws-cdk/core',
   ],

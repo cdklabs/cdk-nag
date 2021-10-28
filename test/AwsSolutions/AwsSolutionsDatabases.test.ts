@@ -40,6 +40,7 @@ import {
   CfnClusterParameterGroup,
 } from '@aws-cdk/aws-redshift';
 import { Bucket } from '@aws-cdk/aws-s3';
+import { CfnDatabase as CfnTimestreamDatabase } from '@aws-cdk/aws-timestream';
 import { Aspects, Duration, SecretValue, Stack } from '@aws-cdk/core';
 import { AwsSolutionsChecks } from '../../src';
 
@@ -1611,6 +1612,35 @@ describe('AWS Solutions Databases Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC5:'),
+          }),
+        })
+      );
+    });
+  });
+  describe('Amazon Timestream', () => {
+    test('AwsSolutions-TS3: Timestream databases use Customer Managed KMS Keys', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnTimestreamDatabase(nonCompliant, 'rTimestreamDb');
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-TS3:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new CfnTimestreamDatabase(compliant, 'rTimestreamDb', {
+        kmsKeyId: 'foo',
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-TS3:'),
           }),
         })
       );

@@ -37,3 +37,4 @@ export { default as awsSolutionsDoc2 } from './DOC2';
 export { default as awsSolutionsDoc3 } from './DOC3';
 export { default as awsSolutionsDoc4 } from './DOC4';
 export { default as awsSolutionsDoc5 } from './DOC5';
+export { default as awsSolutionsTs3 } from './TS3';

@@ -47,7 +47,7 @@ import {
   awsSolutionsElb3,
   awsSolutionsElb4,
   awsSolutionsElb5,
-} from './rules/compute/index';
+} from './rules/compute';
 import {
   awsSolutionsAec1,
   awsSolutionsAec3,
@@ -84,6 +84,7 @@ import {
   awsSolutionsRs6,
   awsSolutionsRs8,
   awsSolutionsRs9,
+  awsSolutionsTs3,
 } from './rules/databases/index';
 import {
   awsSolutionsC91,
@@ -118,7 +119,7 @@ import {
   awsSolutionsCfr5,
   awsSolutionsCfr6,
   awsSolutionsVpc3,
-} from './rules/network_and_delivery/index';
+} from './rules/network_and_delivery';
 import {
   awsSolutionsCog1,
   awsSolutionsCog2,
@@ -680,6 +681,15 @@ export class AwsSolutionsChecks extends NagPack {
         'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsDoc5,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-TS3',
+      info: 'The Timestream database does not use a Customer Managed KMS Key for at rest encryption.',
+      explanation:
+        'All Timestream tables in a database are encrypted at rest by default using AWS Managed Key. These keys are rotated every three years. Data at rest must be encrypted using CMKs if you require more control over the permissions and lifecycle of your keys, including the ability to have them automatically rotated on an annual basis.',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsTs3,
       node: node,
     });
   }
