@@ -128,6 +128,7 @@ import {
   awsSolutionsCog1,
   awsSolutionsCog2,
   awsSolutionsCog3,
+  awsSolutionsCog4,
   awsSolutionsCog7,
   awsSolutionsIam4,
   awsSolutionsIam5,
@@ -1112,6 +1113,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Advanced security features enable the system to detect and act upon malicious sign-in attempts.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsCog3,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-COG4',
+      info: 'Rest API methods use Cognito User Pool Authorizers.',
+      explanation:
+        'API Gateway validates the tokens from a successful user pool authentication, and uses them to grant your users access to resources including Lambda functions, or your own API.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsCog4,
       node: node,
     });
     this.applyRule({

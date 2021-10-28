@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { AuthorizationType, RestApi } from '@aws-cdk/aws-apigateway';
 import {
   UserPool,
   CfnUserPool,
@@ -274,6 +275,35 @@ describe('AWS Solutions Security and Compliance Checks', () => {
         })
       );
     });
+
+    test('AwsSolutions-COG4: Rest API methods use Cognito User Pool Authorizers', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new RestApi(nonCompliant, 'rRest').root.addMethod('ANY');
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-COG4:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new RestApi(compliant, 'rRest').root.addMethod('ANY', undefined, {
+        authorizationType: AuthorizationType.COGNITO,
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-COG4:'),
+          }),
+        })
+      );
+    });
+
     test('awsSolutionsCog7: Cognito identity pools do not allow for unauthenticated logins without a valid reason', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
