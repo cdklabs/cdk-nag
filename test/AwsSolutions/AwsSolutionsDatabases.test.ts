@@ -37,6 +37,7 @@ import {
   Cluster,
   ClusterParameterGroup,
   CfnCluster as CfnRedshiftCluster,
+  CfnClusterParameterGroup,
 } from '@aws-cdk/aws-redshift';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Duration, SecretValue, Stack } from '@aws-cdk/core';
@@ -1288,6 +1289,107 @@ describe('AWS Solutions Databases Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS10:'),
+          }),
+        })
+      );
+    });
+    test('AwsSolutions-RS11: Redshift clusters have user user activity logging enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnRedshiftCluster(nonCompliant, 'rRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RS11:'),
+          }),
+        })
+      );
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      const nonCompliant2ParamGroup = new CfnClusterParameterGroup(
+        nonCompliant2,
+        'rBadParameterGroup',
+        {
+          description: 'foo',
+          parameterGroupFamily: 'redshift-1.0',
+        }
+      );
+      new CfnClusterParameterGroup(nonCompliant2, 'rGoodParameterGroup', {
+        description: 'foo',
+        parameterGroupFamily: 'redshift-1.0',
+        parameters: [
+          {
+            parameterName: 'enable_user_activity_logging',
+            parameterValue: 'true',
+          },
+        ],
+      });
+      new CfnRedshiftCluster(nonCompliant2, 'rRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+        clusterParameterGroupName: nonCompliant2ParamGroup.ref,
+      });
+
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RS11:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new Cluster(compliant, 'rRedshiftCluster', {
+        masterUser: { masterUsername: 'use_a_secret_here' },
+        vpc: new Vpc(compliant, 'rVpc'),
+        parameterGroup: new ClusterParameterGroup(
+          compliant,
+          'rParameterGroup',
+          {
+            parameters: { enable_user_activity_logging: 'true' },
+          }
+        ),
+      });
+      const compliantParamGroup = new CfnClusterParameterGroup(
+        compliant,
+        'rCfnParameterGroup',
+        {
+          description: 'foo',
+          parameterGroupFamily: 'redshift-1.0',
+          parameters: [
+            {
+              parameterName: 'enable_user_activity_logging',
+              parameterValue: 'true',
+            },
+          ],
+        }
+      );
+      new CfnRedshiftCluster(compliant, 'rCfnRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+        clusterParameterGroupName: compliantParamGroup.ref,
+      });
+      const messages3 = SynthUtils.synthesize(compliant).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RS11:'),
           }),
         })
       );

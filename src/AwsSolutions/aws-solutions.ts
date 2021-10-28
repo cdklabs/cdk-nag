@@ -76,6 +76,7 @@ import {
   awsSolutionsRds6,
   awsSolutionsRs1,
   awsSolutionsRs10,
+  awsSolutionsRs11,
   awsSolutionsRs2,
   awsSolutionsRs3,
   awsSolutionsRs4,
@@ -425,7 +426,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleId: 'AwsSolutions-RDS15',
       info: 'The RDS Aurora cluster does not have deletion protection enabled.',
       explanation:
-        'Backtrack helps order to rewind cluster tables to a specific time, without using backups.',
+        'Enabling Deletion Protection at the cluster level helps protect Amazon Aurora dtabases from accidental deletion.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRds15,
       node: node,
@@ -625,6 +626,15 @@ export class AwsSolutionsChecks extends NagPack {
         'The retention period represents the number of days to retain automated snapshots. A positive retention period should be set to configure this feature.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsRs10,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-RS11',
+      info: 'The Redshift cluster does not have user activity logging enabled.',
+      explanation:
+        'User activity logging logs each query before it is performed on the clusters databse. To enable this feature associate a Resdhsift Cluster Parameter Group with the "enable_user_activity_logging" parameter set to "true".',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsRs11,
       node: node,
     });
     this.applyRule({
