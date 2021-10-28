@@ -25,7 +25,14 @@ import {
   OriginProtocolPolicy,
 } from '@aws-cdk/aws-cloudfront';
 import { S3Origin, HttpOrigin } from '@aws-cdk/aws-cloudfront-origins';
-import { NetworkAcl, Vpc } from '@aws-cdk/aws-ec2';
+import {
+  CfnFlowLog,
+  FlowLog,
+  FlowLogResourceType,
+  FlowLogTrafficType,
+  NetworkAcl,
+  Vpc,
+} from '@aws-cdk/aws-ec2';
 import { Function } from '@aws-cdk/aws-lambda';
 import { LogGroup } from '@aws-cdk/aws-logs';
 import { Bucket } from '@aws-cdk/aws-s3';
@@ -66,6 +73,58 @@ describe('AWS Solutions Network and Delivery Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-VPC3:'),
+          }),
+        })
+      );
+    });
+    test('AwsSolutions-VPC7: VPCs have Flow Logs enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new Vpc(nonCompliant, 'rVpc');
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-VPC7:'),
+          }),
+        })
+      );
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      new Vpc(nonCompliant2, 'rVpc');
+      new FlowLog(nonCompliant2, 'rFlowLog', {
+        resourceType: FlowLogResourceType.fromVpc(
+          Vpc.fromVpcAttributes(nonCompliant2, 'rLookupVpc', {
+            vpcId: 'foo',
+            availabilityZones: ['us-east-1a'],
+          })
+        ),
+      });
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-VPC7:'),
+          }),
+        })
+      );
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      const compliantVpc = new Vpc(compliant, 'rVpc1');
+      new FlowLog(compliant, 'rFlowFlog1', {
+        resourceType: FlowLogResourceType.fromVpc(compliantVpc),
+      });
+      const compliantVpc2 = new Vpc(compliant, 'rVpc2');
+      new CfnFlowLog(compliant, 'rCfnFlowLog', {
+        resourceId: compliantVpc2.vpcId,
+        resourceType: 'VPC',
+        trafficType: FlowLogTrafficType.ALL,
+      });
+      const messages3 = SynthUtils.synthesize(compliant).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-VPC7:'),
           }),
         })
       );

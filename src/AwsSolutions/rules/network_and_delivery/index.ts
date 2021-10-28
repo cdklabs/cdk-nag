@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 export { default as awsSolutionsVpc3 } from './VPC3';
+export { default as awsSolutionsVpc7 } from './VPC7';
 export { default as awsSolutionsCfr1 } from './CFR1';
 export { default as awsSolutionsCfr2 } from './CFR2';
 export { default as awsSolutionsCfr3 } from './CFR3';

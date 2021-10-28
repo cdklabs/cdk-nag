@@ -119,6 +119,7 @@ import {
   awsSolutionsCfr5,
   awsSolutionsCfr6,
   awsSolutionsVpc3,
+  awsSolutionsVpc7,
 } from './rules/network_and_delivery';
 import {
   awsSolutionsCog1,
@@ -707,6 +708,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Network ACLs should be used sparingly for the following reasons: they can be complex to manage, they are stateless, every IP address must be explicitly opened in each (inbound/outbound) direction, and they affect a complete subnet. Use security groups when possible as they are stateful and easier to manage.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsVpc3,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-VPC7',
+      info: 'The VPC does not have an associated Flow Log.',
+      explanation:
+        'VPC Flow Logs capture network flow information for a VPC, subnet, or network interface and stores it in Amazon CloudWatch Logs. Flow log data can help customers troubleshoot network issues; for example, to diagnose why specific traffic is not reaching an instance, which might be a result of overly restrictive security group rules.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsVpc7,
       node: node,
     });
     this.applyRule({
