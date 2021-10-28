@@ -958,6 +958,37 @@ describe('AWS Analytics Learning Checks', () => {
         })
       );
     });
+
+    test('AwsSolutions-KDS3: Kinesis Data Streams use the "aws/kinesis" key when server-sided encryption is enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new Stream(nonCompliant, 'rKds', {
+        encryption: StreamEncryption.KMS,
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-KDS3:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new Stream(compliant, 'rKds', { encryption: StreamEncryption.MANAGED });
+      new Stream(compliant, 'rKds2', {
+        encryption: StreamEncryption.UNENCRYPTED,
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-KDS3:'),
+          }),
+        })
+      );
+    });
   });
   describe('Amazon Kinesis Data Firehose', () => {
     test('awsSolutionsKdf1: Kinesis Data Firehose delivery streams have server-side encryption enabled', () => {

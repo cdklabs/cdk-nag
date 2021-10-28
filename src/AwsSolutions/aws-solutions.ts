@@ -10,6 +10,7 @@ import {
   awsSolutionsEmr6,
   awsSolutionsKda3,
   awsSolutionsKds1,
+  awsSolutionsKds3,
   awsSolutionsKdf1,
   awsSolutionsMsk2,
   awsSolutionsMsk6,
@@ -932,6 +933,15 @@ export class AwsSolutionsChecks extends NagPack {
         "Data is encrypted before it's written to the Kinesis stream storage layer, and decrypted after it’s retrieved from storage. This allows the system to meet strict regulatory requirements and enhance the security of system data.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKds1,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-KDS3',
+      info: 'The Kinesis Data Stream specifies server-side encryption and does not use the "aws/kinesis" key.',
+      explanation:
+        'Customer Managed Keys can incur additional costs that scale with the amount of consumers and producers. Ensure that Customer Managed Keys are required for compliance before using them (https://docs.aws.amazon.com/streams/latest/dev/costs-performance.html).',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsKds3,
       node: node,
     });
     this.applyRule({
