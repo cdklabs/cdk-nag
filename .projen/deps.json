@@ -122,6 +122,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-appsync",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-athena",
       "version": "^1.123.0",
       "type": "peer"
@@ -388,6 +393,11 @@
     },
     {
       "name": "@aws-cdk/aws-apigatewayv2",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-appsync",
       "version": "^1.123.0",
       "type": "runtime"
     },

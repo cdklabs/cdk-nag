@@ -135,7 +135,11 @@ import {
   awsSolutionsKms5,
   awsSolutionsSmg4,
 } from './rules/security_and_compliance';
-import { awsSolutionsSf1, awsSolutionsSf2 } from './rules/serverless';
+import {
+  awsSolutionsAsc3,
+  awsSolutionsSf1,
+  awsSolutionsSf2,
+} from './rules/serverless';
 import {
   awsSolutionsEfs1,
   awsSolutionsS1,
@@ -1160,6 +1164,15 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkServerless(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'AwsSolutions-ASC3',
+      info: 'The GraphQL API does not have request leveling logging enabled.',
+      explanation:
+        'It is important to use CloudWatch Logs to log metrics such as who has accessed the GraphQL API, how the caller accessed the API, and invalid requests.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsAsc3,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'AwsSolutions-SF1',
       info: 'The Step Function does not log "ALL" events to CloudWatch Logs.',
