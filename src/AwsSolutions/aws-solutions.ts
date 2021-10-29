@@ -10,6 +10,7 @@ import {
   awsSolutionsEmr6,
   awsSolutionsKda3,
   awsSolutionsKds1,
+  awsSolutionsKds3,
   awsSolutionsKdf1,
   awsSolutionsMsk2,
   awsSolutionsMsk6,
@@ -30,6 +31,9 @@ import {
   awsSolutionsSqs3,
 } from './rules/application_integration';
 import {
+  awsSolutionsEb1,
+  awsSolutionsEb3,
+  awsSolutionsEb4,
   awsSolutionsEc23,
   awsSolutionsEc26,
   awsSolutionsEc27,
@@ -44,7 +48,7 @@ import {
   awsSolutionsElb3,
   awsSolutionsElb4,
   awsSolutionsElb5,
-} from './rules/compute/index';
+} from './rules/compute';
 import {
   awsSolutionsAec1,
   awsSolutionsAec3,
@@ -67,11 +71,13 @@ import {
   awsSolutionsRds11,
   awsSolutionsRds13,
   awsSolutionsRds14,
+  awsSolutionsRds15,
   awsSolutionsRds16,
   awsSolutionsRds2,
   awsSolutionsRds6,
   awsSolutionsRs1,
   awsSolutionsRs10,
+  awsSolutionsRs11,
   awsSolutionsRs2,
   awsSolutionsRs3,
   awsSolutionsRs4,
@@ -79,7 +85,8 @@ import {
   awsSolutionsRs6,
   awsSolutionsRs8,
   awsSolutionsRs9,
-} from './rules/databases/index';
+  awsSolutionsTs3,
+} from './rules/databases';
 import {
   awsSolutionsC91,
   awsSolutionsCb3,
@@ -90,7 +97,7 @@ import {
   awsSolutionsSm1,
   awsSolutionsSm2,
   awsSolutionsSm3,
-} from './rules/machine_learning/index';
+} from './rules/machine_learning';
 import {
   awsSolutionsAs1,
   awsSolutionsAs2,
@@ -105,6 +112,8 @@ import {
 } from './rules/media_services';
 import {
   awsSolutionsApig1,
+  awsSolutionsApig2,
+  awsSolutionsApig3,
   awsSolutionsApig4,
   awsSolutionsApig6,
   awsSolutionsCfr1,
@@ -113,23 +122,30 @@ import {
   awsSolutionsCfr5,
   awsSolutionsCfr6,
   awsSolutionsVpc3,
-} from './rules/network_and_delivery/index';
+  awsSolutionsVpc7,
+} from './rules/network_and_delivery';
 import {
   awsSolutionsCog1,
   awsSolutionsCog2,
   awsSolutionsCog3,
+  awsSolutionsCog4,
   awsSolutionsCog7,
   awsSolutionsIam4,
   awsSolutionsIam5,
   awsSolutionsKms5,
+  awsSolutionsSmg4,
 } from './rules/security_and_compliance';
-import { awsSolutionsSf1, awsSolutionsSf2 } from './rules/serverless';
+import {
+  awsSolutionsAsc3,
+  awsSolutionsSf1,
+  awsSolutionsSf2,
+} from './rules/serverless';
 import {
   awsSolutionsEfs1,
   awsSolutionsS1,
   awsSolutionsS2,
   awsSolutionsS3,
-} from './rules/storage/index';
+} from './rules/storage';
 
 /**
  * Check Best practices based on AWS Solutions Security Matrix
@@ -159,6 +175,33 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkCompute(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'AwsSolutions-EB1',
+      info: 'The Elastic Beanstalk environment is not configured to use a specific VPC.',
+      explanation:
+        'Use a non-default in order to seperate your environment from default resources.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsEb1,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-EB3',
+      info: 'The Elastic Beanstalk environment does not have managed updates enabled.',
+      explanation:
+        'Enable managed platform updates for beanstalk environments in order to receive bug fixes, software updates and new features. Managed platform updates perform immutable environment updates.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsEb3,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-EB4',
+      info: 'The Elastic Beanstalk environment does not upload EC2 Instance logs to S3.',
+      explanation:
+        'Beanstalk environment logs should be retained and uploaded to Amazon S3 in order to keep the logging data for future audits, historical purposes or to track and analyze the EB application environment behavior for a long period of time.',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsEb4,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'AwsSolutions-EC23',
       info: 'The Security Group allows for 0.0.0.0/0 or ::/0 inbound access.',
@@ -391,6 +434,15 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'AwsSolutions-RDS15',
+      info: 'The RDS Aurora cluster does not have deletion protection enabled.',
+      explanation:
+        'Enabling Deletion Protection at the cluster level helps protect Amazon Aurora dtabases from accidental deletion.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsRds15,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'AwsSolutions-RDS16',
       info: 'The RDS Aurora MySQL serverless cluster does not have audit, error, general, and slowquery Log Exports enabled.',
       explanation:
@@ -588,6 +640,15 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'AwsSolutions-RS11',
+      info: 'The Redshift cluster does not have user activity logging enabled.',
+      explanation:
+        'User activity logging logs each query before it is performed on the clusters databse. To enable this feature associate a Resdhsift Cluster Parameter Group with the "enable_user_activity_logging" parameter set to "true".',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsRs11,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'AwsSolutions-DOC1',
       info: 'The Document DB cluster does not have encryption at rest enabled.',
       explanation:
@@ -632,6 +693,15 @@ export class AwsSolutionsChecks extends NagPack {
       rule: awsSolutionsDoc5,
       node: node,
     });
+    this.applyRule({
+      ruleId: 'AwsSolutions-TS3',
+      info: 'The Timestream database does not use a Customer Managed KMS Key for at rest encryption.',
+      explanation:
+        'All Timestream tables in a database are encrypted at rest by default using AWS Managed Key. These keys are rotated every three years. Data at rest must be encrypted using CMKs if you require more control over the permissions and lifecycle of your keys, including the ability to have them automatically rotated on an annual basis.',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsTs3,
+      node: node,
+    });
   }
 
   /**
@@ -647,6 +717,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Network ACLs should be used sparingly for the following reasons: they can be complex to manage, they are stateless, every IP address must be explicitly opened in each (inbound/outbound) direction, and they affect a complete subnet. Use security groups when possible as they are stateful and easier to manage.',
       level: NagMessageLevel.WARN,
       rule: awsSolutionsVpc3,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-VPC7',
+      info: 'The VPC does not have an associated Flow Log.',
+      explanation:
+        'VPC Flow Logs capture network flow information for a VPC, subnet, or network interface and stores it in Amazon CloudWatch Logs. Flow log data can help customers troubleshoot network issues; for example, to diagnose why specific traffic is not reaching an instance, which might be a result of overly restrictive security group rules.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsVpc7,
       node: node,
     });
     this.applyRule({
@@ -701,6 +780,24 @@ export class AwsSolutionsChecks extends NagPack {
         'Enabling access logs helps operators view who accessed an API and how the caller accessed the API.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsApig1,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-APIG2',
+      info: 'The Rest API does not have request validation enabled.',
+      explanation:
+        'The API should have basic request validation enabled. If the API is integrated with custom source (Lambda, ECS, etc..) in the backend, deeper input validation should be considered for implementation.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsApig2,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-APIG3',
+      info: 'The Rest API stage is not associated with AWS WAFv2 web ACL.',
+      explanation:
+        'AWS WAFv2 is a web application firewall that helps protect web applications and APIs from attacks by allowing configured rules to allow, block, or monitor (count) web requests based on customizable rules and conditions that are defined.',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsApig3,
       node: node,
     });
     this.applyRule({
@@ -842,6 +939,15 @@ export class AwsSolutionsChecks extends NagPack {
         "Data is encrypted before it's written to the Kinesis stream storage layer, and decrypted after it’s retrieved from storage. This allows the system to meet strict regulatory requirements and enhance the security of system data.",
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKds1,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-KDS3',
+      info: 'The Kinesis Data Stream specifies server-side encryption and does not use the "aws/kinesis" key.',
+      explanation:
+        'Customer Managed Keys can incur additional costs that scale with the amount of consumers and producers. Ensure that Customer Managed Keys are required for compliance before using them (https://docs.aws.amazon.com/streams/latest/dev/costs-performance.html).',
+      level: NagMessageLevel.WARN,
+      rule: awsSolutionsKds3,
       node: node,
     });
     this.applyRule({
@@ -1015,6 +1121,15 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'AwsSolutions-COG4',
+      info: 'The API GW method does not use a Cognito user pool authorizer.',
+      explanation:
+        'API Gateway validates the tokens from a successful user pool authentication, and uses them to grant your users access to resources including Lambda functions, or your own API.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsCog4,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'AwsSolutions-COG7',
       info: 'The Cognito identity pool allows for unauthenticated logins and does not have a cdk_nag rule suppression with a reason.',
       explanation:
@@ -1032,6 +1147,15 @@ export class AwsSolutionsChecks extends NagPack {
       rule: awsSolutionsKms5,
       node: node,
     });
+    this.applyRule({
+      ruleId: 'AwsSolutions-SMG4',
+      info: 'The Secret does not have automatic rotation scheduled.',
+      explanation:
+        'AWS Secrets Manager can be configured to automatically rotate the secret for a secured service or database.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsSmg4,
+      node: node,
+    });
   }
 
   /**
@@ -1040,6 +1164,15 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkServerless(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'AwsSolutions-ASC3',
+      info: 'The GraphQL API does not have request leveling logging enabled.',
+      explanation:
+        'It is important to use CloudWatch Logs to log metrics such as who has accessed the GraphQL API, how the caller accessed the API, and invalid requests.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsAsc3,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'AwsSolutions-SF1',
       info: 'The Step Function does not log "ALL" events to CloudWatch Logs.',

@@ -37,8 +37,10 @@ import {
   Cluster,
   ClusterParameterGroup,
   CfnCluster as CfnRedshiftCluster,
+  CfnClusterParameterGroup,
 } from '@aws-cdk/aws-redshift';
 import { Bucket } from '@aws-cdk/aws-s3';
+import { CfnDatabase as CfnTimestreamDatabase } from '@aws-cdk/aws-timestream';
 import { Aspects, Duration, SecretValue, Stack } from '@aws-cdk/core';
 import { AwsSolutionsChecks } from '../../src';
 
@@ -338,6 +340,43 @@ describe('AWS Solutions Databases Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RDS14:'),
+          }),
+        })
+      );
+    });
+    test('AwsSolutions-RDS15: RDS Aurora DB clusters have Deletion Protection enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new AuroraCluster(nonCompliant, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
+        }),
+        instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RDS15:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      const vpc = new Vpc(compliant, 'rVpc');
+      new AuroraCluster(compliant, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
+        }),
+        instanceProps: { vpc: vpc },
+        deletionProtection: true,
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RDS15:'),
           }),
         })
       );
@@ -1255,6 +1294,107 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
     });
+    test('AwsSolutions-RS11: Redshift clusters have user user activity logging enabled', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnRedshiftCluster(nonCompliant, 'rRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+      });
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RS11:'),
+          }),
+        })
+      );
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      const nonCompliant2ParamGroup = new CfnClusterParameterGroup(
+        nonCompliant2,
+        'rBadParameterGroup',
+        {
+          description: 'foo',
+          parameterGroupFamily: 'redshift-1.0',
+        }
+      );
+      new CfnClusterParameterGroup(nonCompliant2, 'rGoodParameterGroup', {
+        description: 'foo',
+        parameterGroupFamily: 'redshift-1.0',
+        parameters: [
+          {
+            parameterName: 'enable_user_activity_logging',
+            parameterValue: 'true',
+          },
+        ],
+      });
+      new CfnRedshiftCluster(nonCompliant2, 'rRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+        clusterParameterGroupName: nonCompliant2ParamGroup.ref,
+      });
+
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RS11:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new Cluster(compliant, 'rRedshiftCluster', {
+        masterUser: { masterUsername: 'use_a_secret_here' },
+        vpc: new Vpc(compliant, 'rVpc'),
+        parameterGroup: new ClusterParameterGroup(
+          compliant,
+          'rParameterGroup',
+          {
+            parameters: { enable_user_activity_logging: 'true' },
+          }
+        ),
+      });
+      const compliantParamGroup = new CfnClusterParameterGroup(
+        compliant,
+        'rCfnParameterGroup',
+        {
+          description: 'foo',
+          parameterGroupFamily: 'redshift-1.0',
+          parameters: [
+            {
+              parameterName: 'enable_user_activity_logging',
+              parameterValue: 'true',
+            },
+          ],
+        }
+      );
+      new CfnRedshiftCluster(compliant, 'rCfnRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+        clusterParameterGroupName: compliantParamGroup.ref,
+      });
+      const messages3 = SynthUtils.synthesize(compliant).messages;
+      expect(messages3).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-RS11:'),
+          }),
+        })
+      );
+    });
   });
   describe('Amazon DocumentDB (with MongoDB compatibility)', () => {
     test('awsSolutionsDoc1: Document DB clusters have encryption at rest enabled', () => {
@@ -1472,6 +1612,35 @@ describe('AWS Solutions Databases Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-DOC5:'),
+          }),
+        })
+      );
+    });
+  });
+  describe('Amazon Timestream', () => {
+    test('AwsSolutions-TS3: Timestream databases use Customer Managed KMS Keys', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new CfnTimestreamDatabase(nonCompliant, 'rTimestreamDb');
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-TS3:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new CfnTimestreamDatabase(compliant, 'rTimestreamDb', {
+        kmsKeyId: 'foo',
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-TS3:'),
           }),
         })
       );

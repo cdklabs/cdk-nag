@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { AuthorizationType, RestApi } from '@aws-cdk/aws-apigateway';
 import {
   UserPool,
   CfnUserPool,
@@ -19,8 +20,10 @@ import {
   Group,
 } from '@aws-cdk/aws-iam';
 import { Key, KeySpec } from '@aws-cdk/aws-kms';
+import { Function } from '@aws-cdk/aws-lambda';
 import { Bucket } from '@aws-cdk/aws-s3';
-import { Aspects, CfnResource, Stack } from '@aws-cdk/core';
+import { HostedRotation, Secret } from '@aws-cdk/aws-secretsmanager';
+import { Aspects, CfnResource, Duration, Stack } from '@aws-cdk/core';
 import { AwsSolutionsChecks } from '../../src';
 
 describe('AWS Solutions Security and Compliance Checks', () => {
@@ -274,6 +277,35 @@ describe('AWS Solutions Security and Compliance Checks', () => {
         })
       );
     });
+
+    test('AwsSolutions-COG4: Rest API methods use Cognito User Pool Authorizers', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new RestApi(nonCompliant, 'rRest').root.addMethod('ANY');
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-COG4:'),
+          }),
+        })
+      );
+
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new RestApi(compliant, 'rRest').root.addMethod('ANY', undefined, {
+        authorizationType: AuthorizationType.COGNITO,
+      });
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-COG4:'),
+          }),
+        })
+      );
+    });
+
     test('awsSolutionsCog7: Cognito identity pools do not allow for unauthenticated logins without a valid reason', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
@@ -327,6 +359,43 @@ describe('AWS Solutions Security and Compliance Checks', () => {
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-KMS5:'),
+          }),
+        })
+      );
+    });
+  });
+
+  describe('AWS Secrets Manager', () => {
+    test('AwsSolutions-SMG4: Secrets are automatically rotated', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new Secret(nonCompliant, 'rSecret1');
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-SMG4:'),
+          }),
+        })
+      );
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      new Secret(compliant, 'rSecret1').addRotationSchedule(
+        'rRotationSchedule1',
+        { hostedRotation: HostedRotation.mysqlSingleUser() }
+      );
+      new Secret(compliant, 'rSecret2').addRotationSchedule(
+        'rRotationSchedule2',
+        {
+          rotationLambda: Function.fromFunctionArn(compliant, 'rLambda', 'foo'),
+          automaticallyAfter: Duration.days(30),
+        }
+      );
+      const messages2 = SynthUtils.synthesize(compliant).messages;
+      expect(messages2).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-SMG4:'),
           }),
         })
       );

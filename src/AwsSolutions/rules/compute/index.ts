@@ -2,6 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+export { default as awsSolutionsEb1 } from './EB1';
+export { default as awsSolutionsEb3 } from './EB3';
+export { default as awsSolutionsEb4 } from './EB4';
 export { default as awsSolutionsEc23 } from './EC23';
 export { default as awsSolutionsEc26 } from './EC26';
 export { default as awsSolutionsEc27 } from './EC27';

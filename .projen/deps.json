@@ -122,6 +122,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-appsync",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-athena",
       "version": "^1.123.0",
       "type": "peer"
@@ -348,6 +353,11 @@
     },
     {
       "name": "@aws-cdk/aws-stepfunctions",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-timestream",
       "version": "^1.123.0",
       "type": "peer"
     },
@@ -387,6 +397,11 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-cdk/aws-appsync",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
       "name": "@aws-cdk/aws-athena",
       "version": "^1.123.0",
       "type": "runtime"
@@ -613,6 +628,11 @@
     },
     {
       "name": "@aws-cdk/aws-stepfunctions",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-timestream",
       "version": "^1.123.0",
       "type": "runtime"
     },

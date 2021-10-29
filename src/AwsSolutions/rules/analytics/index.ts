@@ -7,6 +7,7 @@ export { default as awsSolutionsEmr2 } from './EMR2';
 export { default as awsSolutionsEmr6 } from './EMR6';
 export { default as awsSolutionsKda3 } from './KDA3';
 export { default as awsSolutionsKds1 } from './KDS1';
+export { default as awsSolutionsKds3 } from './KDS3';
 export { default as awsSolutionsKdf1 } from './KDF1';
 export { default as awsSolutionsMsk2 } from './MSK2';
 export { default as awsSolutionsMsk3 } from './MSK3';
