@@ -1122,7 +1122,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-COG4',
-      info: 'The API GW method does not use a cognito user pool authorizer.',
+      info: 'The API GW method does not use a Cognito user pool authorizer.',
       explanation:
         'API Gateway validates the tokens from a successful user pool authentication, and uses them to grant your users access to resources including Lambda functions, or your own API.',
       level: NagMessageLevel.ERROR,
