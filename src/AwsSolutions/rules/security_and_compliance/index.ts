@@ -10,3 +10,4 @@ export { default as awsSolutionsCog3 } from './COG3';
 export { default as awsSolutionsCog4 } from './COG4';
 export { default as awsSolutionsCog7 } from './COG7';
 export { default as awsSolutionsKms5 } from './KMS5';
+export { default as awsSolutionsSmg4 } from './SMG4';

@@ -133,6 +133,7 @@ import {
   awsSolutionsIam4,
   awsSolutionsIam5,
   awsSolutionsKms5,
+  awsSolutionsSmg4,
 } from './rules/security_and_compliance';
 import { awsSolutionsSf1, awsSolutionsSf2 } from './rules/serverless';
 import {
@@ -1117,7 +1118,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-COG4',
-      info: 'Rest API methods use Cognito User Pool Authorizers.',
+      info: 'The API GW method does not use a cognito user pool authorizer.',
       explanation:
         'API Gateway validates the tokens from a successful user pool authentication, and uses them to grant your users access to resources including Lambda functions, or your own API.',
       level: NagMessageLevel.ERROR,
@@ -1140,6 +1141,15 @@ export class AwsSolutionsChecks extends NagPack {
         'KMS Key Rotation allow a system to set an yearly rotation schedule for a KMS key so when a AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKms5,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'AwsSolutions-SMG4',
+      info: 'The Secret does not have automatic rotation scheduled.',
+      explanation:
+        'AWS Secrets Manager can be configured to automatically rotate the secret for a secured service or database.',
+      level: NagMessageLevel.ERROR,
+      rule: awsSolutionsSmg4,
       node: node,
     });
   }
