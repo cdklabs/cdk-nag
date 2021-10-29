@@ -86,7 +86,7 @@ import {
   awsSolutionsRs8,
   awsSolutionsRs9,
   awsSolutionsTs3,
-} from './rules/databases/index';
+} from './rules/databases';
 import {
   awsSolutionsC91,
   awsSolutionsCb3,
@@ -97,7 +97,7 @@ import {
   awsSolutionsSm1,
   awsSolutionsSm2,
   awsSolutionsSm3,
-} from './rules/machine_learning/index';
+} from './rules/machine_learning';
 import {
   awsSolutionsAs1,
   awsSolutionsAs2,
@@ -145,7 +145,7 @@ import {
   awsSolutionsS1,
   awsSolutionsS2,
   awsSolutionsS3,
-} from './rules/storage/index';
+} from './rules/storage';
 
 /**
  * Check Best practices based on AWS Solutions Security Matrix
