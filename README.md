@@ -131,7 +131,7 @@ NagSuppressions.addStackSuppressions(stack, [
 </details>
 
 <details>
-  <summary>Example 4) Construct using it's path</summary>
+  <summary>Example 4) Construct path</summary>
 
 If you received the following error on synth/deploy
 
