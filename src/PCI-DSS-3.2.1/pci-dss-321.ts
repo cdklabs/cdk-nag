@@ -23,6 +23,10 @@ import {
   pciDss321CloudWatchLogGroupEncrypted,
   pciDss321CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
+import {
+  pciDss321CodeBuildProjectEnvVarAwsCred,
+  pciDss321CodeBuildProjectSourceRepoUrl,
+} from './rules/codebuild';
 import { pciDss321DMSReplicationNotPublic } from './rules/dms';
 import {
   pciDss321EC2InstanceNoPublicIp,
@@ -101,6 +105,7 @@ export class PCIDSS321Checks extends NagPack {
       this.checkAutoScaling(node);
       this.checkCloudTrail(node);
       this.checkCloudWatch(node);
+      this.checkCodeBuild(node);
       this.checkDMS(node);
       this.checkEC2(node);
       this.checkECS(node);
@@ -238,6 +243,32 @@ export class PCIDSS321Checks extends NagPack {
         'Ensure a minimum duration of event log data is retained for your log groups to help with troubleshooting and forensics investigations. The lack of available past event log data makes it difficult to reconstruct and identify potentially malicious events.',
       level: NagMessageLevel.ERROR,
       rule: pciDss321CloudWatchLogGroupRetentionPeriod,
+      node: node,
+    });
+  }
+
+  /**
+   * Check CodeBuild Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkCodeBuild(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-CodeBuildProjectEnvVarAwsCred',
+      info: 'The CodeBuild environment stores sensitive credentials (such as AWS_ACCESS_KEY_ID and/or AWS_SECRET_ACCESS_KEY) as plaintext environment variables - (Control ID: 8.2.1).',
+      explanation:
+        'Do not store these variables in clear text. Storing these variables in clear text leads to unintended data exposure and unauthorized access.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321CodeBuildProjectEnvVarAwsCred,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-CodeBuildProjectSourceRepoUrl',
+      info: 'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control ID: 8.2.1).',
+      explanation:
+        'OAUTH is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321CodeBuildProjectSourceRepoUrl,
       node: node,
     });
   }
