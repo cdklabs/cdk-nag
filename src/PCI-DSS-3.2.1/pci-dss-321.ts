@@ -38,6 +38,7 @@ import {
 import { pciDss321ECSTaskDefinitionUserForHostMode } from './rules/ecs';
 import { pciDss321EFSEncrypted } from './rules/efs';
 import {
+  pciDss321ALBHttpDropInvalidHeaderEnabled,
   pciDss321ALBHttpToHttpsRedirection,
   pciDss321ELBACMCertificateRequired,
   pciDss321ELBLoggingEnabled,
@@ -383,6 +384,15 @@ export class PCIDSS321Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkELB(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-ALBHttpDropInvalidHeaderEnabled',
+      info: 'The ALB does not have invalid HTTP header dropping enabled - (Control IDs: 4.1, 8.2.1).',
+      explanation:
+        'Ensure that your Application Load Balancers (ALB) are configured to drop http headers. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321ALBHttpDropInvalidHeaderEnabled,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'PCI.DSS.321-ALBHttpToHttpsRedirection',
       info: "The ALB's HTTP listeners are not configured to redirect to HTTPS - (Control IDs: 2.3, 4.1, 8.2.1).",

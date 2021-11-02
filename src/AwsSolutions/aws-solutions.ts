@@ -784,7 +784,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-APIG2',
-      info: 'The Rest API does not have request validation enabled.',
+      info: 'The REST API does not have request validation enabled.',
       explanation:
         'The API should have basic request validation enabled. If the API is integrated with custom source (Lambda, ECS, etc..) in the backend, deeper input validation should be considered for implementation.',
       level: NagMessageLevel.ERROR,
@@ -793,7 +793,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-APIG3',
-      info: 'The Rest API stage is not associated with AWS WAFv2 web ACL.',
+      info: 'The REST API stage is not associated with AWS WAFv2 web ACL.',
       explanation:
         'AWS WAFv2 is a web application firewall that helps protect web applications and APIs from attacks by allowing configured rules to allow, block, or monitor (count) web requests based on customizable rules and conditions that are defined.',
       level: NagMessageLevel.WARN,
