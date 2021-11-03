@@ -122,6 +122,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-applicationautoscaling",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-appsync",
       "version": "^1.123.0",
       "type": "peer"
@@ -133,6 +138,11 @@
     },
     {
       "name": "@aws-cdk/aws-autoscaling",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/aws-backup",
       "version": "^1.123.0",
       "type": "peer"
     },
@@ -397,6 +407,11 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-cdk/aws-applicationautoscaling",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
       "name": "@aws-cdk/aws-appsync",
       "version": "^1.123.0",
       "type": "runtime"
@@ -408,6 +423,11 @@
     },
     {
       "name": "@aws-cdk/aws-autoscaling",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-backup",
       "version": "^1.123.0",
       "type": "runtime"
     },

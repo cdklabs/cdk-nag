@@ -30,7 +30,11 @@ import {
   hipaaSecurityCodeBuildProjectSourceRepoUrl,
 } from './rules/codebuild';
 import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
-import { hipaaSecurityDynamoDBPITREnabled } from './rules/dynamodb';
+import {
+  hipaaSecurityDynamoDBAutoscalingEnabled,
+  hipaaSecurityDynamoDBInBackupPlan,
+  hipaaSecurityDynamoDBPITREnabled,
+} from './rules/dynamodb';
 import {
   hipaaSecurityEC2EBSOptimizedInstance,
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
@@ -339,6 +343,24 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkDynamoDB(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-DynamoDBAutoscalingEnabled',
+      info: "The provisioned capacity DynamoDB table does not have Auto Scaling enabled on it's indexes - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).",
+      explanation:
+        'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityDynamoDBAutoscalingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'HIPAA.Security-DynamoDBInBackupPlan',
+      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon DynamoDB tables are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityDynamoDBInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-DynamoDBPITREnabled',
       info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
