@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
@@ -140,6 +141,48 @@ describe('Amazon Relational Database Service (RDS)', () => {
           data: expect.stringContaining(
             'HIPAA.Security-RDSInstanceBackupEnabled:'
           ),
+        }),
+      })
+    );
+  });
+
+  test('HIPAA.Security-RDSInBackupPlan: - RDS DB Instances are part of AWS Backup plan(s) - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new CfnDBInstance(nonCompliant, 'rDbInstance', {
+      dbInstanceClass: 'db.t3.micro',
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-RDSInBackupPlan:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    BackupPlan.dailyWeeklyMonthly5YearRetention(
+      compliant,
+      'rPlan'
+    ).addSelection('Selection', {
+      resources: [
+        BackupResource.fromRdsDatabaseInstance(
+          new RdsInstance(compliant, 'rDbInstance2', {
+            engine: DatabaseInstanceEngine.postgres({
+              version: PostgresEngineVersion.VER_13_2,
+            }),
+            vpc: new Vpc(compliant, 'rVpc2'),
+          })
+        ),
+      ],
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-RDSInBackupPlan:'),
         }),
       })
     );

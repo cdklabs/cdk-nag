@@ -88,6 +88,7 @@ import {
 import {
   hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled,
   hipaaSecurityRDSEnhancedMonitoringEnabled,
+  hipaaSecurityRDSInBackupPlan,
   hipaaSecurityRDSInstanceBackupEnabled,
   hipaaSecurityRDSInstanceDeletionProtectionEnabled,
   hipaaSecurityRDSInstanceMultiAZSupport,
@@ -359,7 +360,7 @@ export class HIPAASecurityChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'HIPAA.Security-DynamoDBInBackupPlan',
-      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
+      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
       explanation:
         'To help with data back-up processes, ensure your Amazon DynamoDB tables are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
       level: NagMessageLevel.ERROR,
@@ -787,6 +788,15 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkRDS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-RDSInBackupPlan',
+      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityRDSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-RDSAutomaticMinorVersionUpgradeEnabled',
       info: 'The RDS DB instance does not have automatic minor version upgrades enabled - (Control ID: 164.308(a)(5)(ii)(A)).',

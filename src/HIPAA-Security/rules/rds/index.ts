@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 export { default as hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled } from './hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled';
 export { default as hipaaSecurityRDSEnhancedMonitoringEnabled } from './hipaaSecurityRDSEnhancedMonitoringEnabled';
+export { default as hipaaSecurityRDSInBackupPlan } from './hipaaSecurityRDSInBackupPlan';
 export { default as hipaaSecurityRDSInstanceBackupEnabled } from './hipaaSecurityRDSInstanceBackupEnabled';
 export { default as hipaaSecurityRDSInstanceDeletionProtectionEnabled } from './hipaaSecurityRDSInstanceDeletionProtectionEnabled';
 export { default as hipaaSecurityRDSInstanceMultiAZSupport } from './hipaaSecurityRDSInstanceMultiAZSupport';
