@@ -36,6 +36,7 @@ import {
   hipaaSecurityDynamoDBPITREnabled,
 } from './rules/dynamodb';
 import {
+  hipaaSecurityEC2EBSInBackupPlan,
   hipaaSecurityEC2EBSOptimizedInstance,
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstanceNoPublicIps,
@@ -378,6 +379,15 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEC2(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-EC2EBSInBackupPlan',
+      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityEC2EBSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-EC2EBSOptimizedInstance',
       info: "The EC2 instance type 'supports' EBS optimization and does not have EBS optimization enabled - (Control ID: 164.308(a)(7)(i)).",

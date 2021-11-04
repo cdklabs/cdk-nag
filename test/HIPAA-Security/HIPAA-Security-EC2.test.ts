@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { SynthUtils } from '@aws-cdk/assert';
 import { AutoScalingGroup, Monitoring } from '@aws-cdk/aws-autoscaling';
+import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
 import {
   Instance,
   InstanceClass,
@@ -18,12 +19,84 @@ import {
   CfnSecurityGroupIngress,
   CfnSecurityGroup,
   InstanceSize,
+  Volume,
 } from '@aws-cdk/aws-ec2';
 import { PolicyStatement } from '@aws-cdk/aws-iam';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Aspects, Size, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
 describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
+  test('HIPAA.Security-EC2EBSInBackupPlan: - EBS volumes are part of AWS Backup plan(s) - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new Volume(nonCompliant, 'rVolume', {
+      availabilityZone: 'us-east-1a',
+      size: Size.gibibytes(42),
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-EC2EBSInBackupPlan:'),
+        }),
+      })
+    );
+
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    new Volume(nonCompliant2, 'rVolume', {
+      availabilityZone: 'us-east-1a',
+      size: Size.gibibytes(42),
+    });
+    BackupPlan.dailyWeeklyMonthly5YearRetention(
+      nonCompliant2,
+      'rPlan'
+    ).addSelection('Selection', {
+      resources: [
+        BackupResource.fromArn(
+          'arn:aws:ec2:us-east-1:123456789012:volume/' +
+            new Volume(nonCompliant2, 'rVolume2', {
+              availabilityZone: 'us-east-1a',
+              size: Size.gibibytes(42),
+            }).volumeId
+        ),
+      ],
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-EC2EBSInBackupPlan:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    BackupPlan.dailyWeeklyMonthly5YearRetention(
+      compliant,
+      'rPlan'
+    ).addSelection('Selection', {
+      resources: [
+        BackupResource.fromArn(
+          'arn:aws:ec2:us-east-1:123456789012:volume/' +
+            new Volume(compliant, 'rVolume', {
+              availabilityZone: 'us-east-1a',
+              size: Size.gibibytes(42),
+            }).volumeId
+        ),
+      ],
+    });
+    const messages3 = SynthUtils.synthesize(compliant).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-EC2EBSInBackupPlan:'),
+        }),
+      })
+    );
+  });
+
   test('hipaaSecurityEC2EBSOptimizedInstance: - EC2 instance types that support EBS optimization and are not EBS optimized by default have EBS optimization enabled - (Control ID: 164.308(a)(7)(i))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
