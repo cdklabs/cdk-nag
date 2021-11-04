@@ -67,6 +67,7 @@ import {
 } from './rules/elb';
 import { hipaaSecurityEMRKerberosEnabled } from './rules/emr';
 import {
+  hipaaSecurityIAMGroupHasUsers,
   hipaaSecurityIAMNoInlinePolicy,
   hipaaSecurityIAMPolicyNoStatementsWithAdminAccess,
   hipaaSecurityIAMPolicyNoStatementsWithFullAccess,
@@ -645,6 +646,15 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkIAM(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-IAMGroupHasUsers',
+      info: 'The IAM Group does not have at least one IAM User - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).',
+      explanation:
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityIAMGroupHasUsers,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-IAMNoInlinePolicy',
       info: 'The IAM Group, User, or Role contains an inline policy - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).',

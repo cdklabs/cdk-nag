@@ -13,12 +13,56 @@ import {
   Role,
   AccountRootPrincipal,
   ServicePrincipal,
+  CfnUserToGroupAddition,
 } from '@aws-cdk/aws-iam';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
 describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
+  test('HIPAA.Security-IAMGroupHasUsers: - IAM Groups have at least one IAM User - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new Group(nonCompliant, 'rGroup');
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-IAMGroupHasUsers:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    new Group(compliant, 'rGroup').addUser(new User(compliant, 'rUser'));
+    new Group(compliant, 'rGroup2', { groupName: 'foo' });
+    new User(compliant, 'rUser2').addToGroup(
+      Group.fromGroupArn(
+        compliant,
+        'rImportedGroup2',
+        'arn:aws:iam::123456789012:group/foo'
+      )
+    );
+    new Group(compliant, 'rGroup3', { groupName: 'baz' });
+    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition', {
+      groupName: 'baz',
+      users: ['bar'],
+    });
+    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition2', {
+      groupName: new Group(compliant, 'rGroup4').groupName,
+      users: ['bar'],
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-IAMGroupHasUsers:'),
+        }),
+      })
+    );
+  });
+
   test('HIPAA.Security-IAMNoInlinePolicy: - IAM Groups, Users, and Roles do not contain inline policies - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
