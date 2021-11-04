@@ -46,7 +46,10 @@ import {
   hipaaSecurityEC2RestrictedSSH,
 } from './rules/ec2';
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
-import { hipaaSecurityEFSEncrypted } from './rules/efs';
+import {
+  hipaaSecurityEFSEncrypted,
+  hipaaSecurityEFSInBackupPlan,
+} from './rules/efs';
 import { hipaaSecurityElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
   hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled,
@@ -476,6 +479,15 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEFS(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-EFSInBackupPlan',
+      info: 'The EFS is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic File System (Amazon EFS) file systems are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityEFSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-EFSEncrypted',
       info: 'The EFS does not have encryption at rest enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
