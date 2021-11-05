@@ -119,7 +119,10 @@ import {
   hipaaSecuritySageMakerNotebookInstanceKMSKeyConfigured,
   hipaaSecuritySageMakerNotebookNoDirectInternetAccess,
 } from './rules/sagemaker';
-import { hipaaSecuritySecretsManagerUsingKMSKey } from './rules/secretsmanager';
+import {
+  hipaaSecuritySecretsManagerRotationEnabled,
+  hipaaSecuritySecretsManagerUsingKMSKey,
+} from './rules/secretsmanager';
 import { hipaaSecuritySNSEncryptedKMS } from './rules/sns';
 import {
   hipaaSecurityVPCDefaultSecurityGroupClosed,
@@ -1056,8 +1059,17 @@ export class HIPAASecurityChecks extends NagPack {
    */
   private checkSecretsManager(node: CfnResource): void {
     this.applyRule({
+      ruleId: 'HIPAA.Security-SecretsManagerRotationEnabled',
+      info: 'The secret does not have automatic rotation scheduled - (Control ID: 164.308(a)(4)(ii)(B)).',
+      explanation:
+        'Rotating secrets on a regular schedule can shorten the period a secret is active, and potentially reduce the business impact if the secret is compromised.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecuritySecretsManagerRotationEnabled,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'HIPAA.Security-SecretsManagerUsingKMSKey',
-      info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
+      info: ' is not encrypted with a KMS Customer managed key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
       explanation:
         'To help protect data at rest, ensure encryption with AWS Key Management Service (AWS KMS) is enabled for AWS Secrets Manager secrets. Because sensitive data can exist at rest in Secrets Manager secrets, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.ERROR,

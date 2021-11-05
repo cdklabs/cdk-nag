@@ -1149,7 +1149,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-SMG4',
-      info: 'The Secret does not have automatic rotation scheduled.',
+      info: 'The secret does not have automatic rotation scheduled.',
       explanation:
         'AWS Secrets Manager can be configured to automatically rotate the secret for a secured service or database.',
       level: NagMessageLevel.ERROR,
