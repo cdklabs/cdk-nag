@@ -35,6 +35,7 @@ import {
   nist80053r4EC2CheckInsideVPC,
   nist80053r4EC2CheckNoPublicIPs,
   nist80053r4EC2CheckSSHRestricted,
+  nist80053r4EC2EBSInBackupPlan,
 } from './rules/ec2';
 import { nist80053r4EFSEncrypted } from './rules/efs';
 import { nist80053r4ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
@@ -353,6 +354,15 @@ export class NIST80053R4Checks extends NagPack {
         'Not restricting access to ports to trusted sources can lead to attacks against the availability, integrity and confidentiality of systems. By default, common ports which should be restricted include port numbers 20, 21, 3389, 3306, and 4333.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4EC2CheckCommonPortsRestricted,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-EC2EBSInBackupPlan',
+      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4EC2EBSInBackupPlan,
       node: node,
     });
   }
