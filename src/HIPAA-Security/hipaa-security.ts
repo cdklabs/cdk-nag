@@ -102,6 +102,7 @@ import {
   hipaaSecurityRedshiftClusterMaintenanceSettings,
   hipaaSecurityRedshiftClusterPublicAccess,
   hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+  hipaaSecurityRedshiftRequireTlsSSL,
 } from './rules/redshift';
 import {
   hipaaSecurityS3BucketLevelPublicAccessProhibited,
@@ -920,6 +921,15 @@ export class HIPAASecurityChecks extends NagPack {
         'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.',
       level: NagMessageLevel.ERROR,
       rule: hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'HIPAA.Security-RedshiftRequireTlsSSL',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).',
+      explanation:
+        'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityRedshiftRequireTlsSSL,
       node: node,
     });
   }
