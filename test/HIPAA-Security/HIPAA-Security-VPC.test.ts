@@ -4,7 +4,17 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnVPC, CfnRoute, CfnSubnet, Subnet } from '@aws-cdk/aws-ec2';
+import {
+  CfnVPC,
+  CfnRoute,
+  CfnSubnet,
+  Subnet,
+  Vpc,
+  FlowLog,
+  FlowLogResourceType,
+  CfnFlowLog,
+  FlowLogTrafficType,
+} from '@aws-cdk/aws-ec2';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
@@ -35,6 +45,59 @@ describe('Amazon Virtual Private Cloud (VPC)', () => {
           data: expect.stringContaining(
             'HIPAA.Security-VPCDefaultSecurityGroupClosed:'
           ),
+        }),
+      })
+    );
+  });
+
+  test('HIPAA.Security-VPCFlowLogsEnabled: - VPCs have Flow Logs enabled - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new Vpc(nonCompliant, 'rVpc');
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-VPCFlowLogsEnabled:'),
+        }),
+      })
+    );
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    new Vpc(nonCompliant2, 'rVpc');
+    new FlowLog(nonCompliant2, 'rFlowLog', {
+      resourceType: FlowLogResourceType.fromVpc(
+        Vpc.fromVpcAttributes(nonCompliant2, 'rLookupVpc', {
+          vpcId: 'foo',
+          availabilityZones: ['us-east-1a'],
+        })
+      ),
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-VPCFlowLogsEnabled:'),
+        }),
+      })
+    );
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    const compliantVpc = new Vpc(compliant, 'rVpc1');
+    new FlowLog(compliant, 'rFlowFlog1', {
+      resourceType: FlowLogResourceType.fromVpc(compliantVpc),
+    });
+    const compliantVpc2 = new Vpc(compliant, 'rVpc2');
+    new CfnFlowLog(compliant, 'rCfnFlowLog', {
+      resourceId: compliantVpc2.vpcId,
+      resourceType: 'VPC',
+      trafficType: FlowLogTrafficType.ALL,
+    });
+    const messages3 = SynthUtils.synthesize(compliant).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('HIPAA.Security-VPCFlowLogsEnabled:'),
         }),
       })
     );

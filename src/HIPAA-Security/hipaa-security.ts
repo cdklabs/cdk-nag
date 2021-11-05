@@ -126,6 +126,7 @@ import {
 import { hipaaSecuritySNSEncryptedKMS } from './rules/sns';
 import {
   hipaaSecurityVPCDefaultSecurityGroupClosed,
+  hipaaSecurityVPCFlowLogsEnabled,
   hipaaSecurityVPCNoUnrestrictedRouteToIGW,
   hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
@@ -1108,6 +1109,15 @@ export class HIPAASecurityChecks extends NagPack {
         'When creating a VPC through CloudFormation, the default security group will always be open. Therefore it is important to always close the default security group after stack creation whenever a VPC is created. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.',
       level: NagMessageLevel.WARN,
       rule: hipaaSecurityVPCDefaultSecurityGroupClosed,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'HIPAA.Security-VPCFlowLogsEnabled',
+      info: 'The VPC does not have an associated Flow Log - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).',
+      explanation:
+        'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityVPCFlowLogsEnabled,
       node: node,
     });
     this.applyRule({
