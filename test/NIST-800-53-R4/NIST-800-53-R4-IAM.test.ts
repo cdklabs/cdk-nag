@@ -12,12 +12,55 @@ import {
   Effect,
   Role,
   AccountRootPrincipal,
+  CfnUserToGroupAddition,
 } from '@aws-cdk/aws-iam';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
+  test('NIST.800.53.R4-IAMGroupHasUsers: - IAM Groups have at least one IAM User - (Control IDs: AC-2(j))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R4Checks());
+    new Group(nonCompliant, 'rGroup');
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R4-IAMGroupHasUsers:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R4Checks());
+    new Group(compliant, 'rGroup').addUser(new User(compliant, 'rUser'));
+    new Group(compliant, 'rGroup2', { groupName: 'foo' });
+    new User(compliant, 'rUser2').addToGroup(
+      Group.fromGroupArn(
+        compliant,
+        'rImportedGroup2',
+        'arn:aws:iam::123456789012:group/foo'
+      )
+    );
+    new Group(compliant, 'rGroup3', { groupName: 'baz' });
+    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition', {
+      groupName: 'baz',
+      users: ['bar'],
+    });
+    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition2', {
+      groupName: new Group(compliant, 'rGroup4').groupName,
+      users: ['bar'],
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R4-IAMGroupHasUsers:'),
+        }),
+      })
+    );
+  });
   test('NIST.800.53.R4-IAMGroupMembership: IAM users are assigned to at least one group', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());

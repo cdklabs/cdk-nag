@@ -54,6 +54,7 @@ import {
 } from './rules/elb';
 import { nist80053r4EMRKerberosEnabled } from './rules/emr';
 import {
+  nist80053r4IAMGroupHasUsers,
   nist80053r4IAMGroupMembership,
   nist80053r4IAMNoInlinePolicy,
   nist80053r4IAMPolicyNoStatementsWithAdminAccess,
@@ -517,6 +518,15 @@ export class NIST80053R4Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkIAM(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-IAMGroupHasUsers',
+      info: 'The IAM Group does not have at least one IAM User - (Control IDs: AC-2(j)).',
+      explanation:
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4IAMGroupHasUsers,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R4-IAMGroupMembership',
       info: 'The IAM user does not belong to any group(s) - (Control IDs: AC-2(1), AC-2(j), AC-3, AC-6).',
