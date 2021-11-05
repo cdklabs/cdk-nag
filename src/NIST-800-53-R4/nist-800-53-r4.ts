@@ -37,7 +37,10 @@ import {
   nist80053r4EC2CheckSSHRestricted,
   nist80053r4EC2EBSInBackupPlan,
 } from './rules/ec2';
-import { nist80053r4EFSEncrypted } from './rules/efs';
+import {
+  nist80053r4EFSEncrypted,
+  nist80053r4EFSInBackupPlan,
+} from './rules/efs';
 import { nist80053r4ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
   nist80053r4ALBHttpDropInvalidHeaderEnabled,
@@ -373,6 +376,16 @@ export class NIST80053R4Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEFS(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-EFSInBackupPlan',
+      info: 'The EFS is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic File System (Amazon EFS) file systems are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4EFSInBackupPlan,
+      node: node,
+    });
+
     this.applyRule({
       ruleId: 'NIST.800.53.R4-EFSEncrypted',
       info: 'The EFS does not have encryption at rest enabled - (Control IDs: SC-13, SC-28).',
