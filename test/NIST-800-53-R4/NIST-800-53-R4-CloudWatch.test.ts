@@ -6,12 +6,12 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { Alarm, Metric } from '@aws-cdk/aws-cloudwatch';
 import { Ec2Action, Ec2InstanceAction } from '@aws-cdk/aws-cloudwatch-actions';
 import { Key } from '@aws-cdk/aws-kms';
-import { LogGroup } from '@aws-cdk/aws-logs';
+import { CfnLogGroup, LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon CloudWatch', () => {
-  test('NIST.800.53.R4-CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled', () => {
+  test('NIST.800.53.R4-CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - ', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new Alarm(nonCompliant, 'rAlarm', {
@@ -77,7 +77,7 @@ describe('Amazon CloudWatch', () => {
     );
   });
 
-  test('NIST.800.53.R4-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
+  test('NIST.800.53.R4-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys - ', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new LogGroup(nonCompliant, 'rLogGroup');
@@ -103,6 +103,38 @@ describe('Amazon CloudWatch', () => {
         entry: expect.objectContaining({
           data: expect.stringContaining(
             'NIST.800.53.R4-CloudWatchLogGroupEncrypted:'
+          ),
+        }),
+      })
+    );
+  });
+
+  test('NIST.800.53.R4-CloudWatchLogGroupRetentionPeriod: - CloudWatch Log Groups have an explicit retention period configured - (Control IDs: AU-11, SI-12)', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R4Checks());
+    new CfnLogGroup(nonCompliant, 'rLogGroup');
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R4-CloudWatchLogGroupRetentionPeriod:'
+          ),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R4Checks());
+    new LogGroup(compliant, 'rLogGroup', {
+      retention: RetentionDays.ONE_YEAR,
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R4-CloudWatchLogGroupRetentionPeriod:'
           ),
         }),
       })

@@ -18,6 +18,7 @@ import {
 import {
   nist80053r4CloudWatchAlarmAction,
   nist80053r4CloudWatchLogGroupEncrypted,
+  nist80053r4CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
 import {
   nist80053r4CodeBuildCheckEnvVars,
@@ -234,6 +235,15 @@ export class NIST80053R4Checks extends NagPack {
         'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4CloudWatchLogGroupEncrypted,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-CloudWatchLogGroupRetentionPeriod',
+      info: 'The CloudWatch Log Group does not have an explicit retention period configured - (Control IDs: AU-11, SI-12).',
+      explanation:
+        'Ensure a minimum duration of event log data is retained for your log groups to help with troubleshooting and forensics investigations. The lack of available past event log data makes it difficult to reconstruct and identify potentially malicious events.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4CloudWatchLogGroupRetentionPeriod,
       node: node,
     });
   }

@@ -7,12 +7,12 @@ import { CfnLogGroup } from '@aws-cdk/aws-logs';
 import { CfnResource } from '@aws-cdk/core';
 
 /**
- * CloudWatch Log Groups are encrypted with customer managed keys - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)))
+ * CloudWatch Log Groups have an explicit retention period configured - (Control IDs: AU-11, SI-12)
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnLogGroup) {
-    if (node.kmsKeyId == undefined) {
+    if (node.retentionInDays == undefined) {
       return false;
     }
   }
