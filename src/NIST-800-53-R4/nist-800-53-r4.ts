@@ -24,7 +24,10 @@ import {
   nist80053r4CodeBuildURLCheck,
 } from './rules/codebuild';
 import { nist80053r4DMSReplicationNotPublic } from './rules/dms';
-import { nist80053r4DynamoDBPITREnabled } from './rules/dynamodb';
+import {
+  nist80053r4DynamoDBInBackupPlan,
+  nist80053r4DynamoDBPITREnabled,
+} from './rules/dynamodb';
 import {
   nist80053r4EC2CheckCommonPortsRestricted,
   nist80053r4EC2CheckDefaultSecurityGroupClosed,
@@ -272,6 +275,15 @@ export class NIST80053R4Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkDynamoDB(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-DynamoDBInBackupPlan',
+      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon DynamoDB tables are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4DynamoDBInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R4-DynamoDBPITREnabled',
       info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: CP-9(b), CP-10, SI-12).',
