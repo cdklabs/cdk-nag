@@ -57,9 +57,9 @@ function isMatchingWebACLAssociation(
     Stack.of(node).resolve(node.resourceArn)
   );
   const regexes = Array<string>();
-  regexes.push(`${restApiId}.+${stageLogicalId}`);
+  regexes.push(`${restApiId}.+${stageLogicalId}(?![\\w])`);
   if (stageName !== undefined) {
-    regexes.push(`${restApiId}.+${stageName}`);
+    regexes.push(`${restApiId}.+${stageName}(?![\\w])`);
   }
   const regex = new RegExp(regexes.join('|'), 'gm');
   if (regex.test(resourceLogicalId)) {

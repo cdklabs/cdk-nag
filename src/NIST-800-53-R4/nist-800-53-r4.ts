@@ -38,6 +38,7 @@ import { nist80053r4ElastiCacheRedisClusterAutomaticBackup } from './rules/elast
 import {
   nist80053r4ALBHttpDropInvalidHeaderEnabled,
   nist80053r4ALBHttpToHttpsRedirection,
+  nist80053r4ALBWAFEnabled,
   nist80053r4ELBCrossZoneBalancing,
   nist80053r4ELBDeletionProtectionEnabled,
   nist80053r4ELBListenersUseSSLOrHTTPS,
@@ -398,6 +399,15 @@ export class NIST80053R4Checks extends NagPack {
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4ALBHttpToHttpsRedirection,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-ALBWAFEnabled',
+      info: 'The ALB is not associated with AWS WAFv2 web ACL - (Control IDs: SC-7, SI-4(a)(b)(c)).',
+      explanation:
+        'A WAF helps to protect your web applications or APIs against common web exploits. These web exploits may affect availability, compromise security, or consume excessive resources within your environment.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4ALBWAFEnabled,
       node: node,
     });
     this.applyRule({
