@@ -130,6 +130,7 @@ import {
   hipaaSecurityVPCNoUnrestrictedRouteToIGW,
   hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
+import { hipaaSecurityWAFv2LoggingEnabled } from './rules/waf';
 
 /**
  * Check for HIPAA Security compliance.
@@ -162,6 +163,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkSecretsManager(node);
       this.checkSNS(node);
       this.checkVPC(node);
+      this.checkWAF(node);
     }
   }
 
@@ -1136,6 +1138,23 @@ export class HIPAASecurityChecks extends NagPack {
         'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.',
       level: NagMessageLevel.ERROR,
       rule: hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
+      node: node,
+    });
+  }
+
+  /**
+   * Check WAF Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkWAF(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-WAFv2LoggingEnabled',
+      info: 'The WAFv2 web ACL does not have logging enabled - (Control ID: 164.312(b)).',
+      explanation:
+        'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityWAFv2LoggingEnabled,
       node: node,
     });
   }
