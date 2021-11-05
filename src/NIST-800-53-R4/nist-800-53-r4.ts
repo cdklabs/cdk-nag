@@ -98,6 +98,7 @@ import {
 } from './rules/sagemaker';
 import { nist80053r4SNSEncryptedKMS } from './rules/sns';
 import { nist80053r4VPCFlowLogsEnabled } from './rules/vpc';
+import { nist80053r4WAFv2LoggingEnabled } from './rules/waf';
 
 /**
  * Check for NIST 800-53 rev 4 compliance.
@@ -128,6 +129,7 @@ export class NIST80053R4Checks extends NagPack {
       this.checkSageMaker(node);
       this.checkSNS(node);
       this.checkVPC(node);
+      this.checkWAF(node);
     }
   }
 
@@ -889,6 +891,22 @@ export class NIST80053R4Checks extends NagPack {
         'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4VPCFlowLogsEnabled,
+      node: node,
+    });
+  }
+  /**
+   * Check WAF Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkWAF(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-WAFv2LoggingEnabled',
+      info: 'The WAFv2 web ACL does not have logging enabled - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c), SC-7, SI-4(a)(b)(c)).',
+      explanation:
+        'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4WAFv2LoggingEnabled,
       node: node,
     });
   }
