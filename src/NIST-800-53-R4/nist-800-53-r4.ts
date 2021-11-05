@@ -4,7 +4,6 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnResource, IConstruct } from '@aws-cdk/core';
-import { hipaaSecurityRDSInBackupPlan } from '../HIPAA-Security/rules/rds';
 import { NagPack, NagMessageLevel } from '../nag-pack';
 import {
   nist80053r4APIGWCacheEnabledAndEncrypted,
@@ -70,6 +69,7 @@ import {
 } from './rules/opensearch';
 import {
   nist80053r4RDSEnhancedMonitoringEnabled,
+  nist80053r4RDSInBackupPlan,
   nist80053r4RDSInstanceBackupEnabled,
   nist80053r4RDSInstanceDeletionProtectionEnabled,
   nist80053r4RDSInstanceMultiAZSupport,
@@ -80,6 +80,7 @@ import {
 import {
   nist80053r4RedshiftClusterConfiguration,
   nist80053r4RedshiftClusterPublicAccess,
+  nist80053r4RedshiftRequireTlsSSL,
 } from './rules/redshift';
 import {
   nist80053r4S3BucketDefaultLockEnabled,
@@ -656,7 +657,7 @@ export class NIST80053R4Checks extends NagPack {
       explanation:
         'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
       level: NagMessageLevel.ERROR,
-      rule: hipaaSecurityRDSInBackupPlan,
+      rule: nist80053r4RDSInBackupPlan,
       node: node,
     });
     this.applyRule({
@@ -737,6 +738,15 @@ export class NIST80053R4Checks extends NagPack {
         'Amazon Redshift clusters can contain sensitive information and principles and access control is required for such accounts.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4RedshiftClusterPublicAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-RedshiftRequireTlsSSL',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).',
+      explanation:
+        'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4RedshiftRequireTlsSSL,
       node: node,
     });
   }
