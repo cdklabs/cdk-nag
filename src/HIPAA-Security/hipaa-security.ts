@@ -796,15 +796,6 @@ export class HIPAASecurityChecks extends NagPack {
    */
   private checkRDS(node: CfnResource): void {
     this.applyRule({
-      ruleId: 'HIPAA.Security-RDSInBackupPlan',
-      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
-      explanation:
-        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
-      level: NagMessageLevel.ERROR,
-      rule: hipaaSecurityRDSInBackupPlan,
-      node: node,
-    });
-    this.applyRule({
       ruleId: 'HIPAA.Security-RDSAutomaticMinorVersionUpgradeEnabled',
       info: 'The RDS DB instance does not have automatic minor version upgrades enabled - (Control ID: 164.308(a)(5)(ii)(A)).',
       explanation:
@@ -820,6 +811,15 @@ export class HIPAASecurityChecks extends NagPack {
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.',
       level: NagMessageLevel.ERROR,
       rule: hipaaSecurityRDSEnhancedMonitoringEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'HIPAA.Security-RDSInBackupPlan',
+      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityRDSInBackupPlan,
       node: node,
     });
     this.applyRule({

@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { CfnResource, IConstruct } from '@aws-cdk/core';
+import { hipaaSecurityRDSInBackupPlan } from '../HIPAA-Security/rules/rds';
 import { NagPack, NagMessageLevel } from '../nag-pack';
 import {
   nist80053r4APIGWCacheEnabledAndEncrypted,
@@ -647,6 +648,15 @@ export class NIST80053R4Checks extends NagPack {
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4RDSEnhancedMonitoringEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-RDSInBackupPlan',
+      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityRDSInBackupPlan,
       node: node,
     });
     this.applyRule({
