@@ -25,6 +25,7 @@ import {
 } from './rules/codebuild';
 import { nist80053r4DMSReplicationNotPublic } from './rules/dms';
 import {
+  nist80053r4DynamoDBAutoscalingEnabled,
   nist80053r4DynamoDBInBackupPlan,
   nist80053r4DynamoDBPITREnabled,
 } from './rules/dynamodb';
@@ -286,6 +287,15 @@ export class NIST80053R4Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkDynamoDB(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-DynamoDBAutoscalingEnabled',
+      info: "The provisioned capacity DynamoDB table does not have Auto Scaling enabled on it's indexes - (Control IDs: CP-10, SC-5).",
+      explanation:
+        'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4DynamoDBAutoscalingEnabled,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R4-DynamoDBInBackupPlan',
       info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: CP-9(b), CP-10, SI-12).',
