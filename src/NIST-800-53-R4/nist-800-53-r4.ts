@@ -97,6 +97,7 @@ import {
   nist80053r4SageMakerNotebookKMS,
 } from './rules/sagemaker';
 import { nist80053r4SNSEncryptedKMS } from './rules/sns';
+import { nist80053r4VPCFlowLogsEnabled } from './rules/vpc';
 
 /**
  * Check for NIST 800-53 rev 4 compliance.
@@ -126,6 +127,7 @@ export class NIST80053R4Checks extends NagPack {
       this.checkS3(node);
       this.checkSageMaker(node);
       this.checkSNS(node);
+      this.checkVPC(node);
     }
   }
 
@@ -870,6 +872,23 @@ export class NIST80053R4Checks extends NagPack {
         'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r4SNSEncryptedKMS,
+      node: node,
+    });
+  }
+
+  /**
+   * Check VPC Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkVPC(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-VPCFlowLogsEnabled',
+      info: 'The VPC does not have an associated Flow Log - (Control IDs: AU-2(a)(d), AU-3, AU-12(a)(c)).',
+      explanation:
+        'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4VPCFlowLogsEnabled,
       node: node,
     });
   }
