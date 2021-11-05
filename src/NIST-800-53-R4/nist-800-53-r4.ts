@@ -52,6 +52,7 @@ import {
   nist80053r4IAMPolicyNoStatementsWithAdminAccess,
   nist80053r4IAMUserNoPolicies,
 } from './rules/iam';
+import { nist80053r4KMSBackingKeyRotationEnabled } from './rules/kms';
 import { nist80053r4LambdaFunctionsInsideVPC } from './rules/lambda';
 import {
   nist80053r4OpenSearchEncryptedAtRest,
@@ -107,6 +108,7 @@ export class NIST80053R4Checks extends NagPack {
       this.checkELB(node);
       this.checkEMR(node);
       this.checkIAM(node);
+      this.checkKMS(node);
       this.checkLambda(node);
       this.checkOpenSearch(node);
       this.checkRDS(node);
@@ -482,7 +484,7 @@ export class NIST80053R4Checks extends NagPack {
   private checkIAM(node: CfnResource): void {
     this.applyRule({
       ruleId: 'NIST.800.53.R4-IAMGroupMembership',
-      info: 'The IAM user does not belong to any group(s) - (Control IDs: AC-2(1), AC-2(j), AC-3, and AC-6).',
+      info: 'The IAM user does not belong to any group(s) - (Control IDs: AC-2(1), AC-2(j), AC-3, AC-6).',
       explanation:
         'AWS Identity and Access Management (IAM) can help you restrict access permissions and authorizations, by ensuring IAM users are members of at least one group. Allowing users more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.',
       level: NagMessageLevel.ERROR,
@@ -517,6 +519,24 @@ export class NIST80053R4Checks extends NagPack {
       node: node,
     });
   }
+
+  /**
+   * Check KMS Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkKMS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R4-KMSBackingKeyRotationEnabled',
+      info: 'The KMS Symmetric key does not have key rotation enabled - (Control IDs: CM-6a, CM-9b, SA-9(6), SC-12, SC-12(2), SC-12(6)).',
+      explanation:
+        'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r4KMSBackingKeyRotationEnabled,
+      node: node,
+    });
+  }
+
   /**
    * Check Lambda Resources
    * @param node the CfnResource to check

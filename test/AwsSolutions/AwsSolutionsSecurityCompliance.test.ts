@@ -338,7 +338,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
   });
 
   describe('AWS Key Management Service (KMS)', () => {
-    test('awsSolutionsKms5: KMS Symmetric keys have Key Rotation enabled', () => {
+    test('awsSolutionsKms5: KMS Symmetric keys have key rotation enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Key(positive, 'rSymmetricKey');
