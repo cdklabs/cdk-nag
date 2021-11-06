@@ -43,6 +43,7 @@ import {
 } from './rules/elasticbeanstalk';
 import {
   nist80053r5ALBHttpToHttpsRedirection,
+  nist80053r5ALBWAFEnabled,
   nist80053r5ELBACMCertificateRequired,
   nist80053r5ELBCrossZoneLoadBalancingEnabled,
   nist80053r5ELBDeletionProtectionEnabled,
@@ -456,6 +457,15 @@ export class NIST80053R5Checks extends NagPack {
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5ALBHttpToHttpsRedirection,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ALBWAFEnabled',
+      info: 'The ALB is not associated with AWS WAFv2 web ACL - (Control ID: AC-4(21)).',
+      explanation:
+        'A WAF helps to protect your web applications or APIs against common web exploits. These web exploits may affect availability, compromise security, or consume excessive resources within your environment.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ALBWAFEnabled,
       node: node,
     });
     this.applyRule({
