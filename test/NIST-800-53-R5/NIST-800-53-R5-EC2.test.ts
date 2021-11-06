@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { SynthUtils } from '@aws-cdk/assert';
+import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
 import {
   Instance,
   InstanceClass,
@@ -17,12 +18,83 @@ import {
   CfnSecurityGroupIngress,
   CfnSecurityGroup,
   InstanceSize,
+  Volume,
 } from '@aws-cdk/aws-ec2';
 import { PolicyStatement } from '@aws-cdk/aws-iam';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Aspects, Size, Stack } from '@aws-cdk/core';
 import { NIST80053R5Checks } from '../../src';
 
 describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
+  test('NIST.800.53.R5-EC2EBSInBackupPlan: - EBS volumes are part of AWS Backup plan(s) - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
+    new Volume(nonCompliant, 'rVolume', {
+      availabilityZone: 'us-east-1a',
+      size: Size.gibibytes(42),
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R5-EC2EBSInBackupPlan:'),
+        }),
+      })
+    );
+
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
+    new Volume(nonCompliant2, 'rVolume', {
+      availabilityZone: 'us-east-1a',
+      size: Size.gibibytes(42),
+    });
+    BackupPlan.dailyWeeklyMonthly5YearRetention(
+      nonCompliant2,
+      'rPlan'
+    ).addSelection('Selection', {
+      resources: [
+        BackupResource.fromArn(
+          'arn:aws:ec2:us-east-1:123456789012:volume/' +
+            new Volume(nonCompliant2, 'rVolume2', {
+              availabilityZone: 'us-east-1a',
+              size: Size.gibibytes(42),
+            }).volumeId
+        ),
+      ],
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R5-EC2EBSInBackupPlan:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R5Checks());
+    BackupPlan.dailyWeeklyMonthly5YearRetention(
+      compliant,
+      'rPlan'
+    ).addSelection('Selection', {
+      resources: [
+        BackupResource.fromArn(
+          'arn:aws:ec2:us-east-1:123456789012:volume/' +
+            new Volume(compliant, 'rVolume', {
+              availabilityZone: 'us-east-1a',
+              size: Size.gibibytes(42),
+            }).volumeId
+        ),
+      ],
+    });
+    const messages3 = SynthUtils.synthesize(compliant).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R5-EC2EBSInBackupPlan:'),
+        }),
+      })
+    );
+  });
   test('NIST.800.53.R5-EC2EBSOptimizedInstance: - EC2 instance types that support EBS optimization and are not EBS optimized by default have EBS optimization enabled - (Control IDs: CP-2(5), CP-9a, CP-9b, CP-9c, CP-10, SC-5(2))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());

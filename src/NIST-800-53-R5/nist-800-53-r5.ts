@@ -32,6 +32,7 @@ import {
   nist80053r5DynamoDBPITREnabled,
 } from './rules/dynamodb';
 import {
+  nist80053r5EC2EBSInBackupPlan,
   nist80053r5EC2EBSOptimizedInstance,
   nist80053r5EC2InstanceNoPublicIp,
   nist80053r5EC2InstanceProfileAttached,
@@ -40,7 +41,10 @@ import {
   nist80053r5EC2RestrictedSSH,
 } from './rules/ec2';
 import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
-import { nist80053r5EFSEncrypted } from './rules/efs';
+import {
+  nist80053r5EFSEncrypted,
+  nist80053r5EFSInBackupPlan,
+} from './rules/efs';
 import { nist80053r5ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
   nist80053r5ElasticBeanstalkEnhancedHealthReportingEnabled,
@@ -77,6 +81,7 @@ import {
 } from './rules/opensearch';
 import {
   nist80053r5RDSEnhancedMonitoringEnabled,
+  nist80053r5RDSInBackupPlan,
   nist80053r5RDSInstanceBackupEnabled,
   nist80053r5RDSInstanceDeletionProtectionEnabled,
   nist80053r5RDSInstancePublicAccess,
@@ -346,6 +351,15 @@ export class NIST80053R5Checks extends NagPack {
    */
   private checkEC2(node: CfnResource): void {
     this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2EBSInBackupPlan',
+      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2EBSInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'NIST.800.53.R5-EC2EBSOptimizedInstance',
       info: "The EC2 instance type 'supports' EBS optimization and does not have EBS optimization enabled - (Control IDs: CP-2(5), CP-9a, CP-9b, CP-9c, CP-10, SC-5(2)).",
       explanation:
@@ -424,6 +438,15 @@ export class NIST80053R5Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEFS(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EFSInBackupPlan',
+      info: 'The EFS is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic File System (Amazon EFS) file systems are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EFSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R5-EFSEncrypted',
       info: 'The EFS does not have encryption at rest enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
@@ -720,6 +743,15 @@ export class NIST80053R5Checks extends NagPack {
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5RDSEnhancedMonitoringEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RDSInBackupPlan',
+      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RDSInBackupPlan,
       node: node,
     });
     this.applyRule({
