@@ -11,7 +11,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon CloudWatch', () => {
-  test('NIST.800.53.R4-CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - ', () => {
+  test('NIST.800.53.R4-CloudWatchAlarmAction: - CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled - (Control IDs: AC-2(4), AU-6(1)(3), AU-7(1), CA-7(a)(b), IR-4(1), SI-4(2), SI-4(4), SI-4(5), SI-4(a)(b)(c)) ', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new Alarm(nonCompliant, 'rAlarm', {
@@ -77,7 +77,7 @@ describe('Amazon CloudWatch', () => {
     );
   });
 
-  test('NIST.800.53.R4-CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys - ', () => {
+  test('NIST.800.53.R4-CloudWatchLogGroupEncrypted: - CloudWatch Log Groups are encrypted with customer managed keys - (Control IDs: AU-9, SC-13, SC-28)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new LogGroup(nonCompliant, 'rLogGroup');

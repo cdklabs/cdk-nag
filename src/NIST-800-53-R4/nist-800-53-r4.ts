@@ -546,7 +546,7 @@ export class NIST80053R4Checks extends NagPack {
   private checkIAM(node: CfnResource): void {
     this.applyRule({
       ruleId: 'NIST.800.53.R4-IAMGroupHasUsers',
-      info: 'The IAM Group does not have at least one IAM User - (Control IDs: AC-2(j)).',
+      info: 'The IAM Group does not have at least one IAM User - (Control ID: AC-2(j)).',
       explanation:
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
       level: NagMessageLevel.ERROR,
@@ -599,7 +599,7 @@ export class NIST80053R4Checks extends NagPack {
   private checkKMS(node: CfnResource): void {
     this.applyRule({
       ruleId: 'NIST.800.53.R4-KMSBackingKeyRotationEnabled',
-      info: 'The KMS Symmetric key does not have key rotation enabled - (Control ID: SC-12).',
+      info: 'The KMS Symmetric key does not have automatic key rotation enabled - (Control ID: SC-12).',
       explanation:
         'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
       level: NagMessageLevel.ERROR,

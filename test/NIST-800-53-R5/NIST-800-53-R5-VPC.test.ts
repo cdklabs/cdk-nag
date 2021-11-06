@@ -19,7 +19,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R5Checks } from '../../src';
 
 describe('Amazon Virtual Private Cloud (VPC)', () => {
-  test('NIST.800.53.R5-VPCDefaultSecurityGroupClosed: - VPCs have their default security group closed - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), CM-6a, CM-9b, IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SI-4(17), SI-7(8))', () => {
+  test('NIST.800.53.R5-VPCDefaultSecurityGroupClosed: - VPCs have their default security group closed - (Control IDs: AC-4(21), AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), CM-6a, CM-9b, SC-7a, SC-7c, SC-7(5), SC-7(7), SC-7(11), SC-7(12), SC-7(16), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new CfnVPC(nonCompliant, 'rVPC', {

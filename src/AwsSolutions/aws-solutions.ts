@@ -1140,7 +1140,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-KMS5',
-      info: 'The KMS Symmetric key does not have key rotation enabled.',
+      info: 'The KMS Symmetric key does not have automatic key rotation enabled.',
       explanation:
         'KMS key rotation allow a system to set an yearly rotation schedule for a KMS key so when a AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
       level: NagMessageLevel.ERROR,

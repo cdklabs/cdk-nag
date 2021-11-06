@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('AWS Key Management Service (KMS)', () => {
-  test('NIST.800.53.R4-KMSBackingKeyRotationEnabled: - KMS Symmetric keys have key rotation enabled - (Control ID: SC-12)', () => {
+  test('NIST.800.53.R4-KMSBackingKeyRotationEnabled: - KMS Symmetric keys have automatic key rotation enabled - (Control ID: SC-12)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new Key(nonCompliant, 'rSymmetricKey');

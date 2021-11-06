@@ -7,7 +7,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveIfPrimitive } from '../../../nag-pack';
 
 /**
- * KMS Symmetric keys have key rotation enabled
+ * KMS Symmetric keys have automatic key rotation enabled
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {

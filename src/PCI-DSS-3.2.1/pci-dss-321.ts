@@ -554,7 +554,7 @@ export class PCIDSS321Checks extends NagPack {
   private checkKMS(node: CfnResource): void {
     this.applyRule({
       ruleId: 'PCI.DSS.321-KMSBackingKeyRotationEnabled',
-      info: 'The KMS Symmetric key does not have key rotation enabled - (Control IDs: 2.2, 3.5, 3.6, 3.6.4).',
+      info: 'The KMS Symmetric key does not have automatic key rotation enabled - (Control IDs: 2.2, 3.5, 3.6, 3.6.4).',
       explanation:
         'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
       level: NagMessageLevel.ERROR,

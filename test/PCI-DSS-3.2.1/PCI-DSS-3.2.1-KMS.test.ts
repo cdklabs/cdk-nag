@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { PCIDSS321Checks } from '../../src';
 
 describe('AWS Key Management Service (KMS)', () => {
-  test('PCI.DSS.321-KMSBackingKeyRotationEnabled: - KMS Symmetric keys have key rotation enabled - (Control IDs: 2.2, 3.5, 3.6, 3.6.4)', () => {
+  test('PCI.DSS.321-KMSBackingKeyRotationEnabled: - KMS Symmetric keys have automatic key rotation enabled - (Control IDs: 2.2, 3.5, 3.6, 3.6.4)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new PCIDSS321Checks());
     new Key(nonCompliant, 'rSymmetricKey');

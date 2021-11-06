@@ -19,7 +19,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
-  test('NIST.800.53.R4-IAMGroupHasUsers: - IAM Groups have at least one IAM User - (Control IDs: AC-2(j))', () => {
+  test('NIST.800.53.R4-IAMGroupHasUsers: - IAM Groups have at least one IAM User - (Control ID: AC-2(j))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new Group(nonCompliant, 'rGroup');
