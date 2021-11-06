@@ -1,5 +1,42 @@
 {
   "tasks": {
+    "build": {
+      "name": "build",
+      "description": "Full release build (test+compile)",
+      "steps": [
+        {
+          "exec": "npx projen"
+        },
+        {
+          "spawn": "test"
+        },
+        {
+          "spawn": "compile"
+        },
+        {
+          "spawn": "package"
+        },
+        {
+          "spawn": "docgen"
+        }
+      ]
+    },
+    "bump": {
+      "name": "bump",
+      "description": "Bumps version based on latest git tag and generates a changelog entry",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt"
+      },
+      "steps": [
+        {
+          "builtin": "release/bump-version"
+        }
+      ],
+      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
+    },
     "clobber": {
       "name": "clobber",
       "description": "hard resets to HEAD of origin and cleans the local repo",
@@ -32,6 +69,15 @@
       ],
       "condition": "git diff --exit-code > /dev/null"
     },
+    "compat": {
+      "name": "compat",
+      "description": "Perform API compatibility check against latest version",
+      "steps": [
+        {
+          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
+        }
+      ]
+    },
     "compile": {
       "name": "compile",
       "description": "Only compile",
@@ -41,88 +87,38 @@
         }
       ]
     },
-    "test": {
-      "name": "test",
-      "description": "Run tests",
+    "default": {
+      "name": "default",
       "steps": [
         {
-          "exec": "rm -fr lib/"
-        },
-        {
-          "exec": "jest --passWithNoTests --all --updateSnapshot"
-        },
-        {
-          "spawn": "eslint"
+          "exec": "node .projenrc.js"
         }
       ]
     },
-    "build": {
-      "name": "build",
-      "description": "Full release build (test+compile)",
+    "docgen": {
+      "name": "docgen",
+      "description": "Generate API.md from .jsii manifest",
       "steps": [
         {
-          "exec": "npx projen"
-        },
-        {
-          "spawn": "test"
-        },
-        {
-          "spawn": "compile"
-        },
-        {
-          "spawn": "package"
-        },
-        {
-          "spawn": "docgen"
+          "exec": "jsii-docgen"
         }
       ]
     },
-    "test:watch": {
-      "name": "test:watch",
-      "description": "Run jest in watch mode",
+    "eslint": {
+      "name": "eslint",
+      "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "jest --watch"
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js"
         }
       ]
     },
-    "test:update": {
-      "name": "test:update",
-      "description": "Update jest snapshots",
+    "package": {
+      "name": "package",
+      "description": "Create an npm tarball",
       "steps": [
         {
-          "exec": "jest --updateSnapshot"
-        }
-      ]
-    },
-    "bump": {
-      "name": "bump",
-      "description": "Bumps version based on latest git tag and generates a changelog entry",
-      "env": {
-        "OUTFILE": "package.json",
-        "CHANGELOG": "dist/changelog.md",
-        "BUMPFILE": "dist/version.txt",
-        "RELEASETAG": "dist/releasetag.txt"
-      },
-      "steps": [
-        {
-          "builtin": "release/bump-version"
-        }
-      ],
-      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
-    },
-    "unbump": {
-      "name": "unbump",
-      "description": "Restores version to 0.0.0",
-      "env": {
-        "OUTFILE": "package.json",
-        "CHANGELOG": "dist/changelog.md",
-        "BUMPFILE": "dist/version.txt",
-        "RELEASETAG": "dist/releasetag.txt"
-      },
-      "steps": [
-        {
-          "builtin": "release/reset-version"
+          "exec": "jsii-pacmak"
         }
       ]
     },
@@ -137,50 +133,6 @@
       "steps": [
         {
           "exec": "errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q \"Release.tag_name already exists\" $errout; then cat $errout; exit $exitcode; fi"
-        }
-      ]
-    },
-    "default": {
-      "name": "default",
-      "steps": [
-        {
-          "exec": "node .projenrc.js"
-        }
-      ]
-    },
-    "watch": {
-      "name": "watch",
-      "description": "Watch & compile in the background",
-      "steps": [
-        {
-          "exec": "jsii -w --silence-warnings=reserved-word --no-fix-peer-dependencies"
-        }
-      ]
-    },
-    "package": {
-      "name": "package",
-      "description": "Create an npm tarball",
-      "steps": [
-        {
-          "exec": "jsii-pacmak"
-        }
-      ]
-    },
-    "eslint": {
-      "name": "eslint",
-      "description": "Runs eslint against the codebase",
-      "steps": [
-        {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js"
-        }
-      ]
-    },
-    "compat": {
-      "name": "compat",
-      "description": "Perform API compatibility check against latest version",
-      "steps": [
-        {
-          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
         }
       ]
     },
@@ -213,15 +165,6 @@
         }
       ]
     },
-    "docgen": {
-      "name": "docgen",
-      "description": "Generate API.md from .jsii manifest",
-      "steps": [
-        {
-          "exec": "jsii-docgen"
-        }
-      ]
-    },
     "release": {
       "name": "release",
       "description": "Prepare a release from \"main\" branch",
@@ -243,6 +186,54 @@
         },
         {
           "exec": "git diff --ignore-space-at-eol --exit-code"
+        }
+      ]
+    },
+    "test": {
+      "name": "test",
+      "description": "Run tests",
+      "steps": [
+        {
+          "exec": "rm -fr lib/"
+        },
+        {
+          "exec": "jest --passWithNoTests --all --updateSnapshot"
+        },
+        {
+          "spawn": "eslint"
+        }
+      ]
+    },
+    "test:update": {
+      "name": "test:update",
+      "description": "Update jest snapshots",
+      "steps": [
+        {
+          "exec": "jest --updateSnapshot"
+        }
+      ]
+    },
+    "test:watch": {
+      "name": "test:watch",
+      "description": "Run jest in watch mode",
+      "steps": [
+        {
+          "exec": "jest --watch"
+        }
+      ]
+    },
+    "unbump": {
+      "name": "unbump",
+      "description": "Restores version to 0.0.0",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt"
+      },
+      "steps": [
+        {
+          "builtin": "release/reset-version"
         }
       ]
     },
@@ -276,6 +267,15 @@
         },
         {
           "exec": "npx projen"
+        }
+      ]
+    },
+    "watch": {
+      "name": "watch",
+      "description": "Watch & compile in the background",
+      "steps": [
+        {
+          "exec": "jsii -w --silence-warnings=reserved-word --no-fix-peer-dependencies"
         }
       ]
     }
