@@ -51,7 +51,7 @@ describe('Amazon DynamoDB', () => {
     );
 
     const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new NIST80053R4Checks({ verbose: true }));
+    Aspects.of(nonCompliant3).add(new NIST80053R4Checks());
     const nonCompliant3Table = new Table(nonCompliant3, 'rTable', {
       partitionKey: { name: 'foo', type: AttributeType.STRING },
     });
@@ -83,7 +83,7 @@ describe('Amazon DynamoDB', () => {
     );
 
     const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new NIST80053R4Checks({ verbose: true }));
+    Aspects.of(nonCompliant4).add(new NIST80053R4Checks());
     const nonCompliant4Table = new Table(nonCompliant4, 'rTable', {
       partitionKey: { name: 'foo', type: AttributeType.STRING },
       tableName: 'baz',

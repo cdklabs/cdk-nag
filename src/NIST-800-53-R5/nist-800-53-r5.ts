@@ -26,7 +26,11 @@ import {
   nist80053r5CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
 import { nist80053r5DMSReplicationNotPublic } from './rules/dms';
-import { nist80053r5DynamoDBPITREnabled } from './rules/dynamodb';
+import {
+  nist80053r5DynamoDBAutoscalingEnabled,
+  nist80053r5DynamoDBInBackupPlan,
+  nist80053r5DynamoDBPITREnabled,
+} from './rules/dynamodb';
 import {
   nist80053r5EC2EBSOptimizedInstance,
   nist80053r5EC2InstanceNoPublicIp,
@@ -306,6 +310,24 @@ export class NIST80053R5Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkDynamoDB(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-DynamoDBAutoscalingEnabled',
+      info: "The provisioned capacity DynamoDB table does not have Auto Scaling enabled on it's indexes - (Control IDs: CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), CP-2(6), CP-6(2), CP-10, SC-5(2), SC-6, SC-22, SC-36, SI-13(5)).",
+      explanation:
+        'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5DynamoDBAutoscalingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-DynamoDBInBackupPlan',
+      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon DynamoDB tables are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5DynamoDBInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R5-DynamoDBPITREnabled',
       info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: CP-1(2), CP-2(5), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
