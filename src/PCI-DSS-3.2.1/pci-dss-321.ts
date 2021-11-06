@@ -96,6 +96,7 @@ import { pciDss321SecretsManagerUsingKMSKey } from './rules/secretsmanager';
 import { pciDss321SNSEncryptedKMS } from './rules/sns';
 import {
   pciDss321VPCDefaultSecurityGroupClosed,
+  pciDss321VPCFlowLogsEnabled,
   pciDss321VPCNoUnrestrictedRouteToIGW,
   pciDss321VPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
@@ -880,6 +881,15 @@ export class PCIDSS321Checks extends NagPack {
         'Amazon Elastic Compute Cloud (Amazon EC2) security groups can help in the management of network access by providing stateful filtering of ingress and egress network traffic to AWS resources. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.',
       level: NagMessageLevel.WARN,
       rule: pciDss321VPCDefaultSecurityGroupClosed,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-VPCFlowLogsEnabled',
+      info: 'The VPC does not have an associated Flow Log - (Control IDs: 2.2, 10.1, 10.3.2, 10.3.3, 10.3.4, 10.3.5, 10.3.6).',
+      explanation:
+        'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321VPCFlowLogsEnabled,
       node: node,
     });
     this.applyRule({
