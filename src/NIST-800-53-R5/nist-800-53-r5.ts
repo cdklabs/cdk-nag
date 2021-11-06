@@ -123,6 +123,7 @@ import {
   nist80053r5VPCNoUnrestrictedRouteToIGW,
   nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
+import { nist80053r5WAFv2LoggingEnabled } from './rules/waf';
 
 /**
  * Check for NIST 800-53 rev 5 compliance.
@@ -154,6 +155,7 @@ export class NIST80053R5Checks extends NagPack {
       this.checkSecretsManager(node);
       this.checkSNS(node);
       this.checkVPC(node);
+      this.checkWAF(node);
     }
   }
 
@@ -843,7 +845,7 @@ export class NIST80053R5Checks extends NagPack {
       ruleId: 'NIST.800.53.R5-RedshiftClusterMaintenanceSettings',
       info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: CM-2b, CM-2b.1, CM-2b.2, CM-2b.3, CM-3(3), CP-9a, CP-9b, CP-9c, SC-5(2), SI-2c, SI-2d, SI-2(2), SI-2(5)).',
       explanation:
-        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.                                                                                                                                                                                                                                                                                                                                                              ',
+        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.                                                                            ',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5RedshiftClusterMaintenanceSettings,
       node: node,
@@ -1075,6 +1077,23 @@ export class NIST80053R5Checks extends NagPack {
         'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
+      node: node,
+    });
+  }
+
+  /**
+   * Check WAF Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkWAF(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-WAFv2LoggingEnabled',
+      info: 'The WAFv2 web ACL does not have logging enabled - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-4(17), SI-7(8)).',
+      explanation:
+        'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5WAFv2LoggingEnabled,
       node: node,
     });
   }
