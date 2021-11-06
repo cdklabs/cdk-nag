@@ -40,6 +40,7 @@ import { pciDss321EFSEncrypted } from './rules/efs';
 import {
   pciDss321ALBHttpDropInvalidHeaderEnabled,
   pciDss321ALBHttpToHttpsRedirection,
+  pciDss321ALBWAFEnabled,
   pciDss321ELBACMCertificateRequired,
   pciDss321ELBLoggingEnabled,
   pciDss321ELBTlsHttpsListenersOnly,
@@ -400,6 +401,15 @@ export class PCIDSS321Checks extends NagPack {
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: pciDss321ALBHttpToHttpsRedirection,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-ALBWAFEnabled',
+      info: 'The ALB is not associated with AWS WAFv2 web ACL - (Control ID: 6.6).',
+      explanation:
+        'A WAF helps to protect your web applications or APIs against common web exploits. These web exploits may affect availability, compromise security, or consume excessive resources within your environment.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321ALBWAFEnabled,
       node: node,
     });
     this.applyRule({

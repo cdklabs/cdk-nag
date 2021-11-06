@@ -84,6 +84,7 @@ describe('Elastic Load Balancing', () => {
       })
     );
   });
+
   test('NIST.800.53.R5-ALBWAFEnabled: - ALBs are associated with AWS WAFv2 web ACLs - (Control ID: AC-4(21))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
