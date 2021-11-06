@@ -90,6 +90,7 @@ import {
   nist80053r5RDSStorageEncrypted,
 } from './rules/rds';
 import {
+  nist80053r5RedshiftRequireTlsSSL,
   nist80053r5RedshiftBackupEnabled,
   nist80053r5RedshiftClusterConfiguration,
   nist80053r5RedshiftClusterMaintenanceSettings,
@@ -859,6 +860,15 @@ export class NIST80053R5Checks extends NagPack {
         'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5RedshiftEnhancedVPCRoutingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftRequireTlsSSL',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: AC-4, AC-4(22), AC-24(1), AU-9(3), CA-9b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftRequireTlsSSL,
       node: node,
     });
   }

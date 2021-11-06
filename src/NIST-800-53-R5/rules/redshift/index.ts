@@ -7,3 +7,4 @@ export { default as nist80053r5RedshiftClusterConfiguration } from './nist80053r
 export { default as nist80053r5RedshiftClusterMaintenanceSettings } from './nist80053r5RedshiftClusterMaintenanceSettings';
 export { default as nist80053r5RedshiftClusterPublicAccess } from './nist80053r5RedshiftClusterPublicAccess';
 export { default as nist80053r5RedshiftEnhancedVPCRoutingEnabled } from './nist80053r5RedshiftEnhancedVPCRoutingEnabled';
+export { default as nist80053r5RedshiftRequireTlsSSL } from './nist80053r5RedshiftRequireTlsSSL';
