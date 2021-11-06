@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack } from '../nag-pack';
 import {
+  pciDss321APIGWAssociatedWithWAF,
   pciDss321APIGWCacheEnabledAndEncrypted,
   pciDss321APIGWExecutionLoggingEnabled,
   pciDss321APIGWSSLEnabled,
@@ -135,6 +136,15 @@ export class PCIDSS321Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkAPIGW(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-APIGWAssociatedWithWAF',
+      info: 'The REST API stage is not associated with AWS WAFv2 web ACL - (Control ID: 6.6).',
+      explanation:
+        'AWS WAF enables you to configure a set of rules (called a web access control list (web ACL)) that allow, block, or count web requests based on customizable web security rules and conditions that you define. Ensure your Amazon API Gateway stage is associated with a WAF Web ACL to protect it from malicious attacks.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321APIGWAssociatedWithWAF,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'PCI.DSS.321-APIGWCacheEnabledAndEncrypted',
       info: 'The API Gateway stage does not have caching enabled and encrypted for all methods - (Control ID: 3.4).',
