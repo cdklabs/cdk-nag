@@ -118,6 +118,7 @@ import {
 } from './rules/secretsmanager';
 import { nist80053r5SNSEncryptedKMS } from './rules/sns';
 import {
+  nist80053r5VPCFlowLogsEnabled,
   nist80053r5VPCDefaultSecurityGroupClosed,
   nist80053r5VPCNoUnrestrictedRouteToIGW,
   nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
@@ -1047,6 +1048,15 @@ export class NIST80053R5Checks extends NagPack {
         'Amazon Elastic Compute Cloud (Amazon EC2) security groups can help in the management of network access by providing stateful filtering of ingress and egress network traffic to AWS resources. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.',
       level: NagMessageLevel.WARN,
       rule: nist80053r5VPCDefaultSecurityGroupClosed,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-VPCFlowLogsEnabled',
+      info: 'The VPC does not have an associated Flow Log - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), CM-6a, CM-9b, IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SI-4(17), SI-7(8)).',
+      explanation:
+        'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5VPCFlowLogsEnabled,
       node: node,
     });
     this.applyRule({
