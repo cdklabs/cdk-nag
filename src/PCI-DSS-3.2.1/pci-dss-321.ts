@@ -54,6 +54,7 @@ import {
   pciDss321IAMUserGroupMembership,
   pciDss321IAMUserNoPolicies,
 } from './rules/iam';
+import { pciDss321KMSBackingKeyRotationEnabled } from './rules/kms';
 import { pciDss321LambdaInsideVPC } from './rules/lambda';
 import {
   pciDss321OpenSearchEncryptedAtRest,
@@ -115,6 +116,7 @@ export class PCIDSS321Checks extends NagPack {
       this.checkELB(node);
       this.checkEMR(node);
       this.checkIAM(node);
+      this.checkKMS(node);
       this.checkLambda(node);
       this.checkOpenSearch(node);
       this.checkRDS(node);
@@ -516,6 +518,23 @@ export class PCIDSS321Checks extends NagPack {
         'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.',
       level: NagMessageLevel.ERROR,
       rule: pciDss321IAMUserNoPolicies,
+      node: node,
+    });
+  }
+
+  /**
+   * Check KMS Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkKMS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-KMSBackingKeyRotationEnabled',
+      info: 'The KMS Symmetric key does not have key rotation enabled - (Control IDs: 2.2, 3.5, 3.6, 3.6.4).',
+      explanation:
+        'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321KMSBackingKeyRotationEnabled,
       node: node,
     });
   }
