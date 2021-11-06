@@ -599,7 +599,7 @@ export class NIST80053R4Checks extends NagPack {
   private checkKMS(node: CfnResource): void {
     this.applyRule({
       ruleId: 'NIST.800.53.R4-KMSBackingKeyRotationEnabled',
-      info: 'The KMS Symmetric key does not have key rotation enabled - (Control IDs: CM-6a, CM-9b, SA-9(6), SC-12, SC-12(2), SC-12(6)).',
+      info: 'The KMS Symmetric key does not have key rotation enabled - (Control ID: SC-12).',
       explanation:
         'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
       level: NagMessageLevel.ERROR,

@@ -58,6 +58,7 @@ import {
   nist80053r5IAMUserGroupMembership,
   nist80053r5IAMUserNoPolicies,
 } from './rules/iam';
+import { nist80053r5KMSBackingKeyRotationEnabled } from './rules/kms';
 import {
   nist80053r5LambdaConcurrency,
   nist80053r5LambdaDlq,
@@ -128,6 +129,7 @@ export class NIST80053R5Checks extends NagPack {
       this.checkElasticBeanstalk(node);
       this.checkELB(node);
       this.checkIAM(node);
+      this.checkKMS(node);
       this.checkLambda(node);
       this.checkOpenSearch(node);
       this.checkRDS(node);
@@ -573,6 +575,23 @@ export class NIST80053R5Checks extends NagPack {
         'Assigning privileges at the group or the role level helps to reduce opportunity for an identity to receive or retain excessive privileges.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5IAMUserNoPolicies,
+      node: node,
+    });
+  }
+
+  /**
+   * Check KMS Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkKMS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-KMSBackingKeyRotationEnabled',
+      info: 'The KMS Symmetric key does not have key rotation enabled - (Control IDs: CM-6a, CM-9b, SA-9(6), SC-12, SC-12(2), SC-12(6)).',
+      explanation:
+        'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5KMSBackingKeyRotationEnabled,
       node: node,
     });
   }

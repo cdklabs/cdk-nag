@@ -8,7 +8,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon EMR', () => {
-  test('NIST.800.53.R4-EMRKerberosEnabled: - KMS Symmetric keys have key rotation enabled - (Control IDs: CM-6a, CM-9b, SA-9(6), SC-12, SC-12(2), SC-12(6))', () => {
+  test('NIST.800.53.R4-EMRKerberosEnabled: - EMR clusters have Kerberos enabled - (Control IDs: AC-2(j), AC-3, AC-5c, AC-6)', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
     new CfnCluster(positive, 'rEmrCluster', {
