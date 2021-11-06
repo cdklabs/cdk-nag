@@ -100,6 +100,7 @@ import {
   pciDss321VPCNoUnrestrictedRouteToIGW,
   pciDss321VPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
+import { pciDss321WAFv2LoggingEnabled } from './rules/waf';
 
 /**
  * Check for PCI DSS 3.2.1 compliance.
@@ -130,6 +131,7 @@ export class PCIDSS321Checks extends NagPack {
       this.checkSecretsManager(node);
       this.checkSNS(node);
       this.checkVPC(node);
+      this.checkWAF(node);
     }
   }
 
@@ -908,6 +910,23 @@ export class PCIDSS321Checks extends NagPack {
         'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.',
       level: NagMessageLevel.ERROR,
       rule: pciDss321VPCSubnetAutoAssignPublicIpDisabled,
+      node: node,
+    });
+  }
+
+  /**
+   * Check WAF Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkWAF(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-WAFv2LoggingEnabled',
+      info: 'The WAFv2 web ACL does not have logging enabled - (Control IDs: 10.1, 10.3.1, 10.3.2, 10.3.3, 10.3.4, 10.3.5, 10.3.6, 10.5.4).',
+      explanation:
+        'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321WAFv2LoggingEnabled,
       node: node,
     });
   }
