@@ -13,12 +13,56 @@ import {
   Role,
   AccountRootPrincipal,
   ServicePrincipal,
+  CfnUserToGroupAddition,
 } from '@aws-cdk/aws-iam';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { PCIDSS321Checks } from '../../src';
 
 describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
+  test('PCI.DSS.321-IAMGroupHasUsers: - IAM Groups have at least one IAM User - (Control IDs: 7.1.2, 7.1.3, 7.2.1, 7.2.2)', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new PCIDSS321Checks());
+    new Group(nonCompliant, 'rGroup');
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('PCI.DSS.321-IAMGroupHasUsers:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new PCIDSS321Checks());
+    new Group(compliant, 'rGroup').addUser(new User(compliant, 'rUser'));
+    new Group(compliant, 'rGroup2', { groupName: 'foo' });
+    new User(compliant, 'rUser2').addToGroup(
+      Group.fromGroupArn(
+        compliant,
+        'rImportedGroup2',
+        'arn:aws:iam::123456789012:group/foo'
+      )
+    );
+    new Group(compliant, 'rGroup3', { groupName: 'baz' });
+    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition', {
+      groupName: 'baz',
+      users: ['bar'],
+    });
+    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition2', {
+      groupName: new Group(compliant, 'rGroup4').groupName,
+      users: ['bar'],
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('PCI.DSS.321-IAMGroupHasUsers:'),
+        }),
+      })
+    );
+  });
+
   test('PCI.DSS.321-IAMNoInlinePolicy: - IAM Groups, Users, and Roles do not contain inline policies - (Control IDs: 2.2, 7.1.2, 7.1.3, 7.2.1, 7.2.2)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new PCIDSS321Checks());

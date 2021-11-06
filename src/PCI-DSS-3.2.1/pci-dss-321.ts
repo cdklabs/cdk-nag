@@ -49,6 +49,7 @@ import {
 } from './rules/elb';
 import { pciDss321EMRKerberosEnabled } from './rules/emr';
 import {
+  pciDss321IAMGroupHasUsers,
   pciDss321IAMNoInlinePolicy,
   pciDss321IAMPolicyNoStatementsWithAdminAccess,
   pciDss321IAMPolicyNoStatementsWithFullAccess,
@@ -485,6 +486,15 @@ export class PCIDSS321Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkIAM(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-IAMGroupHasUsers',
+      info: 'The IAM Group does not have at least one IAM User - (Control IDs: 7.1.2, 7.1.3, 7.2.1, 7.2.2).',
+      explanation:
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321IAMGroupHasUsers,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'PCI.DSS.321-IAMNoInlinePolicy',
       info: 'The IAM Group, User, or Role contains an inline policy - (Control IDs: 2.2, 7.1.2, 7.1.3, 7.2.1, 7.2.2).',
