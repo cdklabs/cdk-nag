@@ -75,6 +75,7 @@ import {
   pciDss321RedshiftClusterMaintenanceSettings,
   pciDss321RedshiftClusterPublicAccess,
   pciDss321RedshiftEnhancedVPCRoutingEnabled,
+  pciDss321RedshiftRequireTlsSSL,
 } from './rules/redshift';
 import {
   pciDss321S3BucketLevelPublicAccessProhibited,
@@ -704,6 +705,15 @@ export class PCIDSS321Checks extends NagPack {
         'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.',
       level: NagMessageLevel.ERROR,
       rule: pciDss321RedshiftEnhancedVPCRoutingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'PCI.DSS.321-RedshiftRequireTlsSSL',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: 2.3, 4.1).',
+      explanation:
+        'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: pciDss321RedshiftRequireTlsSSL,
       node: node,
     });
   }
