@@ -278,7 +278,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleId: 'AwsSolutions-ELB1',
       info: 'The CLB is used for incoming HTTP/HTTPS traffic. Use ALBs instead.',
       explanation:
-        'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of The CLB for enhanced incoming traffic distribution, better performance and lower costs.',
+        'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of the CLB for enhanced incoming traffic distribution, better performance and lower costs.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb1,
       node: node,
@@ -784,7 +784,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-APIG2',
-      info: 'The Rest API does not have request validation enabled.',
+      info: 'The REST API does not have request validation enabled.',
       explanation:
         'The API should have basic request validation enabled. If the API is integrated with custom source (Lambda, ECS, etc..) in the backend, deeper input validation should be considered for implementation.',
       level: NagMessageLevel.ERROR,
@@ -793,7 +793,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-APIG3',
-      info: 'The Rest API stage is not associated with AWS WAFv2 web ACL.',
+      info: 'The REST API stage is not associated with AWS WAFv2 web ACL.',
       explanation:
         'AWS WAFv2 is a web application firewall that helps protect web applications and APIs from attacks by allowing configured rules to allow, block, or monitor (count) web requests based on customizable rules and conditions that are defined.',
       level: NagMessageLevel.WARN,
@@ -1140,16 +1140,16 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'AwsSolutions-KMS5',
-      info: 'The KMS Symmetric key does not have Key Rotation enabled.',
+      info: 'The KMS Symmetric key does not have automatic key rotation enabled.',
       explanation:
-        'KMS Key Rotation allow a system to set an yearly rotation schedule for a KMS key so when a AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
+        'KMS key rotation allow a system to set an yearly rotation schedule for a KMS key so when a AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsKms5,
       node: node,
     });
     this.applyRule({
       ruleId: 'AwsSolutions-SMG4',
-      info: 'The Secret does not have automatic rotation scheduled.',
+      info: 'The secret does not have automatic rotation scheduled.',
       explanation:
         'AWS Secrets Manager can be configured to automatically rotate the secret for a secured service or database.',
       level: NagMessageLevel.ERROR,

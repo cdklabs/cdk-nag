@@ -18,10 +18,55 @@ import {
   ApplicationProtocol,
 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { Bucket } from '@aws-cdk/aws-s3';
+import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { PCIDSS321Checks } from '../../src';
 
 describe('Elastic Load Balancing', () => {
+  test('PCI.DSS.321-ALBHttpDropInvalidHeaderEnabled: - Load balancers have invalid HTTP header dropping enabled - (Control IDs: 4.1, 8.2.1)', () => {
+    const nonCompliant = new Stack(undefined, undefined, {
+      env: { region: 'us-east-1' },
+    });
+    Aspects.of(nonCompliant).add(new PCIDSS321Checks());
+    const alb1 = new ApplicationLoadBalancer(nonCompliant, 'rALB', {
+      vpc: new Vpc(nonCompliant, 'rVPC'),
+    });
+    alb1.logAccessLogs(new Bucket(nonCompliant, 'rLogsBucket'));
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'PCI.DSS.321-ALBHttpDropInvalidHeaderEnabled:'
+          ),
+        }),
+      })
+    );
+
+    const compliant = new Stack(undefined, undefined, {
+      env: { region: 'us-east-1' },
+    });
+    Aspects.of(compliant).add(new PCIDSS321Checks());
+    const alb = new ApplicationLoadBalancer(compliant, 'rALB', {
+      vpc: new Vpc(compliant, 'rVPC'),
+    });
+    alb.logAccessLogs(new Bucket(compliant, 'rLogsBucket'));
+    alb.setAttribute('routing.http.drop_invalid_header_fields.enabled', 'true');
+    new NetworkLoadBalancer(compliant, 'rNLB', {
+      vpc: new Vpc(compliant, 'rVPC2'),
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'PCI.DSS.321-ALBHttpDropInvalidHeaderEnabled:'
+          ),
+        }),
+      })
+    );
+  });
+
   test('PCI.DSS.321-ALBHttpToHttpsRedirection: - HTTP ALB listeners are configured to redirect to HTTPS - (Control IDs: 2.3, 4.1, 8.2.1)', () => {
     const nonCompliant = new Stack(undefined, undefined, {
       env: { region: 'us-east-1' },
@@ -78,6 +123,43 @@ describe('Elastic Load Balancing', () => {
           data: expect.stringContaining(
             'PCI.DSS.321-ALBHttpToHttpsRedirection:'
           ),
+        }),
+      })
+    );
+  });
+
+  test('PCI.DSS.321-ALBWAFEnabled: - ALBs are associated with AWS WAFv2 web ACLs - (Control ID: 6.6)', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new PCIDSS321Checks());
+    new ApplicationLoadBalancer(nonCompliant, 'rALB', {
+      vpc: new Vpc(nonCompliant, 'rVPC'),
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('PCI.DSS.321-ALBWAFEnabled:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new PCIDSS321Checks());
+    const compliantALB1 = new ApplicationLoadBalancer(compliant, 'rALB1', {
+      vpc: new Vpc(compliant, 'rVPC1'),
+    });
+    new CfnWebACLAssociation(compliant, 'rWebAClAssoc1', {
+      webAclArn: 'bar',
+      resourceArn: compliantALB1.loadBalancerArn,
+    });
+    new NetworkLoadBalancer(compliant, 'rNLB', {
+      vpc: new Vpc(compliant, 'rVPC2'),
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('PCI.DSS.321-ALBWAFEnabled:'),
         }),
       })
     );

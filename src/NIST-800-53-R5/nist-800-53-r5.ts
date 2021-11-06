@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack } from '../nag-pack';
 import {
+  nist80053r5APIGWAssociatedWithWAF,
   nist80053r5APIGWCacheEnabledAndEncrypted,
   nist80053r5APIGWExecutionLoggingEnabled,
   nist80053r5APIGWSSLEnabled,
@@ -25,8 +26,13 @@ import {
   nist80053r5CloudWatchLogGroupRetentionPeriod,
 } from './rules/cloudwatch';
 import { nist80053r5DMSReplicationNotPublic } from './rules/dms';
-import { nist80053r5DynamoDBPITREnabled } from './rules/dynamodb';
 import {
+  nist80053r5DynamoDBAutoscalingEnabled,
+  nist80053r5DynamoDBInBackupPlan,
+  nist80053r5DynamoDBPITREnabled,
+} from './rules/dynamodb';
+import {
+  nist80053r5EC2EBSInBackupPlan,
   nist80053r5EC2EBSOptimizedInstance,
   nist80053r5EC2InstanceNoPublicIp,
   nist80053r5EC2InstanceProfileAttached,
@@ -35,7 +41,10 @@ import {
   nist80053r5EC2RestrictedSSH,
 } from './rules/ec2';
 import { nist80053r5ECSTaskDefinitionUserForHostMode } from './rules/ecs';
-import { nist80053r5EFSEncrypted } from './rules/efs';
+import {
+  nist80053r5EFSEncrypted,
+  nist80053r5EFSInBackupPlan,
+} from './rules/efs';
 import { nist80053r5ElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
   nist80053r5ElasticBeanstalkEnhancedHealthReportingEnabled,
@@ -43,6 +52,7 @@ import {
 } from './rules/elasticbeanstalk';
 import {
   nist80053r5ALBHttpToHttpsRedirection,
+  nist80053r5ALBWAFEnabled,
   nist80053r5ELBACMCertificateRequired,
   nist80053r5ELBCrossZoneLoadBalancingEnabled,
   nist80053r5ELBDeletionProtectionEnabled,
@@ -57,6 +67,7 @@ import {
   nist80053r5IAMUserGroupMembership,
   nist80053r5IAMUserNoPolicies,
 } from './rules/iam';
+import { nist80053r5KMSBackingKeyRotationEnabled } from './rules/kms';
 import {
   nist80053r5LambdaConcurrency,
   nist80053r5LambdaDlq,
@@ -70,6 +81,7 @@ import {
 } from './rules/opensearch';
 import {
   nist80053r5RDSEnhancedMonitoringEnabled,
+  nist80053r5RDSInBackupPlan,
   nist80053r5RDSInstanceBackupEnabled,
   nist80053r5RDSInstanceDeletionProtectionEnabled,
   nist80053r5RDSInstancePublicAccess,
@@ -78,6 +90,7 @@ import {
   nist80053r5RDSStorageEncrypted,
 } from './rules/rds';
 import {
+  nist80053r5RedshiftRequireTlsSSL,
   nist80053r5RedshiftBackupEnabled,
   nist80053r5RedshiftClusterConfiguration,
   nist80053r5RedshiftClusterMaintenanceSettings,
@@ -99,13 +112,18 @@ import {
   nist80053r5SageMakerNotebookInstanceKMSKeyConfigured,
   nist80053r5SageMakerNotebookNoDirectInternetAccess,
 } from './rules/sagemaker';
-import { nist80053r5SecretsManagerUsingKMSKey } from './rules/secretsmanager';
+import {
+  nist80053r5SecretsManagerRotationEnabled,
+  nist80053r5SecretsManagerUsingKMSKey,
+} from './rules/secretsmanager';
 import { nist80053r5SNSEncryptedKMS } from './rules/sns';
 import {
+  nist80053r5VPCFlowLogsEnabled,
   nist80053r5VPCDefaultSecurityGroupClosed,
   nist80053r5VPCNoUnrestrictedRouteToIGW,
   nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
+import { nist80053r5WAFv2LoggingEnabled } from './rules/waf';
 
 /**
  * Check for NIST 800-53 rev 5 compliance.
@@ -127,6 +145,7 @@ export class NIST80053R5Checks extends NagPack {
       this.checkElasticBeanstalk(node);
       this.checkELB(node);
       this.checkIAM(node);
+      this.checkKMS(node);
       this.checkLambda(node);
       this.checkOpenSearch(node);
       this.checkRDS(node);
@@ -136,6 +155,7 @@ export class NIST80053R5Checks extends NagPack {
       this.checkSecretsManager(node);
       this.checkSNS(node);
       this.checkVPC(node);
+      this.checkWAF(node);
     }
   }
 
@@ -145,6 +165,15 @@ export class NIST80053R5Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkAPIGW(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-APIGWAssociatedWithWAF',
+      info: 'The REST API stage is not associated with AWS WAFv2 web ACL - (Control ID: AC-4(21)).',
+      explanation:
+        'AWS WAF enables you to configure a set of rules (called a web access control list (web ACL)) that allow, block, or count web requests based on customizable web security rules and conditions that you define. Ensure your Amazon API Gateway stage is associated with a WAF Web ACL to protect it from malicious attacks.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5APIGWAssociatedWithWAF,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R5-APIGWCacheEnabledAndEncrypted',
       info: 'The API Gateway stage does not have caching enabled and encrypted for all methods - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
@@ -294,6 +323,24 @@ export class NIST80053R5Checks extends NagPack {
    */
   private checkDynamoDB(node: CfnResource) {
     this.applyRule({
+      ruleId: 'NIST.800.53.R5-DynamoDBAutoscalingEnabled',
+      info: "The provisioned capacity DynamoDB table does not have Auto Scaling enabled on it's indexes - (Control IDs: CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), CP-2(6), CP-6(2), CP-10, SC-5(2), SC-6, SC-22, SC-36, SI-13(5)).",
+      explanation:
+        'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5DynamoDBAutoscalingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-DynamoDBInBackupPlan',
+      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon DynamoDB tables are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5DynamoDBInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'NIST.800.53.R5-DynamoDBPITREnabled',
       info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: CP-1(2), CP-2(5), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
       explanation:
@@ -310,6 +357,15 @@ export class NIST80053R5Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEC2(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-EC2EBSInBackupPlan',
+      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EC2EBSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R5-EC2EBSOptimizedInstance',
       info: "The EC2 instance type 'supports' EBS optimization and does not have EBS optimization enabled - (Control IDs: CP-2(5), CP-9a, CP-9b, CP-9c, CP-10, SC-5(2)).",
@@ -390,6 +446,15 @@ export class NIST80053R5Checks extends NagPack {
    */
   private checkEFS(node: CfnResource) {
     this.applyRule({
+      ruleId: 'NIST.800.53.R5-EFSInBackupPlan',
+      info: 'The EFS is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic File System (Amazon EFS) file systems are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5EFSInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'NIST.800.53.R5-EFSEncrypted',
       info: 'The EFS does not have encryption at rest enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
       explanation:
@@ -456,6 +521,15 @@ export class NIST80053R5Checks extends NagPack {
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5ALBHttpToHttpsRedirection,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-ALBWAFEnabled',
+      info: 'The ALB is not associated with AWS WAFv2 web ACL - (Control ID: AC-4(21)).',
+      explanation:
+        'A WAF helps to protect your web applications or APIs against common web exploits. These web exploits may affect availability, compromise security, or consume excessive resources within your environment.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5ALBWAFEnabled,
       node: node,
     });
     this.applyRule({
@@ -568,6 +642,23 @@ export class NIST80053R5Checks extends NagPack {
   }
 
   /**
+   * Check KMS Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkKMS(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-KMSBackingKeyRotationEnabled',
+      info: 'The KMS Symmetric key does not have automatic key rotation enabled - (Control IDs: CM-6a, CM-9b, SA-9(6), SC-12, SC-12(2), SC-12(6)).',
+      explanation:
+        'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5KMSBackingKeyRotationEnabled,
+      node: node,
+    });
+  }
+
+  /**
    * Check Lambda Resources
    * @param node the CfnResource to check
    * @param ignores list of ignores for the resource
@@ -662,6 +753,15 @@ export class NIST80053R5Checks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'NIST.800.53.R5-RDSInBackupPlan',
+      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RDSInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'NIST.800.53.R5-RDSInstanceBackupEnabled',
       info: 'The RDS DB Instance does not have backup enabled - (Control IDs: CP-1(2), CP-2(5), CP-6a, CP-6(1), CP-6(2), CP-9a, CP-9b, CP-9c, CP-10, CP-10(2), SC-5(2), SI-13(5)).',
       explanation:
@@ -745,7 +845,7 @@ export class NIST80053R5Checks extends NagPack {
       ruleId: 'NIST.800.53.R5-RedshiftClusterMaintenanceSettings',
       info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configured - (Control IDs: CM-2b, CM-2b.1, CM-2b.2, CM-2b.3, CM-3(3), CP-9a, CP-9b, CP-9c, SC-5(2), SI-2c, SI-2d, SI-2(2), SI-2(5)).',
       explanation:
-        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.                                                                                                                                                                                                                                                                                                                                                              ',
+        'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.                                                                            ',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5RedshiftClusterMaintenanceSettings,
       node: node,
@@ -766,6 +866,15 @@ export class NIST80053R5Checks extends NagPack {
         'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5RedshiftEnhancedVPCRoutingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-RedshiftRequireTlsSSL',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: AC-4, AC-4(22), AC-24(1), AU-9(3), CA-9b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5RedshiftRequireTlsSSL,
       node: node,
     });
   }
@@ -892,6 +1001,15 @@ export class NIST80053R5Checks extends NagPack {
    */
   private checkSecretsManager(node: CfnResource): void {
     this.applyRule({
+      ruleId: 'NIST.800.53.R5-SecretsManagerRotationEnabled',
+      info: 'The secret does not have automatic rotation scheduled - (Control IDs: AC-4, AC-4(22), AC-24(1), AU-9(3), CA-9b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Rotating secrets on a regular schedule can shorten the period a secret is active, and potentially reduce the business impact if the secret is compromised.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SecretsManagerRotationEnabled,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'NIST.800.53.R5-SecretsManagerUsingKMSKey',
       info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
       explanation:
@@ -935,6 +1053,15 @@ export class NIST80053R5Checks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'NIST.800.53.R5-VPCFlowLogsEnabled',
+      info: 'The VPC does not have an associated Flow Log - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), CM-6a, CM-9b, IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SI-4(17), SI-7(8)).',
+      explanation:
+        'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5VPCFlowLogsEnabled,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'NIST.800.53.R5-VPCNoUnrestrictedRouteToIGW',
       info: "The route table may contain one or more unrestricted route(s) to an IGW ('0.0.0.0/0' or '::/0') - (Control IDs: AC-4(21), CM-7b).",
       explanation:
@@ -950,6 +1077,23 @@ export class NIST80053R5Checks extends NagPack {
         'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.',
       level: NagMessageLevel.ERROR,
       rule: nist80053r5VPCSubnetAutoAssignPublicIpDisabled,
+      node: node,
+    });
+  }
+
+  /**
+   * Check WAF Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkWAF(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-WAFv2LoggingEnabled',
+      info: 'The WAFv2 web ACL does not have logging enabled - (Control IDs: AC-4(26), AU-2b, AU-3a, AU-3b, AU-3c, AU-3d, AU-3e, AU-3f, AU-6(3), AU-6(4), AU-6(6), AU-6(9), AU-8b, AU-10, AU-12a, AU-12c, AU-12(1), AU-12(2), AU-12(3), AU-12(4), AU-14a, AU-14b, AU-14b, AU-14(3), CA-7b, CM-5(1)(b), IA-3(3)(b), MA-4(1)(a), PM-14a.1, PM-14b, PM-31, SC-7(9)(b), SI-4(17), SI-7(8)).',
+      explanation:
+        'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5WAFv2LoggingEnabled,
       node: node,
     });
   }

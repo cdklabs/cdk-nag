@@ -8,7 +8,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveResourceFromInstrinsic } from '../../../nag-pack';
 
 /**
- * Secrets are automatically rotated
+ * Secrets have automatic rotation scheduled
  * @param node the CfnResource to check
  */
 export default function (node: CfnResource): boolean {

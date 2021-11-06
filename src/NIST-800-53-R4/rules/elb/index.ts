@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 export { default as nist80053r4ALBHttpDropInvalidHeaderEnabled } from './nist80053r4ALBHttpDropInvalidHeaderEnabled';
 export { default as nist80053r4ALBHttpToHttpsRedirection } from './nist80053r4ALBHttpToHttpsRedirection';
+export { default as nist80053r4ALBWAFEnabled } from './nist80053r4ALBWAFEnabled';
 export { default as nist80053r4ELBCrossZoneBalancing } from './nist80053r4ELBCrossZoneBalancing';
 export { default as nist80053r4ELBDeletionProtectionEnabled } from './nist80053r4ELBDeletionProtectionEnabled';
 export { default as nist80053r4ELBListenersUseSSLOrHTTPS } from './nist80053r4ELBListenersUseSSLOrHTTPS';

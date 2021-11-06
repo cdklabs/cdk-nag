@@ -42,9 +42,9 @@ export default function (node: CfnResource): boolean {
 /**
  * Helper function to check whether a given Web ACL Association is associated with the given Rest API
  * @param node the CfnWebACLAssociation to check
- * @param stageLogicalId the Cfn Logical ID of the Rest API Stage
- * @param stageName the name of the Rest API Stage
- * @param restApiId the ID or Cfn Resource ID of the Rest API associated with the Stage
+ * @param stageLogicalId the Cfn Logical ID of the REST API Stage
+ * @param stageName the name of the REST API Stage
+ * @param restApiId the ID or Cfn Resource ID of the REST API associated with the Stage
  * returns whether the CfnWebACLAssociation is associates with the given Rest API
  */
 function isMatchingWebACLAssociation(
@@ -57,9 +57,9 @@ function isMatchingWebACLAssociation(
     Stack.of(node).resolve(node.resourceArn)
   );
   const regexes = Array<string>();
-  regexes.push(`${restApiId}.+${stageLogicalId}`);
+  regexes.push(`${restApiId}.+${stageLogicalId}(?![\\w])`);
   if (stageName !== undefined) {
-    regexes.push(`${restApiId}.+${stageName}`);
+    regexes.push(`${restApiId}.+${stageName}(?![\\w])`);
   }
   const regex = new RegExp(regexes.join('|'), 'gm');
   if (regex.test(resourceLogicalId)) {

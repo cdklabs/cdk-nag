@@ -338,7 +338,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
   });
 
   describe('AWS Key Management Service (KMS)', () => {
-    test('awsSolutionsKms5: KMS Symmetric keys have Key Rotation enabled', () => {
+    test('awsSolutionsKms5: KMS Symmetric keys have automatic key rotation enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new Key(positive, 'rSymmetricKey');
@@ -366,7 +366,7 @@ describe('AWS Solutions Security and Compliance Checks', () => {
   });
 
   describe('AWS Secrets Manager', () => {
-    test('AwsSolutions-SMG4: Secrets are automatically rotated', () => {
+    test('AwsSolutions-SMG4: Secrets have automatic rotation scheduled', () => {
       const nonCompliant = new Stack();
       Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
       new Secret(nonCompliant, 'rSecret1');

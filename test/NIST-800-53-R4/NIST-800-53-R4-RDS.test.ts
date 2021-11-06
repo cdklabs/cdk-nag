@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
@@ -376,6 +377,47 @@ describe('Amazon Relational Database Service (RDS)', () => {
           data: expect.stringContaining(
             'NIST.800.53.R4-RDSEnhancedMonitoringEnabled:'
           ),
+        }),
+      })
+    );
+  });
+  test('NIST.800.53.R4-RDSInBackupPlan: - RDS DB Instances are part of AWS Backup plan(s) - (Control IDs: CP-9(b), CP-10, SI-12)', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R4Checks());
+    new CfnDBInstance(nonCompliant, 'rDbInstance', {
+      dbInstanceClass: 'db.t3.micro',
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R4-RDSInBackupPlan:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R4Checks());
+    BackupPlan.dailyWeeklyMonthly5YearRetention(
+      compliant,
+      'rPlan'
+    ).addSelection('Selection', {
+      resources: [
+        BackupResource.fromRdsDatabaseInstance(
+          new RdsInstance(compliant, 'rDbInstance2', {
+            engine: DatabaseInstanceEngine.postgres({
+              version: PostgresEngineVersion.VER_13_2,
+            }),
+            vpc: new Vpc(compliant, 'rVpc2'),
+          })
+        ),
+      ],
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R4-RDSInBackupPlan:'),
         }),
       })
     );

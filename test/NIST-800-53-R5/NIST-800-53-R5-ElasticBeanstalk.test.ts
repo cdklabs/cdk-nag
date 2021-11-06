@@ -5,12 +5,12 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { CfnEnvironment } from '@aws-cdk/aws-elasticbeanstalk';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { HIPAASecurityChecks } from '../../src';
+import { NIST80053R5Checks } from '../../src';
 
 describe('AWS Elastic Beanstalk', () => {
-  test('HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled: - Elastic Beanstalk environments have enhanced health reporting enabled - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-6, SC-36(1)(a), SI-2a)', () => {
+  test('NIST.800.53.R5-ElasticBeanstalkEnhancedHealthReportingEnabled: - Elastic Beanstalk environments have enhanced health reporting enabled - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-6, SC-36(1)(a), SI-2a)', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new CfnEnvironment(nonCompliant, 'rBeanstalk', {
       applicationName: 'foo',
     });
@@ -19,14 +19,14 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkEnhancedHealthReportingEnabled:'
           ),
         }),
       })
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     new CfnEnvironment(nonCompliant2, 'rBeanstalk', {
       applicationName: 'foo',
       optionSettings: [
@@ -41,14 +41,14 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkEnhancedHealthReportingEnabled:'
           ),
         }),
       })
     );
 
     const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     new CfnEnvironment(compliant, 'rBeanstalk', {
       applicationName: 'foo',
       optionSettings: [
@@ -64,16 +64,16 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkEnhancedHealthReportingEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkEnhancedHealthReportingEnabled:'
           ),
         }),
       })
     );
   });
 
-  test('HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled: - Elastic Beanstalk environments have managed updates enabled - (Control IDs: SI-2c, SI-2d, SI-2(2), SI-2(5))', () => {
+  test('NIST.800.53.R5-ElasticBeanstalkManagedUpdatesEnabled: - Elastic Beanstalk environments have managed updates enabled - (Control IDs: SI-2c, SI-2d, SI-2(2), SI-2(5))', () => {
     const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new CfnEnvironment(nonCompliant, 'rBeanstalk', {
       applicationName: 'foo',
     });
@@ -82,14 +82,14 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkManagedUpdatesEnabled:'
           ),
         }),
       })
     );
 
     const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
     new CfnEnvironment(nonCompliant2, 'rBeanstalk', {
       applicationName: 'foo',
       optionSettings: [
@@ -105,14 +105,14 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkManagedUpdatesEnabled:'
           ),
         }),
       })
     );
 
     const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
+    Aspects.of(nonCompliant3).add(new NIST80053R5Checks());
     new CfnEnvironment(nonCompliant3, 'rBeanstalk', {
       applicationName: 'foo',
       optionSettings: [
@@ -136,14 +136,14 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkManagedUpdatesEnabled:'
           ),
         }),
       })
     );
 
     const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
+    Aspects.of(compliant).add(new NIST80053R5Checks());
     new CfnEnvironment(compliant, 'rBeanstalk', {
       applicationName: 'foo',
       optionSettings: [
@@ -168,7 +168,7 @@ describe('AWS Elastic Beanstalk', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'HIPAA.Security-ElasticBeanstalkManagedUpdatesEnabled:'
+            'NIST.800.53.R5-ElasticBeanstalkManagedUpdatesEnabled:'
           ),
         }),
       })

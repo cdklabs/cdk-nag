@@ -86,7 +86,7 @@
     "@aws-cdk/core" "1.130.0"
     constructs "^3.3.69"
 
-"@aws-cdk/aws-applicationautoscaling@1.130.0":
+"@aws-cdk/aws-applicationautoscaling@1.130.0", "@aws-cdk/aws-applicationautoscaling@^1.123.0":
   version "1.130.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-applicationautoscaling/-/aws-applicationautoscaling-1.130.0.tgz#396374a93f64d1ec901511033a0c7ef8f06bf141"
   integrity sha512-9xjRy3iQc3VdL1Rajd+0iz2giAo4II8gAYJl+6HdyakxzjLAnACN8NXPD86BSg+sZykgpOZ1CHs9tvoWUEdIDA==
@@ -157,6 +157,22 @@
     "@aws-cdk/aws-elasticloadbalancing" "1.130.0"
     "@aws-cdk/aws-elasticloadbalancingv2" "1.130.0"
     "@aws-cdk/aws-iam" "1.130.0"
+    "@aws-cdk/aws-sns" "1.130.0"
+    "@aws-cdk/core" "1.130.0"
+    constructs "^3.3.69"
+
+"@aws-cdk/aws-backup@^1.123.0":
+  version "1.130.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-backup/-/aws-backup-1.130.0.tgz#18cc46458cba31134ff19471fdaec7889086068a"
+  integrity sha512-Mc1Kdx3DI4GjbhSdZMBjURvfhJvvuDmXR2h+Ku4XQ90eP0AzSJLAymOkfnAkUYfinfn5kaaI0zDEX1e4eSlkSg==
+  dependencies:
+    "@aws-cdk/aws-dynamodb" "1.130.0"
+    "@aws-cdk/aws-ec2" "1.130.0"
+    "@aws-cdk/aws-efs" "1.130.0"
+    "@aws-cdk/aws-events" "1.130.0"
+    "@aws-cdk/aws-iam" "1.130.0"
+    "@aws-cdk/aws-kms" "1.130.0"
+    "@aws-cdk/aws-rds" "1.130.0"
     "@aws-cdk/aws-sns" "1.130.0"
     "@aws-cdk/core" "1.130.0"
     constructs "^3.3.69"

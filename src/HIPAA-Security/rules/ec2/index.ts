@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+export { default as hipaaSecurityEC2EBSInBackupPlan } from './hipaaSecurityEC2EBSInBackupPlan';
 export { default as hipaaSecurityEC2EBSOptimizedInstance } from './hipaaSecurityEC2EBSOptimizedInstance';
 export { default as hipaaSecurityEC2InstanceDetailedMonitoringEnabled } from './hipaaSecurityEC2InstanceDetailedMonitoringEnabled';
 export { default as hipaaSecurityEC2InstanceNoPublicIps } from './hipaaSecurityEC2InstanceNoPublicIps';

@@ -19,6 +19,7 @@ import {
   CfnLoadBalancer as CfnLoadBalancerV2,
 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { Bucket } from '@aws-cdk/aws-s3';
+import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R5Checks } from '../../src';
 
@@ -79,6 +80,43 @@ describe('Elastic Load Balancing', () => {
           data: expect.stringContaining(
             'NIST.800.53.R5-ALBHttpToHttpsRedirection:'
           ),
+        }),
+      })
+    );
+  });
+
+  test('NIST.800.53.R5-ALBWAFEnabled: - ALBs are associated with AWS WAFv2 web ACLs - (Control ID: AC-4(21))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
+    new ApplicationLoadBalancer(nonCompliant, 'rALB', {
+      vpc: new Vpc(nonCompliant, 'rVPC'),
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R5-ALBWAFEnabled:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R5Checks());
+    const compliantALB1 = new ApplicationLoadBalancer(compliant, 'rALB1', {
+      vpc: new Vpc(compliant, 'rVPC1'),
+    });
+    new CfnWebACLAssociation(compliant, 'rWebAClAssoc1', {
+      webAclArn: 'bar',
+      resourceArn: compliantALB1.loadBalancerArn,
+    });
+    new NetworkLoadBalancer(compliant, 'rNLB', {
+      vpc: new Vpc(compliant, 'rVPC2'),
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NIST.800.53.R5-ALBWAFEnabled:'),
         }),
       })
     );

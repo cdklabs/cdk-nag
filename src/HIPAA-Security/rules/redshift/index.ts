@@ -7,3 +7,4 @@ export { default as hipaaSecurityRedshiftClusterConfiguration } from './hipaaSec
 export { default as hipaaSecurityRedshiftClusterMaintenanceSettings } from './hipaaSecurityRedshiftClusterMaintenanceSettings';
 export { default as hipaaSecurityRedshiftClusterPublicAccess } from './hipaaSecurityRedshiftClusterPublicAccess';
 export { default as hipaaSecurityRedshiftEnhancedVPCRoutingEnabled } from './hipaaSecurityRedshiftEnhancedVPCRoutingEnabled';
+export { default as hipaaSecurityRedshiftRequireTlsSSL } from './hipaaSecurityRedshiftRequireTlsSSL';

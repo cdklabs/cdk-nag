@@ -30,8 +30,13 @@ import {
   hipaaSecurityCodeBuildProjectSourceRepoUrl,
 } from './rules/codebuild';
 import { hipaaSecurityDMSReplicationNotPublic } from './rules/dms';
-import { hipaaSecurityDynamoDBPITREnabled } from './rules/dynamodb';
 import {
+  hipaaSecurityDynamoDBAutoscalingEnabled,
+  hipaaSecurityDynamoDBInBackupPlan,
+  hipaaSecurityDynamoDBPITREnabled,
+} from './rules/dynamodb';
+import {
+  hipaaSecurityEC2EBSInBackupPlan,
   hipaaSecurityEC2EBSOptimizedInstance,
   hipaaSecurityEC2InstanceDetailedMonitoringEnabled,
   hipaaSecurityEC2InstanceNoPublicIps,
@@ -41,7 +46,10 @@ import {
   hipaaSecurityEC2RestrictedSSH,
 } from './rules/ec2';
 import { hipaaSecurityECSTaskDefinitionUserForHostMode } from './rules/ecs';
-import { hipaaSecurityEFSEncrypted } from './rules/efs';
+import {
+  hipaaSecurityEFSEncrypted,
+  hipaaSecurityEFSInBackupPlan,
+} from './rules/efs';
 import { hipaaSecurityElastiCacheRedisClusterAutomaticBackup } from './rules/elasticache';
 import {
   hipaaSecurityElasticBeanstalkEnhancedHealthReportingEnabled,
@@ -59,6 +67,7 @@ import {
 } from './rules/elb';
 import { hipaaSecurityEMRKerberosEnabled } from './rules/emr';
 import {
+  hipaaSecurityIAMGroupHasUsers,
   hipaaSecurityIAMNoInlinePolicy,
   hipaaSecurityIAMPolicyNoStatementsWithAdminAccess,
   hipaaSecurityIAMPolicyNoStatementsWithFullAccess,
@@ -79,6 +88,7 @@ import {
 import {
   hipaaSecurityRDSAutomaticMinorVersionUpgradeEnabled,
   hipaaSecurityRDSEnhancedMonitoringEnabled,
+  hipaaSecurityRDSInBackupPlan,
   hipaaSecurityRDSInstanceBackupEnabled,
   hipaaSecurityRDSInstanceDeletionProtectionEnabled,
   hipaaSecurityRDSInstanceMultiAZSupport,
@@ -92,6 +102,7 @@ import {
   hipaaSecurityRedshiftClusterMaintenanceSettings,
   hipaaSecurityRedshiftClusterPublicAccess,
   hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+  hipaaSecurityRedshiftRequireTlsSSL,
 } from './rules/redshift';
 import {
   hipaaSecurityS3BucketLevelPublicAccessProhibited,
@@ -108,13 +119,18 @@ import {
   hipaaSecuritySageMakerNotebookInstanceKMSKeyConfigured,
   hipaaSecuritySageMakerNotebookNoDirectInternetAccess,
 } from './rules/sagemaker';
-import { hipaaSecuritySecretsManagerUsingKMSKey } from './rules/secretsmanager';
+import {
+  hipaaSecuritySecretsManagerRotationEnabled,
+  hipaaSecuritySecretsManagerUsingKMSKey,
+} from './rules/secretsmanager';
 import { hipaaSecuritySNSEncryptedKMS } from './rules/sns';
 import {
   hipaaSecurityVPCDefaultSecurityGroupClosed,
+  hipaaSecurityVPCFlowLogsEnabled,
   hipaaSecurityVPCNoUnrestrictedRouteToIGW,
   hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
 } from './rules/vpc';
+import { hipaaSecurityWAFv2LoggingEnabled } from './rules/waf';
 
 /**
  * Check for HIPAA Security compliance.
@@ -147,6 +163,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkSecretsManager(node);
       this.checkSNS(node);
       this.checkVPC(node);
+      this.checkWAF(node);
     }
   }
 
@@ -340,6 +357,24 @@ export class HIPAASecurityChecks extends NagPack {
    */
   private checkDynamoDB(node: CfnResource) {
     this.applyRule({
+      ruleId: 'HIPAA.Security-DynamoDBAutoscalingEnabled',
+      info: "The provisioned capacity DynamoDB table does not have Auto Scaling enabled on it's indexes - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C)).",
+      explanation:
+        'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityDynamoDBAutoscalingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'HIPAA.Security-DynamoDBInBackupPlan',
+      info: 'The DynamoDB table is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon DynamoDB tables are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityDynamoDBInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'HIPAA.Security-DynamoDBPITREnabled',
       info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
       explanation:
@@ -356,6 +391,15 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEC2(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-EC2EBSInBackupPlan',
+      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityEC2EBSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-EC2EBSOptimizedInstance',
       info: "The EC2 instance type 'supports' EBS optimization and does not have EBS optimization enabled - (Control ID: 164.308(a)(7)(i)).",
@@ -444,6 +488,15 @@ export class HIPAASecurityChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkEFS(node: CfnResource) {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-EFSInBackupPlan',
+      info: 'The EFS is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Elastic File System (Amazon EFS) file systems are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityEFSInBackupPlan,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'HIPAA.Security-EFSEncrypted',
       info: 'The EFS does not have encryption at rest enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
@@ -602,6 +655,15 @@ export class HIPAASecurityChecks extends NagPack {
    */
   private checkIAM(node: CfnResource): void {
     this.applyRule({
+      ruleId: 'HIPAA.Security-IAMGroupHasUsers',
+      info: 'The IAM Group does not have at least one IAM User - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).',
+      explanation:
+        'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityIAMGroupHasUsers,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'HIPAA.Security-IAMNoInlinePolicy',
       info: 'The IAM Group, User, or Role contains an inline policy - (Control IDs: 164.308(a)(3)(i), 164.308(a)(3)(ii)(A), 164.308(a)(3)(ii)(B), 164.308(a)(4)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(B), 164.308(a)(4)(ii)(C), 164.312(a)(1)).',
       explanation:
@@ -752,6 +814,15 @@ export class HIPAASecurityChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'HIPAA.Security-RDSInBackupPlan',
+      info: 'The RDS DB instance is not in an AWS Backup plan - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
+      explanation:
+        'To help with data back-up processes, ensure your Amazon Relational Database Service (Amazon RDS) instances are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityRDSInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'HIPAA.Security-RDSInstanceBackupEnabled',
       info: 'The RDS DB instance does not have backups enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(A), 164.308(a)(7)(ii)(B)).',
       explanation:
@@ -856,6 +927,15 @@ export class HIPAASecurityChecks extends NagPack {
         'Enhanced VPC routing forces all COPY and UNLOAD traffic between the cluster and data repositories to go through your Amazon VPC. You can then use VPC features such as security groups and network access control lists to secure network traffic. You can also use VPC flow logs to monitor network traffic.',
       level: NagMessageLevel.ERROR,
       rule: hipaaSecurityRedshiftEnhancedVPCRoutingEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleId: 'HIPAA.Security-RedshiftRequireTlsSSL',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii)).',
+      explanation:
+        'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityRedshiftRequireTlsSSL,
       node: node,
     });
   }
@@ -982,6 +1062,15 @@ export class HIPAASecurityChecks extends NagPack {
    */
   private checkSecretsManager(node: CfnResource): void {
     this.applyRule({
+      ruleId: 'HIPAA.Security-SecretsManagerRotationEnabled',
+      info: 'The secret does not have automatic rotation scheduled - (Control ID: 164.308(a)(4)(ii)(B)).',
+      explanation:
+        'Rotating secrets on a regular schedule can shorten the period a secret is active, and potentially reduce the business impact if the secret is compromised.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecuritySecretsManagerRotationEnabled,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'HIPAA.Security-SecretsManagerUsingKMSKey',
       info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
       explanation:
@@ -1025,6 +1114,15 @@ export class HIPAASecurityChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleId: 'HIPAA.Security-VPCFlowLogsEnabled',
+      info: 'The VPC does not have an associated Flow Log - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b)).',
+      explanation:
+        'The VPC flow logs provide detailed records for information about the IP traffic going to and from network interfaces in your Amazon Virtual Private Cloud (Amazon VPC). By default, the flow log record includes values for the different components of the IP flow, including the source, destination, and protocol.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityVPCFlowLogsEnabled,
+      node: node,
+    });
+    this.applyRule({
       ruleId: 'HIPAA.Security-VPCNoUnrestrictedRouteToIGW',
       info: "The route table may contain one or more unrestricted route(s) to an IGW ('0.0.0.0/0' or '::/0') - (Control ID: 164.312(e)(1)).",
       explanation:
@@ -1040,6 +1138,23 @@ export class HIPAASecurityChecks extends NagPack {
         'Manage access to the AWS Cloud by ensuring Amazon Virtual Private Cloud (VPC) subnets are not automatically assigned a public IP address. Amazon Elastic Compute Cloud (EC2) instances that are launched into subnets that have this attribute enabled have a public IP address assigned to their primary network interface.',
       level: NagMessageLevel.ERROR,
       rule: hipaaSecurityVPCSubnetAutoAssignPublicIpDisabled,
+      node: node,
+    });
+  }
+
+  /**
+   * Check WAF Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkWAF(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'HIPAA.Security-WAFv2LoggingEnabled',
+      info: 'The WAFv2 web ACL does not have logging enabled - (Control ID: 164.312(b)).',
+      explanation:
+        'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
+      level: NagMessageLevel.ERROR,
+      rule: hipaaSecurityWAFv2LoggingEnabled,
       node: node,
     });
   }

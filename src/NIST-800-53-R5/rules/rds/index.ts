@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+export { default as nist80053r5RDSInBackupPlan } from './nist80053r5RDSInBackupPlan';
 export { default as nist80053r5RDSEnhancedMonitoringEnabled } from './nist80053r5RDSEnhancedMonitoringEnabled';
 export { default as nist80053r5RDSInstanceBackupEnabled } from './nist80053r5RDSInstanceBackupEnabled';
 export { default as nist80053r5RDSInstanceDeletionProtectionEnabled } from './nist80053r5RDSInstanceDeletionProtectionEnabled';
