@@ -43,7 +43,7 @@ export default function (node: CfnResource): boolean {
 /**
  * Helper function to check whether a given Web ACL Association is associated with the given Load Balancer
  * @param node the CfnWebACLAssociation to check
- * @param loadBalancerLogicalId the Cfn Logical ID of The Load Balancer
+ * @param loadBalancerLogicalId the Cfn Logical ID of the Load Balancer
  * returns whether the CfnWebACLAssociation is associates with the given Load Balancer
  */
 function isMatchingWebACLAssociation(

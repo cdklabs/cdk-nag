@@ -42,9 +42,9 @@ export default function (node: CfnResource): boolean {
 /**
  * Helper function to check whether a given Web ACL Association is associated with the given Rest API
  * @param node the CfnWebACLAssociation to check
- * @param stageLogicalId the Cfn Logical ID of The REST API Stage
- * @param stageName the name of The REST API Stage
- * @param restApiId the ID or Cfn Resource ID of The REST API associated with the Stage
+ * @param stageLogicalId the Cfn Logical ID of the REST API Stage
+ * @param stageName the name of the REST API Stage
+ * @param restApiId the ID or Cfn Resource ID of the REST API associated with the Stage
  * returns whether the CfnWebACLAssociation is associates with the given Rest API
  */
 function isMatchingWebACLAssociation(

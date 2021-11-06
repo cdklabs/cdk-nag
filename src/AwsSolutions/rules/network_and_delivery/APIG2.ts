@@ -32,7 +32,7 @@ export default function (node: CfnResource): boolean {
 /**
  * Helper function to check whether a given Request Validator is associated with the given Rest API
  * @param node the CfnRequestValidator to check
- * @param apiLogicalId the Cfn Logical ID of The REST API
+ * @param apiLogicalId the Cfn Logical ID of the REST API
  * returns whether the CfnRequestValidator is associated with the given Rest API
  */
 function isMatchingRequestValidator(

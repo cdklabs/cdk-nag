@@ -278,7 +278,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleId: 'AwsSolutions-ELB1',
       info: 'The CLB is used for incoming HTTP/HTTPS traffic. Use ALBs instead.',
       explanation:
-        'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of The CLB for enhanced incoming traffic distribution, better performance and lower costs.',
+        'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of the CLB for enhanced incoming traffic distribution, better performance and lower costs.',
       level: NagMessageLevel.ERROR,
       rule: awsSolutionsElb1,
       node: node,
