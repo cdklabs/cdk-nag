@@ -112,7 +112,10 @@ import {
   nist80053r5SageMakerNotebookInstanceKMSKeyConfigured,
   nist80053r5SageMakerNotebookNoDirectInternetAccess,
 } from './rules/sagemaker';
-import { nist80053r5SecretsManagerUsingKMSKey } from './rules/secretsmanager';
+import {
+  nist80053r5SecretsManagerRotationEnabled,
+  nist80053r5SecretsManagerUsingKMSKey,
+} from './rules/secretsmanager';
 import { nist80053r5SNSEncryptedKMS } from './rules/sns';
 import {
   nist80053r5VPCDefaultSecurityGroupClosed,
@@ -994,6 +997,15 @@ export class NIST80053R5Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkSecretsManager(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-SecretsManagerRotationEnabled',
+      info: 'The secret does not have automatic rotation scheduled - (Control IDs: AC-4, AC-4(22), AC-24(1), AU-9(3), CA-9b, PM-17b, SC-7(4)(b), SC-7(4)(g), SC-8, SC-8(1), SC-8(2), SC-8(3), SC-8(4), SC-8(5), SC-13a, SC-23, SI-1a.2, SI-1a.2, SI-1c.2).',
+      explanation:
+        'Rotating secrets on a regular schedule can shorten the period a secret is active, and potentially reduce the business impact if the secret is compromised.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5SecretsManagerRotationEnabled,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R5-SecretsManagerUsingKMSKey',
       info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',

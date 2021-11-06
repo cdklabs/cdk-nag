@@ -1072,7 +1072,7 @@ export class HIPAASecurityChecks extends NagPack {
     });
     this.applyRule({
       ruleId: 'HIPAA.Security-SecretsManagerUsingKMSKey',
-      info: ' is not encrypted with a KMS Customer managed key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
+      info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
       explanation:
         'To help protect data at rest, ensure encryption with AWS Key Management Service (AWS KMS) is enabled for AWS Secrets Manager secrets. Because sensitive data can exist at rest in Secrets Manager secrets, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.ERROR,
