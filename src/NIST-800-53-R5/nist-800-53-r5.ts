@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 import { CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack } from '../nag-pack';
 import {
+  nist80053r5APIGWAssociatedWithWAF,
   nist80053r5APIGWCacheEnabledAndEncrypted,
   nist80053r5APIGWExecutionLoggingEnabled,
   nist80053r5APIGWSSLEnabled,
@@ -148,6 +149,15 @@ export class NIST80053R5Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkAPIGW(node: CfnResource): void {
+    this.applyRule({
+      ruleId: 'NIST.800.53.R5-APIGWAssociatedWithWAF',
+      info: 'The REST API stage is not associated with AWS WAFv2 web ACL - (Control ID: AC-4(21)).',
+      explanation:
+        'AWS WAF enables you to configure a set of rules (called a web access control list (web ACL)) that allow, block, or count web requests based on customizable web security rules and conditions that you define. Ensure your Amazon API Gateway stage is associated with a WAF Web ACL to protect it from malicious attacks.',
+      level: NagMessageLevel.ERROR,
+      rule: nist80053r5APIGWAssociatedWithWAF,
+      node: node,
+    });
     this.applyRule({
       ruleId: 'NIST.800.53.R5-APIGWCacheEnabledAndEncrypted',
       info: 'The API Gateway stage does not have caching enabled and encrypted for all methods - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4)).',
