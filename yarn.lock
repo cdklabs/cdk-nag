@@ -2410,9 +2410,9 @@ camelcase@^6.2.0:
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
 caniuse-lite@^1.0.30001274:
-  version "1.0.30001277"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001277.tgz#9416dae5e075f47eacd8e0475ae1dcc5a20e9ca5"
-  integrity sha512-J2WtYj2Pl6LBEG214XmbGw1gzZEsYuinQFPqYtpZDB3/vm49qNlrcbJrTMkHKmdRDdmXYwkG0tgOBJsuI+J12Q==
+  version "1.0.30001278"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001278.tgz#51cafc858df77d966b17f59b5839250b24417fff"
+  integrity sha512-mpF9KeH8u5cMoEmIic/cr7PNS+F5LWBk0t2ekGT60lFf0Wq+n9LspAj0g3P+o7DQhD3sUdlMln4YFAWhFYn9jg==
 
 case@^1.6.3:
   version "1.6.3"
@@ -6099,10 +6099,10 @@ progress@^2.0.0, progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.32.6:
-  version "0.32.6"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.32.6.tgz#93662e9aa358abf0ecba79822925a8f471e41317"
-  integrity sha512-SwD30ix/5sl7jDtr/q15z6GImU8799SFiSI6ptQFDq2OLhSRqCAf5CXz+RIfdgyY3opC4hRlO1tddL1nFj9fEA==
+projen@^0.32.8:
+  version "0.32.8"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.32.8.tgz#6f69c0bd63984ff2735a6bb25c157cffe58e66ed"
+  integrity sha512-t6m/VEye66WrRHcO9j0kJ04hN6AQ2JHM+XezRtVMGad+uI33HmgHdyG0Zbxs0w7kkZNoUQga0/1J7Afhyp6yAA==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
