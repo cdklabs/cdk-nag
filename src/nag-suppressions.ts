@@ -79,8 +79,11 @@ export class NagSuppressions {
     }
     const constructs = applyToChildren ? construct.node.findAll() : [construct];
     for (const child of constructs) {
-      if (child.node.defaultChild instanceof CfnResource) {
-        const resource = child.node.defaultChild as CfnResource;
+      const possibleL1 = child.node.defaultChild
+        ? child.node.defaultChild
+        : child;
+      if (possibleL1 instanceof CfnResource) {
+        const resource = possibleL1 as CfnResource;
         const currentSuppressions = resource.getMetadata('cdk_nag');
         if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
           newSuppressions.unshift(...currentSuppressions.rules_to_suppress);

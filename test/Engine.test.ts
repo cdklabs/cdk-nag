@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils, stringLike } from '@aws-cdk/assert';
 import '@aws-cdk/assert/jest';
 import {
+  CfnRoute,
   CfnSecurityGroup,
   Peer,
   Port,
@@ -350,6 +351,15 @@ describe('Testing rule suppression system', () => {
         }),
       })
     );
+  });
+  test('Resource suppressions change metadata on L1 Constructs', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new CfnRoute(stack, 'CfnRoute', { routeTableId: 'foo' });
+    const suppression = { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' };
+    NagSuppressions.addResourceSuppressions(test, [suppression]);
+    const metadata = test.getMetadata('cdk_nag')?.rules_to_suppress;
+    expect(metadata).toContainEqual(expect.objectContaining(suppression));
   });
   test('suppressed rule logging enabled', () => {
     const stack = new Stack();
