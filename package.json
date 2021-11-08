@@ -15,6 +15,8 @@
     "docgen": "npx projen docgen",
     "eslint": "npx projen eslint",
     "package": "npx projen package",
+    "post-compile": "npx projen post-compile",
+    "pre-compile": "npx projen pre-compile",
     "publish:github": "npx projen publish:github",
     "publish:npm": "npx projen publish:npm",
     "publish:pypi": "npx projen publish:pypi",
@@ -53,7 +55,7 @@
     "json-schema": "^0.3.0",
     "npm-check-updates": "^11",
     "prettier": "^2.4.1",
-    "projen": "^0.32.9",
+    "projen": "^0.33.0",
     "standard-version": "^9",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
