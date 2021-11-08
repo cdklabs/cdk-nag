@@ -2,22 +2,25 @@
   "tasks": {
     "build": {
       "name": "build",
-      "description": "Full release build (test+compile)",
+      "description": "Full release build",
       "steps": [
         {
-          "exec": "npx projen"
+          "spawn": "default"
         },
         {
-          "spawn": "test"
+          "spawn": "pre-compile"
         },
         {
           "spawn": "compile"
         },
         {
-          "spawn": "package"
+          "spawn": "post-compile"
         },
         {
-          "spawn": "docgen"
+          "spawn": "test"
+        },
+        {
+          "spawn": "package"
         }
       ]
     },
@@ -89,6 +92,7 @@
     },
     "default": {
       "name": "default",
+      "description": "Synthesize project files",
       "steps": [
         {
           "exec": "node .projenrc.js"
@@ -115,12 +119,25 @@
     },
     "package": {
       "name": "package",
-      "description": "Create an npm tarball",
+      "description": "Creates the distribution package",
       "steps": [
         {
           "exec": "jsii-pacmak"
         }
       ]
+    },
+    "post-compile": {
+      "name": "post-compile",
+      "description": "Runs after successful compilation",
+      "steps": [
+        {
+          "spawn": "docgen"
+        }
+      ]
+    },
+    "pre-compile": {
+      "name": "pre-compile",
+      "description": "Prepare the project for compilation"
     },
     "publish:github": {
       "name": "publish:github",
@@ -193,9 +210,6 @@
       "name": "test",
       "description": "Run tests",
       "steps": [
-        {
-          "exec": "rm -fr lib/"
-        },
         {
           "exec": "jest --passWithNoTests --all --updateSnapshot"
         },
