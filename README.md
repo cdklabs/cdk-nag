@@ -252,6 +252,7 @@ Sample Stack with imported template
 
 ```typescript
 import { CfnInclude } from '@aws-cdk/cloudformation-include';
+import { NagSuppressions } from 'cdk-nag';
 import { Construct, Stack, StackProps } from '@aws-cdk/core';
 
 export class CdkTestStack extends Stack {
