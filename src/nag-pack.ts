@@ -188,7 +188,7 @@ export abstract class NagPack implements IAspect {
     explanation: string
   ): string {
     let message = `${ruleId}: ${info}`;
-    return this.verbose ? `${message} ${explanation}` : message;
+    return this.verbose ? `${message} ${explanation}\n` : `${message}\n`;
   }
 }
 

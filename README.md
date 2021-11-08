@@ -260,6 +260,17 @@ export class CdkTestStack extends Stack {
     new CfnInclude(this, 'Template', {
       templateFile: 'my-template.json',
     });
+    // Add any additional suppressions
+    NagSuppressions.addResourceSuppressionsByPath(
+      this,
+      '/CdkNagDemo/Template/rBucket',
+      [
+        {
+          id: 'AwsSolutions-S2',
+          reason: 'at least 10 characters',
+        },
+      ]
+    );
   }
 }
 ```
