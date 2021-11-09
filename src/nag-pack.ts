@@ -15,7 +15,7 @@ const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 const SUPPRESSION_ID = 'CdkNagSuppression';
 
 /**
- * Interface for creating a Nag rule set
+ * Interface for creating a Nag rule pack.
  */
 export interface NagPackProps {
   /**
@@ -30,38 +30,38 @@ export interface NagPackProps {
 }
 
 /**
- * Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method
+ * Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
  */
 export interface IApplyRule {
   /**
-   * The id of the rule to ignore
+   * The id of the rule to ignore.
    */
   ruleId: string;
   /**
-   * Why the rule was triggered
+   * Why the rule was triggered.
    */
   info: string;
   /**
-   * Why the rule exists
+   * Why the rule exists.
    */
   explanation: string;
   /**
-   * The annotations message level to apply to the rule if triggered
+   * The annotations message level to apply to the rule if triggered.
    */
   level: NagMessageLevel;
   /**
-   * Ignores listed in cdk-nag metadata
+   * Ignores listed in cdk-nag metadata.
    */
   node: CfnResource;
   /**
-   * The callback to the rule
-   * @param node the CfnResource to check
+   * The callback to the rule.
+   * @param node The CfnResource to check.
    */
   rule(node: CfnResource): boolean;
 }
 
 /**
- * The level of the message that the rule applies
+ * The level of the message that the rule applies.
  */
 export enum NagMessageLevel {
   WARN,
@@ -69,7 +69,7 @@ export enum NagMessageLevel {
 }
 
 /**
- * Base class for all rule sets
+ * Base class for all rule packs.
  */
 export abstract class NagPack implements IAspect {
   protected verbose: boolean;
@@ -90,8 +90,8 @@ export abstract class NagPack implements IAspect {
   public abstract visit(node: IConstruct): void;
 
   /**
-   * Create a rule to be used in the NagPack
-   * @param params The @IApplyRule interface with rule details
+   * Create a rule to be used in the NagPack.
+   * @param params The @IApplyRule interface with rule details.
    */
   public applyRule(params: IApplyRule): void {
     let resourceIgnores = params.node.getMetadata('cdk_nag')?.rules_to_suppress;
@@ -149,10 +149,10 @@ export abstract class NagPack implements IAspect {
   }
 
   /**
-   * Check whether a specific rule should be ignored
-   * @param ignores ignores listed in cdkNag metadata
-   * @param ruleId the id of the rule to ignore
-   * @returns the reason the rule was ignored, or an empty string
+   * Check whether a specific rule should be ignored.
+   * @param ignores The ignores listed in cdk-nag metadata.
+   * @param ruleId The id of the rule to ignore.
+   * @returns The reason the rule was ignored, or an empty string.
    */
   private ignoreRule(ignores: NagPackSuppression[], ruleId: string): string {
     for (let ignore of ignores) {
@@ -176,11 +176,11 @@ export abstract class NagPack implements IAspect {
   }
 
   /**
-   * The message to output to the console when a rule is triggered
-   * @param ruleId the id of the rule
-   * @param info why the rule was triggered
-   * @param explanation why the rule exists
-   * @returns string
+   * The message to output to the console when a rule is triggered.
+   * @param ruleId The id of the rule.
+   * @param info Why the rule was triggered.
+   * @param explanation Why the rule exists.
+   * @returns The formatted message string.
    */
   private createMessage(
     ruleId: string,
@@ -193,10 +193,10 @@ export abstract class NagPack implements IAspect {
 }
 
 /**
- * Use in cases where a primitive value must be known to pass a rule
+ * Use in cases where a primitive value must be known to pass a rule.
  * https://developer.mozilla.org/en-US/docs/Glossary/Primitive
- * @param node the CfnResource to check
- * @param parameter the value to attempt to resolve
+ * @param node The CfnResource to check.
+ * @param parameter The value to attempt to resolve.
  * @returns Return a value if resolves to a primitive data type, otherwise throw an error.
  */
 export function resolveIfPrimitive(node: CfnResource, parameter: any): any {
@@ -213,9 +213,9 @@ export function resolveIfPrimitive(node: CfnResource, parameter: any): any {
 }
 
 /**
- * Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule
- * @param node the CfnResource to check
- * @param parameter the value to attempt to resolve
+ * Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
+ * @param node The CfnResource to check.
+ * @param parameter The value to attempt to resolve.
  * @returns Return the Logical resource Id if resolves to a intrinsic function, otherwise the resolved provided value.
  */
 export function resolveResourceFromInstrinsic(

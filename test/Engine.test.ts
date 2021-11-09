@@ -19,6 +19,7 @@ import {
   CfnParameter,
   CfnResource,
   IConstruct,
+  NestedStack,
   Stack,
 } from '@aws-cdk/core';
 import {
@@ -360,6 +361,22 @@ describe('Testing rule suppression system', () => {
     NagSuppressions.addResourceSuppressions(test, [suppression]);
     const metadata = test.getMetadata('cdk_nag')?.rules_to_suppress;
     expect(metadata).toContainEqual(expect.objectContaining(suppression));
+  });
+  test('Stack suppressions work on Nested Stacks', () => {
+    const stack = new Stack();
+    const nestedStack1 = new NestedStack(stack, 'rNestedStack1');
+    const nestedStack2 = new Stack(stack, 'rNestedStack2');
+    const suppression = { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' };
+    NagSuppressions.addStackSuppressions(stack, [suppression], true);
+    const rootMetadata =
+      stack.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    const nested1Metadata =
+      nestedStack1.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    const nested2Metadata =
+      nestedStack2.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    expect(rootMetadata).toContainEqual(expect.objectContaining(suppression));
+    expect(nested1Metadata).toEqual(rootMetadata);
+    expect(nested2Metadata).toEqual(rootMetadata);
   });
   test('suppressed rule logging enabled', () => {
     const stack = new Stack();
