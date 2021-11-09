@@ -8,7 +8,7 @@ Name|Description
 [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
 [NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
 [NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
-[NagPack](#cdk-nag-nagpack)|Base class for all rule sets.
+[NagPack](#cdk-nag-nagpack)|Base class for all rule packs.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 
@@ -17,7 +17,7 @@ Name|Description
 
 Name|Description
 ----|-----------
-[NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule set.
+[NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule pack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
 
 
@@ -200,7 +200,7 @@ visit(node: IConstruct): void
 
 ## class NagPack  <a id="cdk-nag-nagpack"></a>
 
-Base class for all rule sets.
+Base class for all rule packs.
 
 __Implements__: [IAspect](#aws-cdk-core-iaspect)
 __Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks), [PCIDSS321Checks](#cdk-nag-pcidss321checks)
@@ -280,45 +280,46 @@ new NagSuppressions()
 
 #### *static* addResourceSuppressions(construct, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressions"></a>
 
-Add cdk-nag suppressions to the construct if it is a CfnResource.
+Add cdk-nag suppressions to a CfnResource and optionally its children.
 
 ```ts
 static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
-* **construct** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  the IConstruct to apply the suppression to.
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the resource.
-* **applyToChildren** (<code>boolean</code>)  apply the suppressions to this construct and all of its children if they exist (default:false).
+* **construct** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  The IConstruct to apply the suppression to.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
+* **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
 
 
 
 
 #### *static* addResourceSuppressionsByPath(stack, path, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressionsbypath"></a>
 
-Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource.
+Add cdk-nag suppressions to a CfnResource and optionally its children via its path.
 
 ```ts
 static addResourceSuppressionsByPath(stack: Stack, path: string, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
-* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  the Stack the construct belongs to.
-* **path** (<code>string</code>)  the path of the construct in the provided stack.
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the resource.
-* **applyToChildren** (<code>boolean</code>)  apply the suppressions to this construct and all of its children if they exist (default:false).
+* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  The Stack the construct belongs to.
+* **path** (<code>string</code>)  The path to the construct in the provided stack.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
+* **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
 
 
 
 
-#### *static* addStackSuppressions(stack, suppressions) <a id="cdk-nag-nagsuppressions-addstacksuppressions"></a>
+#### *static* addStackSuppressions(stack, suppressions, applyToNestedStacks?) <a id="cdk-nag-nagsuppressions-addstacksuppressions"></a>
 
-Add cdk-nag suppressions to the Stack.
+Apply cdk-nag suppressions to a Stack and optionally nested stacks.
 
 ```ts
-static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression>): void
+static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression>, applyToNestedStacks?: boolean): void
 ```
 
-* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  the Stack to apply the suppression to.
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  a list of suppressions to apply to the stack.
+* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  The Stack to apply the suppression to.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the stack.
+* **applyToNestedStacks** (<code>boolean</code>)  Apply the suppressions to children stacks (default:false).
 
 
 
@@ -391,7 +392,7 @@ The callback to the rule.
 rule(node: CfnResource): boolean
 ```
 
-* **node** (<code>[CfnResource](#aws-cdk-core-cfnresource)</code>)  the CfnResource to check.
+* **node** (<code>[CfnResource](#aws-cdk-core-cfnresource)</code>)  The CfnResource to check.
 
 __Returns__:
 * <code>boolean</code>
@@ -401,7 +402,7 @@ __Returns__:
 ## struct NagPackProps  <a id="cdk-nag-nagpackprops"></a>
 
 
-Interface for creating a Nag rule set.
+Interface for creating a Nag rule pack.
 
 
 
