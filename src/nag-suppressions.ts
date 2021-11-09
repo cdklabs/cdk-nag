@@ -23,44 +23,51 @@ export interface NagPackSuppression {
  */
 export class NagSuppressions {
   /**
-   * Add cdk-nag suppressions to the Stack
-   * @param stack the Stack to apply the suppression to
-   * @param suppressions a list of suppressions to apply to the stack
+   * Apply cdk-nag suppressions to a Stack and optionally nested stacks
+   * @param stack The Stack to apply the suppression to
+   * @param suppressions A list of suppressions to apply to the stack
+   * @param applyToNestedStacks Apply the suppressions to children stacks (default:false)
    */
   static addStackSuppressions(
     stack: Stack,
-    suppressions: NagPackSuppression[]
+    suppressions: NagPackSuppression[],
+    applyToNestedStacks: boolean = false
   ): void {
-    const newSuppressions = [];
-    for (const suppression of suppressions) {
-      if (suppression.reason.length >= 10) {
-        newSuppressions.push(suppression);
-      } else {
-        throw Error(
-          `${stack.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
-        );
+    const stacks = applyToNestedStacks
+      ? stack.node.findAll().filter((x): x is Stack => x instanceof Stack)
+      : [stack];
+    stacks.forEach((s) => {
+      const newSuppressions = [];
+      for (const suppression of suppressions) {
+        if (suppression.reason.length >= 10) {
+          newSuppressions.push(suppression);
+        } else {
+          throw Error(
+            `${s.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
+          );
+        }
       }
-    }
-    const currentSuppressions = stack.templateOptions.metadata?.cdk_nag;
-    if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
-      newSuppressions.unshift(...currentSuppressions.rules_to_suppress);
-    }
-    if (stack.templateOptions.metadata) {
-      stack.templateOptions.metadata.cdk_nag = {
-        rules_to_suppress: newSuppressions,
-      };
-    } else {
-      stack.templateOptions.metadata = {
-        cdk_nag: { rules_to_suppress: newSuppressions },
-      };
-    }
+      const currentSuppressions = s.templateOptions.metadata?.cdk_nag;
+      if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
+        newSuppressions.unshift(...currentSuppressions.rules_to_suppress);
+      }
+      if (s.templateOptions.metadata) {
+        s.templateOptions.metadata.cdk_nag = {
+          rules_to_suppress: newSuppressions,
+        };
+      } else {
+        s.templateOptions.metadata = {
+          cdk_nag: { rules_to_suppress: newSuppressions },
+        };
+      }
+    });
   }
 
   /**
-   * Add cdk-nag suppressions to the construct if it is a CfnResource
-   * @param construct the IConstruct to apply the suppression to
-   * @param suppressions a list of suppressions to apply to the resource
-   * @param applyToChildren apply the suppressions to this construct and all of its children if they exist (default:false)
+   * Add cdk-nag suppressions to a CfnResource and optionally its children
+   * @param construct The IConstruct to apply the suppression to
+   * @param suppressions A list of suppressions to apply to the resource
+   * @param applyToChildren Apply the suppressions to children CfnResources  (default:false)
    */
   static addResourceSuppressions(
     construct: IConstruct,
@@ -96,11 +103,11 @@ export class NagSuppressions {
   }
 
   /**
-   * Locate a construct by it's path and add cdk-nag suppressions if it both exists and is a CfnResource
-   * @param stack the Stack the construct belongs to
-   * @param path the path of the construct in the provided stack
-   * @param suppressions a list of suppressions to apply to the resource
-   * @param applyToChildren apply the suppressions to this construct and all of its children if they exist (default:false)
+   * Add cdk-nag suppressions to a CfnResource and optionally its children via its path
+   * @param stack The Stack the construct belongs to
+   * @param path The path to the construct in the provided stack
+   * @param suppressions A list of suppressions to apply to the resource
+   * @param applyToChildren Apply the suppressions to children CfnResources  (default:false)
    */
   static addResourceSuppressionsByPath(
     stack: Stack,
