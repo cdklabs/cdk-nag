@@ -52,10 +52,10 @@
     "jsii-diff": "^1.43.0",
     "jsii-docgen": "^1.8.110",
     "jsii-pacmak": "^1.43.0",
-    "json-schema": "^0.3.0",
+    "json-schema": "^0.4.0",
     "npm-check-updates": "^11",
     "prettier": "^2.4.1",
-    "projen": "^0.33.1",
+    "projen": "^0.33.2",
     "standard-version": "^9",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
