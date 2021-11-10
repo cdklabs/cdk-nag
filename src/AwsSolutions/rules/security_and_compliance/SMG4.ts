@@ -3,7 +3,11 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { CfnSecret, CfnRotationSchedule } from '@aws-cdk/aws-secretsmanager';
+import {
+  CfnSecret,
+  CfnRotationSchedule,
+  CfnSecretTargetAttachment,
+} from '@aws-cdk/aws-secretsmanager';
 import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveResourceFromInstrinsic } from '../../../nag-pack';
 
@@ -14,13 +18,39 @@ import { resolveResourceFromInstrinsic } from '../../../nag-pack';
 export default function (node: CfnResource): boolean {
   if (node instanceof CfnSecret) {
     const secretLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-    let found = false;
+    const secretTargetAttachmentLogicalIds = Array<string>();
+    const cfnSecretTargetAttachments = Array<CfnSecretTargetAttachment>();
+    const cfnRotationSchedules = Array<CfnRotationSchedule>();
     for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnRotationSchedule) {
-        if (isMatchingRotationSchedule(child, secretLogicalId)) {
-          found = true;
-          break;
-        }
+      if (child instanceof CfnSecretTargetAttachment) {
+        cfnSecretTargetAttachments.push(child);
+      } else if (child instanceof CfnRotationSchedule) {
+        cfnRotationSchedules.push(child);
+      }
+    }
+    if (cfnRotationSchedules.length === 0) {
+      return false;
+    }
+    let found = false;
+    for (const child of cfnSecretTargetAttachments) {
+      const attachmentLogicalId = getMatchingSecretTargetAttachment(
+        child,
+        secretLogicalId
+      );
+      if (attachmentLogicalId) {
+        secretTargetAttachmentLogicalIds.push(attachmentLogicalId);
+      }
+    }
+    for (const child of cfnRotationSchedules) {
+      if (
+        isMatchingRotationSchedule(
+          child,
+          secretLogicalId,
+          secretTargetAttachmentLogicalIds
+        )
+      ) {
+        found = true;
+        break;
       }
     }
     if (!found) {
@@ -31,19 +61,44 @@ export default function (node: CfnResource): boolean {
 }
 
 /**
- * Helper function to check whether a given Rotation Schedule is associated with the given Secret
- * @param node the CfnRotationSchedule to check
- * @param secretLogicalId the Cfn Logical ID of the Secret
- * returns whether the CfnRotationSchedule is associates with the given Secret
+ * Helper function to check whether a given Secret Target Attachment is associated with the given secret.
+ * @param node The CfnTargetAttachment to check.
+ * @param secretLogicalId The Cfn Logical ID of the secret.
+ * Returns the Logical ID if the attachment if is associated with the secret, otherwise and empty string.
+ */
+function getMatchingSecretTargetAttachment(
+  node: CfnSecretTargetAttachment,
+  secretLogicalId: string
+): string {
+  const resourceSecretId = resolveResourceFromInstrinsic(node, node.secretId);
+  if (secretLogicalId === resourceSecretId) {
+    return resolveResourceFromInstrinsic(node, node.ref);
+  }
+  return '';
+}
+
+/**
+ * Helper function to check whether a given Rotation Schedule is associated with the given secret.
+ * @param node The CfnRotationSchedule to check.
+ * @param secretLogicalId The Cfn Logical ID of the secret.
+ * @param secretTargetAttachmentLogicalIds The Cfn Logical IDs of any Secret Target Attachments associated with the given secret.
+ * Returns whether the CfnRotationSchedule is associated with the given secret.
  */
 function isMatchingRotationSchedule(
   node: CfnRotationSchedule,
-  secretLogicalId: string
+  secretLogicalId: string,
+  secretTargetAttachmentLogicalIds: string[]
 ): boolean {
   const resourceSecretId = resolveResourceFromInstrinsic(node, node.secretId);
-  if (secretLogicalId === resourceSecretId) {
-    if (Stack.of(node).resolve(node.hostedRotationLambda) !== undefined) {
-      return true;
+  if (
+    secretLogicalId === resourceSecretId ||
+    secretTargetAttachmentLogicalIds.includes(resourceSecretId)
+  ) {
+    if (
+      Stack.of(node).resolve(node.hostedRotationLambda) === undefined &&
+      Stack.of(node).resolve(node.rotationLambdaArn) === undefined
+    ) {
+      return false;
     }
     const rotationRules = Stack.of(node).resolve(node.rotationRules);
     if (rotationRules !== undefined) {

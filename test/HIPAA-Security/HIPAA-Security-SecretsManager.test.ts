@@ -5,7 +5,13 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { Key } from '@aws-cdk/aws-kms';
 import { Function } from '@aws-cdk/aws-lambda';
-import { Secret, CfnSecret, HostedRotation } from '@aws-cdk/aws-secretsmanager';
+import {
+  Secret,
+  CfnSecret,
+  HostedRotation,
+  CfnRotationSchedule,
+  CfnSecretTargetAttachment,
+} from '@aws-cdk/aws-secretsmanager';
 import { Aspects, Duration, Stack } from '@aws-cdk/core';
 import { HIPAASecurityChecks } from '../../src';
 
@@ -24,6 +30,59 @@ describe('AWS Secrets Manager', () => {
         }),
       })
     );
+
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+    new CfnRotationSchedule(nonCompliant2, 'rRotationSchedule', {
+      secretId: new CfnSecretTargetAttachment(
+        nonCompliant2,
+        'rCfnTargetAttachment',
+        {
+          secretId: new Secret(nonCompliant2, 'rSecret').secretArn,
+          targetId: 'foo',
+          targetType: 'bar',
+        }
+      ).ref,
+      hostedRotationLambda: { rotationType: 'baz' },
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'HIPAA.Security-SecretsManagerRotationEnabled:'
+          ),
+        }),
+      })
+    );
+
+    const nonCompliant3 = new Stack();
+    Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
+    new CfnRotationSchedule(nonCompliant3, 'rRotationSchedule', {
+      secretId: new CfnSecretTargetAttachment(
+        nonCompliant3,
+        'rCfnTargetAttachment',
+        {
+          secretId: new Secret(nonCompliant3, 'rSecret').secretArn,
+          targetId: 'foo',
+          targetType: 'bar',
+        }
+      ).ref,
+      rotationRules: {
+        automaticallyAfterDays: 42,
+      },
+    });
+    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+    expect(messages3).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'HIPAA.Security-SecretsManagerRotationEnabled:'
+          ),
+        }),
+      })
+    );
+
     const compliant = new Stack();
     Aspects.of(compliant).add(new HIPAASecurityChecks());
     new Secret(compliant, 'rSecret1').addRotationSchedule(
@@ -37,8 +96,23 @@ describe('AWS Secrets Manager', () => {
         automaticallyAfter: Duration.days(30),
       }
     );
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
+    new CfnRotationSchedule(compliant, 'rRotationSchedule3', {
+      secretId: new CfnSecretTargetAttachment(
+        compliant,
+        'rCfnTargetAttachment',
+        {
+          secretId: new Secret(compliant, 'rSecret3').secretArn,
+          targetId: 'foo',
+          targetType: 'bar',
+        }
+      ).ref,
+      rotationLambdaArn: 'baz',
+      rotationRules: {
+        automaticallyAfterDays: 42,
+      },
+    });
+    const messages4 = SynthUtils.synthesize(compliant).messages;
+    expect(messages4).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(

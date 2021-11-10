@@ -22,7 +22,12 @@ import {
 import { Key, KeySpec } from '@aws-cdk/aws-kms';
 import { Function } from '@aws-cdk/aws-lambda';
 import { Bucket } from '@aws-cdk/aws-s3';
-import { HostedRotation, Secret } from '@aws-cdk/aws-secretsmanager';
+import {
+  HostedRotation,
+  Secret,
+  CfnSecretTargetAttachment,
+  CfnRotationSchedule,
+} from '@aws-cdk/aws-secretsmanager';
 import { Aspects, CfnResource, Duration, Stack } from '@aws-cdk/core';
 import { AwsSolutionsChecks } from '../../src';
 
@@ -378,6 +383,55 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           }),
         })
       );
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      new CfnRotationSchedule(nonCompliant2, 'rRotationSchedule', {
+        secretId: new CfnSecretTargetAttachment(
+          nonCompliant2,
+          'rCfnTargetAttachment',
+          {
+            secretId: new Secret(nonCompliant2, 'rSecret').secretArn,
+            targetId: 'foo',
+            targetType: 'bar',
+          }
+        ).ref,
+        hostedRotationLambda: { rotationType: 'baz' },
+      });
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-SMG4:'),
+          }),
+        })
+      );
+
+      const nonCompliant3 = new Stack();
+      Aspects.of(nonCompliant3).add(new AwsSolutionsChecks());
+      new CfnRotationSchedule(nonCompliant3, 'rRotationSchedule', {
+        secretId: new CfnSecretTargetAttachment(
+          nonCompliant3,
+          'rCfnTargetAttachment',
+          {
+            secretId: new Secret(nonCompliant3, 'rSecret').secretArn,
+            targetId: 'foo',
+            targetType: 'bar',
+          }
+        ).ref,
+        rotationRules: {
+          automaticallyAfterDays: 42,
+        },
+      });
+      const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+      expect(messages3).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-SMG4:'),
+          }),
+        })
+      );
+
       const compliant = new Stack();
       Aspects.of(compliant).add(new AwsSolutionsChecks());
       new Secret(compliant, 'rSecret1').addRotationSchedule(
@@ -391,8 +445,23 @@ describe('AWS Solutions Security and Compliance Checks', () => {
           automaticallyAfter: Duration.days(30),
         }
       );
-      const messages2 = SynthUtils.synthesize(compliant).messages;
-      expect(messages2).not.toContainEqual(
+      new CfnRotationSchedule(compliant, 'rRotationSchedule3', {
+        secretId: new CfnSecretTargetAttachment(
+          compliant,
+          'rCfnTargetAttachment',
+          {
+            secretId: new Secret(compliant, 'rSecret3').secretArn,
+            targetId: 'foo',
+            targetType: 'bar',
+          }
+        ).ref,
+        rotationLambdaArn: 'baz',
+        rotationRules: {
+          automaticallyAfterDays: 42,
+        },
+      });
+      const messages4 = SynthUtils.synthesize(compliant).messages;
+      expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-SMG4:'),
