@@ -103,6 +103,7 @@ const project = new AwsCdkConstructLibrary({
   },
   buildWorkflow: true,
   release: true,
+  gitignore: ['.vscode'],
 });
 project.package.addField('resolutions', {
   'ansi-regex': '^5.0.1',
