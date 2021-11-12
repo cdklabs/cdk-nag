@@ -3110,9 +3110,9 @@ ecc-jsbn@~0.1.1:
     safer-buffer "^2.1.0"
 
 electron-to-chromium@^1.3.886:
-  version "1.3.894"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.894.tgz#54554ecb40d40ddac7241c4a42887e86180015d8"
-  integrity sha512-WY8pA4irAZ4cm/Pr7YFPtPLVqj3nU6d0SbfoHF6M7HZNONfPdAnYAarumqQ75go2LuN72uO9wGuCEqnfya/ytg==
+  version "1.3.895"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.895.tgz#9b0f8f2e32d8283bbb200156fd5d8dfd775f31ed"
+  integrity sha512-9Ww3fB8CWctjqHwkOt7DQbMZMpal2x2reod+/lU4b9axO1XJEDUpPMBxs7YnjLhhqpKXIIB5SRYN/B4K0QpvyQ==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -6107,10 +6107,10 @@ progress@^2.0.0, progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.33.3:
-  version "0.33.3"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.33.3.tgz#35995d6e079c4f1d35675fb9a5ba103c622ca8b4"
-  integrity sha512-JV5rFhIO1wEuoC7GDSvcNcSmf56s6BekZQr/+fc9x0pU+pN8TfLvJDW7KEvTS2opZ3/7B3qXn5FDjTzfsfErVA==
+projen@^0.33.4:
+  version "0.33.4"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.33.4.tgz#bb65d68d0f39797c3f7c49c024ecbc1e22404036"
+  integrity sha512-c2iJ0IA6jCGURN48yf3s+6vsp97O4XUlbtUAW57F/PI/WZoLHp6/T/OxhtTJ+GubBvu9VpJu4apC+gAK6NylzQ==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
