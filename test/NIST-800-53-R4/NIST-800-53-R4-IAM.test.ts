@@ -61,7 +61,7 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
       })
     );
   });
-  test('NIST.800.53.R4-IAMGroupMembership: IAM users are assigned to at least one group', () => {
+  test('NIST.800.53.R4-IAMUserGroupMembership: IAM users are assigned to at least one group', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
 
@@ -73,7 +73,9 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages1).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-IAMGroupMembership:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-IAMUserGroupMembership:'
+          ),
         }),
       })
     );
@@ -88,7 +90,9 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-IAMGroupMembership:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-IAMUserGroupMembership:'
+          ),
         }),
       })
     );
@@ -108,7 +112,9 @@ describe('Amazon Identity and Access Management Service (AWS IAM)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-IAMGroupMembership:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-IAMUserGroupMembership:'
+          ),
         }),
       })
     );

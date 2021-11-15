@@ -11,7 +11,7 @@ import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon SageMaker', () => {
   //Test whether SageMaker endpoints are encrypted with a KMS key
-  test('NIST.800.53.R4-SageMakerEndpointKMS: SageMaker endpoints use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
+  test('NIST.800.53.R4-SageMakerEndpointConfigurationKMSKeyConfigured: SageMaker endpoints use a KMS key for encryption - (Control IDs: SC-13, SC-28)', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
     new CfnEndpointConfig(positive, 'badendpoint', {
@@ -21,7 +21,9 @@ describe('Amazon SageMaker', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-SageMakerEndpointKMS:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-SageMakerEndpointConfigurationKMSKeyConfigured:'
+          ),
         }),
       })
     );
@@ -36,7 +38,9 @@ describe('Amazon SageMaker', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-SageMakerEndpointKMS:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-SageMakerEndpointConfigurationKMSKeyConfigured:'
+          ),
         }),
       })
     );
@@ -44,7 +48,7 @@ describe('Amazon SageMaker', () => {
 
   //Test whether SageMaker notebooks are encrypted with a KMS key
   //These tests taken from AWS Solutions tests for rule "SM2"
-  test('NIST.800.53.R4-SageMakerNotebookKMS: SageMaker notebooks use a KMS key for encryption at rest - (Control IDs: SC-13, SC-28)', () => {
+  test('NIST.800.53.R4-SageMakerNotebookInstanceKMSKeyConfigured: SageMaker notebooks use a KMS key for encryption at rest - (Control IDs: SC-13, SC-28)', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
     new CfnNotebookInstance(positive, 'rNotebook', {
@@ -57,7 +61,9 @@ describe('Amazon SageMaker', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-SageMakerNotebookKMS:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-SageMakerNotebookInstanceKMSKeyConfigured:'
+          ),
         }),
       })
     );
@@ -75,7 +81,9 @@ describe('Amazon SageMaker', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-SageMakerNotebookKMS:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-SageMakerNotebookInstanceKMSKeyConfigured:'
+          ),
         }),
       })
     );
@@ -83,7 +91,7 @@ describe('Amazon SageMaker', () => {
 
   //Test whether SageMaker notebooks disable direct internet access
   //These tests taken from AWS Solutions tests for rule "SM3"
-  test('nist80053r4SageMakerNotebookDirectInternetAccessDisabled: - SageMaker instances have direct internet access disabled - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
+  test('nist80053r4SageMakerNotebookNoDirectInternetAccess: - SageMaker instances have direct internet access disabled - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
     new CfnNotebookInstance(positive, 'rNotebook', {
@@ -97,7 +105,7 @@ describe('Amazon SageMaker', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-SageMakerNotebookDirectInternetAccessDisabled:'
+            'NIST.800.53.R4-SageMakerNotebookNoDirectInternetAccess:'
           ),
         }),
       })
@@ -118,7 +126,7 @@ describe('Amazon SageMaker', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-SageMakerNotebookDirectInternetAccessDisabled:'
+            'NIST.800.53.R4-SageMakerNotebookNoDirectInternetAccess:'
           ),
         }),
       })

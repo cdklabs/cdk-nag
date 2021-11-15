@@ -422,7 +422,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
       })
     );
   });
-  test('NIST.800.53.R4-RDSInstanceMultiAZSupport: Non-Aurora RDS DB instances have multi-AZ support enabled', () => {
+  test('NIST.800.53.R4-RDSMultiAZSupport: Non-Aurora RDS DB instances have multi-AZ support enabled', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
     const vpc = new Vpc(positive, 'rVpc');
@@ -437,9 +437,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-RDSInstanceMultiAZSupport:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-RDSMultiAZSupport:'),
         }),
       })
     );
@@ -458,9 +456,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-RDSInstanceMultiAZSupport:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-RDSMultiAZSupport:'),
         }),
       })
     );

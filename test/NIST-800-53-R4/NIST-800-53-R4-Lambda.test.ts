@@ -10,7 +10,7 @@ import { NIST80053R4Checks } from '../../src';
 
 describe('AWS Lambda', () => {
   //Test whether Lambda functions exist within VPCs
-  test('nist80053r4LambdaFunctionsInsideVPC: - Lambda functions are contained within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+  test('nist80053r4LambdaInsideVPC: - Lambda functions are contained within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
     //Expect a POSITIVE response because no VPC is defined for the lambda function
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -22,9 +22,7 @@ describe('AWS Lambda', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-LambdaFunctionsInsideVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-LambdaInsideVPC:'),
         }),
       })
     );
@@ -44,9 +42,7 @@ describe('AWS Lambda', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-LambdaFunctionsInsideVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-LambdaInsideVPC:'),
         }),
       })
     );
@@ -78,9 +74,7 @@ describe('AWS Lambda', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-LambdaFunctionsInsideVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-LambdaInsideVPC:'),
         }),
       })
     );

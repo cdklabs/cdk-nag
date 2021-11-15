@@ -256,7 +256,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     );
   });
 
-  test('HIPAA.Security-RDSInstanceMultiAZSupport: - Non-Aurora RDS DB instances have multi-AZ support enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
+  test('HIPAA.Security-RDSMultiAZSupport: - Non-Aurora RDS DB instances have multi-AZ support enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     const vpc = new Vpc(nonCompliant, 'rVpc');
@@ -271,9 +271,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-RDSInstanceMultiAZSupport:'
-          ),
+          data: expect.stringContaining('HIPAA.Security-RDSMultiAZSupport:'),
         }),
       })
     );
@@ -292,9 +290,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-RDSInstanceMultiAZSupport:'
-          ),
+          data: expect.stringContaining('HIPAA.Security-RDSMultiAZSupport:'),
         }),
       })
     );

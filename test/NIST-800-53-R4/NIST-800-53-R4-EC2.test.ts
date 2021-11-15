@@ -12,7 +12,6 @@ import {
   InstanceType,
   MachineImage,
   Vpc,
-  CfnVPC,
   CfnInstance,
   CfnSecurityGroup,
   SecurityGroup,
@@ -97,44 +96,8 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
   });
   //Test whether the default VPC security group is closed
 
-  test('nist80053r4CheckDefaultSecurityGroupClosed: - Default VPC security group is closed - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
-    //Expect a POSITIVE response because we create a VPC within our stack and its default security group will not be closed.
-    const positive = new Stack();
-    Aspects.of(positive).add(new NIST80053R4Checks());
-    new CfnVPC(positive, 'rSecurityGroup', {
-      cidrBlock: '1.1.1.1',
-    });
-    const messages = SynthUtils.synthesize(positive).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckDefaultSecurityGroupClosed:'
-          ),
-        }),
-      })
-    );
-
-    //Create stack for negative checks
-    //Expect a NEGATIVE response because the stack is empty
-    const negative = new Stack();
-    Aspects.of(negative).add(new NIST80053R4Checks());
-
-    //Check cdk-nag response
-    const messages6 = SynthUtils.synthesize(negative).messages;
-    expect(messages6).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckDefaultSecurityGroupClosed:'
-          ),
-        }),
-      })
-    );
-  });
-
   //Test whether common ports are restricted
-  test('nist80053r4EC2CheckCommonPortsRestricted: - EC2 instances restrict common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3))', () => {
+  test('nist80053r4EC2RestrictedCommonPorts: - EC2 instances restrict common ports - (Control IDs: AC-4, CM-2, SC-7, SC-7(3))', () => {
     //Expect a POSITIVE response because the security group allows connections from port 20
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -153,7 +116,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckCommonPortsRestricted:'
+            'NIST.800.53.R4-EC2RestrictedCommonPorts:'
           ),
         }),
       })
@@ -177,7 +140,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckCommonPortsRestricted:'
+            'NIST.800.53.R4-EC2RestrictedCommonPorts:'
           ),
         }),
       })
@@ -196,7 +159,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckCommonPortsRestricted:'
+            'NIST.800.53.R4-EC2RestrictedCommonPorts:'
           ),
         }),
       })
@@ -221,7 +184,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckCommonPortsRestricted:'
+            'NIST.800.53.R4-EC2RestrictedCommonPorts:'
           ),
         }),
       })
@@ -281,7 +244,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckCommonPortsRestricted:'
+            'NIST.800.53.R4-EC2RestrictedCommonPorts:'
           ),
         }),
       })
@@ -307,9 +270,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckSSHRestricted:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-EC2RestrictedSSH:'),
         }),
       })
     );
@@ -331,9 +292,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckSSHRestricted:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-EC2RestrictedSSH:'),
         }),
       })
     );
@@ -350,9 +309,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages3).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckSSHRestricted:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-EC2RestrictedSSH:'),
         }),
       })
     );
@@ -375,9 +332,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages4).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckSSHRestricted:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-EC2RestrictedSSH:'),
         }),
       })
     );
@@ -395,9 +350,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages5).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckSSHRestricted:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-EC2RestrictedSSH:'),
         }),
       })
     );
@@ -443,16 +396,14 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages6).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckSSHRestricted:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-EC2RestrictedSSH:'),
         }),
       })
     );
   });
 
   //Test whether EC2 instances have public IPs
-  test('nist80053r4EC2CheckNoPublicIPs: - EC2 instances do not have public IPs - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
+  test('nist80053r4EC2InstanceNoPublicIp: - EC2 instances do not have public IPs - (Control IDs: AC-4, AC-6, AC-21(b), SC-7, SC-7(3))', () => {
     //Expect a POSITIVE response because the instance has a public IP
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -469,7 +420,9 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-EC2CheckNoPublicIPs:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-EC2InstanceNoPublicIp:'
+          ),
         }),
       })
     );
@@ -507,14 +460,16 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-EC2CheckNoPublicIPs:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-EC2InstanceNoPublicIp:'
+          ),
         }),
       })
     );
   });
 
   //Test whether EC2 instances dare created within VPCs
-  test('nist80053r4EC2CheckInsideVPC: - EC2 instances are created within VPCs - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+  test('nist80053r4EC2InstancesInVPC: - EC2 instances are created within VPCs - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
     //Expect a POSITIVE response because the instance is not defined inside of a VPC (subnet)
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -525,7 +480,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-EC2CheckInsideVPC:'),
+          data: expect.stringContaining('NIST.800.53.R4-EC2InstancesInVPC:'),
         }),
       })
     );
@@ -552,14 +507,14 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-EC2CheckInsideVPC:'),
+          data: expect.stringContaining('NIST.800.53.R4-EC2InstancesInVPC:'),
         }),
       })
     );
   });
 
   //Test whether detailed monitoring is enabled
-  test('nist80053r4EC2CheckDetailedMonitoring: - EC2 instances have detailed monitoring enabled - (Control IDs: CA-7(a)(b), SI-4(2), SI-4(a)(b)(c)).', () => {
+  test('nist80053r4EC2InstanceDetailedMonitoringEnabled: - EC2 instances have detailed monitoring enabled - (Control IDs: CA-7(a)(b), SI-4(2), SI-4(a)(b)(c)).', () => {
     //Expect a POSITIVE response because the instance does not have detailed monitoring enabled
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -574,7 +529,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckDetailedMonitoring:'
+            'NIST.800.53.R4-EC2InstanceDetailedMonitoringEnabled:'
           ),
         }),
       })
@@ -594,7 +549,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckDetailedMonitoring:'
+            'NIST.800.53.R4-EC2InstanceDetailedMonitoringEnabled:'
           ),
         }),
       })
@@ -622,7 +577,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-EC2CheckDetailedMonitoring:'
+            'NIST.800.53.R4-EC2InstanceDetailedMonitoringEnabled:'
           ),
         }),
       })

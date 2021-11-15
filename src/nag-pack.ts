@@ -74,6 +74,7 @@ export enum NagMessageLevel {
 export abstract class NagPack implements IAspect {
   protected verbose: boolean;
   protected logIgnores: boolean;
+  protected packName = '';
 
   constructor(props?: NagPackProps) {
     this.verbose =

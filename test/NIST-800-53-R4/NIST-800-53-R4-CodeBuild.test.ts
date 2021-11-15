@@ -10,7 +10,7 @@ import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon CodeBuild', () => {
   //Test whether CodeBuild resources store sensitive credentials as environment variables
-  test('nist80053r4CodeBuildCheckEnvVars: - CodeBuild projects DO NOT store sensitive data as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))', () => {
+  test('nist80053r4CodeBuildProjectEnvVarAwsCred: - CodeBuild projects DO NOT store sensitive data as environment variables - (Control IDs: AC-6, IA-5(7), SA-3(a))', () => {
     //Expect a POSITIVE response because AWS_ACCESS_KEY_ID is defined as a plaintext env var
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -44,7 +44,7 @@ describe('Amazon CodeBuild', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-CodeBuildCheckEnvVars:'
+            'NIST.800.53.R4-CodeBuildProjectEnvVarAwsCred:'
           ),
         }),
       })
@@ -82,7 +82,7 @@ describe('Amazon CodeBuild', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-CodeBuildCheckEnvVars:'
+            'NIST.800.53.R4-CodeBuildProjectEnvVarAwsCred:'
           ),
         }),
       })
@@ -120,7 +120,7 @@ describe('Amazon CodeBuild', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-CodeBuildCheckEnvVars:'
+            'NIST.800.53.R4-CodeBuildProjectEnvVarAwsCred:'
           ),
         }),
       })
@@ -217,7 +217,7 @@ describe('Amazon CodeBuild', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-CodeBuildCheckEnvVars:'
+            'NIST.800.53.R4-CodeBuildProjectEnvVarAwsCred:'
           ),
         }),
       })
@@ -225,7 +225,7 @@ describe('Amazon CodeBuild', () => {
   });
 
   //Test whether CodeBuild resources use OAUTH
-  test('nist80053r4CodeBuildURLCheck: - Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: SA-3(a))', () => {
+  test('nist80053r4CodeBuildProjectSourceRepoUrl: - Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH - (Control IDs: SA-3(a))', () => {
     //Expect a POSITIVE response because OAUTH is not used
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -248,7 +248,9 @@ describe('Amazon CodeBuild', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-CodeBuildURLCheck:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-CodeBuildProjectSourceRepoUrl:'
+          ),
         }),
       })
     );
@@ -279,7 +281,9 @@ describe('Amazon CodeBuild', () => {
     expect(messages6).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-CodeBuildURLCheck:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-CodeBuildProjectSourceRepoUrl:'
+          ),
         }),
       })
     );

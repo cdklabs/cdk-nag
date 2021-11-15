@@ -10,7 +10,7 @@ import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon OpenSearch Service', () => {
-  test('nist80053r4OpenSearchNodeToNodeEncrypted: - OpenSearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
+  test('nist80053r4OpenSearchNodeToNodeEncryption: - OpenSearch domains are node-to-node encrypted - (Control IDs: SC-7, SC-8, SC-8(1)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new LegacyCfnDomain(nonCompliant, 'rDomain', {});
@@ -19,7 +19,7 @@ describe('Amazon OpenSearch Service', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchNodeToNodeEncrypted:'
+            'NIST.800.53.R4-OpenSearchNodeToNodeEncryption:'
           ),
         }),
       })
@@ -33,7 +33,7 @@ describe('Amazon OpenSearch Service', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchNodeToNodeEncrypted:'
+            'NIST.800.53.R4-OpenSearchNodeToNodeEncryption:'
           ),
         }),
       })
@@ -51,7 +51,7 @@ describe('Amazon OpenSearch Service', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchNodeToNodeEncrypted:'
+            'NIST.800.53.R4-OpenSearchNodeToNodeEncryption:'
           ),
         }),
       })
@@ -69,7 +69,7 @@ describe('Amazon OpenSearch Service', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchNodeToNodeEncrypted:'
+            'NIST.800.53.R4-OpenSearchNodeToNodeEncryption:'
           ),
         }),
       })
@@ -92,14 +92,14 @@ describe('Amazon OpenSearch Service', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchNodeToNodeEncrypted:'
+            'NIST.800.53.R4-OpenSearchNodeToNodeEncryption:'
           ),
         }),
       })
     );
   });
 
-  test('nist80053r4OpenSearchRunningWithinVPC: - OpenSearch domains are running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
+  test('nist80053r4OpenSearchInVPCOnly: - OpenSearch domains are running within a VPC - (Control IDs: AC-4, SC-7, SC-7(3))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R4Checks());
     new LegacyCfnDomain(nonCompliant, 'rDomain', {});
@@ -107,9 +107,7 @@ describe('Amazon OpenSearch Service', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchRunningWithinVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-OpenSearchInVPCOnly:'),
         }),
       })
     );
@@ -121,9 +119,7 @@ describe('Amazon OpenSearch Service', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchRunningWithinVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-OpenSearchInVPCOnly:'),
         }),
       })
     );
@@ -139,9 +135,7 @@ describe('Amazon OpenSearch Service', () => {
     expect(messages3).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchRunningWithinVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-OpenSearchInVPCOnly:'),
         }),
       })
     );
@@ -157,9 +151,7 @@ describe('Amazon OpenSearch Service', () => {
     expect(messages4).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchRunningWithinVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-OpenSearchInVPCOnly:'),
         }),
       })
     );
@@ -180,9 +172,7 @@ describe('Amazon OpenSearch Service', () => {
     expect(messages5).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R4-OpenSearchRunningWithinVPC:'
-          ),
+          data: expect.stringContaining('NIST.800.53.R4-OpenSearchInVPCOnly:'),
         }),
       })
     );

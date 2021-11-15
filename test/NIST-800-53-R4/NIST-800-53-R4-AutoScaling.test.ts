@@ -10,7 +10,7 @@ import { NIST80053R4Checks } from '../../src';
 
 describe('Amazon AutoScaling', () => {
   //Test whether AutoScaling groups associated with a load balancer utilize ELB health checks
-  test('nist80053r4AutoScalingHealthChecks: - AutoScaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)', () => {
+  test('nist80053r4AutoscalingGroupELBHealthCheckRequired: - AutoScaling groups associated with load balancers utilize ELB health checks - (Control IDs: SC-5)', () => {
     //Expect a POSITIVE response because a CLB is defined and health checks are not specified
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -24,7 +24,7 @@ describe('Amazon AutoScaling', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-AutoScalingHealthChecks:'
+            'NIST.800.53.R4-AutoscalingGroupELBHealthCheckRequired:'
           ),
         }),
       })
@@ -44,7 +44,7 @@ describe('Amazon AutoScaling', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-AutoScalingHealthChecks:'
+            'NIST.800.53.R4-AutoscalingGroupELBHealthCheckRequired:'
           ),
         }),
       })
@@ -64,7 +64,7 @@ describe('Amazon AutoScaling', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-AutoScalingHealthChecks:'
+            'NIST.800.53.R4-AutoscalingGroupELBHealthCheckRequired:'
           ),
         }),
       })
@@ -102,7 +102,7 @@ describe('Amazon AutoScaling', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-AutoScalingHealthChecks:'
+            'NIST.800.53.R4-AutoscalingGroupELBHealthCheckRequired:'
           ),
         }),
       })

@@ -116,7 +116,7 @@ describe('Elastic Load Balancing', () => {
 
   //Ensure CLBs are only listening for SSL and HTTPS traffic
   //These tests are taken from AWS Solutions' tests for rule "ELB5"
-  test('nist80053r4ELBListenersUseSSLOrHTTPSOnly: - CLBs are only listening for SSL and HTTPS traffic - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23)', () => {
+  test('nist80053r4ELBTlsHttpsListenersOnly: - CLBs are only listening for SSL and HTTPS traffic - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-23)', () => {
     const positive = new Stack();
     const positive2 = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -141,7 +141,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-ELBListenersUseSSLOrHTTPS:'
+            'NIST.800.53.R4-ELBTlsHttpsListenersOnly:'
           ),
         }),
       })
@@ -151,7 +151,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-ELBListenersUseSSLOrHTTPS:'
+            'NIST.800.53.R4-ELBTlsHttpsListenersOnly:'
           ),
         }),
       })
@@ -178,7 +178,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-ELBListenersUseSSLOrHTTPS:'
+            'NIST.800.53.R4-ELBTlsHttpsListenersOnly:'
           ),
         }),
       })
@@ -187,7 +187,7 @@ describe('Elastic Load Balancing', () => {
 
   //Ensure CLBs are load balanced across AZs
   //These tests are taken form AWS Solutions' tests for rule "ELB4"
-  test('nist80053r4ELBCrossZoneBalancing: - CLBs are load balanced across AZs - (Control IDs: SC-5, CP-10)', () => {
+  test('nist80053r4ELBCrossZoneLoadBalancingEnabled: - CLBs are load balanced across AZs - (Control IDs: SC-5, CP-10)', () => {
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
     new LoadBalancer(positive, 'rELB', {
@@ -199,7 +199,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-ELBCrossZoneBalancing:'
+            'NIST.800.53.R4-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -220,7 +220,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-ELBCrossZoneBalancing:'
+            'NIST.800.53.R4-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -246,7 +246,7 @@ describe('Elastic Load Balancing', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'NIST.800.53.R4-ELBCrossZoneBalancing:'
+            'NIST.800.53.R4-ELBCrossZoneLoadBalancingEnabled:'
           ),
         }),
       })
@@ -254,7 +254,7 @@ describe('Elastic Load Balancing', () => {
   });
 
   //Test whether CLBs use ACM certs
-  test('nist80053r4ELBUseACMCerts: - CLBs use ACM certificates - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13)', () => {
+  test('nist80053r4ELBACMCertificateRequired: - CLBs use ACM certificates - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13)', () => {
     //Expect a POSITIVE response because The CLB listener does not use an ACM certificate
     const positive = new Stack();
     Aspects.of(positive).add(new NIST80053R4Checks());
@@ -272,7 +272,9 @@ describe('Elastic Load Balancing', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-ELBUseACMCerts:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-ELBACMCertificateRequired:'
+          ),
         }),
       })
     );
@@ -293,7 +295,9 @@ describe('Elastic Load Balancing', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-ELBUseACMCerts:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-ELBACMCertificateRequired:'
+          ),
         }),
       })
     );
@@ -324,7 +328,9 @@ describe('Elastic Load Balancing', () => {
     expect(messages6).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NIST.800.53.R4-ELBUseACMCerts:'),
+          data: expect.stringContaining(
+            'NIST.800.53.R4-ELBACMCertificateRequired:'
+          ),
         }),
       })
     );
