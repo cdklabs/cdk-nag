@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnVPC, CfnFlowLog } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveResourceFromInstrinsic } from '../../../nag-pack';
@@ -10,24 +11,28 @@ import { resolveResourceFromInstrinsic } from '../../../nag-pack';
  * VPCs have Flow Logs enabled
  * @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnVPC) {
-    const vpcLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-    let found = false;
-    for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnFlowLog) {
-        if (isMatchingCompliantFlowLog(child, vpcLogicalId)) {
-          found = true;
-          break;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnVPC) {
+      const vpcLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      let found = false;
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnFlowLog) {
+          if (isMatchingCompliantFlowLog(child, vpcLogicalId)) {
+            found = true;
+            break;
+          }
         }
       }
+      if (!found) {
+        return false;
+      }
     }
-    if (!found) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether a given Flow Log is compliant and associated with the given VPC

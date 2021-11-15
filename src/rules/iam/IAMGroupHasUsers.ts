@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnGroup, CfnUser, CfnUserToGroupAddition } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveResourceFromInstrinsic } from '../../nag-pack';
@@ -11,30 +12,34 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  * @param node the CfnResource to check
  */
 
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnGroup) {
-    const groupLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-    const groupName = Stack.of(node).resolve(node.groupName);
-    let found = false;
-    for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnUser) {
-        if (isMatchingUser(child, groupLogicalId, groupName)) {
-          found = true;
-          break;
-        }
-      } else if (child instanceof CfnUserToGroupAddition) {
-        if (isMatchingGroupAddition(child, groupLogicalId, groupName)) {
-          found = true;
-          break;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnGroup) {
+      const groupLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const groupName = Stack.of(node).resolve(node.groupName);
+      let found = false;
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnUser) {
+          if (isMatchingUser(child, groupLogicalId, groupName)) {
+            found = true;
+            break;
+          }
+        } else if (child instanceof CfnUserToGroupAddition) {
+          if (isMatchingGroupAddition(child, groupLogicalId, groupName)) {
+            found = true;
+            break;
+          }
         }
       }
+      if (!found) {
+        return false;
+      }
     }
-    if (!found) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether the IAM User belongs to the IAM Group

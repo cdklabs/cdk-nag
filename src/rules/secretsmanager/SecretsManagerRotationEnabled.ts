@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 
 import {
   CfnSecret,
@@ -15,50 +16,54 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  * Secrets have automatic rotation scheduled
  * @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnSecret) {
-    const secretLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-    const secretTargetAttachmentLogicalIds = Array<string>();
-    const cfnSecretTargetAttachments = Array<CfnSecretTargetAttachment>();
-    const cfnRotationSchedules = Array<CfnRotationSchedule>();
-    for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnSecretTargetAttachment) {
-        cfnSecretTargetAttachments.push(child);
-      } else if (child instanceof CfnRotationSchedule) {
-        cfnRotationSchedules.push(child);
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnSecret) {
+      const secretLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const secretTargetAttachmentLogicalIds = Array<string>();
+      const cfnSecretTargetAttachments = Array<CfnSecretTargetAttachment>();
+      const cfnRotationSchedules = Array<CfnRotationSchedule>();
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnSecretTargetAttachment) {
+          cfnSecretTargetAttachments.push(child);
+        } else if (child instanceof CfnRotationSchedule) {
+          cfnRotationSchedules.push(child);
+        }
       }
-    }
-    if (cfnRotationSchedules.length === 0) {
-      return false;
-    }
-    let found = false;
-    for (const child of cfnSecretTargetAttachments) {
-      const attachmentLogicalId = getMatchingSecretTargetAttachment(
-        child,
-        secretLogicalId
-      );
-      if (attachmentLogicalId) {
-        secretTargetAttachmentLogicalIds.push(attachmentLogicalId);
+      if (cfnRotationSchedules.length === 0) {
+        return false;
       }
-    }
-    for (const child of cfnRotationSchedules) {
-      if (
-        isMatchingRotationSchedule(
+      let found = false;
+      for (const child of cfnSecretTargetAttachments) {
+        const attachmentLogicalId = getMatchingSecretTargetAttachment(
           child,
-          secretLogicalId,
-          secretTargetAttachmentLogicalIds
-        )
-      ) {
-        found = true;
-        break;
+          secretLogicalId
+        );
+        if (attachmentLogicalId) {
+          secretTargetAttachmentLogicalIds.push(attachmentLogicalId);
+        }
+      }
+      for (const child of cfnRotationSchedules) {
+        if (
+          isMatchingRotationSchedule(
+            child,
+            secretLogicalId,
+            secretTargetAttachmentLogicalIds
+          )
+        ) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return false;
       }
     }
-    if (!found) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether a given Secret Target Attachment is associated with the given secret.

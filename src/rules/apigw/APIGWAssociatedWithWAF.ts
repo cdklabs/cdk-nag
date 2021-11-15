@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnStage } from '@aws-cdk/aws-apigateway';
 import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
@@ -11,33 +12,37 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  * Rest API stages are associated with AWS WAFv2 web ACLs
  * @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnStage) {
-    const stageLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-    const stageName = resolveResourceFromInstrinsic(node, node.stageName);
-    const restApiId = resolveResourceFromInstrinsic(node, node.restApiId);
-    let found = false;
-    for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnWebACLAssociation) {
-        if (
-          isMatchingWebACLAssociation(
-            child,
-            stageLogicalId,
-            stageName,
-            restApiId
-          )
-        ) {
-          found = true;
-          break;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnStage) {
+      const stageLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const stageName = resolveResourceFromInstrinsic(node, node.stageName);
+      const restApiId = resolveResourceFromInstrinsic(node, node.restApiId);
+      let found = false;
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnWebACLAssociation) {
+          if (
+            isMatchingWebACLAssociation(
+              child,
+              stageLogicalId,
+              stageName,
+              restApiId
+            )
+          ) {
+            found = true;
+            break;
+          }
         }
       }
+      if (!found) {
+        return false;
+      }
     }
-    if (!found) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether a given Web ACL Association is associated with the given Rest API

@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import {
   CfnPolicy,
   CfnManagedPolicy,
@@ -15,18 +16,22 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  * IAM policies do not grant admin access
  * @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
-    if (checkDocument(node, node.policyDocument)) {
-      return false;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
+      if (checkDocument(node, node.policyDocument)) {
+        return false;
+      }
+    } else if (node instanceof CfnGroup || node instanceof CfnRole) {
+      if (node.policies != undefined && checkDocument(node, node.policies)) {
+        return false;
+      }
     }
-  } else if (node instanceof CfnGroup || node instanceof CfnRole) {
-    if (node.policies != undefined && checkDocument(node, node.policies)) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function for parsing through the policy document

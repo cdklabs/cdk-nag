@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnCluster, CfnClusterParameterGroup } from '@aws-cdk/aws-redshift';
 import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveResourceFromInstrinsic } from '../../nag-pack';
@@ -11,30 +12,34 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  * @param node the CfnResource to check
  */
 
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnCluster) {
-    const clusterParameterGroupName = resolveResourceFromInstrinsic(
-      node,
-      node.clusterParameterGroupName
-    );
-    if (clusterParameterGroupName === undefined) {
-      return false;
-    }
-    let found = false;
-    for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnClusterParameterGroup) {
-        if (isMatchingParameterGroup(child, clusterParameterGroupName)) {
-          found = true;
-          break;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnCluster) {
+      const clusterParameterGroupName = resolveResourceFromInstrinsic(
+        node,
+        node.clusterParameterGroupName
+      );
+      if (clusterParameterGroupName === undefined) {
+        return false;
+      }
+      let found = false;
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnClusterParameterGroup) {
+          if (isMatchingParameterGroup(child, clusterParameterGroupName)) {
+            found = true;
+            break;
+          }
         }
       }
+      if (!found) {
+        return false;
+      }
     }
-    if (!found) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether the Parameter Group enforces SSL and is associated with the given Redshift cluster

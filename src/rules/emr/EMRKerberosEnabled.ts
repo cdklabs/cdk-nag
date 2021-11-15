@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnCluster } from '@aws-cdk/aws-emr';
 import { CfnResource, Stack } from '@aws-cdk/core';
 
@@ -9,12 +10,18 @@ import { CfnResource, Stack } from '@aws-cdk/core';
  * EMR clusters have Kerberos enabled
  * @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnCluster) {
-    const kerberosAttributes = Stack.of(node).resolve(node.kerberosAttributes);
-    if (kerberosAttributes == undefined) {
-      return false;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnCluster) {
+      const kerberosAttributes = Stack.of(node).resolve(
+        node.kerberosAttributes
+      );
+      if (kerberosAttributes == undefined) {
+        return false;
+      }
     }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);

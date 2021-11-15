@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
@@ -14,29 +15,33 @@ const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
  * @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnSecurityGroup) {
-    const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
-    if (ingressRules != undefined) {
-      //For each ingress rule, ensure that it does not allow unrestricted SSH traffic.
-      for (const rule of ingressRules) {
-        const resolvedRule = Stack.of(node).resolve(rule);
-        for (const portNum of BLOCKED_PORTS) {
-          if (!testPort(node, resolvedRule, portNum)) {
-            return false;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnSecurityGroup) {
+      const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
+      if (ingressRules != undefined) {
+        //For each ingress rule, ensure that it does not allow unrestricted SSH traffic.
+        for (const rule of ingressRules) {
+          const resolvedRule = Stack.of(node).resolve(rule);
+          for (const portNum of BLOCKED_PORTS) {
+            if (!testPort(node, resolvedRule, portNum)) {
+              return false;
+            }
           }
         }
       }
-    }
-  } else if (node instanceof CfnSecurityGroupIngress) {
-    for (const portNum of BLOCKED_PORTS) {
-      if (!testPort(node, node, portNum)) {
-        return false;
+    } else if (node instanceof CfnSecurityGroupIngress) {
+      for (const portNum of BLOCKED_PORTS) {
+        if (!testPort(node, node, portNum)) {
+          return false;
+        }
       }
     }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to identify if the given port number is unrestricted

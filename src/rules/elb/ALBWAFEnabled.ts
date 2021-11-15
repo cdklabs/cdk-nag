@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
@@ -15,30 +16,34 @@ import {
  * @param node the CfnResource to check
  */
 
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnLoadBalancer) {
-    const type = resolveIfPrimitive(node, node.type);
-    if (type === undefined || type === 'application') {
-      const loadBalancerLogicalId = resolveResourceFromInstrinsic(
-        node,
-        node.ref
-      );
-      let found = false;
-      for (const child of Stack.of(node).node.findAll()) {
-        if (child instanceof CfnWebACLAssociation) {
-          if (isMatchingWebACLAssociation(child, loadBalancerLogicalId)) {
-            found = true;
-            break;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnLoadBalancer) {
+      const type = resolveIfPrimitive(node, node.type);
+      if (type === undefined || type === 'application') {
+        const loadBalancerLogicalId = resolveResourceFromInstrinsic(
+          node,
+          node.ref
+        );
+        let found = false;
+        for (const child of Stack.of(node).node.findAll()) {
+          if (child instanceof CfnWebACLAssociation) {
+            if (isMatchingWebACLAssociation(child, loadBalancerLogicalId)) {
+              found = true;
+              break;
+            }
           }
         }
-      }
-      if (!found) {
-        return false;
+        if (!found) {
+          return false;
+        }
       }
     }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether a given Web ACL Association is associated with the given Load Balancer

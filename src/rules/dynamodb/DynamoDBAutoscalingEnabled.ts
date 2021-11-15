@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnScalableTarget } from '@aws-cdk/aws-applicationautoscaling';
 import { CfnTable, BillingMode } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
@@ -12,58 +13,62 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  * @param node the CfnResource to check
  */
 
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnTable) {
-    if (
-      resolveResourceFromInstrinsic(node, node.billingMode) !==
-      BillingMode.PAY_PER_REQUEST
-    ) {
-      const indexWriteMatches = [''];
-      const indexReadMatches = [''];
-      const tableLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-      const tableName = Stack.of(node).resolve(node.tableName);
-      const globalSecondaryIndexes = Stack.of(node).resolve(
-        node.globalSecondaryIndexes
-      );
-      if (Array.isArray(globalSecondaryIndexes)) {
-        globalSecondaryIndexes.forEach((gsi) => {
-          const resolvedGsi = Stack.of(node).resolve(gsi);
-          indexWriteMatches.push(resolvedGsi.indexName);
-          indexReadMatches.push(resolvedGsi.indexName);
-        });
-      }
-      for (const child of Stack.of(node).node.findAll()) {
-        if (child instanceof CfnScalableTarget) {
-          const writeMatchIndex = isMatchingScalableTarget(
-            child,
-            'WriteCapacityUnits',
-            tableLogicalId,
-            tableName,
-            indexWriteMatches
-          );
-          if (writeMatchIndex !== -1) {
-            indexWriteMatches.splice(writeMatchIndex, 1);
-            continue;
-          }
-          const readMatchIndex = isMatchingScalableTarget(
-            child,
-            'ReadCapacityUnits',
-            tableLogicalId,
-            tableName,
-            indexReadMatches
-          );
-          if (readMatchIndex !== -1) {
-            indexReadMatches.splice(readMatchIndex, 1);
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnTable) {
+      if (
+        resolveResourceFromInstrinsic(node, node.billingMode) !==
+        BillingMode.PAY_PER_REQUEST
+      ) {
+        const indexWriteMatches = [''];
+        const indexReadMatches = [''];
+        const tableLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+        const tableName = Stack.of(node).resolve(node.tableName);
+        const globalSecondaryIndexes = Stack.of(node).resolve(
+          node.globalSecondaryIndexes
+        );
+        if (Array.isArray(globalSecondaryIndexes)) {
+          globalSecondaryIndexes.forEach((gsi) => {
+            const resolvedGsi = Stack.of(node).resolve(gsi);
+            indexWriteMatches.push(resolvedGsi.indexName);
+            indexReadMatches.push(resolvedGsi.indexName);
+          });
+        }
+        for (const child of Stack.of(node).node.findAll()) {
+          if (child instanceof CfnScalableTarget) {
+            const writeMatchIndex = isMatchingScalableTarget(
+              child,
+              'WriteCapacityUnits',
+              tableLogicalId,
+              tableName,
+              indexWriteMatches
+            );
+            if (writeMatchIndex !== -1) {
+              indexWriteMatches.splice(writeMatchIndex, 1);
+              continue;
+            }
+            const readMatchIndex = isMatchingScalableTarget(
+              child,
+              'ReadCapacityUnits',
+              tableLogicalId,
+              tableName,
+              indexReadMatches
+            );
+            if (readMatchIndex !== -1) {
+              indexReadMatches.splice(readMatchIndex, 1);
+            }
           }
         }
-      }
-      if (indexWriteMatches.length != 0 || indexReadMatches.length != 0) {
-        return false;
+        if (indexWriteMatches.length != 0 || indexReadMatches.length != 0) {
+          return false;
+        }
       }
     }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether the CfnScalableTarget is related to the given Table index

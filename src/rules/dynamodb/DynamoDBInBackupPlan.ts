@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 import { CfnBackupSelection } from '@aws-cdk/aws-backup';
 import { CfnTable } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
@@ -12,25 +13,29 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  * @param node the CfnResource to check
  */
 
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnTable) {
-    const tableLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-    const tableName = Stack.of(node).resolve(node.tableName);
-    let found = false;
-    for (const child of Stack.of(node).node.findAll()) {
-      if (child instanceof CfnBackupSelection) {
-        if (isMatchingSelection(child, tableLogicalId, tableName)) {
-          found = true;
-          break;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnTable) {
+      const tableLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const tableName = Stack.of(node).resolve(node.tableName);
+      let found = false;
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnBackupSelection) {
+          if (isMatchingSelection(child, tableLogicalId, tableName)) {
+            found = true;
+            break;
+          }
         }
       }
+      if (!found) {
+        return false;
+      }
     }
-    if (!found) {
-      return false;
-    }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
 
 /**
  * Helper function to check whether the Backup Plan Selection contains the given Table

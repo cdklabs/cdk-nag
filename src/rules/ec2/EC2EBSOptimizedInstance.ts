@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { parse } from 'path';
 
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
@@ -32,18 +33,22 @@ const DEFAULT_TYPE = 'm1.small';
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-optimized.html#previous
  *  @param node the CfnResource to check
  */
-export default function (node: CfnResource): boolean {
-  if (node instanceof CfnInstance) {
-    const instanceType = node.instanceType
-      ? resolveIfPrimitive(node, node.instanceType)
-      : DEFAULT_TYPE;
-    const ebsOptimized = Stack.of(node).resolve(node.ebsOptimized);
-    if (
-      EBS_OPTIMIZED_SUPPORTED.includes(instanceType) &&
-      ebsOptimized !== true
-    ) {
-      return false;
+export default Object.defineProperty(
+  (node: CfnResource): boolean => {
+    if (node instanceof CfnInstance) {
+      const instanceType = node.instanceType
+        ? resolveIfPrimitive(node, node.instanceType)
+        : DEFAULT_TYPE;
+      const ebsOptimized = Stack.of(node).resolve(node.ebsOptimized);
+      if (
+        EBS_OPTIMIZED_SUPPORTED.includes(instanceType) &&
+        ebsOptimized !== true
+      ) {
+        return false;
+      }
     }
-  }
-  return true;
-}
+    return true;
+  },
+  'name',
+  { value: parse(__filename).name }
+);
