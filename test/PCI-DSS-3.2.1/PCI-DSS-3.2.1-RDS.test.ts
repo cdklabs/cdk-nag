@@ -7,9 +7,8 @@ import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
   CfnDBInstance,
-  DatabaseCluster as AuroraCluster,
+  DatabaseCluster,
   DatabaseClusterEngine,
-  DatabaseInstance as RdsInstance,
   DatabaseInstance,
   DatabaseInstanceEngine,
   MariaDbEngineVersion,
@@ -61,7 +60,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new PCIDSS321Checks());
     const vpc = new Vpc(nonCompliant, 'rVpc');
-    new RdsInstance(nonCompliant, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -80,7 +79,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new PCIDSS321Checks());
     const vpc2 = new Vpc(compliant, 'rVpc');
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -295,7 +294,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
   test('PCI.DSS.321-RDSStorageEncrypted: RDS DB instances and Aurora DB clusters have storage encryption enabled - (Control IDs: 3.4, 8.2.1)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new PCIDSS321Checks());
-    new AuroraCluster(nonCompliant, 'rDbCluster', {
+    new DatabaseCluster(nonCompliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
@@ -312,7 +311,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     );
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new PCIDSS321Checks());
-    new RdsInstance(nonCompliant2, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -331,14 +330,14 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new PCIDSS321Checks());
     const vpc = new Vpc(compliant, 'rVpc');
-    new AuroraCluster(compliant, 'rDbCluster', {
+    new DatabaseCluster(compliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
       instanceProps: { vpc: vpc },
       storageEncrypted: true,
     });
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),

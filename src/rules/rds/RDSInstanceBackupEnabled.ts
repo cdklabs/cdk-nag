@@ -15,7 +15,7 @@ export default Object.defineProperty(
   (node: CfnResource): boolean => {
     if (node instanceof CfnDBInstance) {
       const backup = resolveIfPrimitive(node, node.backupRetentionPeriod);
-      if (backup == undefined || backup <= 0) {
+      if (backup !== undefined && backup <= 0) {
         return false;
       }
     }

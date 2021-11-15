@@ -8,9 +8,8 @@ import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
   CfnDBInstance,
-  DatabaseCluster as AuroraCluster,
+  DatabaseCluster,
   DatabaseClusterEngine,
-  DatabaseInstance as RdsInstance,
   DatabaseInstance,
   DatabaseInstanceEngine,
   MariaDbEngineVersion,
@@ -99,26 +98,10 @@ describe('Amazon Relational Database Service (RDS)', () => {
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     new CfnDBInstance(nonCompliant, 'rDbInstance', {
       dbInstanceClass: 'db.t3.micro',
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-RDSInstanceBackupEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
-    new CfnDBInstance(nonCompliant2, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
       backupRetentionPeriod: 0,
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages4).toContainEqual(
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
@@ -132,10 +115,13 @@ describe('Amazon Relational Database Service (RDS)', () => {
     Aspects.of(compliant).add(new HIPAASecurityChecks());
     new CfnDBInstance(compliant, 'rDbInstance', {
       dbInstanceClass: 'db.t3.micro',
+    });
+    new CfnDBInstance(compliant, 'rDbInstance2', {
+      dbInstanceClass: 'db.t3.micro',
       backupRetentionPeriod: 15,
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
@@ -169,7 +155,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     ).addSelection('Selection', {
       resources: [
         BackupResource.fromRdsDatabaseInstance(
-          new RdsInstance(compliant, 'rDbInstance2', {
+          new DatabaseInstance(compliant, 'rDbInstance2', {
             engine: DatabaseInstanceEngine.postgres({
               version: PostgresEngineVersion.VER_13_2,
             }),
@@ -191,7 +177,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
   test('HIPAA.Security-RDSInstanceDeletionProtectionEnabled: - RDS DB instances and Aurora DB clusters have Deletion Protection enabled - (Control IDs: 164.308(a)(7)(i), 164.308(a)(7)(ii)(C))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    new AuroraCluster(nonCompliant, 'rDbCluster', {
+    new DatabaseCluster(nonCompliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
@@ -209,7 +195,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     );
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
-    new RdsInstance(nonCompliant2, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -230,14 +216,14 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new HIPAASecurityChecks());
     const vpc = new Vpc(compliant, 'rVpc');
-    new AuroraCluster(compliant, 'rDbCluster', {
+    new DatabaseCluster(compliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
       instanceProps: { vpc: vpc },
       deletionProtection: true,
     });
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -260,7 +246,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     const vpc = new Vpc(nonCompliant, 'rVpc');
-    new RdsInstance(nonCompliant, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -279,7 +265,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new HIPAASecurityChecks());
     const vpc2 = new Vpc(compliant, 'rVpc');
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -300,7 +286,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
     const vpc = new Vpc(nonCompliant, 'rVpc');
-    new RdsInstance(nonCompliant, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -321,7 +307,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new HIPAASecurityChecks());
     const vpc2 = new Vpc(compliant, 'rVpc');
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -538,7 +524,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
   test('HIPAA.Security-RDSStorageEncrypted: RDS DB instances and Aurora DB clusters have storage encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    new AuroraCluster(nonCompliant, 'rDbCluster', {
+    new DatabaseCluster(nonCompliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
@@ -555,7 +541,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     );
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
-    new RdsInstance(nonCompliant2, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -574,14 +560,14 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new HIPAASecurityChecks());
     const vpc = new Vpc(compliant, 'rVpc');
-    new AuroraCluster(compliant, 'rDbCluster', {
+    new DatabaseCluster(compliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
       instanceProps: { vpc: vpc },
       storageEncrypted: true,
     });
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),

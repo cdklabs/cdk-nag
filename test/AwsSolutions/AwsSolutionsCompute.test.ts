@@ -609,7 +609,7 @@ describe('AWS Solutions Compute Checks', () => {
         })
       );
     });
-    test('awsSolutionsElb2a: ALBs have access logs enabled', () => {
+    test('awsSolutionsElb2: ELBs have access logs enabled', () => {
       const positive = new Stack();
       Aspects.of(positive).add(new AwsSolutionsChecks());
       new ApplicationLoadBalancer(positive, 'rALB', {
@@ -619,46 +619,30 @@ describe('AWS Solutions Compute Checks', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ELB2a:'),
+            data: expect.stringContaining('AwsSolutions-ELB2:'),
+          }),
+        })
+      );
+      const positive2 = new Stack();
+      Aspects.of(positive2).add(new AwsSolutionsChecks());
+      new LoadBalancer(positive2, 'rELB', {
+        vpc: new Vpc(positive2, 'rVPC'),
+        accessLoggingPolicy: {
+          s3BucketName: 'foo',
+          enabled: false,
+        },
+      });
+      const messages2 = SynthUtils.synthesize(positive).messages;
+      expect(messages2).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('AwsSolutions-ELB2:'),
           }),
         })
       );
       const negative = new Stack(undefined, undefined, {
         env: { region: 'us-east-1' },
       });
-      Aspects.of(negative).add(new AwsSolutionsChecks());
-      const alb = new ApplicationLoadBalancer(negative, 'rALB', {
-        vpc: new Vpc(negative, 'rVPC'),
-      });
-      alb.logAccessLogs(new Bucket(negative, 'rLogsBucket'));
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ELB2a:'),
-          }),
-        })
-      );
-    });
-    test('awsSolutionsElb2e: CLBs have access logs enabled', () => {
-      const positive = new Stack();
-      Aspects.of(positive).add(new AwsSolutionsChecks());
-      new LoadBalancer(positive, 'rELB', {
-        vpc: new Vpc(positive, 'rVPC'),
-        accessLoggingPolicy: {
-          s3BucketName: 'foo',
-          enabled: false,
-        },
-      });
-      const messages = SynthUtils.synthesize(positive).messages;
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ELB2e:'),
-          }),
-        })
-      );
-      const negative = new Stack();
       Aspects.of(negative).add(new AwsSolutionsChecks());
       new LoadBalancer(negative, 'rELB', {
         vpc: new Vpc(negative, 'rVPC'),
@@ -667,11 +651,15 @@ describe('AWS Solutions Compute Checks', () => {
           enabled: true,
         },
       });
-      const messages2 = SynthUtils.synthesize(negative).messages;
-      expect(messages2).not.toContainEqual(
+      const alb = new ApplicationLoadBalancer(negative, 'rALB', {
+        vpc: new Vpc(negative, 'rVPC2'),
+      });
+      alb.logAccessLogs(new Bucket(negative, 'rLogsBucket'));
+      const messages3 = SynthUtils.synthesize(negative).messages;
+      expect(messages3).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-ELB2e:'),
+            data: expect.stringContaining('AwsSolutions-ELB2:'),
           }),
         })
       );

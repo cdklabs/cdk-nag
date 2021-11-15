@@ -107,6 +107,24 @@ describe('Amazon OpenSearch Service', () => {
     );
   });
 
+  test('hipaaSecurityOpenSearchErrorLogsToCloudWatch: - OpenSearch Service domains stream error logs to CloudWatch Logs - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b))', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+    new LegacyDomain(nonCompliant, 'rDomain', {
+      version: ElasticsearchVersion.V7_10,
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'HIPAA.Security-OpenSearchErrorLogsToCloudWatch:'
+          ),
+        }),
+      })
+    );
+  });
+
   test('hipaaSecurityOpenSearchInVPCOnly: - OpenSearch Service domains are within VPCs - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
@@ -186,180 +204,162 @@ describe('Amazon OpenSearch Service', () => {
     );
   });
 
-  test('hipaaSecurityOpenSearchLogsToCloudWatch: - OpenSearch Service domains stream error logs to CloudWatch Logs - (Control IDs: 164.308(a)(3)(ii)(A), 164.312(b))', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
-    new LegacyDomain(nonCompliant3, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-    });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new HIPAASecurityChecks());
-    new Domain(nonCompliant4, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-    });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
-    new LegacyDomain(compliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { appLogEnabled: true },
-    });
-    new Domain(compliant, 'rDomain2', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { appLogEnabled: true },
-    });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
+  const nonCompliant2 = new Stack();
+  Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+  new Domain(nonCompliant2, 'rDomain', {
+    version: EngineVersion.OPENSEARCH_1_0,
   });
-
-  test('hipaaSecurityOpenSearchNodeToNodeEncryption: - OpenSearch Service domains are node-to-node encrypted - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
-    new LegacyCfnDomain(nonCompliant, 'rDomain', {});
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
-    new CfnDomain(nonCompliant2, 'rDomain', {});
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
-    new LegacyCfnDomain(nonCompliant3, 'rDomain', {
-      nodeToNodeEncryptionOptions: {
-        enabled: false,
-      },
-    });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new HIPAASecurityChecks());
-    new CfnDomain(nonCompliant4, 'rDomain', {
-      nodeToNodeEncryptionOptions: {
-        enabled: false,
-      },
-    });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new HIPAASecurityChecks());
-    new LegacyCfnDomain(compliant, 'rDomain', {
-      nodeToNodeEncryptionOptions: {
-        enabled: true,
-      },
-    });
-    new CfnDomain(compliant, 'rDomain2', {
-      nodeToNodeEncryptionOptions: {
-        enabled: true,
-      },
-    });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
-          ),
-        }),
-      })
-    );
+  const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchErrorLogsToCloudWatch:'
+        ),
+      }),
+    })
+  );
+  const nonCompliant3 = new Stack();
+  Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
+  new LegacyDomain(nonCompliant3, 'rDomain', {
+    version: ElasticsearchVersion.V7_10,
+    logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
   });
+  const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+  expect(messages3).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchErrorLogsToCloudWatch:'
+        ),
+      }),
+    })
+  );
+
+  const nonCompliant4 = new Stack();
+  Aspects.of(nonCompliant4).add(new HIPAASecurityChecks());
+  new Domain(nonCompliant4, 'rDomain', {
+    version: EngineVersion.OPENSEARCH_1_0,
+    logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+  });
+  const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
+  expect(messages4).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchErrorLogsToCloudWatch:'
+        ),
+      }),
+    })
+  );
+
+  const compliant = new Stack();
+  Aspects.of(compliant).add(new HIPAASecurityChecks());
+  new LegacyDomain(compliant, 'rDomain', {
+    version: ElasticsearchVersion.V7_10,
+    logging: { appLogEnabled: true },
+  });
+  new Domain(compliant, 'rDomain2', {
+    version: EngineVersion.OPENSEARCH_1_0,
+    logging: { appLogEnabled: true },
+  });
+  const messages5 = SynthUtils.synthesize(compliant).messages;
+  expect(messages5).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchErrorLogsToCloudWatch:'
+        ),
+      }),
+    })
+  );
+});
+
+test('hipaaSecurityOpenSearchNodeToNodeEncryption: - OpenSearch Service domains are node-to-node encrypted - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(1), 164.312(e)(2)(i), 164.312(e)(2)(ii))', () => {
+  const nonCompliant = new Stack();
+  Aspects.of(nonCompliant).add(new HIPAASecurityChecks());
+  new LegacyCfnDomain(nonCompliant, 'rDomain', {});
+  const messages = SynthUtils.synthesize(nonCompliant).messages;
+  expect(messages).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
+        ),
+      }),
+    })
+  );
+
+  const nonCompliant2 = new Stack();
+  Aspects.of(nonCompliant2).add(new HIPAASecurityChecks());
+  new CfnDomain(nonCompliant2, 'rDomain', {});
+  const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+  expect(messages2).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
+        ),
+      }),
+    })
+  );
+
+  const nonCompliant3 = new Stack();
+  Aspects.of(nonCompliant3).add(new HIPAASecurityChecks());
+  new LegacyCfnDomain(nonCompliant3, 'rDomain', {
+    nodeToNodeEncryptionOptions: {
+      enabled: false,
+    },
+  });
+  const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+  expect(messages3).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
+        ),
+      }),
+    })
+  );
+
+  const nonCompliant4 = new Stack();
+  Aspects.of(nonCompliant4).add(new HIPAASecurityChecks());
+  new CfnDomain(nonCompliant4, 'rDomain', {
+    nodeToNodeEncryptionOptions: {
+      enabled: false,
+    },
+  });
+  const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
+  expect(messages4).toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
+        ),
+      }),
+    })
+  );
+
+  const compliant = new Stack();
+  Aspects.of(compliant).add(new HIPAASecurityChecks());
+  new LegacyCfnDomain(compliant, 'rDomain', {
+    nodeToNodeEncryptionOptions: {
+      enabled: true,
+    },
+  });
+  new CfnDomain(compliant, 'rDomain2', {
+    nodeToNodeEncryptionOptions: {
+      enabled: true,
+    },
+  });
+  const messages5 = SynthUtils.synthesize(compliant).messages;
+  expect(messages5).not.toContainEqual(
+    expect.objectContaining({
+      entry: expect.objectContaining({
+        data: expect.stringContaining(
+          'HIPAA.Security-OpenSearchNodeToNodeEncryption:'
+        ),
+      }),
+    })
+  );
 });

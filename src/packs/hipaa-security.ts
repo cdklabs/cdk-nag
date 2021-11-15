@@ -74,8 +74,8 @@ import {
 import { LambdaConcurrency, LambdaDlq, LambdaInsideVPC } from '../rules/lambda';
 import {
   OpenSearchEncryptedAtRest,
+  OpenSearchErrorLogsToCloudWatch,
   OpenSearchInVPCOnly,
-  OpenSearchLogsToCloudWatch,
   OpenSearchNodeToNodeEncryption,
 } from '../rules/opensearch';
 import {
@@ -720,7 +720,7 @@ export class HIPAASecurityChecks extends NagPack {
       explanation:
         'Ensure Amazon OpenSearch Service domains have error logs enabled and streamed to Amazon CloudWatch Logs for retention and response. Domain error logs can assist with security and access audits, and can help to diagnose availability issues.',
       level: NagMessageLevel.ERROR,
-      rule: OpenSearchLogsToCloudWatch,
+      rule: OpenSearchErrorLogsToCloudWatch,
       node: node,
     });
     this.applyRule({

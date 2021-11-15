@@ -3,7 +3,6 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveIfPrimitive } from '../../nag-pack';
@@ -14,16 +13,13 @@ import { resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): boolean => {
     if (node instanceof CfnAutoScalingGroup) {
-      //get all associated CLBs
       const classicLBs = Stack.of(node).resolve(node.loadBalancerNames);
-      //get all associated Application LBs, Gateway LBs, and Network LBs
       const otherLBs = Stack.of(node).resolve(node.targetGroupArns);
       if (
         (otherLBs != undefined && otherLBs.length > 0) ||
         (classicLBs != undefined && classicLBs.length > 0)
       ) {
         const healthCheckType = resolveIfPrimitive(node, node.healthCheckType);
-        //Do we use ELB health checks?
         if (healthCheckType != undefined) {
           if (healthCheckType != 'ELB') {
             return false;

@@ -3,7 +3,6 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
 

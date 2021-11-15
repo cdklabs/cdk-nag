@@ -3,7 +3,6 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-
 import { CfnLogGroup } from '@aws-cdk/aws-logs';
 import { CfnResource } from '@aws-cdk/core';
 

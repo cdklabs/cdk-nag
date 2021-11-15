@@ -8,9 +8,7 @@ import { Vpc } from '@aws-cdk/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
   CfnDBInstance,
-  DatabaseCluster as AuroraCluster,
   DatabaseClusterEngine,
-  DatabaseInstance as RdsInstance,
   DatabaseInstance,
   DatabaseInstanceEngine,
   MariaDbEngineVersion,
@@ -18,6 +16,7 @@ import {
   SqlServerEngineVersion,
   MysqlEngineVersion,
   OracleEngineVersion,
+  DatabaseCluster,
 } from '@aws-cdk/aws-rds';
 import { Aspects, Stack } from '@aws-cdk/core';
 import { NIST80053R5Checks } from '../../src';
@@ -82,7 +81,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     ).addSelection('Selection', {
       resources: [
         BackupResource.fromRdsDatabaseInstance(
-          new RdsInstance(compliant, 'rDbInstance2', {
+          new DatabaseInstance(compliant, 'rDbInstance2', {
             engine: DatabaseInstanceEngine.postgres({
               version: PostgresEngineVersion.VER_13_2,
             }),
@@ -106,26 +105,10 @@ describe('Amazon Relational Database Service (RDS)', () => {
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     new CfnDBInstance(nonCompliant, 'rDbInstance', {
       dbInstanceClass: 'db.t3.micro',
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R5-RDSInstanceBackupEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
-    new CfnDBInstance(nonCompliant2, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
       backupRetentionPeriod: 0,
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages4).toContainEqual(
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
@@ -139,10 +122,13 @@ describe('Amazon Relational Database Service (RDS)', () => {
     Aspects.of(compliant).add(new NIST80053R5Checks());
     new CfnDBInstance(compliant, 'rDbInstance', {
       dbInstanceClass: 'db.t3.micro',
+    });
+    new CfnDBInstance(compliant, 'rDbInstance2', {
+      dbInstanceClass: 'db.t3.micro',
       backupRetentionPeriod: 15,
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
@@ -156,7 +142,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
   test('NIST.800.53.R5-RDSInstanceDeletionProtectionEnabled: - RDS DB instances and Aurora DB clusters have Deletion Protection enabled - (Control IDs: CA-7(4)(c), CM-3a, CP-1a.1(b), CP-1a.2, CP-2a, CP-2a.6, CP-2a.7, CP-2d, CP-2e, CP-2(5), SA-15a.4, SC-5(2), SC-22, SI-13(5))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
-    new AuroraCluster(nonCompliant, 'rDbCluster', {
+    new DatabaseCluster(nonCompliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
@@ -174,7 +160,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     );
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
-    new RdsInstance(nonCompliant2, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -195,14 +181,14 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new NIST80053R5Checks());
     const vpc = new Vpc(compliant, 'rVpc');
-    new AuroraCluster(compliant, 'rDbCluster', {
+    new DatabaseCluster(compliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
       instanceProps: { vpc: vpc },
       deletionProtection: true,
     });
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -225,7 +211,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     const vpc = new Vpc(nonCompliant, 'rVpc');
-    new RdsInstance(nonCompliant, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -246,7 +232,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new NIST80053R5Checks());
     const vpc2 = new Vpc(compliant, 'rVpc');
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -464,7 +450,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
     const vpc = new Vpc(nonCompliant, 'rVpc');
-    new RdsInstance(nonCompliant, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -483,7 +469,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new NIST80053R5Checks());
     const vpc2 = new Vpc(compliant, 'rVpc');
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -503,7 +489,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
   test('NIST.800.53.R5-RDSStorageEncrypted: RDS DB instances and Aurora DB clusters have storage encryption enabled - (Control IDs: AU-9(3), CP-9d, SC-8(3), SC-8(4), SC-13a, SC-28(1), SI-19(4))', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
-    new AuroraCluster(nonCompliant, 'rDbCluster', {
+    new DatabaseCluster(nonCompliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
@@ -520,7 +506,7 @@ describe('Amazon Relational Database Service (RDS)', () => {
     );
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
-    new RdsInstance(nonCompliant2, 'rDbInstance', {
+    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),
@@ -539,14 +525,14 @@ describe('Amazon Relational Database Service (RDS)', () => {
     const compliant = new Stack();
     Aspects.of(compliant).add(new NIST80053R5Checks());
     const vpc = new Vpc(compliant, 'rVpc');
-    new AuroraCluster(compliant, 'rDbCluster', {
+    new DatabaseCluster(compliant, 'rDbCluster', {
       engine: DatabaseClusterEngine.auroraMysql({
         version: AuroraMysqlEngineVersion.VER_5_7_12,
       }),
       instanceProps: { vpc: vpc },
       storageEncrypted: true,
     });
-    new RdsInstance(compliant, 'rDbInstance', {
+    new DatabaseInstance(compliant, 'rDbInstance', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_2,
       }),

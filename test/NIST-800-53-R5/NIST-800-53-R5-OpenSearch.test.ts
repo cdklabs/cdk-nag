@@ -107,6 +107,94 @@ describe('Amazon OpenSearch Service', () => {
     );
   });
 
+  test('NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch: - OpenSearch Service domains stream error logs to CloudWatch Logs - (Control ID: AU-10)', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
+    new LegacyDomain(nonCompliant, 'rDomain', {
+      version: ElasticsearchVersion.V7_10,
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch:'
+          ),
+        }),
+      })
+    );
+
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
+    new Domain(nonCompliant2, 'rDomain', {
+      version: EngineVersion.OPENSEARCH_1_0,
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch:'
+          ),
+        }),
+      })
+    );
+    const nonCompliant3 = new Stack();
+    Aspects.of(nonCompliant3).add(new NIST80053R5Checks());
+    new LegacyDomain(nonCompliant3, 'rDomain', {
+      version: ElasticsearchVersion.V7_10,
+      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+    });
+    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+    expect(messages3).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch:'
+          ),
+        }),
+      })
+    );
+
+    const nonCompliant4 = new Stack();
+    Aspects.of(nonCompliant4).add(new NIST80053R5Checks());
+    new Domain(nonCompliant4, 'rDomain', {
+      version: EngineVersion.OPENSEARCH_1_0,
+      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+    });
+    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
+    expect(messages4).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch:'
+          ),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new NIST80053R5Checks());
+    new LegacyDomain(compliant, 'rDomain', {
+      version: ElasticsearchVersion.V7_10,
+      logging: { appLogEnabled: true },
+    });
+    new Domain(compliant, 'rDomain2', {
+      version: EngineVersion.OPENSEARCH_1_0,
+      logging: { appLogEnabled: true },
+    });
+    const messages5 = SynthUtils.synthesize(compliant).messages;
+    expect(messages5).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch:'
+          ),
+        }),
+      })
+    );
+  });
+
   test('NIST.800.53.R5-OpenSearchInVPCOnly: - OpenSearch Service domains are within VPCs - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-25)', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new NIST80053R5Checks());
@@ -181,94 +269,6 @@ describe('Amazon OpenSearch Service', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining('NIST.800.53.R5-OpenSearchInVPCOnly:'),
-        }),
-      })
-    );
-  });
-
-  test('NIST.800.53.R5-OpenSearchLogsToCloudWatch: - OpenSearch Service domains stream error logs to CloudWatch Logs - (Control ID: AU-10)', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new NIST80053R5Checks());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R5-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new NIST80053R5Checks());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R5-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new NIST80053R5Checks());
-    new LegacyDomain(nonCompliant3, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-    });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R5-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new NIST80053R5Checks());
-    new Domain(nonCompliant4, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-    });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R5-OpenSearchLogsToCloudWatch:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new NIST80053R5Checks());
-    new LegacyDomain(compliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { appLogEnabled: true },
-    });
-    new Domain(compliant, 'rDomain2', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { appLogEnabled: true },
-    });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NIST.800.53.R5-OpenSearchLogsToCloudWatch:'
-          ),
         }),
       })
     );

@@ -957,13 +957,14 @@ describe('AWS Solutions Databases Checks', () => {
     });
   });
   describe('Amazon Redshift', () => {
-    test('awsSolutionsRs1: Redshift cluster parameter groups must have the "require_ssl" parameter enabled', () => {
-      const positive = new Stack();
-      Aspects.of(positive).add(new AwsSolutionsChecks());
-      new ClusterParameterGroup(positive, 'rRedshiftParamGroup', {
-        parameters: { auto_analyze: 'true' },
+    test('awsSolutionsRs1: Redshift clusters require TLS/SSL encryption', () => {
+      const nonCompliant = new Stack();
+      Aspects.of(nonCompliant).add(new AwsSolutionsChecks());
+      new Cluster(nonCompliant, 'rRedshiftCluster', {
+        masterUser: { masterUsername: 'use_a_secret_here' },
+        vpc: new Vpc(nonCompliant, 'rVpc'),
       });
-      const messages = SynthUtils.synthesize(positive).messages;
+      const messages = SynthUtils.synthesize(nonCompliant).messages;
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
@@ -971,12 +972,21 @@ describe('AWS Solutions Databases Checks', () => {
           }),
         })
       );
-      const positive2 = new Stack();
-      Aspects.of(positive2).add(new AwsSolutionsChecks());
-      new ClusterParameterGroup(positive2, 'rRedshiftParamGroup', {
-        parameters: {},
+
+      const nonCompliant2 = new Stack();
+      Aspects.of(nonCompliant2).add(new AwsSolutionsChecks());
+      new Cluster(nonCompliant2, 'rRedshiftCluster', {
+        masterUser: { masterUsername: 'use_a_secret_here' },
+        vpc: new Vpc(nonCompliant2, 'rVpc'),
+        parameterGroup: new ClusterParameterGroup(
+          nonCompliant2,
+          'rRedshiftParamGroup',
+          {
+            parameters: { require_ssl: 'false' },
+          }
+        ),
       });
-      const messages2 = SynthUtils.synthesize(positive2).messages;
+      const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
       expect(messages2).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
@@ -985,12 +995,20 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
 
-      const positive3 = new Stack();
-      Aspects.of(positive3).add(new AwsSolutionsChecks());
-      new ClusterParameterGroup(positive3, 'rRedshiftParamGroup', {
-        parameters: { auto_analyze: 'true', require_ssl: 'false' },
+      const nonCompliant3 = new Stack();
+      Aspects.of(nonCompliant3).add(new AwsSolutionsChecks());
+      new Cluster(nonCompliant3, 'rRedshiftCluster', {
+        masterUser: { masterUsername: 'use_a_secret_here' },
+        vpc: new Vpc(nonCompliant3, 'rVpc'),
+        parameterGroup: new ClusterParameterGroup(
+          nonCompliant3,
+          'rRedshiftParamGroup',
+          {
+            parameters: { auto_analyze: 'true' },
+          }
+        ),
       });
-      const messages3 = SynthUtils.synthesize(positive3).messages;
+      const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
       expect(messages3).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
@@ -999,27 +1017,33 @@ describe('AWS Solutions Databases Checks', () => {
         })
       );
 
-      const positive4 = new Stack();
-      Aspects.of(positive4).add(new AwsSolutionsChecks());
-      new ClusterParameterGroup(positive4, 'rRedshiftParamGroup', {
-        parameters: { require_ssl: 'false' },
-      });
-      const messages4 = SynthUtils.synthesize(positive4).messages;
-      expect(messages4).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('AwsSolutions-RS1:'),
-          }),
-        })
+      const compliant = new Stack();
+      Aspects.of(compliant).add(new AwsSolutionsChecks());
+      const compliantParameterGroup = new ClusterParameterGroup(
+        compliant,
+        'rRedshiftParamGroup',
+        {
+          parameters: { require_ssl: 'true' },
+        }
       );
-
-      const negative = new Stack();
-      Aspects.of(negative).add(new AwsSolutionsChecks());
-      new ClusterParameterGroup(negative, 'rRedshiftParamGroup', {
-        parameters: { auto_analyze: 'true', require_ssl: 'true' },
+      new CfnRedshiftCluster(compliant, 'rCfnRedshiftCluster', {
+        masterUsername: 'use_a_secret_here',
+        masterUserPassword: 'use_a_secret_here',
+        clusterType: 'single-node',
+        dbName: 'bar',
+        nodeType: 'ds2.xlarge',
+        clusterSubnetGroupName: 'foo',
+        enhancedVpcRouting: true,
+        clusterParameterGroupName:
+          compliantParameterGroup.clusterParameterGroupName,
       });
-      const messages5 = SynthUtils.synthesize(negative).messages;
-      expect(messages5).not.toContainEqual(
+      new Cluster(compliant, 'rRedshiftCluster', {
+        masterUser: { masterUsername: 'use_a_secret_here' },
+        vpc: new Vpc(compliant, 'rVpc'),
+        parameterGroup: compliantParameterGroup,
+      });
+      const messages4 = SynthUtils.synthesize(compliant).messages;
+      expect(messages4).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
             data: expect.stringContaining('AwsSolutions-RS1:'),
