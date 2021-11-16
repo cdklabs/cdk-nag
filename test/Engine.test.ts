@@ -28,6 +28,7 @@ import {
   NagMessageLevel,
   NagPack,
   resolveIfPrimitive,
+  NagPackProps,
 } from '../src';
 
 describe('Testing rule suppression system', () => {
@@ -474,10 +475,14 @@ describe('Testing rule explanations', () => {
 describe('Testing rule exception handling', () => {
   const ERROR_MESSAGE = 'oops!';
   class BadPack extends NagPack {
+    constructor(props?: NagPackProps) {
+      super(props);
+      this.packName = 'Bad.Pack';
+    }
     public visit(node: IConstruct): void {
       if (node instanceof CfnResource) {
         this.applyRule({
-          ruleId: 'Bad.Pack-BadRule',
+          ruleSuffixOverride: 'BadRule',
           info: 'This is a imporperly made rule.',
           explanation: 'This will throw an error',
           level: NagMessageLevel.ERROR,
