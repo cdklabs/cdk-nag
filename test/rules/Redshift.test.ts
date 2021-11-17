@@ -3,14 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Vpc } from '@aws-cdk/aws-ec2';
-import {
-  CfnCluster,
-  CfnClusterParameterGroup,
-  Cluster,
-  ClusterParameterGroup,
-} from '@aws-cdk/aws-redshift';
-import { Bucket } from '@aws-cdk/aws-s3';
+import { CfnCluster, CfnClusterParameterGroup } from '@aws-cdk/aws-redshift';
 import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
@@ -87,9 +80,13 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      automatedSnapshotRetentionPeriod: 1,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -104,9 +101,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftClusterAuditLogging: Redshift clusters have audit logging enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -119,10 +119,13 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
-      loggingBucket: new Bucket(compliant, 'rLoggingBucket'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      loggingProperties: { bucketName: 'foo' },
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -137,9 +140,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftClusterConfiguration: Redshift clusters have encryption and audit logging enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -152,9 +158,12 @@ describe('Amazon Redshift', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    new Cluster(nonCompliant2, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
+    new CfnCluster(nonCompliant2, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
       encrypted: false,
     });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
@@ -168,10 +177,13 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
-      loggingBucket: new Bucket(compliant, 'rLoggingBucket'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      loggingProperties: { bucketName: 'foo' },
       encrypted: true,
     });
     const messages3 = SynthUtils.synthesize(compliant).messages;
@@ -187,10 +199,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftClusterEncryptionAtRest: Redshift clusters have encryption at rest enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      encrypted: false,
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -203,9 +217,13 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      encrypted: true,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -238,9 +256,13 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      clusterSubnetGroupName: 'foo',
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -255,9 +277,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftClusterMaintenanceSettings: Redshift clusters have version upgrades enabled, automated snapshot retention periods enabled, and explicit maintenance windows configured', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -290,9 +315,13 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      allowVersionUpgrade: true,
       preferredMaintenanceWindow: 'Sun:23:45-Mon:00:15',
     });
     const messages3 = SynthUtils.synthesize(compliant).messages;
@@ -308,9 +337,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftClusterNonDefaultPort: Redshift clusters do not use the default endpoint port', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -323,9 +355,12 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
       port: 42,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
@@ -347,7 +382,6 @@ describe('Amazon Redshift', () => {
       clusterType: 'single-node',
       dbName: 'bar',
       nodeType: 'ds2.xlarge',
-      allowVersionUpgrade: false,
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -360,9 +394,12 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'notawsuser',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -377,9 +414,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftClusterPublicAccess: Redshift clusters do not allow public access', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'awsuser',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
       publiclyAccessible: true,
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
@@ -393,9 +433,12 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'awsuser',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -466,13 +509,6 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
-      parameterGroup: new ClusterParameterGroup(compliant, 'rParameterGroup', {
-        parameters: { enable_user_activity_logging: 'true' },
-      }),
-    });
     const compliantParamGroup = new CfnClusterParameterGroup(
       compliant,
       'rCfnParameterGroup',
@@ -527,9 +563,12 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnCluster(compliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -544,9 +583,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftEnhancedVPCRoutingEnabled: Redshift clusters have enhanced VPC routing enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -581,9 +623,12 @@ describe('Amazon Redshift', () => {
   test('RedshiftRequireTlsSSL: Redshift clusters require TLS/SSL encryption', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnCluster(nonCompliant, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -596,16 +641,26 @@ describe('Amazon Redshift', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    new Cluster(nonCompliant2, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
-      parameterGroup: new ClusterParameterGroup(
+    new CfnCluster(nonCompliant2, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      clusterParameterGroupName: new CfnClusterParameterGroup(
         nonCompliant2,
         'rRedshiftParamGroup',
         {
-          parameters: { require_ssl: 'false' },
+          description: 'Cluster parameter group for family redshift-1.0',
+          parameterGroupFamily: 'redshift-1.0',
+          parameters: [
+            {
+              parameterName: 'require_ssl',
+              parameterValue: 'false',
+            },
+          ],
         }
-      ),
+      ).ref,
     });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
@@ -618,16 +673,26 @@ describe('Amazon Redshift', () => {
 
     const nonCompliant3 = new Stack();
     Aspects.of(nonCompliant3).add(new TestPack());
-    new Cluster(nonCompliant3, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(nonCompliant3, 'rVpc'),
-      parameterGroup: new ClusterParameterGroup(
+    new CfnCluster(nonCompliant3, 'rRedshiftCluster', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      clusterParameterGroupName: new CfnClusterParameterGroup(
         nonCompliant3,
         'rRedshiftParamGroup',
         {
-          parameters: { auto_analyze: 'true' },
+          description: 'Cluster parameter group for family redshift-1.0',
+          parameterGroupFamily: 'redshift-1.0',
+          parameters: [
+            {
+              parameterName: 'auto_analyze',
+              parameterValue: 'true',
+            },
+          ],
         }
-      ),
+      ).ref,
     });
     const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
     expect(messages3).toContainEqual(
@@ -640,11 +705,18 @@ describe('Amazon Redshift', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    const compliantParameterGroup = new ClusterParameterGroup(
+    const compliantParameterGroup = new CfnClusterParameterGroup(
       compliant,
       'rRedshiftParamGroup',
       {
-        parameters: { require_ssl: 'true' },
+        description: 'Cluster parameter group for family redshift-1.0',
+        parameterGroupFamily: 'redshift-1.0',
+        parameters: [
+          {
+            parameterName: 'require_ssl',
+            parameterValue: 'true',
+          },
+        ],
       }
     );
     new CfnCluster(compliant, 'rCfnRedshiftCluster', {
@@ -655,13 +727,17 @@ describe('Amazon Redshift', () => {
       nodeType: 'ds2.xlarge',
       clusterSubnetGroupName: 'foo',
       enhancedVpcRouting: true,
-      clusterParameterGroupName:
-        compliantParameterGroup.clusterParameterGroupName,
+      clusterParameterGroupName: compliantParameterGroup.ref,
     });
-    new Cluster(compliant, 'rRedshiftCluster', {
-      masterUser: { masterUsername: 'use_a_secret_here' },
-      vpc: new Vpc(compliant, 'rVpc'),
-      parameterGroup: compliantParameterGroup,
+    new CfnCluster(compliant, 'rCfnRedshiftCluster2', {
+      masterUsername: 'use_a_secret_here',
+      masterUserPassword: 'use_a_secret_here',
+      clusterType: 'single-node',
+      dbName: 'bar',
+      nodeType: 'ds2.xlarge',
+      clusterSubnetGroupName: 'foo',
+      enhancedVpcRouting: true,
+      clusterParameterGroupName: compliantParameterGroup.ref,
     });
     const messages4 = SynthUtils.synthesize(compliant).messages;
     expect(messages4).not.toContainEqual(

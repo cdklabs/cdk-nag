@@ -8,19 +8,11 @@ import {
   MethodLoggingLevel,
   RestApi,
   CfnClientCertificate,
-  LogGroupLogDestination,
   AuthorizationType,
   CfnRequestValidator,
+  CfnRestApi,
 } from '@aws-cdk/aws-apigateway';
-import {
-  HttpApi,
-  CfnStage as CfnV2Stage,
-  HttpNoneAuthorizer,
-} from '@aws-cdk/aws-apigatewayv2';
-import { HttpLambdaAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers';
-import { LambdaProxyIntegration } from '@aws-cdk/aws-apigatewayv2-integrations';
-import { Function } from '@aws-cdk/aws-lambda';
-import { LogGroup } from '@aws-cdk/aws-logs';
+import { CfnStage as CfnV2Stage, CfnRoute } from '@aws-cdk/aws-apigatewayv2';
 import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
 import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
@@ -69,7 +61,11 @@ describe('Amazon API Gateway', () => {
   test('APIGWAccessLogging: APIs have access logging enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new RestApi(nonCompliant, 'rRestApi').root.addMethod('ANY');
+    new CfnStage(nonCompliant, 'rRestApiDeploymentStage', {
+      restApiId: 'foo',
+      deploymentId: 'bar',
+      stageName: 'prod',
+    });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -81,7 +77,11 @@ describe('Amazon API Gateway', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    new HttpApi(nonCompliant2, 'rHttpApi').addStage('rStage', {});
+    new CfnV2Stage(nonCompliant2, 'rHttpApiDefaultStage', {
+      apiId: 'foo',
+      stageName: '$default',
+      autoDeploy: true,
+    });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
       expect.objectContaining({
@@ -93,13 +93,16 @@ describe('Amazon API Gateway', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new RestApi(compliant, 'rRestApi', {
-      deployOptions: {
-        accessLogDestination: new LogGroupLogDestination(
-          new LogGroup(compliant, 'rLogGroup')
-        ),
+    new CfnStage(compliant, 'rRestApiDeploymentStage', {
+      restApiId: 'foo',
+      accessLogSetting: {
+        destinationArn: 'bar',
+        format:
+          '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId',
       },
-    }).root.addMethod('ANY');
+      deploymentId: 'baz',
+      stageName: 'prod',
+    });
     new CfnV2Stage(compliant, 'rStage', {
       accessLogSettings: {
         destinationArn: 'foo',
@@ -121,13 +124,9 @@ describe('Amazon API Gateway', () => {
   test('APIGWAssociatedWithWAF: Rest API stages are associated with AWS WAFv2 web ACLs', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    const nonCompliantRestApi = new RestApi(nonCompliant, 'rRestApi', {
-      deploy: false,
-    });
-    nonCompliantRestApi.root.addMethod('ANY');
     new CfnStage(nonCompliant, 'rRestStage', {
-      restApiId: nonCompliantRestApi.restApiId,
-      stageName: 'foo',
+      restApiId: 'foo',
+      stageName: 'bar',
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -140,17 +139,16 @@ describe('Amazon API Gateway', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    const nonCompliant2RestApi = new RestApi(nonCompliant2, 'rRestApi', {
-      deploy: false,
+    const nonCompliant2RestApi = new CfnRestApi(nonCompliant2, 'rRestApi', {
+      name: 'rRestApi',
     });
-    nonCompliant2RestApi.root.addMethod('ANY');
     new CfnStage(nonCompliant2, 'rRestStage', {
-      restApiId: nonCompliant2RestApi.restApiId,
+      restApiId: nonCompliant2RestApi.ref,
       stageName: 'foo',
     });
     new CfnWebACLAssociation(nonCompliant2, 'rWebAClAssoc', {
       webAclArn: 'bar',
-      resourceArn: `${nonCompliant2RestApi.restApiId}`,
+      resourceArn: nonCompliant2RestApi.ref,
     });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
@@ -163,17 +161,20 @@ describe('Amazon API Gateway', () => {
 
     const nonCompliant3 = new Stack();
     Aspects.of(nonCompliant3).add(new TestPack());
-    const nonCompliant3RestApi = new RestApi(nonCompliant3, 'rRestApi', {
-      deploy: false,
+    const nonCompliant3RestApi = new CfnRestApi(nonCompliant3, 'rRestApi', {
+      name: 'rRestApi',
     });
-    nonCompliant3RestApi.root.addMethod('ANY');
     const nonCompliant3Stage = new CfnStage(nonCompliant3, 'rRestStage', {
-      restApiId: nonCompliant3RestApi.restApiId,
+      restApiId: nonCompliant3RestApi.ref,
       stageName: 'foo',
     });
     new CfnWebACLAssociation(nonCompliant3, 'rWebAClAssoc', {
       webAclArn: 'bar',
-      resourceArn: `${nonCompliant3Stage.restApiId}/baz`,
+      resourceArn: nonCompliant3RestApi.ref,
+    });
+    new CfnWebACLAssociation(nonCompliant3, 'rWebAClAssoc2', {
+      webAclArn: 'bar',
+      resourceArn: `${nonCompliant3Stage.ref}/baz`,
     });
     const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
     expect(messages3).toContainEqual(
@@ -259,13 +260,10 @@ describe('Amazon API Gateway', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    new HttpApi(nonCompliant2, 'rHttpApi', {
-      defaultAuthorizer: new HttpNoneAuthorizer(),
-    }).addRoutes({
-      path: '/foo',
-      integration: new LambdaProxyIntegration({
-        handler: Function.fromFunctionArn(nonCompliant2, 'rLambdaProxy', 'bar'),
-      }),
+    new CfnRoute(nonCompliant2, 'rRoute', {
+      apiId: 'foo',
+      routeKey: 'ANY /bar',
+      authorizationType: 'NONE',
     });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
@@ -281,20 +279,11 @@ describe('Amazon API Gateway', () => {
     new RestApi(compliant, 'rRestApi', {
       defaultMethodOptions: { authorizationType: AuthorizationType.CUSTOM },
     }).root.addMethod('ANY');
-    new HttpApi(compliant, 'rHttpApi', {
-      defaultAuthorizer: new HttpLambdaAuthorizer({
-        authorizerName: 'foo',
-        handler: Function.fromFunctionArn(
-          compliant,
-          'rLambdaAuthorizer',
-          'bar'
-        ),
-      }),
-    }).addRoutes({
-      path: '/foo',
-      integration: new LambdaProxyIntegration({
-        handler: Function.fromFunctionArn(compliant, 'rLambdaProxy', 'bar'),
-      }),
+    new CfnRoute(compliant, 'rRoute', {
+      apiId: 'foo',
+      routeKey: 'ANY /bar',
+      authorizationType: 'CUSTOM',
+      authorizerId: 'baz',
     });
     const messages3 = SynthUtils.synthesize(compliant).messages;
     expect(messages3).not.toContainEqual(

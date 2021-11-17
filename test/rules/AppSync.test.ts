@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnGraphQLApi, GraphqlApi } from '@aws-cdk/aws-appsync';
+import { CfnGraphQLApi } from '@aws-cdk/aws-appsync';
 import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { AppSyncGraphQLRequestLogging } from '../../src/rules/appsync';
@@ -32,7 +32,10 @@ describe('AWS AppSync', () => {
   test('AppSyncGraphQLRequestLogging: GraphQL APIs have request leveling logging enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new GraphqlApi(nonCompliant, 'rGraphqlApi', { name: 'foo' });
+    new CfnGraphQLApi(nonCompliant, 'rGraphqlApi', {
+      authenticationType: 'AMAZON_COGNITO_USER_POOL',
+      name: 'foo',
+    });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -44,7 +47,8 @@ describe('AWS AppSync', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    new GraphqlApi(nonCompliant2, 'rGraphqlApi', {
+    new CfnGraphQLApi(nonCompliant2, 'rGraphqlApi', {
+      authenticationType: 'AMAZON_COGNITO_USER_POOL',
       name: 'foo',
       logConfig: { excludeVerboseContent: true },
     });

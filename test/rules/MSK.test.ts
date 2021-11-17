@@ -3,14 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Vpc } from '@aws-cdk/aws-ec2';
-import { LogGroup } from '@aws-cdk/aws-logs';
-import {
-  ClientBrokerEncryption,
-  Cluster,
-  KafkaVersion,
-} from '@aws-cdk/aws-msk';
-import { Bucket } from '@aws-cdk/aws-s3';
+import { CfnCluster } from '@aws-cdk/aws-msk';
 import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
@@ -48,10 +41,14 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
   test('MSKBrokerLogging: MSK clusters send broker logs to a supported destination', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rMsk', {
+    new CfnCluster(nonCompliant, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -64,11 +61,15 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
 
     const nonCompliant2 = new Stack();
     Aspects.of(nonCompliant2).add(new TestPack());
-    new Cluster(nonCompliant2, 'rMsk', {
+    new CfnCluster(nonCompliant2, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
-      logging: {},
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
+      loggingInfo: { brokerLogs: {} },
     });
     const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
     expect(messages2).toContainEqual(
@@ -81,21 +82,32 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rMsk', {
+    new CfnCluster(compliant, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(compliant, 'rVpc'),
-      logging: {
-        s3: { bucket: new Bucket(compliant, 'rLoggingBucket') },
-        cloudwatchLogGroup: new LogGroup(compliant, 'rLogGroup'),
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
+      loggingInfo: {
+        brokerLogs: {
+          s3: { enabled: true, bucket: 'foo' },
+          cloudWatchLogs: { enabled: true, logGroup: 'baz' },
+        },
       },
     });
-    new Cluster(compliant, 'rMSKClientToBrokerTLS', {
+
+    new CfnCluster(compliant, 'rMsk2', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(compliant, 'rVpc2'),
-      logging: {
-        firehoseDeliveryStreamName: 'bar',
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
+      loggingInfo: {
+        brokerLogs: { firehose: { enabled: true, deliveryStream: 'foo' } },
       },
     });
     const messages3 = SynthUtils.synthesize(compliant).messages;
@@ -111,13 +123,15 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
   test('MSKBrokerToBrokerTLS: MSK clusters use TLS communication between brokers', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rMsk', {
+    new CfnCluster(nonCompliant, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      encryptionInTransit: {
-        enableInCluster: false,
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
       },
+      numberOfBrokerNodes: 42,
+      encryptionInfo: { encryptionInTransit: { inCluster: false } },
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
@@ -130,18 +144,24 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rMsk', {
+    new CfnCluster(compliant, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(compliant, 'rVpc'),
-      encryptionInTransit: {
-        enableInCluster: true,
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
       },
+      numberOfBrokerNodes: 42,
+      encryptionInfo: { encryptionInTransit: { inCluster: true } },
     });
-    new Cluster(compliant, 'rMSKClientToBrokerTLS', {
+    new CfnCluster(compliant, 'rMsk2', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(compliant, 'rVpc2'),
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -156,12 +176,16 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
   test('MSKClientToBrokerTLS: MSK clusters only uses TLS communication between clients and brokers', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new Cluster(nonCompliant, 'rMsk', {
+    new CfnCluster(nonCompliant, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      encryptionInTransit: {
-        clientBroker: ClientBrokerEncryption.TLS_PLAINTEXT,
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
+      encryptionInfo: {
+        encryptionInTransit: { clientBroker: 'TLS_PLAINTEXT' },
       },
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
@@ -175,18 +199,24 @@ describe('Amazon Managed Streaming for Apache Kafka (Amazon MSK)', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new Cluster(compliant, 'rMsk', {
+    new CfnCluster(compliant, 'rMsk', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(compliant, 'rVpc'),
-      encryptionInTransit: {
-        clientBroker: ClientBrokerEncryption.TLS,
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
       },
+      numberOfBrokerNodes: 42,
+      encryptionInfo: { encryptionInTransit: { clientBroker: 'TLS' } },
     });
-    new Cluster(compliant, 'rMSKClientToBrokerTLS', {
+    new CfnCluster(compliant, 'rMsk2', {
       clusterName: 'foo',
-      kafkaVersion: KafkaVersion.V2_8_0,
-      vpc: new Vpc(compliant, 'rVpc2'),
+      kafkaVersion: '2.8.0',
+      brokerNodeGroupInfo: {
+        clientSubnets: ['bar'],
+        instanceType: 'kafka.m5.large',
+      },
+      numberOfBrokerNodes: 42,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
