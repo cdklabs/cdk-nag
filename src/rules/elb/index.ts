@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 export { default as ALBHttpDropInvalidHeaderEnabled } from './ALBHttpDropInvalidHeaderEnabled';
 export { default as ALBHttpToHttpsRedirection } from './ALBHttpToHttpsRedirection';
 export { default as ALBWAFEnabled } from './ALBWAFEnabled';
-export { default as CLBInboundHttpHttps } from './CLBInboundHttpHttps';
+export { default as CLBNoInboundHttpHttps } from './CLBNoInboundHttpHttps';
 export { default as CLBConnectionDraining } from './CLBConnectionDraining';
 export { default as ELBACMCertificateRequired } from './ELBACMCertificateRequired';
 export { default as ELBCrossZoneLoadBalancingEnabled } from './ELBCrossZoneLoadBalancingEnabled';

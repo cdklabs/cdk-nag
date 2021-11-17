@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster } from '@aws-cdk/aws-neptune';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../lib';
+import { resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Neptune DB clusters have a reasonable minimum backup retention period configured

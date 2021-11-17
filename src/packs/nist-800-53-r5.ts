@@ -12,8 +12,8 @@ import {
   APIGWSSLEnabled,
 } from '../rules/apigw';
 import {
-  AutoscalingGroupELBHealthCheckRequired,
-  AutoscalingLaunchConfigPublicIpDisabled,
+  AutoScalingGroupELBHealthCheckRequired,
+  AutoScalingLaunchConfigPublicIpDisabled,
 } from '../rules/autoscaling';
 import {
   CloudTrailCloudWatchLogsEnabled,
@@ -27,7 +27,7 @@ import {
 } from '../rules/cloudwatch';
 import { DMSReplicationNotPublic } from '../rules/dms';
 import {
-  DynamoDBAutoscalingEnabled,
+  DynamoDBAutoScalingEnabled,
   DynamoDBInBackupPlan,
   DynamoDBPITREnabled,
 } from '../rules/dynamodb';
@@ -65,7 +65,7 @@ import {
   IAMUserNoPolicies,
 } from '../rules/iam';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
-import { LambdaConcurrency, LambdaDlq, LambdaInsideVPC } from '../rules/lambda';
+import { LambdaConcurrency, LambdaDLQ, LambdaInsideVPC } from '../rules/lambda';
 import {
   OpenSearchEncryptedAtRest,
   OpenSearchErrorLogsToCloudWatch,
@@ -207,7 +207,7 @@ export class NIST80053R5Checks extends NagPack {
       explanation:
         'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability. The load balancer periodically sends pings, attempts connections, or sends requests to test Amazon EC2 instances health in an auto-scaling group. If an instance is not reporting back, traffic is sent to a new Amazon EC2 instance.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingGroupELBHealthCheckRequired,
+      rule: AutoScalingGroupELBHealthCheckRequired,
       node: node,
     });
     this.applyRule({
@@ -215,7 +215,7 @@ export class NIST80053R5Checks extends NagPack {
       explanation:
         'If you configure your Network Interfaces with a public IP address, then the associated resources to those Network Interfaces are reachable from the internet. EC2 resources should not be publicly accessible, as this may allow unintended access to your applications or servers.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingLaunchConfigPublicIpDisabled,
+      rule: AutoScalingLaunchConfigPublicIpDisabled,
       node: node,
     });
   }
@@ -311,7 +311,7 @@ export class NIST80053R5Checks extends NagPack {
       explanation:
         'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
       level: NagMessageLevel.ERROR,
-      rule: DynamoDBAutoscalingEnabled,
+      rule: DynamoDBAutoScalingEnabled,
       node: node,
     });
     this.applyRule({
@@ -631,7 +631,7 @@ export class NIST80053R5Checks extends NagPack {
       explanation:
         'Notify the appropriate personnel through Amazon Simple Queue Service (Amazon SQS) or Amazon Simple Notification Service (Amazon SNS) when a function has failed.',
       level: NagMessageLevel.ERROR,
-      rule: LambdaDlq,
+      rule: LambdaDLQ,
       node: node,
     });
     this.applyRule({

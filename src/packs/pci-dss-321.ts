@@ -12,8 +12,8 @@ import {
   APIGWSSLEnabled,
 } from '../rules/apigw';
 import {
-  AutoscalingGroupELBHealthCheckRequired,
-  AutoscalingLaunchConfigPublicIpDisabled,
+  AutoScalingGroupELBHealthCheckRequired,
+  AutoScalingLaunchConfigPublicIpDisabled,
 } from '../rules/autoscaling';
 import {
   CloudTrailCloudWatchLogsEnabled,
@@ -190,7 +190,7 @@ export class PCIDSS321Checks extends NagPack {
       explanation:
         'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability. The load balancer periodically sends pings, attempts connections, or sends requests to test Amazon EC2 instances health in an auto-scaling group. If an instance is not reporting back, traffic is sent to a new Amazon EC2 instance.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingGroupELBHealthCheckRequired,
+      rule: AutoScalingGroupELBHealthCheckRequired,
       node: node,
     });
     this.applyRule({
@@ -198,7 +198,7 @@ export class PCIDSS321Checks extends NagPack {
       explanation:
         'If you configure your Network Interfaces with a public IP address, then the associated resources to those Network Interfaces are reachable from the internet. EC2 resources should not be publicly accessible, as this may allow unintended access to your applications or servers.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingLaunchConfigPublicIpDisabled,
+      rule: AutoScalingLaunchConfigPublicIpDisabled,
       node: node,
     });
   }

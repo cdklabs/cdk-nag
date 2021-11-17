@@ -9,7 +9,7 @@ import {
   APIGWCacheEnabledAndEncrypted,
   APIGWExecutionLoggingEnabled,
 } from '../rules/apigw';
-import { AutoscalingGroupELBHealthCheckRequired } from '../rules/autoscaling';
+import { AutoScalingGroupELBHealthCheckRequired } from '../rules/autoscaling';
 import {
   CloudTrailCloudWatchLogsEnabled,
   CloudTrailEncryptionEnabled,
@@ -26,7 +26,7 @@ import {
 } from '../rules/codebuild';
 import { DMSReplicationNotPublic } from '../rules/dms';
 import {
-  DynamoDBAutoscalingEnabled,
+  DynamoDBAutoScalingEnabled,
   DynamoDBInBackupPlan,
   DynamoDBPITREnabled,
 } from '../rules/dynamodb';
@@ -174,7 +174,7 @@ export class NIST80053R4Checks extends NagPack {
       explanation:
         'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingGroupELBHealthCheckRequired,
+      rule: AutoScalingGroupELBHealthCheckRequired,
       node: node,
     });
   }
@@ -294,7 +294,7 @@ export class NIST80053R4Checks extends NagPack {
       explanation:
         'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
       level: NagMessageLevel.ERROR,
-      rule: DynamoDBAutoscalingEnabled,
+      rule: DynamoDBAutoScalingEnabled,
       node: node,
     });
     this.applyRule({

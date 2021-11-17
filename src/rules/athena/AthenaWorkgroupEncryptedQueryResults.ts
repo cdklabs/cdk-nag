@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnWorkGroup } from '@aws-cdk/aws-athena';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../../lib';
+import { resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Athena workgroups encrypt query results

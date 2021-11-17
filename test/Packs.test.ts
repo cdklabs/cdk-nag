@@ -18,7 +18,7 @@ describe('Check NagPack Details', () => {
   describe('AwsSolutions', () => {
     const pack = new AwsSolutionsChecks();
     test('Pack Name is correct', () => {
-      expect(pack.getPackName).toStrictEqual('AwsSolutions');
+      expect(pack.readPackName).toStrictEqual('AwsSolutions');
     });
     test('Pack contains expected rules', () => {
       const warnings = [
@@ -148,7 +148,7 @@ describe('Check NagPack Details', () => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
-        const ruleId = `${pack.getPackName}-${ruleSuffix}`;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         actualRules.push(ruleId);
         return ruleId;
       });
@@ -162,7 +162,7 @@ describe('Check NagPack Details', () => {
   describe('HIPAA-Security', () => {
     const pack = new HIPAASecurityChecks();
     test('Pack Name is correct', () => {
-      expect(pack.getPackName).toStrictEqual('HIPAA.Security');
+      expect(pack.readPackName).toStrictEqual('HIPAA.Security');
     });
     test('Pack contains expected rules', () => {
       const warnings = ['HIPAA.Security-VPCDefaultSecurityGroupClosed'];
@@ -173,8 +173,8 @@ describe('Check NagPack Details', () => {
         'HIPAA.Security-APIGWExecutionLoggingEnabled',
         'HIPAA.Security-APIGWSSLEnabled',
         'HIPAA.Security-APIGWXrayEnabled',
-        'HIPAA.Security-AutoscalingGroupELBHealthCheckRequired',
-        'HIPAA.Security-AutoscalingLaunchConfigPublicIpDisabled',
+        'HIPAA.Security-AutoScalingGroupELBHealthCheckRequired',
+        'HIPAA.Security-AutoScalingLaunchConfigPublicIpDisabled',
         'HIPAA.Security-CloudTrailCloudWatchLogsEnabled',
         'HIPAA.Security-CloudTrailEncryptionEnabled',
         'HIPAA.Security-CloudTrailLogFileValidationEnabled',
@@ -184,7 +184,7 @@ describe('Check NagPack Details', () => {
         'HIPAA.Security-CodeBuildProjectEnvVarAwsCred',
         'HIPAA.Security-CodeBuildProjectSourceRepoUrl',
         'HIPAA.Security-DMSReplicationNotPublic',
-        'HIPAA.Security-DynamoDBAutoscalingEnabled',
+        'HIPAA.Security-DynamoDBAutoScalingEnabled',
         'HIPAA.Security-DynamoDBInBackupPlan',
         'HIPAA.Security-DynamoDBPITREnabled',
         'HIPAA.Security-EC2EBSInBackupPlan',
@@ -215,7 +215,7 @@ describe('Check NagPack Details', () => {
         'HIPAA.Security-IAMUserGroupMembership',
         'HIPAA.Security-IAMUserNoPolicies',
         'HIPAA.Security-LambdaConcurrency',
-        'HIPAA.Security-LambdaDlq',
+        'HIPAA.Security-LambdaDLQ',
         'HIPAA.Security-LambdaInsideVPC',
         'HIPAA.Security-OpenSearchEncryptedAtRest',
         'HIPAA.Security-OpenSearchErrorLogsToCloudWatch',
@@ -261,7 +261,7 @@ describe('Check NagPack Details', () => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
-        const ruleId = `${pack.getPackName}-${ruleSuffix}`;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         actualRules.push(ruleId);
         return ruleId;
       });
@@ -275,7 +275,7 @@ describe('Check NagPack Details', () => {
   describe('NIST-800-53-R4', () => {
     const pack = new NIST80053R4Checks();
     test('Pack Name is correct', () => {
-      expect(pack.getPackName).toStrictEqual('NIST.800.53.R4');
+      expect(pack.readPackName).toStrictEqual('NIST.800.53.R4');
     });
     test('Pack contains expected rules', () => {
       const warnings = ['NIST.800.53.R4-VPCDefaultSecurityGroupClosed'];
@@ -285,7 +285,7 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R4-ALBWAFEnabled',
         'NIST.800.53.R4-APIGWCacheEnabledAndEncrypted',
         'NIST.800.53.R4-APIGWExecutionLoggingEnabled',
-        'NIST.800.53.R4-AutoscalingGroupELBHealthCheckRequired',
+        'NIST.800.53.R4-AutoScalingGroupELBHealthCheckRequired',
         'NIST.800.53.R4-CloudTrailCloudWatchLogsEnabled',
         'NIST.800.53.R4-CloudTrailEncryptionEnabled',
         'NIST.800.53.R4-CloudTrailLogFileValidationEnabled',
@@ -295,7 +295,7 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R4-CodeBuildProjectEnvVarAwsCred',
         'NIST.800.53.R4-CodeBuildProjectSourceRepoUrl',
         'NIST.800.53.R4-DMSReplicationNotPublic',
-        'NIST.800.53.R4-DynamoDBAutoscalingEnabled',
+        'NIST.800.53.R4-DynamoDBAutoScalingEnabled',
         'NIST.800.53.R4-DynamoDBInBackupPlan',
         'NIST.800.53.R4-DynamoDBPITREnabled',
         'NIST.800.53.R4-EC2EBSInBackupPlan',
@@ -354,7 +354,7 @@ describe('Check NagPack Details', () => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
-        const ruleId = `${pack.getPackName}-${ruleSuffix}`;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         actualRules.push(ruleId);
         return ruleId;
       });
@@ -368,7 +368,7 @@ describe('Check NagPack Details', () => {
   describe('NIST-800-53-R5', () => {
     const pack = new NIST80053R5Checks();
     test('Pack Name is correct', () => {
-      expect(pack.getPackName).toStrictEqual('NIST.800.53.R5');
+      expect(pack.readPackName).toStrictEqual('NIST.800.53.R5');
     });
     test('Pack contains expected rules', () => {
       const warnings = ['NIST.800.53.R5-VPCDefaultSecurityGroupClosed'];
@@ -379,8 +379,8 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R5-APIGWCacheEnabledAndEncrypted',
         'NIST.800.53.R5-APIGWExecutionLoggingEnabled',
         'NIST.800.53.R5-APIGWSSLEnabled',
-        'NIST.800.53.R5-AutoscalingGroupELBHealthCheckRequired',
-        'NIST.800.53.R5-AutoscalingLaunchConfigPublicIpDisabled',
+        'NIST.800.53.R5-AutoScalingGroupELBHealthCheckRequired',
+        'NIST.800.53.R5-AutoScalingLaunchConfigPublicIpDisabled',
         'NIST.800.53.R5-CloudTrailCloudWatchLogsEnabled',
         'NIST.800.53.R5-CloudTrailEncryptionEnabled',
         'NIST.800.53.R5-CloudTrailLogFileValidationEnabled',
@@ -388,7 +388,7 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R5-CloudWatchLogGroupEncrypted',
         'NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod',
         'NIST.800.53.R5-DMSReplicationNotPublic',
-        'NIST.800.53.R5-DynamoDBAutoscalingEnabled',
+        'NIST.800.53.R5-DynamoDBAutoScalingEnabled',
         'NIST.800.53.R5-DynamoDBInBackupPlan',
         'NIST.800.53.R5-DynamoDBPITREnabled',
         'NIST.800.53.R5-EC2EBSInBackupPlan',
@@ -417,7 +417,7 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R5-IAMUserNoPolicies',
         'NIST.800.53.R5-KMSBackingKeyRotationEnabled',
         'NIST.800.53.R5-LambdaConcurrency',
-        'NIST.800.53.R5-LambdaDlq',
+        'NIST.800.53.R5-LambdaDLQ',
         'NIST.800.53.R5-LambdaInsideVPC',
         'NIST.800.53.R5-OpenSearchEncryptedAtRest',
         'NIST.800.53.R5-OpenSearchErrorLogsToCloudWatch',
@@ -462,7 +462,7 @@ describe('Check NagPack Details', () => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
-        const ruleId = `${pack.getPackName}-${ruleSuffix}`;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         actualRules.push(ruleId);
         return ruleId;
       });
@@ -476,7 +476,7 @@ describe('Check NagPack Details', () => {
   describe('PCI-DSS-3.2.1', () => {
     const pack = new PCIDSS321Checks();
     test('Pack Name is correct', () => {
-      expect(pack.getPackName).toStrictEqual('PCI.DSS.321');
+      expect(pack.readPackName).toStrictEqual('PCI.DSS.321');
     });
     test('Pack contains expected rules', () => {
       const warnings = ['PCI.DSS.321-VPCDefaultSecurityGroupClosed'];
@@ -488,8 +488,8 @@ describe('Check NagPack Details', () => {
         'PCI.DSS.321-APIGWCacheEnabledAndEncrypted',
         'PCI.DSS.321-APIGWExecutionLoggingEnabled',
         'PCI.DSS.321-APIGWSSLEnabled',
-        'PCI.DSS.321-AutoscalingGroupELBHealthCheckRequired',
-        'PCI.DSS.321-AutoscalingLaunchConfigPublicIpDisabled',
+        'PCI.DSS.321-AutoScalingGroupELBHealthCheckRequired',
+        'PCI.DSS.321-AutoScalingLaunchConfigPublicIpDisabled',
         'PCI.DSS.321-CloudTrailCloudWatchLogsEnabled',
         'PCI.DSS.321-CloudTrailEncryptionEnabled',
         'PCI.DSS.321-CloudTrailLogFileValidationEnabled',
@@ -502,7 +502,7 @@ describe('Check NagPack Details', () => {
         'PCI.DSS.321-EC2InstanceProfileAttached',
         'PCI.DSS.321-EC2InstancesInVPC',
         'PCI.DSS.321-EC2RestrictedCommonPorts',
-        'PCI.DSS.321-EC2RestrictedSsh',
+        'PCI.DSS.321-EC2RestrictedSSH',
         'PCI.DSS.321-ECSTaskDefinitionUserForHostMode',
         'PCI.DSS.321-EFSEncrypted',
         'PCI.DSS.321-ELBACMCertificateRequired',
@@ -555,7 +555,7 @@ describe('Check NagPack Details', () => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
-        const ruleId = `${pack.getPackName}-${ruleSuffix}`;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         actualRules.push(ruleId);
         return ruleId;
       });

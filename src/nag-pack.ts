@@ -85,7 +85,7 @@ export abstract class NagPack implements IAspect {
         : props.logIgnores;
   }
 
-  public get getPackName(): string {
+  public get readPackName(): string {
     return this.packName;
   }
   /**

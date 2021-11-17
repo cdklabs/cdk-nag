@@ -14,9 +14,9 @@ import {
 import { AppSyncGraphQLRequestLogging } from '../rules/appsync';
 import { AthenaWorkgroupEncryptedQueryResults } from '../rules/athena';
 import {
-  AutoscalingGroupCooldownPeriod,
+  AutoScalingGroupCooldownPeriod,
   AutoScalingGroupHealthCheck,
-  AutoscalingGroupScalingNotifications,
+  AutoScalingGroupScalingNotifications,
 } from '../rules/autoscaling';
 import { Cloud9InstanceNoIngressSystemsManager } from '../rules/cloud9';
 import {
@@ -73,7 +73,7 @@ import {
 } from '../rules/elasticbeanstalk';
 import {
   CLBConnectionDraining,
-  CLBInboundHttpHttps,
+  CLBNoInboundHttpHttps,
   ELBCrossZoneLoadBalancingEnabled,
   ELBLoggingEnabled,
   ELBTlsHttpsListenersOnly,
@@ -128,7 +128,7 @@ import {
 } from '../rules/rds';
 import {
   RedshiftClusterAuditLogging,
-  RedshiftClusterAutomatedSnapshots,
+  RedshiftBackupEnabled,
   RedshiftClusterEncryptionAtRest,
   RedshiftClusterInVPC,
   RedshiftClusterNonDefaultPort,
@@ -295,7 +295,7 @@ export class AwsSolutionsChecks extends NagPack {
       explanation:
         'HTTP/HTTPS applications (monolithic or containerized) should use the ALB instead of the CLB for enhanced incoming traffic distribution, better performance and lower costs.',
       level: NagMessageLevel.ERROR,
-      rule: CLBInboundHttpHttps,
+      rule: CLBNoInboundHttpHttps,
       node: node,
     });
     this.applyRule({
@@ -642,7 +642,7 @@ export class AwsSolutionsChecks extends NagPack {
       explanation:
         'The retention period represents the number of days to retain automated snapshots. A positive retention period should be set to configure this feature.',
       level: NagMessageLevel.ERROR,
-      rule: RedshiftClusterAutomatedSnapshots,
+      rule: RedshiftBackupEnabled,
       node: node,
     });
     this.applyRule({
@@ -838,7 +838,7 @@ export class AwsSolutionsChecks extends NagPack {
       explanation:
         'A cooldown period temporarily suspends any scaling activities in order to allow the newly launched EC2 instance(s) some time to start handling the application traffic.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingGroupCooldownPeriod,
+      rule: AutoScalingGroupCooldownPeriod,
       node: node,
     });
     this.applyRule({
@@ -856,7 +856,7 @@ export class AwsSolutionsChecks extends NagPack {
       explanation:
         'Notifications on EC2 instance launch, launch error, termination, and termination errors allow operators to gain better insights into systems attributes such as activity and health.',
       level: NagMessageLevel.ERROR,
-      rule: AutoscalingGroupScalingNotifications,
+      rule: AutoScalingGroupScalingNotifications,
       node: node,
     });
   }

@@ -74,7 +74,10 @@ describe('Testing rule suppression system', () => {
           'aws:cdk:path': stringLike('*Resource*'),
           cdk_nag: {
             rules_to_suppress: [
-              { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
             ],
           },
         },
@@ -104,7 +107,10 @@ describe('Testing rule suppression system', () => {
           'aws:cdk:path': stringLike('*Resource*'),
           cdk_nag: {
             rules_to_suppress: [
-              { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
             ],
           },
         },
@@ -124,7 +130,10 @@ describe('Testing rule suppression system', () => {
     testCfn.addMetadata('cdk_nag', {
       rules_to_suppress: [
         { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-        { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+        {
+          id: 'AwsSolutions-EC2SecurityGroupDescription',
+          reason: 'dolor sit amet',
+        },
       ],
     });
 
@@ -139,7 +148,9 @@ describe('Testing rule suppression system', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('AwsSolutions-EC27:'),
+          data: expect.stringContaining(
+            'AwsSolutions-EC2SecurityGroupDescription:'
+          ),
         }),
       })
     );
@@ -154,7 +165,10 @@ describe('Testing rule suppression system', () => {
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
     NagSuppressions.addResourceSuppressions(test, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+      {
+        id: 'AwsSolutions-EC2SecurityGroupDescription',
+        reason: 'dolor sit amet',
+      },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
     expect(messages).not.toContainEqual(
@@ -167,7 +181,9 @@ describe('Testing rule suppression system', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('AwsSolutions-EC27:'),
+          data: expect.stringContaining(
+            'AwsSolutions-EC2SecurityGroupDescription:'
+          ),
         }),
       })
     );
@@ -184,7 +200,10 @@ describe('Testing rule suppression system', () => {
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
     NagSuppressions.addResourceSuppressions(test, [
-      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+      {
+        id: 'AwsSolutions-EC2SecurityGroupDescription',
+        reason: 'dolor sit amet',
+      },
     ]);
     const synthed = SynthUtils.synthesize(stack);
     expect(synthed).toHaveResourceLike(
@@ -193,8 +212,14 @@ describe('Testing rule suppression system', () => {
         Metadata: {
           cdk_nag: {
             rules_to_suppress: [
-              { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-              { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
+              {
+                id: 'AwsSolutions-EC2SecurityGroupDescription',
+                reason: 'dolor sit amet',
+              },
             ],
           },
         },
@@ -212,7 +237,10 @@ describe('Testing rule suppression system', () => {
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
     NagSuppressions.addResourceSuppressionsByPath(stack, test.node.path, [
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+      {
+        id: 'AwsSolutions-EC2SecurityGroupDescription',
+        reason: 'dolor sit amet',
+      },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
     expect(messages).not.toContainEqual(
@@ -225,7 +253,9 @@ describe('Testing rule suppression system', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('AwsSolutions-EC27:'),
+          data: expect.stringContaining(
+            'AwsSolutions-EC2SecurityGroupDescription:'
+          ),
         }),
       })
     );
@@ -238,14 +268,20 @@ describe('Testing rule suppression system', () => {
       { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
     ]);
     NagSuppressions.addStackSuppressions(stack, [
-      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+      {
+        id: 'AwsSolutions-EC2SecurityGroupDescription',
+        reason: 'dolor sit amet',
+      },
     ]);
     expect(stack.templateOptions.metadata).toMatchObject({
       foo: 'bar',
       cdk_nag: {
         rules_to_suppress: [
           { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-          { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+          {
+            id: 'AwsSolutions-EC2SecurityGroupDescription',
+            reason: 'dolor sit amet',
+          },
         ],
       },
     });
@@ -328,7 +364,10 @@ describe('Testing rule suppression system', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     NagSuppressions.addStackSuppressions(stack, [
-      { id: 'AwsSolutions-EC27', reason: 'dolor sit amet' },
+      {
+        id: 'AwsSolutions-EC2SecurityGroupDescription',
+        reason: 'dolor sit amet',
+      },
     ]);
     const test = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
@@ -349,7 +388,9 @@ describe('Testing rule suppression system', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('AwsSolutions-EC27:'),
+          data: expect.stringContaining(
+            'AwsSolutions-EC2SecurityGroupDescription:'
+          ),
         }),
       })
     );
@@ -358,7 +399,10 @@ describe('Testing rule suppression system', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     const test = new CfnRoute(stack, 'CfnRoute', { routeTableId: 'foo' });
-    const suppression = { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' };
+    const suppression = {
+      id: 'AwsSolutions-EC23',
+      reason: 'lorem ipsum',
+    };
     NagSuppressions.addResourceSuppressions(test, [suppression]);
     const metadata = test.getMetadata('cdk_nag')?.rules_to_suppress;
     expect(metadata).toContainEqual(expect.objectContaining(suppression));
@@ -367,7 +411,10 @@ describe('Testing rule suppression system', () => {
     const stack = new Stack();
     const nestedStack1 = new NestedStack(stack, 'rNestedStack1');
     const nestedStack2 = new Stack(stack, 'rNestedStack2');
-    const suppression = { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' };
+    const suppression = {
+      id: 'AwsSolutions-EC23',
+      reason: 'lorem ipsum',
+    };
     NagSuppressions.addStackSuppressions(stack, [suppression], true);
     const rootMetadata =
       stack.templateOptions.metadata?.cdk_nag?.rules_to_suppress;

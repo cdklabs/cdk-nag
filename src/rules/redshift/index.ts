@@ -4,7 +4,6 @@ SPDX-License-Identifier: Apache-2.0
 */
 export { default as RedshiftBackupEnabled } from './RedshiftBackupEnabled';
 export { default as RedshiftClusterAuditLogging } from './RedshiftClusterAuditLogging';
-export { default as RedshiftClusterAutomatedSnapshots } from './RedshiftClusterAutomatedSnapshots';
 export { default as RedshiftClusterConfiguration } from './RedshiftClusterConfiguration';
 export { default as RedshiftClusterEncryptionAtRest } from './RedshiftClusterEncryptionAtRest';
 export { default as RedshiftClusterInVPC } from './RedshiftClusterInVPC';
