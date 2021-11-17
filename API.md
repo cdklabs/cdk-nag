@@ -226,6 +226,8 @@ new NagPack(props?: NagPackProps)
 Name | Type | Description 
 -----|------|-------------
 **logIgnores** | <code>boolean</code> | <span></span>
+**packName** | <code>string</code> | <span></span>
+**readPackName** | <code>string</code> | <span></span>
 **verbose** | <code>boolean</code> | <span></span>
 
 ### Methods
@@ -379,7 +381,7 @@ Name | Type | Description
 **info** | <code>string</code> | Why the rule was triggered.
 **level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
 **node** | <code>[CfnResource](#aws-cdk-core-cfnresource)</code> | Ignores listed in cdk-nag metadata.
-**ruleId** | <code>string</code> | The id of the rule to ignore.
+**ruleSuffixOverride**? | <code>string</code> | Override for the suffix of the Rule ID for this rule.<br/>__*Optional*__
 
 ### Methods
 

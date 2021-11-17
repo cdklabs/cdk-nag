@@ -34,9 +34,9 @@ export interface NagPackProps {
  */
 export interface IApplyRule {
   /**
-   * The id of the rule to ignore.
+   * Override for the suffix of the Rule ID for this rule
    */
-  ruleId: string;
+  ruleSuffixOverride?: string;
   /**
    * Why the rule was triggered.
    */
@@ -74,6 +74,7 @@ export enum NagMessageLevel {
 export abstract class NagPack implements IAspect {
   protected verbose: boolean;
   protected logIgnores: boolean;
+  protected packName = '';
 
   constructor(props?: NagPackProps) {
     this.verbose =
@@ -84,6 +85,9 @@ export abstract class NagPack implements IAspect {
         : props.logIgnores;
   }
 
+  public get readPackName(): string {
+    return this.packName;
+  }
   /**
    * All aspects can visit an IConstruct.
    */
@@ -94,27 +98,36 @@ export abstract class NagPack implements IAspect {
    * @param params The @IApplyRule interface with rule details.
    */
   public applyRule(params: IApplyRule): void {
+    if (this.packName === '') {
+      throw Error(
+        'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
+      );
+    }
     let resourceIgnores = params.node.getMetadata('cdk_nag')?.rules_to_suppress;
     resourceIgnores = resourceIgnores ? resourceIgnores : [];
     let stackIgnores = Stack.of(params.node).templateOptions.metadata?.cdk_nag
       ?.rules_to_suppress;
     stackIgnores = stackIgnores ? stackIgnores : [];
     const allIgnores = resourceIgnores.concat(stackIgnores);
+    const ruleSuffix = params.ruleSuffixOverride
+      ? params.ruleSuffixOverride
+      : params.rule.name;
+    const ruleId = `${this.packName}-${ruleSuffix}`;
     try {
       if (!params.rule(params.node)) {
-        const reason = this.ignoreRule(allIgnores, params.ruleId);
+        const reason = this.ignoreRule(allIgnores, ruleId);
         if (reason) {
           if (this.logIgnores === true) {
             const message = this.createMessage(
               SUPPRESSION_ID,
-              `${params.ruleId} was triggered but suppressed.`,
+              `${ruleId} was triggered but suppressed.`,
               `Provided reason: "${reason}"`
             );
             Annotations.of(params.node).addInfo(message);
           }
         } else {
           const message = this.createMessage(
-            params.ruleId,
+            ruleId,
             params.info,
             params.explanation
           );
@@ -137,7 +150,7 @@ export abstract class NagPack implements IAspect {
           Annotations.of(params.node).addInfo(message);
         }
       } else {
-        const information = `'${params.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
+        const information = `'${ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,
           information,

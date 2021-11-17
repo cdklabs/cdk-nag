@@ -2,10 +2,10 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-export * from './AwsSolutions/aws-solutions';
-export * from './HIPAA-Security/hipaa-security';
-export * from './NIST-800-53-R4/nist-800-53-r4';
-export * from './NIST-800-53-R5/nist-800-53-r5';
-export * from './PCI-DSS-3.2.1/pci-dss-321';
+export * from './packs/aws-solutions';
+export * from './packs/hipaa-security';
+export * from './packs/nist-800-53-r4';
+export * from './packs/nist-800-53-r5';
+export * from './packs/pci-dss-321';
 export * from './nag-pack';
 export * from './nag-suppressions';
