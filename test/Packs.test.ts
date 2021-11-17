@@ -12,6 +12,7 @@ import {
   NIST80053R5Checks,
   PCIDSS321Checks,
   IApplyRule,
+  NagMessageLevel,
 } from '../src';
 
 describe('Check NagPack Details', () => {
@@ -20,8 +21,8 @@ describe('Check NagPack Details', () => {
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('AwsSolutions');
     });
-    test('Pack contains expected rules', () => {
-      const warnings = [
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = [
         'AwsSolutions-APIG3',
         'AwsSolutions-CB3',
         'AwsSolutions-CB5',
@@ -39,7 +40,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-TS3',
         'AwsSolutions-VPC3',
       ];
-      const errors = [
+      const expectedErrors = [
         'AwsSolutions-AEC1',
         'AwsSolutions-AEC3',
         'AwsSolutions-AEC4',
@@ -142,21 +143,26 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-SQS3',
         'AwsSolutions-VPC7',
       ];
-      const expectedRules = warnings.concat(errors);
-      const actualRules = new Array<string>();
+      const actualWarnings = new Array<string>();
+      const actualErrors = new Array<string>();
       jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
-        actualRules.push(ruleId);
+        if (params.level === NagMessageLevel.WARN) {
+          actualWarnings.push(ruleId);
+        } else {
+          actualErrors.push(ruleId);
+        }
         return ruleId;
       });
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
-      expect(expectedRules.sort()).toEqual(actualRules.sort());
+      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
     });
   });
   describe('HIPAA-Security', () => {
@@ -164,9 +170,9 @@ describe('Check NagPack Details', () => {
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('HIPAA.Security');
     });
-    test('Pack contains expected rules', () => {
-      const warnings = ['HIPAA.Security-VPCDefaultSecurityGroupClosed'];
-      const errors = [
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = ['HIPAA.Security-VPCDefaultSecurityGroupClosed'];
+      const expectedErrors = [
         'HIPAA.Security-ALBHttpDropInvalidHeaderEnabled',
         'HIPAA.Security-ALBHttpToHttpsRedirection',
         'HIPAA.Security-APIGWCacheEnabledAndEncrypted',
@@ -255,21 +261,26 @@ describe('Check NagPack Details', () => {
         'HIPAA.Security-VPCSubnetAutoAssignPublicIpDisabled',
         'HIPAA.Security-WAFv2LoggingEnabled',
       ];
-      const expectedRules = warnings.concat(errors);
-      const actualRules = new Array<string>();
+      const actualWarnings = new Array<string>();
+      const actualErrors = new Array<string>();
       jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
-        actualRules.push(ruleId);
+        if (params.level === NagMessageLevel.WARN) {
+          actualWarnings.push(ruleId);
+        } else {
+          actualErrors.push(ruleId);
+        }
         return ruleId;
       });
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
-      expect(expectedRules.sort()).toEqual(actualRules.sort());
+      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
     });
   });
   describe('NIST-800-53-R4', () => {
@@ -277,9 +288,9 @@ describe('Check NagPack Details', () => {
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('NIST.800.53.R4');
     });
-    test('Pack contains expected rules', () => {
-      const warnings = ['NIST.800.53.R4-VPCDefaultSecurityGroupClosed'];
-      const errors = [
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = ['NIST.800.53.R4-VPCDefaultSecurityGroupClosed'];
+      const expectedErrors = [
         'NIST.800.53.R4-ALBHttpDropInvalidHeaderEnabled',
         'NIST.800.53.R4-ALBHttpToHttpsRedirection',
         'NIST.800.53.R4-ALBWAFEnabled',
@@ -348,21 +359,26 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R4-VPCFlowLogsEnabled',
         'NIST.800.53.R4-WAFv2LoggingEnabled',
       ];
-      const expectedRules = warnings.concat(errors);
-      const actualRules = new Array<string>();
+      const actualWarnings = new Array<string>();
+      const actualErrors = new Array<string>();
       jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
-        actualRules.push(ruleId);
+        if (params.level === NagMessageLevel.WARN) {
+          actualWarnings.push(ruleId);
+        } else {
+          actualErrors.push(ruleId);
+        }
         return ruleId;
       });
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
-      expect(expectedRules.sort()).toEqual(actualRules.sort());
+      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
     });
   });
   describe('NIST-800-53-R5', () => {
@@ -370,9 +386,9 @@ describe('Check NagPack Details', () => {
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('NIST.800.53.R5');
     });
-    test('Pack contains expected rules', () => {
-      const warnings = ['NIST.800.53.R5-VPCDefaultSecurityGroupClosed'];
-      const errors = [
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = ['NIST.800.53.R5-VPCDefaultSecurityGroupClosed'];
+      const expectedErrors = [
         'NIST.800.53.R5-ALBHttpToHttpsRedirection',
         'NIST.800.53.R5-ALBWAFEnabled',
         'NIST.800.53.R5-APIGWAssociatedWithWAF',
@@ -456,21 +472,26 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R5-VPCSubnetAutoAssignPublicIpDisabled',
         'NIST.800.53.R5-WAFv2LoggingEnabled',
       ];
-      const expectedRules = warnings.concat(errors);
-      const actualRules = new Array<string>();
+      const actualWarnings = new Array<string>();
+      const actualErrors = new Array<string>();
       jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
-        actualRules.push(ruleId);
+        if (params.level === NagMessageLevel.WARN) {
+          actualWarnings.push(ruleId);
+        } else {
+          actualErrors.push(ruleId);
+        }
         return ruleId;
       });
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
-      expect(expectedRules.sort()).toEqual(actualRules.sort());
+      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
     });
   });
   describe('PCI-DSS-3.2.1', () => {
@@ -478,9 +499,9 @@ describe('Check NagPack Details', () => {
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('PCI.DSS.321');
     });
-    test('Pack contains expected rules', () => {
-      const warnings = ['PCI.DSS.321-VPCDefaultSecurityGroupClosed'];
-      const errors = [
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = ['PCI.DSS.321-VPCDefaultSecurityGroupClosed'];
+      const expectedErrors = [
         'PCI.DSS.321-ALBHttpDropInvalidHeaderEnabled',
         'PCI.DSS.321-ALBHttpToHttpsRedirection',
         'PCI.DSS.321-ALBWAFEnabled',
@@ -549,21 +570,26 @@ describe('Check NagPack Details', () => {
         'PCI.DSS.321-VPCSubnetAutoAssignPublicIpDisabled',
         'PCI.DSS.321-WAFv2LoggingEnabled',
       ];
-      const expectedRules = warnings.concat(errors);
-      const actualRules = new Array<string>();
+      const actualWarnings = new Array<string>();
+      const actualErrors = new Array<string>();
       jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
-        actualRules.push(ruleId);
+        if (params.level === NagMessageLevel.WARN) {
+          actualWarnings.push(ruleId);
+        } else {
+          actualErrors.push(ruleId);
+        }
         return ruleId;
       });
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
-      expect(expectedRules.sort()).toEqual(actualRules.sort());
+      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
     });
   });
 });
