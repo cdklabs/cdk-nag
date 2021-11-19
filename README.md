@@ -10,6 +10,8 @@ SPDX-License-Identifier: Apache-2.0
 | Python     | [![PyPI version](https://badge.fury.io/py/cdk-nag.svg)](https://badge.fury.io/py/cdk-nag) | [![PyPI version](https://badge.fury.io/py/monocdk-nag.svg)](https://badge.fury.io/py/monocdk-nag) |
 | TypeScript | [![npm version](https://badge.fury.io/js/cdk-nag.svg)](https://badge.fury.io/js/cdk-nag)  | [![npm version](https://badge.fury.io/js/monocdk-nag.svg)](https://badge.fury.io/js/monocdk-nag)  |
 
+**Note**: Read the [usage](#usage) section for details on how to use for your intended cdk version (CDK v1, CDK v2, monocdk)
+
 Check CDK applications or [CloudFormation templates](#using-on-cloudformation-templates) for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
 
 ![](cdk_nag.gif)
@@ -26,7 +28,18 @@ See [RULES](./RULES.md) for more information on all the available packs.
 
 ## Usage
 
-### cdk
+<details>
+<summary>cdk</summary>
+
+Specify a major version of greater than `0` in your dependencies
+
+```json
+{
+  "dependencies": {
+    "cdk-nag": "^0.2.0"
+  }
+}
+```
 
 ```typescript
 import { App, Aspects } from '@aws-cdk/core';
@@ -41,7 +54,48 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 // Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
 ```
 
-### monocdk
+</details>
+
+<details>
+<summary>cdk v2</summary>
+
+Specify a major version of greater than `2` in your dependencies
+
+```json
+{
+  "dependencies": {
+    "cdk-nag": "^2.0.0"
+  }
+}
+```
+
+```typescript
+import { App, Aspects } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks } from 'cdk-nag';
+
+const app = new App();
+new CdkTestStack(app, 'CdkNagDemo');
+// Simple rule informational messages
+Aspects.of(app).add(new AwsSolutionsChecks());
+// Additional explanations on the purpose of triggered rules
+// Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
+```
+
+</details>
+
+<details>
+<summary>monocdk</summary>
+
+Specify a major version of greater than `0` in your dependencies
+
+```json
+{
+  "dependencies": {
+    "monocdk-nag": "^0.2.0"
+  }
+}
+```
 
 ```typescript
 import { App, Aspects } from 'monocdk';
@@ -55,6 +109,8 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 // Additional explanations on the purpose of triggered rules
 // Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
 ```
+
+</details>
 
 ## Suppressing a Rule
 
