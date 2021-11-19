@@ -10,6 +10,10 @@ SPDX-License-Identifier: Apache-2.0
 | Python     | [![PyPI version](https://badge.fury.io/py/cdk-nag.svg)](https://badge.fury.io/py/cdk-nag) | [![PyPI version](https://badge.fury.io/py/monocdk-nag.svg)](https://badge.fury.io/py/monocdk-nag) |
 | TypeScript | [![npm version](https://badge.fury.io/js/cdk-nag.svg)](https://badge.fury.io/js/cdk-nag)  | [![npm version](https://badge.fury.io/js/monocdk-nag.svg)](https://badge.fury.io/js/monocdk-nag)  |
 
+- If your project uses cdk version **1.x.x** use `cdk-nag` **^1.0.0**
+- If your project uses cdk version **2.x.x** use `cdk-nag` **^2.0.0**
+- If your project uses monocdk use `monocdk-nag` **^1.0.0**
+
 Check CDK applications or [CloudFormation templates](#using-on-cloudformation-templates) for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
 
 ![](cdk_nag.gif)
@@ -26,7 +30,8 @@ See [RULES](./RULES.md) for more information on all the available packs.
 
 ## Usage
 
-### cdk
+<details>
+<summary>cdk</summary>
 
 ```typescript
 import { App, Aspects } from '@aws-cdk/core';
@@ -41,7 +46,28 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 // Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
 ```
 
-### monocdk
+</details>
+
+<details>
+<summary>cdk v2</summary>
+
+```typescript
+import { App, Aspects } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks } from 'cdk-nag';
+
+const app = new App();
+new CdkTestStack(app, 'CdkNagDemo');
+// Simple rule informational messages
+Aspects.of(app).add(new AwsSolutionsChecks());
+// Additional explanations on the purpose of triggered rules
+// Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
+```
+
+</details>
+
+<details>
+<summary>monocdk</summary>
 
 ```typescript
 import { App, Aspects } from 'monocdk';
@@ -55,6 +81,8 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 // Additional explanations on the purpose of triggered rules
 // Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
 ```
+
+</details>
 
 ## Suppressing a Rule
 

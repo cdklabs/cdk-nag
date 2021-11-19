@@ -2,20 +2,17 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const {
-  AwsCdkConstructLibrary,
-  DependenciesUpgradeMechanism,
-} = require('projen');
+const { AwsCdkConstructLibrary } = require('projen');
 const project = new AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
   cdkVersion: '1.123.0',
   defaultReleaseBranch: 'main',
+  majorVersion: 1,
   name: 'cdk-nag',
   description:
     'Check CDK applications for best practices using a combination on available rule packs.',
   repositoryUrl: 'https://github.com/cdklabs/cdk-nag.git',
-
   cdkDependencies: [
     '@aws-cdk/aws-apigateway',
     '@aws-cdk/aws-apigatewayv2',
@@ -198,6 +195,7 @@ project.release.addJobs({
     env: {
       CI: 'true',
       RELEASE: 'true',
+      MAJOR: 1,
     },
     steps: [
       {
