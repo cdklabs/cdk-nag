@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   Distribution,
   CfnDistribution,
@@ -10,11 +11,11 @@ import {
   CfnStreamingDistribution,
   OriginProtocolPolicy,
   OriginSslPolicy,
-} from '@aws-cdk/aws-cloudfront';
-import { S3Origin, HttpOrigin } from '@aws-cdk/aws-cloudfront-origins';
-import { Bucket } from '@aws-cdk/aws-s3';
-import { CfnWebACL } from '@aws-cdk/aws-wafv2';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudfront';
+import { S3Origin, HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   CloudFrontDistributionAccessLogging,

@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnBucket } from '@aws-cdk/aws-s3';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnBucket } from 'aws-cdk-lib/aws-s3';
 import { resolveIfPrimitive } from '../../nag-pack';
 
 /**

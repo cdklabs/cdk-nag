@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnAutoScalingGroup } from 'aws-cdk-lib/aws-autoscaling';
 import { resolveIfPrimitive } from '../../nag-pack';
 /**
  * Auto Scaling groups which are associated with load balancers utilize ELB health checks

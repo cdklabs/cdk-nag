@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   CfnStage,
   MethodLoggingLevel,
@@ -11,10 +12,10 @@ import {
   AuthorizationType,
   CfnRequestValidator,
   CfnRestApi,
-} from '@aws-cdk/aws-apigateway';
-import { CfnStage as CfnV2Stage, CfnRoute } from '@aws-cdk/aws-apigatewayv2';
-import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-apigateway';
+import { CfnStage as CfnV2Stage, CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
+import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   APIGWAccessLogging,

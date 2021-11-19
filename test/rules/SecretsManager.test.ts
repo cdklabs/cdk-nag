@@ -3,22 +3,17 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Key } from '@aws-cdk/aws-kms';
-import { Function } from '@aws-cdk/aws-lambda';
+import { Aspects, CfnResource, Stack, Duration } from 'aws-cdk-lib';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { Function } from 'aws-cdk-lib/aws-lambda';
 import {
   Secret,
   CfnSecret,
   HostedRotation,
   CfnRotationSchedule,
   CfnSecretTargetAttachment,
-} from '@aws-cdk/aws-secretsmanager';
-import {
-  Aspects,
-  CfnResource,
-  IConstruct,
-  Stack,
-  Duration,
-} from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-secretsmanager';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   SecretsManagerRotationEnabled,

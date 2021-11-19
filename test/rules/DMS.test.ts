@@ -3,8 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnReplicationInstance } from '@aws-cdk/aws-dms';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { DMSReplicationNotPublic } from '../../src/rules/dms';
 

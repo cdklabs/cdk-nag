@@ -182,11 +182,12 @@
         }
       ]
     },
-    "release": {
-      "name": "release",
-      "description": "Prepare a release from \"main\" branch",
+    "release:v2-main": {
+      "name": "release:v2-main",
+      "description": "Prepare a release from \"v2-main\" branch",
       "env": {
-        "RELEASE": "true"
+        "RELEASE": "true",
+        "MAJOR": "2"
       },
       "steps": [
         {

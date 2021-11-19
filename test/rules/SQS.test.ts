@@ -3,9 +3,10 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Key } from '@aws-cdk/aws-kms';
-import { Queue } from '@aws-cdk/aws-sqs';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { IConstruct } from 'constructs';
 import {
   NagMessageLevel,
   NagPack,

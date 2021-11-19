@@ -3,14 +3,15 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Repository } from '@aws-cdk/aws-ecr';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
   PolicyStatement,
   Effect,
   AccountPrincipal,
   AccountRootPrincipal,
-} from '@aws-cdk/aws-iam';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { ECROpenAccess } from '../../src/rules/ecr';
 

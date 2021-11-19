@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnAlarm } from '@aws-cdk/aws-cloudwatch';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled

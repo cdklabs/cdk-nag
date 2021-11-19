@@ -3,8 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Key, KeySpec } from '@aws-cdk/aws-kms';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { Key, KeySpec } from 'aws-cdk-lib/aws-kms';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { KMSBackingKeyRotationEnabled } from '../../src/rules/kms';
 

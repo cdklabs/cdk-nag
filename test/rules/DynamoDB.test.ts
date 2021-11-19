@@ -3,15 +3,16 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   ScalableTarget,
   ServiceNamespace,
-} from '@aws-cdk/aws-applicationautoscaling';
-import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
-import { CfnCluster } from '@aws-cdk/aws-dax';
-import { AttributeType, BillingMode, Table } from '@aws-cdk/aws-dynamodb';
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-applicationautoscaling';
+import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import { CfnCluster } from 'aws-cdk-lib/aws-dax';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   DAXEncrypted,

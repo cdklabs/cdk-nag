@@ -2,7 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { IConstruct, CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { IConstruct } from 'constructs';
 
 /**
  * Interface for creating a rule suppression

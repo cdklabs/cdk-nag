@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnEnvironment } from '@aws-cdk/aws-elasticbeanstalk';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnEnvironment } from 'aws-cdk-lib/aws-elasticbeanstalk';
 
 /**
  * Elastic Beanstalk environments are configured to use a specific VPC

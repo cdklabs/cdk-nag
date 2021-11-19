@@ -3,14 +3,14 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
+import { CfnResource, Stack } from 'aws-cdk-lib';
 import {
   CfnPolicy,
   CfnManagedPolicy,
   PolicyDocument,
   CfnGroup,
   CfnRole,
-} from '@aws-cdk/aws-iam';
-import { CfnResource, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
 
 /**
  * IAM policies do not grant admin access

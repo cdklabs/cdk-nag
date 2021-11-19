@@ -3,14 +3,15 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { RestApi, AuthorizationType } from '@aws-cdk/aws-apigateway';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { RestApi, AuthorizationType } from 'aws-cdk-lib/aws-apigateway';
 import {
   UserPool,
   Mfa,
   CfnUserPool,
   CfnIdentityPool,
-} from '@aws-cdk/aws-cognito';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cognito';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   CognitoUserPoolAPIGWAuthorizer,

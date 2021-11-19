@@ -3,9 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnBackupSelection } from '@aws-cdk/aws-backup';
-import { CfnTable } from '@aws-cdk/aws-dynamodb';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnBackupSelection } from 'aws-cdk-lib/aws-backup';
+import { CfnTable } from 'aws-cdk-lib/aws-dynamodb';
 import { resolveResourceFromInstrinsic } from '../../nag-pack';
 
 /**

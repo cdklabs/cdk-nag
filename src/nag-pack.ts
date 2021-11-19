@@ -2,13 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import {
-  IAspect,
-  IConstruct,
-  Annotations,
-  CfnResource,
-  Stack,
-} from '@aws-cdk/core';
+import { IAspect, Annotations, CfnResource, Stack } from 'aws-cdk-lib';
+import { IConstruct } from 'constructs';
 import { NagPackSuppression } from './nag-suppressions';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';

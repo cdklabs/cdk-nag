@@ -3,8 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnWebACL, CfnLoggingConfiguration } from '@aws-cdk/aws-wafv2';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnWebACL, CfnLoggingConfiguration } from 'aws-cdk-lib/aws-wafv2';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { WAFv2LoggingEnabled } from '../../src/rules/waf';
 

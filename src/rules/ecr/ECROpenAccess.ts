@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnRegistryPolicy, CfnRepository } from '@aws-cdk/aws-ecr';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnRegistryPolicy, CfnRepository } from 'aws-cdk-lib/aws-ecr';
 
 /**
  * ECR Repositories do not allow open access

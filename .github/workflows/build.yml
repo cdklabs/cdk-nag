@@ -19,27 +19,21 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
-      - name: Setup Node.js
-        uses: actions/setup-node@v2.2.0
-        with:
-          node-version: 12.20.0
-      - name: Install dependencies
-        run: yarn install --check-files --frozen-lockfile
       - name: Set git identity
         run: |-
-          git config user.name "Automation"
+          git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-      - name: Build for cdk
+      - name: Install dependencies
+        run: yarn install --check-files --frozen-lockfile
+      - name: build
         run: npx projen build
       - name: Check for changes
         id: git_diff
         run: git diff --exit-code || echo "::set-output name=has_changes::true"
       - if: steps.git_diff.outputs.has_changes
         name: Commit and push changes (if changed)
-        run: |-
-          git add .
-          git commit -m "chore: self mutation"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+        run: 'git add . && git commit -m "chore: self mutation" && git push origin
+          HEAD:${{ github.event.pull_request.head.ref }}'
       - if: steps.git_diff.outputs.has_changes
         name: Update status check (if changed)
         run: gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name
@@ -53,26 +47,5 @@ jobs:
           }}/actions/runs/${{ github.run_id }}/cancel
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup for monocdk build
-        run: >-
-          rm yarn.lock
-
-          rm .projenrc.js
-
-          mv .projenrc.monocdk.js .projenrc.js
-
-          find ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'
-
-          find ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'
-
-          find ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'
-
-          find ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'
-
-          find ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'
-      - name: Build for monocdk
-        run: npx projen build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     container:
-      image: jsii/superchain:1-buster-slim-node12
+      image: jsii/superchain:1-buster-slim-node14

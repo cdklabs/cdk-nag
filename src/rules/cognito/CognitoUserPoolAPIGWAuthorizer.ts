@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnMethod } from '@aws-cdk/aws-apigateway';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { CfnMethod } from 'aws-cdk-lib/aws-apigateway';
 
 /**
  * Rest API methods use Cognito User Pool Authorizers

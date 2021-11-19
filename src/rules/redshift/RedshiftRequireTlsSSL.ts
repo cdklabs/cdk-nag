@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnCluster, CfnClusterParameterGroup } from '@aws-cdk/aws-redshift';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnCluster, CfnClusterParameterGroup } from 'aws-cdk-lib/aws-redshift';
 import { resolveResourceFromInstrinsic } from '../../nag-pack';
 
 /**

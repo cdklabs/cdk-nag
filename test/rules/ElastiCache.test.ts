@@ -3,14 +3,12 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
+import { Aspects, CfnResource, SecretValue, Stack } from 'aws-cdk-lib';
 import {
-  Aspects,
-  CfnResource,
-  IConstruct,
-  SecretValue,
-  Stack,
-} from '@aws-cdk/core';
+  CfnCacheCluster,
+  CfnReplicationGroup,
+} from 'aws-cdk-lib/aws-elasticache';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   ElastiCacheClusterInVPC,

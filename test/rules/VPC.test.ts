@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   CfnVPC,
   CfnRoute,
@@ -14,8 +15,8 @@ import {
   CfnFlowLog,
   FlowLogTrafficType,
   NetworkAcl,
-} from '@aws-cdk/aws-ec2';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   VPCDefaultSecurityGroupClosed,

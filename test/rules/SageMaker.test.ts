@@ -3,9 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { CfnEndpointConfig, CfnNotebookInstance } from '@aws-cdk/aws-sagemaker';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  CfnEndpointConfig,
+  CfnNotebookInstance,
+} from 'aws-cdk-lib/aws-sagemaker';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   SageMakerEndpointConfigurationKMSKeyConfigured,

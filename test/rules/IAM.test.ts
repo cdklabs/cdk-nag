@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   User,
   Group,
@@ -15,9 +16,9 @@ import {
   ServicePrincipal,
   CfnUserToGroupAddition,
   PolicyDocument,
-} from '@aws-cdk/aws-iam';
-import { Bucket } from '@aws-cdk/aws-s3';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   IAMGroupHasUsers,

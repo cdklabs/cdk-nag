@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnLogGroup } from '@aws-cdk/aws-logs';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { CfnLogGroup } from 'aws-cdk-lib/aws-logs';
 
 /**
  * CloudWatch Log Groups have an explicit retention period configured
