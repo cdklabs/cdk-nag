@@ -10,7 +10,9 @@ SPDX-License-Identifier: Apache-2.0
 | Python     | [![PyPI version](https://badge.fury.io/py/cdk-nag.svg)](https://badge.fury.io/py/cdk-nag) | [![PyPI version](https://badge.fury.io/py/monocdk-nag.svg)](https://badge.fury.io/py/monocdk-nag) |
 | TypeScript | [![npm version](https://badge.fury.io/js/cdk-nag.svg)](https://badge.fury.io/js/cdk-nag)  | [![npm version](https://badge.fury.io/js/monocdk-nag.svg)](https://badge.fury.io/js/monocdk-nag)  |
 
-**Note**: Read the [usage](#usage) section for details on how to use for your intended cdk version (CDK v1, CDK v2, monocdk)
+- If your project uses cdk version **1.x.x** use `cdk-nag` **^1.0.0**
+- If your project uses cdk version **2.x.x** use `cdk-nag` **^2.0.0**
+- If your project uses monocdk use `monocdk-nag` **^1.0.0**
 
 Check CDK applications or [CloudFormation templates](#using-on-cloudformation-templates) for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
 
@@ -31,16 +33,6 @@ See [RULES](./RULES.md) for more information on all the available packs.
 <details>
 <summary>cdk</summary>
 
-Specify a major version of greater than `0` in your dependencies
-
-```json
-{
-  "dependencies": {
-    "cdk-nag": "^0.2.0"
-  }
-}
-```
-
 ```typescript
 import { App, Aspects } from '@aws-cdk/core';
 import { CdkTestStack } from '../lib/cdk-test-stack';
@@ -59,16 +51,6 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 <details>
 <summary>cdk v2</summary>
 
-Specify a major version of greater than `2` in your dependencies
-
-```json
-{
-  "dependencies": {
-    "cdk-nag": "^2.0.0"
-  }
-}
-```
-
 ```typescript
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
@@ -86,16 +68,6 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 
 <details>
 <summary>monocdk</summary>
-
-Specify a major version of greater than `0` in your dependencies
-
-```json
-{
-  "dependencies": {
-    "monocdk-nag": "^0.2.0"
-  }
-}
-```
 
 ```typescript
 import { App, Aspects } from 'monocdk';
