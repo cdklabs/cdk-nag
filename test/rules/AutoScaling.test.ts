@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Duration, Stack } from 'aws-cdk-lib';
 import {
   AutoScalingGroup,
   CfnAutoScalingGroup,
@@ -10,21 +11,15 @@ import {
   HealthCheck,
   ScalingEvent,
   ScalingEvents,
-} from '@aws-cdk/aws-autoscaling';
+} from 'aws-cdk-lib/aws-autoscaling';
 import {
   InstanceClass,
   InstanceType,
   MachineImage,
   Vpc,
-} from '@aws-cdk/aws-ec2';
-import { Topic } from '@aws-cdk/aws-sns';
-import {
-  Aspects,
-  CfnResource,
-  Duration,
-  IConstruct,
-  Stack,
-} from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   AutoScalingGroupHealthCheck,

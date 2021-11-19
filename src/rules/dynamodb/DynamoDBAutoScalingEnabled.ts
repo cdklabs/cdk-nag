@@ -3,9 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnScalableTarget } from '@aws-cdk/aws-applicationautoscaling';
-import { CfnTable, BillingMode } from '@aws-cdk/aws-dynamodb';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnScalableTarget } from 'aws-cdk-lib/aws-applicationautoscaling';
+import { CfnTable, BillingMode } from 'aws-cdk-lib/aws-dynamodb';
 import { resolveResourceFromInstrinsic } from '../../nag-pack';
 
 /**

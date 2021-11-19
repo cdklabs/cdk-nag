@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnPolicy, CfnManagedPolicy, CfnUser } from '@aws-cdk/aws-iam';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnPolicy, CfnManagedPolicy, CfnUser } from 'aws-cdk-lib/aws-iam';
 /**
  * IAM policies are not attached at the user level
  * @param node the CfnResource to check

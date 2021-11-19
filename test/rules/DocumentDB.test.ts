@@ -3,21 +3,21 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnDBCluster, DatabaseCluster } from '@aws-cdk/aws-docdb';
+import {
+  Aspects,
+  CfnResource,
+  Duration,
+  SecretValue,
+  Stack,
+} from 'aws-cdk-lib';
+import { CfnDBCluster, DatabaseCluster } from 'aws-cdk-lib/aws-docdb';
 import {
   InstanceType,
   InstanceClass,
   InstanceSize,
   Vpc,
-} from '@aws-cdk/aws-ec2';
-import {
-  Aspects,
-  CfnResource,
-  Duration,
-  IConstruct,
-  SecretValue,
-  Stack,
-} from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   DocumentDBClusterBackupRetentionPeriod,

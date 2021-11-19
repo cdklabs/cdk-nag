@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnDBInstance } from '@aws-cdk/aws-rds';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnDBInstance } from 'aws-cdk-lib/aws-rds';
 import { resolveIfPrimitive } from '../../nag-pack';
 
 /**
@@ -30,13 +30,15 @@ export default Object.defineProperty(
             dbLogs.includes('general') &&
             dbLogs.includes('slowquery')
           )
-        )
+        ) {
           return false;
+        }
       }
 
       if (dbType.includes('postgres')) {
-        if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade')))
+        if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade'))) {
           return false;
+        }
       }
 
       if (dbType.includes('oracle')) {
@@ -48,13 +50,15 @@ export default Object.defineProperty(
             dbLogs.includes('oemagent') &&
             dbLogs.includes('trace')
           )
-        )
+        ) {
           return false;
+        }
       }
 
       if (dbType.includes('sqlserver')) {
-        if (!(dbLogs.includes('agent') && dbLogs.includes('error')))
+        if (!(dbLogs.includes('agent') && dbLogs.includes('error'))) {
           return false;
+        }
       }
     }
     return true;

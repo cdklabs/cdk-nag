@@ -3,9 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { AuthorizationType, CfnMethod } from '@aws-cdk/aws-apigateway';
-import { CfnRoute } from '@aws-cdk/aws-apigatewayv2';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { AuthorizationType, CfnMethod } from 'aws-cdk-lib/aws-apigateway';
+import { CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
 import { resolveIfPrimitive } from '../../nag-pack';
 
 /**

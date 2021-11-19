@@ -5,23 +5,23 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils, stringLike } from '@aws-cdk/assert';
 import '@aws-cdk/assert/jest';
 import {
+  Aspects,
+  CfnParameter,
+  CfnResource,
+  NestedStack,
+  Stack,
+} from 'aws-cdk-lib';
+import {
   CfnRoute,
   CfnSecurityGroup,
   Peer,
   Port,
   SecurityGroup,
   Vpc,
-} from '@aws-cdk/aws-ec2';
-import { PolicyStatement, User } from '@aws-cdk/aws-iam';
-import { CfnBucket } from '@aws-cdk/aws-s3';
-import {
-  Aspects,
-  CfnParameter,
-  CfnResource,
-  IConstruct,
-  NestedStack,
-  Stack,
-} from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { PolicyStatement, User } from 'aws-cdk-lib/aws-iam';
+import { CfnBucket } from 'aws-cdk-lib/aws-s3';
+import { IConstruct } from 'constructs';
 import {
   NagSuppressions,
   AwsSolutionsChecks,

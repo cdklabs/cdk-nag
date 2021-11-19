@@ -3,20 +3,15 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { LogGroup } from '@aws-cdk/aws-logs';
+import { Aspects, CfnResource, Duration, Stack } from 'aws-cdk-lib';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import {
   StateMachine,
   Wait,
   WaitTime,
   LogLevel,
-} from '@aws-cdk/aws-stepfunctions';
-import {
-  Aspects,
-  CfnResource,
-  Duration,
-  IConstruct,
-  Stack,
-} from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-stepfunctions';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,

@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   AwsSolutionsChecks,
   HIPAASecurityChecks,

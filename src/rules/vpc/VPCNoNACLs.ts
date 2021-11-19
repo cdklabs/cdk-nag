@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnNetworkAcl, CfnNetworkAclEntry } from '@aws-cdk/aws-ec2';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { CfnNetworkAcl, CfnNetworkAclEntry } from 'aws-cdk-lib/aws-ec2';
 
 /**
  * VPCs do not implement network ACLs

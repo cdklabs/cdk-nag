@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnTrail } from '@aws-cdk/aws-cloudtrail';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { CfnTrail } from 'aws-cdk-lib/aws-cloudtrail';
 import { resolveIfPrimitive } from '../../nag-pack';
 /**
  * CloudTrail trails have log file validation enabled

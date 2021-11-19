@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnFunction } from '@aws-cdk/aws-lambda';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
 
 /**
  * Lambda functions are configured with a dead-letter configuration

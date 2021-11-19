@@ -3,10 +3,11 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
-import { Vpc } from '@aws-cdk/aws-ec2';
-import { FileSystem } from '@aws-cdk/aws-efs';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { FileSystem } from 'aws-cdk-lib/aws-efs';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { EFSEncrypted, EFSInBackupPlan } from '../../src/rules/efs';
 

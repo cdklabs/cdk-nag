@@ -3,14 +3,15 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
   Bucket,
   BucketAccessControl,
   BucketEncryption,
   CfnBucket,
-} from '@aws-cdk/aws-s3';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-s3';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   S3BucketDefaultLockEnabled,

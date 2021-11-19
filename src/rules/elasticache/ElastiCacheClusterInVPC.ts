@@ -3,8 +3,11 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import {
+  CfnCacheCluster,
+  CfnReplicationGroup,
+} from 'aws-cdk-lib/aws-elasticache';
 
 /**
  * ElastiCache clusters are provisioned in a VPC

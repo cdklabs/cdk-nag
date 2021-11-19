@@ -3,9 +3,10 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { CfnEnvironmentEC2 } from '@aws-cdk/aws-cloud9';
-import { InstanceType, InstanceClass, InstanceSize } from '@aws-cdk/aws-ec2';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnEnvironmentEC2 } from 'aws-cdk-lib/aws-cloud9';
+import { InstanceType, InstanceClass, InstanceSize } from 'aws-cdk-lib/aws-ec2';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import { Cloud9InstanceNoIngressSystemsManager } from '../../src/rules/cloud9';
 

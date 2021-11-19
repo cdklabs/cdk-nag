@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnStream } from '@aws-cdk/aws-kinesis';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnStream } from 'aws-cdk-lib/aws-kinesis';
 
 /**
  * Kinesis Data Streams have server-side encryption enabled

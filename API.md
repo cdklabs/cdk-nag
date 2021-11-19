@@ -40,7 +40,7 @@ Name|Description
 
 Check Best practices based on AWS Solutions Security Matrix.
 
-__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
 __Extends__: [NagPack](#cdk-nag-nagpack)
 
 ### Initializer
@@ -68,7 +68,7 @@ All aspects can visit an IConstruct.
 visit(node: IConstruct): void
 ```
 
-* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
 
 
@@ -81,7 +81,7 @@ Check for HIPAA Security compliance.
 
 Based on the HIPAA Security AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-hipaa_security.html
 
-__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
 __Extends__: [NagPack](#cdk-nag-nagpack)
 
 ### Initializer
@@ -109,7 +109,7 @@ All aspects can visit an IConstruct.
 visit(node: IConstruct): void
 ```
 
-* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
 
 
@@ -122,7 +122,7 @@ Check for NIST 800-53 rev 4 compliance.
 
 Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
 
-__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
 __Extends__: [NagPack](#cdk-nag-nagpack)
 
 ### Initializer
@@ -150,7 +150,7 @@ All aspects can visit an IConstruct.
 visit(node: IConstruct): void
 ```
 
-* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
 
 
@@ -163,7 +163,7 @@ Check for NIST 800-53 rev 5 compliance.
 
 Based on the NIST 800-53 rev 5 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_5.html
 
-__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
 __Extends__: [NagPack](#cdk-nag-nagpack)
 
 ### Initializer
@@ -191,7 +191,7 @@ All aspects can visit an IConstruct.
 visit(node: IConstruct): void
 ```
 
-* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
 
 
@@ -202,7 +202,7 @@ visit(node: IConstruct): void
 
 Base class for all rule packs.
 
-__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
 __Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks), [PCIDSS321Checks](#cdk-nag-pcidss321checks)
 
 ### Initializer
@@ -254,7 +254,7 @@ All aspects can visit an IConstruct.
 visit(node: IConstruct): void
 ```
 
-* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
 
 
@@ -288,7 +288,7 @@ Add cdk-nag suppressions to a CfnResource and optionally its children.
 static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
-* **construct** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  The IConstruct to apply the suppression to.
+* **construct** (<code>[IConstruct](#constructs-iconstruct)</code>)  The IConstruct to apply the suppression to.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
 * **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
 
@@ -303,7 +303,7 @@ Add cdk-nag suppressions to a CfnResource and optionally its children via its pa
 static addResourceSuppressionsByPath(stack: Stack, path: string, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
-* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  The Stack the construct belongs to.
+* **stack** (<code>[Stack](#aws-cdk-lib-stack)</code>)  The Stack the construct belongs to.
 * **path** (<code>string</code>)  The path to the construct in the provided stack.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
 * **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
@@ -319,7 +319,7 @@ Apply cdk-nag suppressions to a Stack and optionally nested stacks.
 static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression>, applyToNestedStacks?: boolean): void
 ```
 
-* **stack** (<code>[Stack](#aws-cdk-core-stack)</code>)  The Stack to apply the suppression to.
+* **stack** (<code>[Stack](#aws-cdk-lib-stack)</code>)  The Stack to apply the suppression to.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the stack.
 * **applyToNestedStacks** (<code>boolean</code>)  Apply the suppressions to children stacks (default:false).
 
@@ -332,7 +332,7 @@ static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression
 
 Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 
-__Implements__: [IAspect](#aws-cdk-core-iaspect)
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
 __Extends__: [NagPack](#cdk-nag-nagpack)
 
 ### Initializer
@@ -360,7 +360,7 @@ All aspects can visit an IConstruct.
 visit(node: IConstruct): void
 ```
 
-* **node** (<code>[IConstruct](#aws-cdk-core-iconstruct)</code>)  *No description*
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
 
 
@@ -380,7 +380,7 @@ Name | Type | Description
 **explanation** | <code>string</code> | Why the rule exists.
 **info** | <code>string</code> | Why the rule was triggered.
 **level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
-**node** | <code>[CfnResource](#aws-cdk-core-cfnresource)</code> | Ignores listed in cdk-nag metadata.
+**node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | Ignores listed in cdk-nag metadata.
 **ruleSuffixOverride**? | <code>string</code> | Override for the suffix of the Rule ID for this rule.<br/>__*Optional*__
 
 ### Methods
@@ -394,7 +394,7 @@ The callback to the rule.
 rule(node: CfnResource): boolean
 ```
 
-* **node** (<code>[CfnResource](#aws-cdk-core-cfnresource)</code>)  The CfnResource to check.
+* **node** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The CfnResource to check.
 
 __Returns__:
 * <code>boolean</code>

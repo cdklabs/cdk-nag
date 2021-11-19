@@ -3,9 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancingv2';
-import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import {
   resolveIfPrimitive,
   resolveResourceFromInstrinsic,

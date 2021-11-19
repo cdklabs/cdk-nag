@@ -3,8 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
-import { Vpc } from '@aws-cdk/aws-ec2';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
   CfnDBInstance,
@@ -18,8 +19,8 @@ import {
   MysqlEngineVersion,
   OracleEngineVersion,
   CfnDBCluster,
-} from '@aws-cdk/aws-rds';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-rds';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   AuroraMySQLBacktrack,

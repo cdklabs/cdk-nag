@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnDatabase } from '@aws-cdk/aws-timestream';
-import { CfnResource } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { CfnDatabase } from 'aws-cdk-lib/aws-timestream';
 
 /**
  * Timestream databases use Customer Managed KMS Keys

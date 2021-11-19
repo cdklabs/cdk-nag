@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnGraphQLApi } from '@aws-cdk/aws-appsync';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnGraphQLApi } from 'aws-cdk-lib/aws-appsync';
 import { resolveIfPrimitive } from '../../nag-pack';
 
 /**

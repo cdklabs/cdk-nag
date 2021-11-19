@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnRequestValidator, CfnRestApi } from '@aws-cdk/aws-apigateway';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnRequestValidator, CfnRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { resolveResourceFromInstrinsic } from '../../nag-pack';
 
 /**

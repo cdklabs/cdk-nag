@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnStage } from '@aws-cdk/aws-apigateway';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnStage } from 'aws-cdk-lib/aws-apigateway';
 
 /**
  * All methods in API Gateway stages have caching enabled and encrypted

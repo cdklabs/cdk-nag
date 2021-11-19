@@ -3,7 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { CfnResource, IConstruct } from '@aws-cdk/core';
+import { CfnResource } from 'aws-cdk-lib';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../nag-pack';
 import {
   APIGWAssociatedWithWAF,

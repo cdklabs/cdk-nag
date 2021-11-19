@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
+import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   TaskDefinition,
   Compatibility,
@@ -10,8 +11,8 @@ import {
   EcsOptimizedImage,
   Cluster,
   ExecuteCommandLogging,
-} from '@aws-cdk/aws-ecs';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ecs';
+import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   ECSClusterCloudWatchContainerInsights,
