@@ -8,7 +8,7 @@ const project = new AwsCdkConstructLibrary({
   authorAddress: 'donti@amazon.com',
   cdkVersion: '2.0.0-rc.22',
   defaultReleaseBranch: 'v2-main',
-  majorVersion: '2',
+  majorVersion: 2,
   deps: ['constructs@^10.0.5', 'aws-cdk-lib@^2.0.0-rc.22'],
   devDeps: ['constructs@^10.0.5', 'aws-cdk-lib@^2.0.0-rc.22'],
   peerDeps: ['constructs@^10.0.5', 'aws-cdk-lib@^2.0.0-rc.22'],
