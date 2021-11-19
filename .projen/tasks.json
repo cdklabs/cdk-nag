@@ -157,7 +157,7 @@
       "name": "publish:npm",
       "description": "Publish this package to npm",
       "env": {
-        "NPM_DIST_TAG": "latest",
+        "NPM_DIST_TAG": "next",
         "NPM_REGISTRY": "registry.npmjs.org"
       },
       "requiredEnv": [

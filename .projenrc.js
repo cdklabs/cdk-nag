@@ -9,6 +9,7 @@ const project = new AwsCdkConstructLibrary({
   cdkVersion: '2.0.0-rc.22',
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
+  npmDistTag: 'next',
   deps: ['constructs@^10.0.5', 'aws-cdk-lib@^2.0.0-rc.22'],
   devDeps: ['constructs@^10.0.5', 'aws-cdk-lib@^2.0.0-rc.22'],
   peerDeps: ['constructs@^10.0.5', 'aws-cdk-lib@^2.0.0-rc.22'],
