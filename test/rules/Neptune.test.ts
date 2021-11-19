@@ -3,21 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
-import { Vpc } from '@aws-cdk/aws-ec2';
-import {
-  CfnDBCluster,
-  CfnDBInstance,
-  DatabaseCluster,
-  DatabaseInstance,
-  InstanceType,
-} from '@aws-cdk/aws-neptune';
-import {
-  Aspects,
-  CfnResource,
-  Duration,
-  IConstruct,
-  Stack,
-} from '@aws-cdk/core';
+import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-neptune';
+import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   NeptuneClusterAutomaticMinorVersionUpgrade,
@@ -58,15 +45,9 @@ describe('Amazon Neptune', () => {
   test('NeptuneClusterAutomaticMinorVersionUpgrade: Neptune DB instances have Auto Minor Version Upgrade enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-
-    new DatabaseInstance(nonCompliant, 'rDatabaseInstance', {
-      instanceType: InstanceType.R4_2XLARGE,
-      cluster: new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-        instanceType: InstanceType.R4_2XLARGE,
-        vpc: new Vpc(nonCompliant, 'rVpc'),
-      }),
+    new CfnDBInstance(nonCompliant, 'rDatabaseInstance', {
+      dbInstanceClass: 'db.r4.2xlarge',
     });
-
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -99,12 +80,7 @@ describe('Amazon Neptune', () => {
   test('NeptuneClusterBackupRetentionPeriod: Neptune DB clusters have a reasonable minimum backup retention period configured', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-    });
-
+    new CfnDBCluster(nonCompliant, 'rDatabaseCluster');
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -116,10 +92,8 @@ describe('Amazon Neptune', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(compliant, 'rVpc'),
-      backupRetention: Duration.days(42),
+    new CfnDBCluster(compliant, 'rDatabaseCluster', {
+      backupRetentionPeriod: 7,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -134,9 +108,7 @@ describe('Amazon Neptune', () => {
   test('NeptuneClusterEncryptionAtRest: Neptune DB clusters have encryption at rest enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+    new CfnDBCluster(nonCompliant, 'rDatabaseCluster', {
       storageEncrypted: false,
     });
     const messages = SynthUtils.synthesize(nonCompliant).messages;
@@ -150,12 +122,7 @@ describe('Amazon Neptune', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(compliant, 'rVpc'),
-      storageEncrypted: true,
-    });
-
+    new CfnDBCluster(compliant, 'rDatabaseCluster', { storageEncrypted: true });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
       expect.objectContaining({
@@ -169,10 +136,7 @@ describe('Amazon Neptune', () => {
   test('NeptuneClusterIAMAuth: Neptune DB clusters have IAM Database Authentication enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-    });
+    new CfnDBCluster(nonCompliant, 'rDatabaseCluster');
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -184,10 +148,8 @@ describe('Amazon Neptune', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(compliant, 'rVpc'),
-      iamAuthentication: true,
+    new CfnDBCluster(compliant, 'rDatabaseCluster', {
+      iamAuthEnabled: true,
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
@@ -202,12 +164,10 @@ describe('Amazon Neptune', () => {
   test('NeptuneClusterMultiAZ: Neptune DB clusters are deployed in a Multi-AZ configuration', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
-
     new CfnDBCluster(nonCompliant, 'rDatabaseCluster', {
       availabilityZones: ['us-east-1a'],
       dbSubnetGroupName: 'foo',
     });
-
     const messages = SynthUtils.synthesize(nonCompliant).messages;
     expect(messages).toContainEqual(
       expect.objectContaining({
@@ -219,9 +179,9 @@ describe('Amazon Neptune', () => {
 
     const compliant = new Stack();
     Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.R4_2XLARGE,
-      vpc: new Vpc(compliant, 'rVpc'),
+    new CfnDBCluster(compliant, 'rDatabaseCluster', {
+      availabilityZones: ['us-east-1a', 'us-east-1b'],
+      dbSubnetGroupName: 'foo',
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
