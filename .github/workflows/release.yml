@@ -39,7 +39,7 @@ jobs:
           name: dist
           path: dist
     container:
-      image: jsii/superchain:1-buster-slim
+      image: jsii/superchain:1-buster-slim-node14
   release_github:
     name: Publish to GitHub Releases
     needs: release
