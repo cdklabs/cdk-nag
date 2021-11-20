@@ -95,7 +95,7 @@ const project = new AwsCdkConstructLibrary({
       labels: ['auto-approve'],
       secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
       container: {
-        image: 'jsii/superchain:1-buster-slim-node12',
+        image: 'jsii/superchain:1-buster-slim-node14',
       },
     },
   },
