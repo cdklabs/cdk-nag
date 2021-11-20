@@ -207,6 +207,31 @@
         }
       ]
     },
+    "release:v2-main": {
+      "name": "release:v2-main",
+      "description": "Prepare a release from \"v2-main\" branch",
+      "env": {
+        "RELEASE": "true",
+        "MAJOR": "2"
+      },
+      "steps": [
+        {
+          "exec": "rm -fr dist"
+        },
+        {
+          "spawn": "bump"
+        },
+        {
+          "spawn": "build"
+        },
+        {
+          "spawn": "unbump"
+        },
+        {
+          "exec": "git diff --ignore-space-at-eol --exit-code"
+        }
+      ]
+    },
     "test": {
       "name": "test",
       "description": "Run tests",

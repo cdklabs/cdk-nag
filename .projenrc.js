@@ -9,6 +9,7 @@ const project = new AwsCdkConstructLibrary({
   cdkVersion: '1.123.0',
   defaultReleaseBranch: 'main',
   majorVersion: 1,
+  releaseBranches: { 'v2-main': { majorVersion: 2 } },
   name: 'cdk-nag',
   description:
     'Check CDK applications for best practices using a combination on available rule packs.',
