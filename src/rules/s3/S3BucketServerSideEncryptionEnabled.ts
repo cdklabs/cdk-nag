@@ -5,21 +5,21 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * S3 Buckets have default server-side encryption enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
       if (node.bucketEncryption == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const encryption = Stack.of(node).resolve(node.bucketEncryption);
       if (encryption.serverSideEncryptionConfiguration == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const sse = Stack.of(node).resolve(
         encryption.serverSideEncryptionConfiguration
@@ -29,7 +29,7 @@ export default Object.defineProperty(
           rule.serverSideEncryptionByDefault
         );
         if (defaultEncryption == undefined) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
         const sseAlgorithm = resolveIfPrimitive(
           node,
@@ -39,11 +39,13 @@ export default Object.defineProperty(
           sseAlgorithm.toLowerCase() != 'aes256' &&
           sseAlgorithm.toLowerCase() != 'aws:kms'
         ) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

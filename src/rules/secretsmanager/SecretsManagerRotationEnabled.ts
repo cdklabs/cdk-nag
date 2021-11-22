@@ -9,14 +9,17 @@ import {
   CfnSecretTargetAttachment,
 } from '@aws-cdk/aws-secretsmanager';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveResourceFromInstrinsic } from '../../nag-pack';
+import {
+  resolveResourceFromInstrinsic,
+  NagRuleCompliance,
+} from '../../nag-pack';
 
 /**
  * Secrets have automatic rotation scheduled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecret) {
       const secretLogicalId = resolveResourceFromInstrinsic(node, node.ref);
       const secretTargetAttachmentLogicalIds = Array<string>();
@@ -30,7 +33,7 @@ export default Object.defineProperty(
         }
       }
       if (cfnRotationSchedules.length === 0) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       let found = false;
       for (const child of cfnSecretTargetAttachments) {
@@ -55,10 +58,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

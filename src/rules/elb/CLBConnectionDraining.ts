@@ -5,26 +5,28 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * CLBs have connection draining enabled.
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnLoadBalancer) {
       if (node.connectionDrainingPolicy == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const draining = Stack.of(node).resolve(node.connectionDrainingPolicy);
       const resolvedDraining = Stack.of(node).resolve(draining);
       const enabled = resolveIfPrimitive(node, resolvedDraining.enabled);
       if (enabled !== true) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -6,14 +6,14 @@ import { parse } from 'path';
 import { CfnDomain as LegacyCfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * OpenSearch Service domains have encryption at rest enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof LegacyCfnDomain || node instanceof CfnDomain) {
       const encryptionAtRestOptions = Stack.of(node).resolve(
         node.encryptionAtRestOptions
@@ -24,13 +24,15 @@ export default Object.defineProperty(
           encryptionAtRestOptions.enabled
         );
         if (enabled !== true) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       } else {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

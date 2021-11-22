@@ -5,19 +5,22 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnStage } from '@aws-cdk/aws-apigateway';
 import { CfnResource } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * API Gateway REST API stages are configured with SSL certificates
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStage) {
       if (node.clientCertificateId == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

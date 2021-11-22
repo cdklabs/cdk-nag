@@ -5,18 +5,20 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnCluster } from '@aws-cdk/aws-ecs';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * ECS Cluster has CloudWatch Container Insights Enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
       if (node.clusterSettings == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const clusterSettings = Stack.of(node).resolve(node.clusterSettings);
+      let found = false;
       for (const setting of clusterSettings) {
         const resolvedSetting = Stack.of(node).resolve(setting);
         if (
@@ -25,13 +27,17 @@ export default Object.defineProperty(
           resolvedSetting.value &&
           resolvedSetting.value == 'enabled'
         ) {
-          return true;
+          found = true;
+          break;
         }
       }
-      return false;
+      if (!found) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-
-    return true;
   },
   'name',
   { value: parse(__filename).name }

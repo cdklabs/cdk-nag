@@ -6,7 +6,10 @@ import { parse } from 'path';
 import { CfnScalableTarget } from '@aws-cdk/aws-applicationautoscaling';
 import { CfnTable, BillingMode } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveResourceFromInstrinsic } from '../../nag-pack';
+import {
+  resolveResourceFromInstrinsic,
+  NagRuleCompliance,
+} from '../../nag-pack';
 
 /**
  * Provisioned capacity DynamoDB tables have auto-scaling enabled on their indexes
@@ -14,7 +17,7 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  */
 
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnTable) {
       if (
         resolveResourceFromInstrinsic(node, node.billingMode) !==
@@ -60,11 +63,13 @@ export default Object.defineProperty(
           }
         }
         if (indexWriteMatches.length != 0 || indexReadMatches.length != 0) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

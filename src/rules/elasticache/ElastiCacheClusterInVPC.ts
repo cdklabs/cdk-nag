@@ -5,13 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * ElastiCache clusters are provisioned in a VPC
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (
       node instanceof CfnCacheCluster ||
       node instanceof CfnReplicationGroup
@@ -20,10 +21,12 @@ export default Object.defineProperty(
         node.cacheSubnetGroupName == undefined ||
         node.cacheSubnetGroupName.length == 0
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -5,26 +5,26 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  *  RDS DB instances and Aurora DB clusters have Deletion Protection enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
       if (node.deletionProtection == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const deletionProtection = resolveIfPrimitive(
         node,
         node.deletionProtection
       );
       if (deletionProtection == false) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
-      return true;
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnDBInstance) {
       const deletionProtection = resolveIfPrimitive(
         node,
@@ -35,11 +35,12 @@ export default Object.defineProperty(
         (deletionProtection == false || deletionProtection == undefined) &&
         (engine == undefined || !engine.toLowerCase().includes('aurora'))
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
-      return true;
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

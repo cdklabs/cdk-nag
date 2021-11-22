@@ -5,21 +5,23 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnFileSystem } from '@aws-cdk/aws-efs';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Elastic File Systems are configured for encryption at rest
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFileSystem) {
       const encrypted = resolveIfPrimitive(node, node.encrypted);
       if (encrypted === false) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

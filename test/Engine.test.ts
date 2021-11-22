@@ -13,8 +13,9 @@ import {
   Vpc,
 } from '@aws-cdk/aws-ec2';
 import { PolicyStatement, User } from '@aws-cdk/aws-iam';
-import { CfnBucket } from '@aws-cdk/aws-s3';
+import { Bucket, CfnBucket } from '@aws-cdk/aws-s3';
 import {
+  App,
   Aspects,
   CfnParameter,
   CfnResource,
@@ -29,9 +30,11 @@ import {
   NagPack,
   resolveIfPrimitive,
   NagPackProps,
+  NagRuleCompliance,
+  IApplyRule,
 } from '../src';
 
-describe('Testing rule suppression system', () => {
+describe('Rule suppression system', () => {
   test('Test single rule suppression', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
@@ -468,7 +471,7 @@ describe('Testing rule suppression system', () => {
   });
 });
 
-describe('Testing rule explanations', () => {
+describe('Rule explanations', () => {
   test('Test no explicit explanation', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
@@ -519,7 +522,7 @@ describe('Testing rule explanations', () => {
   });
 });
 
-describe('Testing rule exception handling', () => {
+describe('Rule exception handling', () => {
   const ERROR_MESSAGE = 'oops!';
   class BadPack extends NagPack {
     constructor(props?: NagPackProps) {
@@ -533,11 +536,11 @@ describe('Testing rule exception handling', () => {
           info: 'This is a imporperly made rule.',
           explanation: 'This will throw an error',
           level: NagMessageLevel.ERROR,
-          rule: function (node2: CfnResource): boolean {
+          rule: function (node2: CfnResource): NagRuleCompliance {
             if (node2) {
               throw Error(ERROR_MESSAGE);
             }
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           },
           node: node,
         });
@@ -621,5 +624,138 @@ describe('Testing rule exception handling', () => {
     expect(() => {
       resolveIfPrimitive(bucket, bucket.objectLockEnabled);
     }).not.toThrowError();
+  });
+});
+
+describe('Report system', () => {
+  class TestPack extends NagPack {
+    lines = new Array<string>();
+    constructor(props?: NagPackProps) {
+      super(props);
+      this.packName = 'Test';
+    }
+    public visit(node: IConstruct): void {
+      if (node instanceof CfnResource) {
+        const compliances = [
+          NagRuleCompliance.NON_COMPLIANT,
+          NagRuleCompliance.COMPLIANT,
+          NagRuleCompliance.NOT_APPLICABLE,
+        ];
+        compliances.forEach((compliance) => {
+          this.applyRule({
+            ruleSuffixOverride: compliance,
+            info: 'foo.',
+            explanation: 'bar.',
+            level: NagMessageLevel.ERROR,
+            rule: function (node2: CfnResource): NagRuleCompliance {
+              if (node2.cfnResourceType !== 'Error') {
+                return compliance;
+              }
+              throw Error('foobar');
+            },
+            node: node,
+          });
+        });
+      }
+    }
+
+    protected writeToStackComplianceReport(
+      params: IApplyRule,
+      ruleId: string,
+      compliance: NagRuleCompliance.COMPLIANT | NagRuleCompliance.NON_COMPLIANT,
+      explanation: string = ''
+    ): void {
+      this.lines.push(
+        this.createComplianceReportLine(params, ruleId, compliance, explanation)
+      );
+      this.createComplianceReportLine(params, ruleId, compliance, explanation);
+      const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
+      if (!this.reportStacks.includes(fileName)) {
+        this.reportStacks.push(fileName);
+      }
+    }
+  }
+
+  test('Reports are generated for all stacks', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const stack2 = new Stack(app, 'Stack2');
+    const pack = new TestPack({ reports: true });
+    Aspects.of(app).add(pack);
+    new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    new Bucket(stack2, 'rBucket');
+    app.synth();
+    expect(pack.readReportStacks.length).toEqual(2);
+  });
+  test('Compliant and Non-Compliant values are written properly', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new TestPack({ reports: true });
+    Aspects.of(app).add(pack);
+    new CfnResource(stack, 'rResource', { type: 'foo' });
+    app.synth();
+    const expectedOuput = [
+      'Test-Compliant,Stack1/rResource,Compliant,N/A,Error\n',
+      'Test-Non-Compliant,Stack1/rResource,Non-Compliant,N/A,Error\n',
+    ];
+    expect(pack.lines.sort()).toEqual(expectedOuput.sort());
+  });
+  test('Suppression values are written properly', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new TestPack({ reports: true });
+    Aspects.of(app).add(pack);
+    const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
+    NagSuppressions.addResourceSuppressions(resource, [
+      {
+        id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
+        reason: 'lorem ipsum',
+      },
+    ]);
+    app.synth();
+    const expectedOuput = [
+      'Test-Compliant,Stack1/rResource,Compliant,N/A,Error\n',
+      'Test-Non-Compliant,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
+    ];
+    expect(pack.lines.sort()).toEqual(expectedOuput.sort());
+  });
+  test('Error values are written properly', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new TestPack({ reports: true });
+    Aspects.of(app).add(pack);
+    const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
+    NagSuppressions.addResourceSuppressions(resource, [
+      {
+        id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
+        reason: 'lorem ipsum',
+      },
+    ]);
+    app.synth();
+    const expectedOuput = [
+      'Test-Non-Compliant,Stack1/rResource,UNKNOWN,N/A,Error\n',
+      'Test-Compliant,Stack1/rResource,UNKNOWN,N/A,Error\n',
+      'Test-N/A,Stack1/rResource,UNKNOWN,N/A,Error\n',
+    ];
+    expect(pack.lines.sort()).toEqual(expectedOuput.sort());
+  });
+  test('Suppressed error values are written properly', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new TestPack({ reports: true });
+    Aspects.of(app).add(pack);
+    const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
+    NagSuppressions.addResourceSuppressions(resource, [
+      { id: 'CdkNagValidationFailure', reason: 'lorem ipsum' },
+    ]);
+    app.synth();
+    const expectedOuput = [
+      'Test-Compliant,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
+      'Test-N/A,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
+      'Test-Non-Compliant,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
+    ];
+    expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
 });

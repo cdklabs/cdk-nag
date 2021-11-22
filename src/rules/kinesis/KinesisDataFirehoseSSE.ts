@@ -5,22 +5,25 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDeliveryStream } from '@aws-cdk/aws-kinesisfirehose';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Kinesis Data Firehose delivery stream have server-side encryption enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDeliveryStream) {
       const deliveryStreamEncryptionConfigurationInput = Stack.of(node).resolve(
         node.deliveryStreamEncryptionConfigurationInput
       );
       if (deliveryStreamEncryptionConfigurationInput == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

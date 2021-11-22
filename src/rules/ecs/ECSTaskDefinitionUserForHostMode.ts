@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnTaskDefinition, NetworkMode } from '@aws-cdk/aws-ecs';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Containers in ECS task definitions configured for host networking have 'privileged' set to true and a non-empty non-root 'user'
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnTaskDefinition) {
       if (node.networkMode === NetworkMode.HOST) {
         const containerDefinitions = Stack.of(node).resolve(
@@ -28,20 +28,22 @@ export default Object.defineProperty(
             );
             const user = resolveIfPrimitive(node, resolvedDefinition.user);
             if (privileged !== true || user === undefined) {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
             const rootIdentifiers = ['root', '0'];
             const userParts = user.split(':');
             for (const userPart of userParts) {
               if (rootIdentifiers.includes(userPart.toLowerCase())) {
-                return false;
+                return NagRuleCompliance.NON_COMPLIANT;
               }
             }
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

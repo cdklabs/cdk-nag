@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { appendFileSync, writeFileSync } from 'fs';
 import {
   IAspect,
   IConstruct,
@@ -27,6 +28,11 @@ export interface NagPackProps {
    * Whether or not to log triggered rules that have been suppressed as informational messages (default: false).
    */
   readonly logIgnores?: boolean;
+
+  /**
+   * Whether or not to generate CSV compliance reports for applied Stacks (default: false).
+   */
+  readonly reports?: boolean;
 }
 
 /**
@@ -57,15 +63,24 @@ export interface IApplyRule {
    * The callback to the rule.
    * @param node The CfnResource to check.
    */
-  rule(node: CfnResource): boolean;
+  rule(node: CfnResource): NagRuleCompliance;
 }
 
 /**
  * The level of the message that the rule applies.
  */
 export enum NagMessageLevel {
-  WARN,
-  ERROR,
+  WARN = 'Warning',
+  ERROR = 'Error',
+}
+
+/**
+ * The compliance level of a resource in relation to a rule.
+ */
+export enum NagRuleCompliance {
+  COMPLIANT = 'Compliant',
+  NON_COMPLIANT = 'Non-Compliant',
+  NOT_APPLICABLE = 'N/A',
 }
 
 /**
@@ -74,6 +89,8 @@ export enum NagMessageLevel {
 export abstract class NagPack implements IAspect {
   protected verbose: boolean;
   protected logIgnores: boolean;
+  protected reports: boolean;
+  protected reportStacks = new Array<string>();
   protected packName = '';
 
   constructor(props?: NagPackProps) {
@@ -83,10 +100,15 @@ export abstract class NagPack implements IAspect {
       props == undefined || props.logIgnores == undefined
         ? false
         : props.logIgnores;
+    this.reports =
+      props == undefined || props.reports == undefined ? false : props.reports;
   }
 
   public get readPackName(): string {
     return this.packName;
+  }
+  public get readReportStacks(): string[] {
+    return this.reportStacks;
   }
   /**
    * All aspects can visit an IConstruct.
@@ -97,7 +119,7 @@ export abstract class NagPack implements IAspect {
    * Create a rule to be used in the NagPack.
    * @param params The @IApplyRule interface with rule details.
    */
-  public applyRule(params: IApplyRule): void {
+  protected applyRule(params: IApplyRule): void {
     if (this.packName === '') {
       throw Error(
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
@@ -114,8 +136,22 @@ export abstract class NagPack implements IAspect {
       : params.rule.name;
     const ruleId = `${this.packName}-${ruleSuffix}`;
     try {
-      if (!params.rule(params.node)) {
+      const ruleCompliance = params.rule(params.node);
+      if (
+        this.reports === true &&
+        ruleCompliance === NagRuleCompliance.COMPLIANT
+      ) {
+        this.writeToStackComplianceReport(params, ruleId, ruleCompliance);
+      } else if (ruleCompliance === NagRuleCompliance.NON_COMPLIANT) {
         const reason = this.ignoreRule(allIgnores, ruleId);
+        if (this.reports === true) {
+          this.writeToStackComplianceReport(
+            params,
+            ruleId,
+            ruleCompliance,
+            reason
+          );
+        }
         if (reason) {
           if (this.logIgnores === true) {
             const message = this.createMessage(
@@ -140,6 +176,9 @@ export abstract class NagPack implements IAspect {
       }
     } catch (error) {
       const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID);
+      if (this.reports === true) {
+        this.writeToStackComplianceReport(params, ruleId, 'UNKNOWN', reason);
+      }
       if (reason) {
         if (this.logIgnores === true) {
           const message = this.createMessage(
@@ -167,7 +206,7 @@ export abstract class NagPack implements IAspect {
    * @param ruleId The id of the rule to ignore.
    * @returns The reason the rule was ignored, or an empty string.
    */
-  private ignoreRule(ignores: NagPackSuppression[], ruleId: string): string {
+  protected ignoreRule(ignores: NagPackSuppression[], ruleId: string): string {
     for (let ignore of ignores) {
       if (
         ignore.id &&
@@ -195,13 +234,81 @@ export abstract class NagPack implements IAspect {
    * @param explanation Why the rule exists.
    * @returns The formatted message string.
    */
-  private createMessage(
+  protected createMessage(
     ruleId: string,
     info: string,
     explanation: string
   ): string {
     let message = `${ruleId}: ${info}`;
     return this.verbose ? `${message} ${explanation}\n` : `${message}\n`;
+  }
+
+  /**
+   * Write a line to the rule packs compliance report for the resource's Stack
+   * @param params The @IApplyRule interface with rule details.
+   * @param ruleId The id of the rule.
+   * @param compliance The compliance status of the rule.
+   * @param explanation The explanation for suppressed rules.
+   */
+  protected writeToStackComplianceReport(
+    params: IApplyRule,
+    ruleId: string,
+    compliance:
+      | NagRuleCompliance.COMPLIANT
+      | NagRuleCompliance.NON_COMPLIANT
+      | 'UNKNOWN',
+    explanation: string = ''
+  ): void {
+    const line = this.createComplianceReportLine(
+      params,
+      ruleId,
+      compliance,
+      explanation
+    );
+    const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
+    if (!this.reportStacks.includes(fileName)) {
+      this.reportStacks.push(fileName);
+      writeFileSync(
+        fileName,
+        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level\n'
+      );
+    }
+    appendFileSync(fileName, line);
+  }
+
+  /**
+   * Helper function to create a line for the compliance report
+   * @param params The @IApplyRule interface with rule details.
+   * @param ruleId The id of the rule.
+   * @param compliance The compliance status of the rule.
+   * @param explanation The explanation for suppressed rules.
+   */
+  protected createComplianceReportLine(
+    params: IApplyRule,
+    ruleId: string,
+    compliance:
+      | NagRuleCompliance.COMPLIANT
+      | NagRuleCompliance.NON_COMPLIANT
+      | 'UNKNOWN',
+    explanation: string = ''
+  ): string {
+    //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level
+    const line = Array<string>();
+    line.push(ruleId);
+    line.push(params.node.node.path);
+    if (
+      (compliance === NagRuleCompliance.NON_COMPLIANT ||
+        compliance === 'UNKNOWN') &&
+      explanation !== ''
+    ) {
+      line.push('Suppressed');
+      line.push(explanation);
+    } else {
+      line.push(compliance);
+      line.push('N/A');
+    }
+    line.push(params.level);
+    return line.join(',') + '\n';
   }
 }
 

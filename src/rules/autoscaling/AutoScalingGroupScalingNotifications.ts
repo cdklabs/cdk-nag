@@ -5,16 +5,17 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnAutoScalingGroup, ScalingEvent } from '@aws-cdk/aws-autoscaling';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Auto Scaling Groups have notifications for all scaling events configured
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnAutoScalingGroup) {
       if (node.notificationConfigurations == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const notificationConfigurations = <
         CfnAutoScalingGroup.NotificationConfigurationProperty[]
@@ -27,13 +28,18 @@ export default Object.defineProperty(
         ScalingEvent.INSTANCE_TERMINATE_ERROR,
       ];
 
-      return requiredEvents.every((req) => {
+      const compliant = requiredEvents.every((req) => {
         return notificationConfigurations.some((config) => {
           return config.notificationTypes?.includes(req);
         });
       });
+      if (compliant !== true) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -5,21 +5,31 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnRegistryPolicy, CfnRepository } from '@aws-cdk/aws-ecr';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * ECR Repositories do not allow open access
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnRegistryPolicy) {
       const policyText = Stack.of(node).resolve(node.policyText);
-      return checkStatement(policyText);
+      const compliant = checkStatement(policyText);
+      if (compliant !== true) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnRepository) {
       const policyText = Stack.of(node).resolve(node.repositoryPolicyText);
-      return checkStatement(policyText);
+      const compliant = checkStatement(policyText);
+      if (compliant !== true) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

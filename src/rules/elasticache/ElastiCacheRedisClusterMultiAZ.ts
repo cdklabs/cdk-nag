@@ -5,24 +5,26 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * ElastiCache Redis clusters are deployed in a Multi-AZ configuration
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnReplicationGroup) {
       if (node.multiAzEnabled == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const multiAz = resolveIfPrimitive(node, node.multiAzEnabled);
       if (!multiAz) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

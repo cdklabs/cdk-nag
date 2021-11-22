@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
 
@@ -15,7 +15,7 @@ const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecurityGroup) {
       const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
       if (ingressRules != undefined) {
@@ -24,19 +24,22 @@ export default Object.defineProperty(
           const resolvedRule = Stack.of(node).resolve(rule);
           for (const portNum of BLOCKED_PORTS) {
             if (!testPort(node, resolvedRule, portNum)) {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnSecurityGroupIngress) {
       for (const portNum of BLOCKED_PORTS) {
         if (!testPort(node, node, portNum)) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

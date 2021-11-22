@@ -6,26 +6,29 @@ import { parse } from 'path';
 import { CfnLaunchConfiguration } from '@aws-cdk/aws-autoscaling';
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * EC2 instances have detailed monitoring enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInstance) {
       const monitoring = resolveIfPrimitive(node, node.monitoring);
       if (monitoring == undefined || monitoring == false) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnLaunchConfiguration) {
       const monitoring = resolveIfPrimitive(node, node.instanceMonitoring);
       if (monitoring != undefined && monitoring == false) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -6,42 +6,45 @@ import { parse } from 'path';
 import { CfnDomain as LegacyCfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * OpenSearch Service domains have Zone Awareness enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof LegacyCfnDomain) {
       const elasticsearchClusterConfig = Stack.of(node).resolve(
         node.elasticsearchClusterConfig
       );
       if (elasticsearchClusterConfig == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const zoneAwarenessEnabled = resolveIfPrimitive(
         node,
         elasticsearchClusterConfig.zoneAwarenessEnabled
       );
       if (!zoneAwarenessEnabled) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnDomain) {
       const clusterConfig = Stack.of(node).resolve(node.clusterConfig);
       if (clusterConfig == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const zoneAwarenessEnabled = resolveIfPrimitive(
         node,
         clusterConfig.zoneAwarenessEnabled
       );
       if (!zoneAwarenessEnabled) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

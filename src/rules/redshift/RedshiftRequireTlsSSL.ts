@@ -5,7 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnCluster, CfnClusterParameterGroup } from '@aws-cdk/aws-redshift';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveResourceFromInstrinsic } from '../../nag-pack';
+import {
+  resolveResourceFromInstrinsic,
+  NagRuleCompliance,
+} from '../../nag-pack';
 
 /**
  * Redshift clusters require TLS/SSL encryption
@@ -13,14 +16,14 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  */
 
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
       const clusterParameterGroupName = resolveResourceFromInstrinsic(
         node,
         node.clusterParameterGroupName
       );
       if (clusterParameterGroupName === undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
@@ -32,10 +35,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }
