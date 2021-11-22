@@ -6,14 +6,17 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnStage } from 'aws-cdk-lib/aws-apigateway';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
-import { resolveResourceFromInstrinsic } from '../../nag-pack';
+import {
+  NagRuleCompliance,
+  resolveResourceFromInstrinsic,
+} from '../../nag-pack';
 
 /**
  * Rest API stages are associated with AWS WAFv2 web ACLs
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStage) {
       const stageLogicalId = resolveResourceFromInstrinsic(node, node.ref);
       const stageName = resolveResourceFromInstrinsic(node, node.stageName);
@@ -35,10 +38,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

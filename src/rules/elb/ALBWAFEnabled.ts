@@ -9,6 +9,7 @@ import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import {
   resolveIfPrimitive,
   resolveResourceFromInstrinsic,
+  NagRuleCompliance,
 } from '../../nag-pack';
 
 /**
@@ -17,7 +18,7 @@ import {
  */
 
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnLoadBalancer) {
       const type = resolveIfPrimitive(node, node.type);
       if (type === undefined || type === 'application') {
@@ -35,11 +36,13 @@ export default Object.defineProperty(
           }
         }
         if (!found) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

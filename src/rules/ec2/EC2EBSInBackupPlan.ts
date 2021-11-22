@@ -6,7 +6,10 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnBackupSelection } from 'aws-cdk-lib/aws-backup';
 import { CfnVolume } from 'aws-cdk-lib/aws-ec2';
-import { resolveResourceFromInstrinsic } from '../../nag-pack';
+import {
+  NagRuleCompliance,
+  resolveResourceFromInstrinsic,
+} from '../../nag-pack';
 
 /**
  * EBS volumes are part of AWS Backup plan(s)
@@ -14,7 +17,7 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  */
 
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnVolume) {
       const volumeLogicalId = resolveResourceFromInstrinsic(node, node.ref);
       let found = false;
@@ -27,10 +30,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -5,19 +5,22 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnReplicationGroup } from 'aws-cdk-lib/aws-elasticache';
+import { NagRuleCompliance } from '../..';
 
 /**
  * ElastiCache Redis clusters use Redis AUTH for user authentication
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnReplicationGroup) {
       if (node.authToken == undefined || node.authToken.length == 0) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

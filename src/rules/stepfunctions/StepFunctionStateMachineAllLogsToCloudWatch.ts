@@ -5,27 +5,29 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnStateMachine, LogLevel } from 'aws-cdk-lib/aws-stepfunctions';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Step Function log "ALL" events to CloudWatch Logs
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStateMachine) {
       const loggingConfiguration = Stack.of(node).resolve(
         node.loggingConfiguration
       );
       if (loggingConfiguration == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const level = resolveIfPrimitive(node, loggingConfiguration.level);
       if (level == undefined || level != LogLevel.ALL) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

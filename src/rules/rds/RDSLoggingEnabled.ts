@@ -5,21 +5,21 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * RDS DB instances are configured to export all possible log types to CloudWatch
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
       const dbType = JSON.stringify(resolveIfPrimitive(node, node.engine));
       const dbLogs = JSON.stringify(
         Stack.of(node).resolve(node.enableCloudwatchLogsExports)
       );
       if (dbLogs == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
 
       if (dbType.includes('mariadb') || dbType.includes('mysql')) {
@@ -31,13 +31,13 @@ export default Object.defineProperty(
             dbLogs.includes('slowquery')
           )
         ) {
-          return false;
+          NagRuleCompliance.NON_COMPLIANT;
         }
       }
 
       if (dbType.includes('postgres')) {
         if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade'))) {
-          return false;
+          NagRuleCompliance.NON_COMPLIANT;
         }
       }
 
@@ -51,17 +51,19 @@ export default Object.defineProperty(
             dbLogs.includes('trace')
           )
         ) {
-          return false;
+          NagRuleCompliance.NON_COMPLIANT;
         }
       }
 
       if (dbType.includes('sqlserver')) {
         if (!(dbLogs.includes('agent') && dbLogs.includes('error'))) {
-          return false;
+          NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

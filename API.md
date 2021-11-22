@@ -33,6 +33,7 @@ Name|Description
 Name|Description
 ----|-----------
 [NagMessageLevel](#cdk-nag-nagmessagelevel)|The level of the message that the rule applies.
+[NagRuleCompliance](#cdk-nag-nagrulecompliance)|The compliance level of a resource in relation to a rule.
 
 
 
@@ -54,6 +55,7 @@ new AwsSolutionsChecks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -95,6 +97,7 @@ new HIPAASecurityChecks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -136,6 +139,7 @@ new NIST80053R4Checks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -177,6 +181,7 @@ new NIST80053R5Checks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -216,6 +221,7 @@ new NagPack(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -228,22 +234,12 @@ Name | Type | Description
 **logIgnores** | <code>boolean</code> | <span></span>
 **packName** | <code>string</code> | <span></span>
 **readPackName** | <code>string</code> | <span></span>
+**readReportStacks** | <code>Array<string></code> | <span></span>
+**reportStacks** | <code>Array<string></code> | <span></span>
+**reports** | <code>boolean</code> | <span></span>
 **verbose** | <code>boolean</code> | <span></span>
 
 ### Methods
-
-
-#### applyRule(params) <a id="cdk-nag-nagpack-applyrule"></a>
-
-Create a rule to be used in the NagPack.
-
-```ts
-applyRule(params: IApplyRule): void
-```
-
-* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The.
-
-
 
 
 #### visit(node) <a id="cdk-nag-nagpack-visit"></a>
@@ -255,6 +251,80 @@ visit(node: IConstruct): void
 ```
 
 * **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+
+
+
+
+#### protected applyRule(params) <a id="cdk-nag-nagpack-applyrule"></a>
+
+Create a rule to be used in the NagPack.
+
+```ts
+protected applyRule(params: IApplyRule): void
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The.
+
+
+
+
+#### protected createComplianceReportLine(params, ruleId, compliance, explanation?) <a id="cdk-nag-nagpack-createcompliancereportline"></a>
+
+Helper function to create a line for the compliance report.
+
+```ts
+protected createComplianceReportLine(params: IApplyRule, ruleId: string, compliance: NagRuleCompliance &#124; string, explanation?: string): string
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The.
+* **ruleId** (<code>string</code>)  The id of the rule.
+* **compliance** (<code>[NagRuleCompliance](#cdk-nag-nagrulecompliance) &#124; string</code>)  The compliance status of the rule.
+* **explanation** (<code>string</code>)  The explanation for suppressed rules.
+
+__Returns__:
+* <code>string</code>
+
+#### protected createMessage(ruleId, info, explanation) <a id="cdk-nag-nagpack-createmessage"></a>
+
+The message to output to the console when a rule is triggered.
+
+```ts
+protected createMessage(ruleId: string, info: string, explanation: string): string
+```
+
+* **ruleId** (<code>string</code>)  The id of the rule.
+* **info** (<code>string</code>)  Why the rule was triggered.
+* **explanation** (<code>string</code>)  Why the rule exists.
+
+__Returns__:
+* <code>string</code>
+
+#### protected ignoreRule(ignores, ruleId) <a id="cdk-nag-nagpack-ignorerule"></a>
+
+Check whether a specific rule should be ignored.
+
+```ts
+protected ignoreRule(ignores: Array<NagPackSuppression>, ruleId: string): string
+```
+
+* **ignores** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The ignores listed in cdk-nag metadata.
+* **ruleId** (<code>string</code>)  The id of the rule to ignore.
+
+__Returns__:
+* <code>string</code>
+
+#### protected writeToStackComplianceReport(params, ruleId, compliance, explanation?) <a id="cdk-nag-nagpack-writetostackcompliancereport"></a>
+
+Write a line to the rule packs compliance report for the resource's Stack.
+
+```ts
+protected writeToStackComplianceReport(params: IApplyRule, ruleId: string, compliance: NagRuleCompliance &#124; string, explanation?: string): void
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The.
+* **ruleId** (<code>string</code>)  The id of the rule.
+* **compliance** (<code>[NagRuleCompliance](#cdk-nag-nagrulecompliance) &#124; string</code>)  The compliance status of the rule.
+* **explanation** (<code>string</code>)  The explanation for suppressed rules.
 
 
 
@@ -346,6 +416,7 @@ new PCIDSS321Checks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -391,13 +462,13 @@ Name | Type | Description
 The callback to the rule.
 
 ```ts
-rule(node: CfnResource): boolean
+rule(node: CfnResource): NagRuleCompliance
 ```
 
 * **node** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The CfnResource to check.
 
 __Returns__:
-* <code>boolean</code>
+* <code>[NagRuleCompliance](#cdk-nag-nagrulecompliance)</code>
 
 
 
@@ -411,6 +482,7 @@ Interface for creating a Nag rule pack.
 Name | Type | Description 
 -----|------|-------------
 **logIgnores**? | <code>boolean</code> | Whether or not to log triggered rules that have been suppressed as informational messages (default: false).<br/>__*Optional*__
+**reports**? | <code>boolean</code> | Whether or not to generate CSV compliance reports for applied Stacks (default: false).<br/>__*Optional*__
 **verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).<br/>__*Optional*__
 
 
@@ -437,5 +509,16 @@ Name | Description
 -----|-----
 **WARN** |
 **ERROR** |
+
+
+## enum NagRuleCompliance  <a id="cdk-nag-nagrulecompliance"></a>
+
+The compliance level of a resource in relation to a rule.
+
+Name | Description
+-----|-----
+**COMPLIANT** |
+**NON_COMPLIANT** |
+**NOT_APPLICABLE** |
 
 

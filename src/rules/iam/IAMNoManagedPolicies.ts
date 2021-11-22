@@ -5,13 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnRole, CfnUser, CfnGroup } from 'aws-cdk-lib/aws-iam';
+import { NagRuleCompliance } from '../..';
 
 /**
  * IAM users, roles, and groups do not use AWS managed policies
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (
       node instanceof CfnGroup ||
       node instanceof CfnUser ||
@@ -25,12 +26,14 @@ export default Object.defineProperty(
           if (
             !(/\d{12}/.test(arnPrefix) || arnPrefix.includes('AWS::AccountId'))
           ) {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

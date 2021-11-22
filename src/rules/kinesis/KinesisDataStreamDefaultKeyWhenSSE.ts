@@ -5,22 +5,25 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnStream } from 'aws-cdk-lib/aws-kinesis';
+import { NagRuleCompliance } from '../..';
 
 /**
  * Kinesis Data Streams use the "aws/kinesis" key when server-sided encryption is enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStream) {
       const streamEncryption = Stack.of(node).resolve(node.streamEncryption);
       if (streamEncryption !== undefined) {
         if (streamEncryption.keyId !== 'alias/aws/kinesis') {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

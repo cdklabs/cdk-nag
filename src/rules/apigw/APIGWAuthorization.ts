@@ -6,14 +6,14 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { AuthorizationType, CfnMethod } from 'aws-cdk-lib/aws-apigateway';
 import { CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * APIs implement authorization
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnMethod || node instanceof CfnRoute) {
       const authorizationType = resolveIfPrimitive(
         node,
@@ -23,10 +23,12 @@ export default Object.defineProperty(
         authorizationType == undefined ||
         authorizationType == AuthorizationType.NONE
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

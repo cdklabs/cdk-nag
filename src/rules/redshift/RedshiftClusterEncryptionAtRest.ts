@@ -5,24 +5,26 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Redshift clusters have encryption at rest enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
       if (node.encrypted == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const encrypted = resolveIfPrimitive(node, node.encrypted);
       if (!encrypted) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

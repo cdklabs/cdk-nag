@@ -5,22 +5,22 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnUserPool } from 'aws-cdk-lib/aws-cognito';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Cognito user pools have password policies that minimally specify a password length of at least 8 characters, as well as requiring uppercase, numeric, and special characters
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnUserPool) {
       const policies = Stack.of(node).resolve(node.policies);
       if (policies == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const passwordPolicy = Stack.of(node).resolve(policies.passwordPolicy);
       if (passwordPolicy == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
 
       const minimumLength = resolveIfPrimitive(
@@ -28,7 +28,7 @@ export default Object.defineProperty(
         passwordPolicy.minimumLength
       );
       if (minimumLength == undefined || minimumLength < 8) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
 
       const requireUppercase = resolveIfPrimitive(
@@ -36,7 +36,7 @@ export default Object.defineProperty(
         passwordPolicy.requireUppercase
       );
       if (requireUppercase !== true) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
 
       const requireNumbers = resolveIfPrimitive(
@@ -44,7 +44,7 @@ export default Object.defineProperty(
         passwordPolicy.requireNumbers
       );
       if (requireNumbers !== true) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
 
       const requireSymbols = resolveIfPrimitive(
@@ -52,10 +52,12 @@ export default Object.defineProperty(
         passwordPolicy.requireSymbols
       );
       if (requireSymbols !== true) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

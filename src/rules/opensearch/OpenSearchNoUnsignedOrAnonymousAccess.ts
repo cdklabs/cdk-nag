@@ -6,21 +6,22 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDomain as LegacyCfnDomain } from 'aws-cdk-lib/aws-elasticsearch';
 import { CfnDomain } from 'aws-cdk-lib/aws-opensearchservice';
+import { NagRuleCompliance } from '../..';
 
 /**
  * OpenSearch Service domains do not allow for unsigned requests or anonymous access
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof LegacyCfnDomain || node instanceof CfnDomain) {
       const accessPolicies = Stack.of(node).resolve(node.accessPolicies);
       if (accessPolicies == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const statements = accessPolicies?.Statement;
       if (statements == undefined || statements.length == 0) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       for (const statement of statements) {
         if (statement.Effect == 'Allow') {
@@ -28,12 +29,14 @@ export default Object.defineProperty(
             ? JSON.stringify(statement.Principal)
             : '';
           if (awsString.includes('*')) {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

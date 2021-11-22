@@ -5,13 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnRole, CfnUser, CfnGroup, CfnPolicy } from 'aws-cdk-lib/aws-iam';
+import { NagRuleCompliance } from '../..';
 
 /**
  * IAM Groups, Users, and Roles do not contain inline policies
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (
       node instanceof CfnGroup ||
       node instanceof CfnUser ||
@@ -19,13 +20,14 @@ export default Object.defineProperty(
     ) {
       const inlinePolicies = Stack.of(node).resolve(node.policies);
       if (inlinePolicies != undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else if (node instanceof CfnPolicy) {
+      return NagRuleCompliance.NON_COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    if (node instanceof CfnPolicy) {
-      return false;
-    }
-    return true;
   },
   'name',
   { value: parse(__filename).name }
