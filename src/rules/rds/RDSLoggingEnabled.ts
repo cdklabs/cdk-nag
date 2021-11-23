@@ -30,15 +30,13 @@ export default Object.defineProperty(
             dbLogs.includes('general') &&
             dbLogs.includes('slowquery')
           )
-        ) {
-          NagRuleCompliance.NON_COMPLIANT;
-        }
+        )
+          return NagRuleCompliance.NON_COMPLIANT;
       }
 
       if (dbType.includes('postgres')) {
-        if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade'))) {
-          NagRuleCompliance.NON_COMPLIANT;
-        }
+        if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade')))
+          return NagRuleCompliance.NON_COMPLIANT;
       }
 
       if (dbType.includes('oracle')) {
@@ -50,15 +48,13 @@ export default Object.defineProperty(
             dbLogs.includes('oemagent') &&
             dbLogs.includes('trace')
           )
-        ) {
-          NagRuleCompliance.NON_COMPLIANT;
-        }
+        )
+          return NagRuleCompliance.NON_COMPLIANT;
       }
 
       if (dbType.includes('sqlserver')) {
-        if (!(dbLogs.includes('agent') && dbLogs.includes('error'))) {
-          NagRuleCompliance.NON_COMPLIANT;
-        }
+        if (!(dbLogs.includes('agent') && dbLogs.includes('error')))
+          return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else {

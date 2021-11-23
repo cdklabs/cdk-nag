@@ -25,7 +25,7 @@ export default Object.defineProperty(
             encryptionInTransit.clientBroker
           );
           if (clientBroker != undefined && clientBroker != 'TLS') {
-            NagRuleCompliance.NON_COMPLIANT;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       }
