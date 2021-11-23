@@ -675,11 +675,11 @@ describe('Report system', () => {
     }
   }
 
-  test('Reports are generated for all stacks', () => {
+  test('Reports are generated for all stacks by default', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
     const stack2 = new Stack(app, 'Stack2');
-    const pack = new TestPack({ reports: true });
+    const pack = new TestPack();
     Aspects.of(app).add(pack);
     new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
@@ -691,7 +691,7 @@ describe('Report system', () => {
   test('Compliant and Non-Compliant values are written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack({ reports: true });
+    const pack = new TestPack();
     Aspects.of(app).add(pack);
     new CfnResource(stack, 'rResource', { type: 'foo' });
     app.synth();
@@ -704,7 +704,7 @@ describe('Report system', () => {
   test('Suppression values are written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack({ reports: true });
+    const pack = new TestPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
     NagSuppressions.addResourceSuppressions(resource, [
@@ -723,7 +723,7 @@ describe('Report system', () => {
   test('Error values are written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack({ reports: true });
+    const pack = new TestPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
     NagSuppressions.addResourceSuppressions(resource, [
@@ -743,7 +743,7 @@ describe('Report system', () => {
   test('Suppressed error values are escaped and written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack({ reports: true });
+    const pack = new TestPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
     NagSuppressions.addResourceSuppressions(resource, [

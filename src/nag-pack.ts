@@ -32,7 +32,7 @@ export interface NagPackProps {
   readonly logIgnores?: boolean;
 
   /**
-   * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false).
+   * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).
    */
   readonly reports?: boolean;
 }
@@ -103,7 +103,7 @@ export abstract class NagPack implements IAspect {
         ? false
         : props.logIgnores;
     this.reports =
-      props == undefined || props.reports == undefined ? false : props.reports;
+      props == undefined || props.reports == undefined ? true : props.reports;
   }
 
   public get readPackName(): string {
