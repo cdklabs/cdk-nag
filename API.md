@@ -55,7 +55,7 @@ new AwsSolutionsChecks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -97,7 +97,7 @@ new HIPAASecurityChecks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -139,7 +139,7 @@ new NIST80053R4Checks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -181,7 +181,7 @@ new NIST80053R5Checks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -221,7 +221,7 @@ new NagPack(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -416,7 +416,7 @@ new PCIDSS321Checks(props?: NagPackProps)
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks (default: false). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -482,7 +482,7 @@ Interface for creating a Nag rule pack.
 Name | Type | Description 
 -----|------|-------------
 **logIgnores**? | <code>boolean</code> | Whether or not to log triggered rules that have been suppressed as informational messages (default: false).<br/>__*Optional*__
-**reports**? | <code>boolean</code> | Whether or not to generate CSV compliance reports for applied Stacks (default: false).<br/>__*Optional*__
+**reports**? | <code>boolean</code> | Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false).<br/>__*Optional*__
 **verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).<br/>__*Optional*__
 
 
