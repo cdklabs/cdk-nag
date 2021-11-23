@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnCluster, ClientBrokerEncryption } from '@aws-cdk/aws-msk';
+import { CfnCluster } from '@aws-cdk/aws-msk';
 import { CfnResource, Stack } from '@aws-cdk/core';
 import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
@@ -24,10 +24,7 @@ export default Object.defineProperty(
             node,
             encryptionInTransit.clientBroker
           );
-          if (
-            clientBroker != undefined &&
-            clientBroker != ClientBrokerEncryption.TLS
-          ) {
+          if (clientBroker != undefined && clientBroker != 'TLS') {
             return NagRuleCompliance.NON_COMPLIANT;
           }
         }
