@@ -697,8 +697,8 @@ describe('Report system', () => {
     new CfnResource(stack, 'rResource', { type: 'foo' });
     app.synth();
     const expectedOuput = [
-      'Test-Compliant,Stack1/rResource,Compliant,N/A,Error\n',
-      'Test-Non-Compliant,Stack1/rResource,Non-Compliant,N/A,Error\n',
+      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Non-Compliant","N/A","Error"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -716,8 +716,8 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      'Test-Compliant,Stack1/rResource,Compliant,N/A,Error\n',
-      'Test-Non-Compliant,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
+      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -735,9 +735,9 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      'Test-Non-Compliant,Stack1/rResource,UNKNOWN,N/A,Error\n',
-      'Test-Compliant,Stack1/rResource,UNKNOWN,N/A,Error\n',
-      'Test-N/A,Stack1/rResource,UNKNOWN,N/A,Error\n',
+      '"Test-Non-Compliant","Stack1/rResource","UNKNOWN","N/A","Error"\n',
+      '"Test-Compliant","Stack1/rResource","UNKNOWN","N/A","Error"\n',
+      '"Test-N/A","Stack1/rResource","UNKNOWN","N/A","Error"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -752,9 +752,9 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      'Test-Compliant,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
-      'Test-N/A,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
-      'Test-Non-Compliant,Stack1/rResource,Suppressed,lorem ipsum,Error\n',
+      '"Test-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
+      '"Test-N/A","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });

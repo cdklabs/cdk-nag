@@ -303,7 +303,7 @@ export abstract class NagPack implements IAspect {
       line.push('N/A');
     }
     line.push(params.level);
-    return line.join(',') + '\n';
+    return line.map((i) => '"' + i + '"').join(',') + '\n';
   }
 }
 
