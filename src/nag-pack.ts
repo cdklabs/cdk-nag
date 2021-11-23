@@ -3,12 +3,14 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { appendFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import {
   IAspect,
   IConstruct,
   Annotations,
   CfnResource,
   Stack,
+  App,
 } from '@aws-cdk/core';
 import { NagPackSuppression } from './nag-suppressions';
 
@@ -30,7 +32,7 @@ export interface NagPackProps {
   readonly logIgnores?: boolean;
 
   /**
-   * Whether or not to generate CSV compliance reports for applied Stacks (default: false).
+   * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: false).
    */
   readonly reports?: boolean;
 }
@@ -265,15 +267,17 @@ export abstract class NagPack implements IAspect {
       compliance,
       explanation
     );
+    let outDir = App.of(params.node)?.outdir;
     const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
+    const filePath = join(outDir ? outDir : '', fileName);
     if (!this.reportStacks.includes(fileName)) {
       this.reportStacks.push(fileName);
       writeFileSync(
-        fileName,
+        filePath,
         'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level\n'
       );
     }
-    appendFileSync(fileName, line);
+    appendFileSync(filePath, line);
   }
 
   /**
