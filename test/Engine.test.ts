@@ -668,7 +668,6 @@ describe('Report system', () => {
       this.lines.push(
         this.createComplianceReportLine(params, ruleId, compliance, explanation)
       );
-      this.createComplianceReportLine(params, ruleId, compliance, explanation);
       const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
       if (!this.reportStacks.includes(fileName)) {
         this.reportStacks.push(fileName);
@@ -741,20 +740,20 @@ describe('Report system', () => {
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
-  test('Suppressed error values are written properly', () => {
+  test('Suppressed error values are escaped and written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
     const pack = new TestPack({ reports: true });
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
     NagSuppressions.addResourceSuppressions(resource, [
-      { id: 'CdkNagValidationFailure', reason: 'lorem ipsum' },
+      { id: 'CdkNagValidationFailure', reason: '"quoted "lorem" ipsum"' },
     ]);
     app.synth();
     const expectedOuput = [
-      '"Test-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
-      '"Test-N/A","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
-      '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error"\n',
+      '"Test-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error"\n',
+      '"Test-N/A","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
