@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled
@@ -14,8 +14,11 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
-      const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
-      const engineMode = resolveIfPrimitive(
+      const engine = NagRules.resolveIfPrimitive(
+        node,
+        node.engine
+      ).toLowerCase();
+      const engineMode = NagRules.resolveIfPrimitive(
         node,
         node.engineMode
       ).toLowerCase();

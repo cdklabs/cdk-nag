@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnStream } from '@aws-cdk/aws-kinesis';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * Kinesis Data Streams use the "aws/kinesis" key when server-sided encryption is enabled

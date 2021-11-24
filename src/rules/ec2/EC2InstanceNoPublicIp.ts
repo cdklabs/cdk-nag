@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * EC2 instances do not have public IPs
@@ -19,7 +19,7 @@ export default Object.defineProperty(
         //Iterate through network interfaces, checking if public IPs are enabled
         for (const networkInterface of networkInterfaces) {
           const resolvedInterface = Stack.of(node).resolve(networkInterface);
-          const associatePublicIpAddress = resolveIfPrimitive(
+          const associatePublicIpAddress = NagRules.resolveIfPrimitive(
             node,
             resolvedInterface.associatePublicIpAddress
           );

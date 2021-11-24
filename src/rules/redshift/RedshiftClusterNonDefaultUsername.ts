@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnCluster } from '@aws-cdk/aws-redshift';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters use custom user names vice the default (awsuser)
@@ -14,7 +14,10 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const masterUsername = resolveIfPrimitive(node, node.masterUsername);
+      const masterUsername = NagRules.resolveIfPrimitive(
+        node,
+        node.masterUsername
+      );
       if (masterUsername == 'awsuser') {
         return NagRuleCompliance.NON_COMPLIANT;
       }

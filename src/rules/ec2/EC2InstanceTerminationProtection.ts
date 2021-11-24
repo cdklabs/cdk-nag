@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * EC2 Instances outside of an ASG have Termination Protection enabled
@@ -14,7 +14,7 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInstance) {
-      const disableApiTermination = resolveIfPrimitive(
+      const disableApiTermination = NagRules.resolveIfPrimitive(
         node,
         node.disableApiTermination
       );

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * RDS DB instances and Aurora DB clusters have storage encryption enabled
@@ -17,13 +17,19 @@ export default Object.defineProperty(
       if (node.storageEncrypted == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const encrypted = resolveIfPrimitive(node, node.storageEncrypted);
+      const encrypted = NagRules.resolveIfPrimitive(
+        node,
+        node.storageEncrypted
+      );
       if (encrypted == false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnDBInstance) {
-      const encrypted = resolveIfPrimitive(node, node.storageEncrypted);
+      const encrypted = NagRules.resolveIfPrimitive(
+        node,
+        node.storageEncrypted
+      );
       if (
         (encrypted == false || encrypted == undefined) &&
         (node.engine == undefined ||

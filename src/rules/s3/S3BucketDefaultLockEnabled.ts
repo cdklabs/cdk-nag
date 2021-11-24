@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * S3 Buckets have object lock enabled
@@ -14,7 +14,7 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
-      const objectLockEnabled = resolveIfPrimitive(
+      const objectLockEnabled = NagRules.resolveIfPrimitive(
         node,
         node.objectLockEnabled
       );
@@ -24,8 +24,10 @@ export default Object.defineProperty(
       if (
         objectLockEnabled !== true ||
         objectLockConfiguration === undefined ||
-        resolveIfPrimitive(node, objectLockConfiguration.objectLockEnabled) !==
-          'Enabled'
+        NagRules.resolveIfPrimitive(
+          node,
+          objectLockConfiguration.objectLockEnabled
+        ) !== 'Enabled'
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

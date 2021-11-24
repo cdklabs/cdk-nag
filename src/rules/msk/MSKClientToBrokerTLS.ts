@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnCluster } from '@aws-cdk/aws-msk';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * MSK clusters only uses TLS communication between clients and brokers
@@ -20,7 +20,7 @@ export default Object.defineProperty(
           encryptionInfo.encryptionInTransit
         );
         if (encryptionInTransit != undefined) {
-          const clientBroker = resolveIfPrimitive(
+          const clientBroker = NagRules.resolveIfPrimitive(
             node,
             encryptionInTransit.clientBroker
           );

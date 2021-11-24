@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnGraphQLApi } from '@aws-cdk/aws-appsync';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * GraphQL APIs have request leveling logging enabled
@@ -18,7 +18,7 @@ export default Object.defineProperty(
       if (logConfig === undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const excludeVerboseContent = resolveIfPrimitive(
+      const excludeVerboseContent = NagRules.resolveIfPrimitive(
         node,
         logConfig.excludeVerboseContent
       );

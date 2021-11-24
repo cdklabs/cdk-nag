@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnDomain as LegacyCfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * OpenSearch Service domains stream error logs to CloudWatch Logs

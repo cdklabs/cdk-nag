@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnLaunchConfiguration } from '@aws-cdk/aws-autoscaling';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 /**
  * Auto Scaling launch configurations have public IP addresses disabled
  * @param node the CfnResource to check
@@ -13,7 +13,7 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnLaunchConfiguration) {
-      const associatePublicIpAddress = resolveIfPrimitive(
+      const associatePublicIpAddress = NagRules.resolveIfPrimitive(
         node,
         node.associatePublicIpAddress
       );

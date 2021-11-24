@@ -9,6 +9,7 @@ Name|Description
 [NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
 [NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule packs.
+[NagRules](#cdk-nag-nagrules)|Helper class with methods for rule creation.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 
@@ -328,6 +329,57 @@ protected writeToStackComplianceReport(params: IApplyRule, ruleId: string, compl
 
 
 
+
+
+
+## class NagRules  <a id="cdk-nag-nagrules"></a>
+
+Helper class with methods for rule creation.
+
+
+### Initializer
+
+
+
+
+```ts
+new NagRules()
+```
+
+
+
+### Methods
+
+
+#### *static* resolveIfPrimitive(node, parameter) <a id="cdk-nag-nagrules-resolveifprimitive"></a>
+
+Use in cases where a primitive value must be known to pass a rule.
+
+https://developer.mozilla.org/en-US/docs/Glossary/Primitive
+
+```ts
+static resolveIfPrimitive(node: CfnResource, parameter: any): any
+```
+
+* **node** (<code>[CfnResource](#aws-cdk-core-cfnresource)</code>)  The CfnResource to check.
+* **parameter** (<code>any</code>)  The value to attempt to resolve.
+
+__Returns__:
+* <code>any</code>
+
+#### *static* resolveResourceFromInstrinsic(node, parameter) <a id="cdk-nag-nagrules-resolveresourcefrominstrinsic"></a>
+
+Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
+
+```ts
+static resolveResourceFromInstrinsic(node: CfnResource, parameter: any): any
+```
+
+* **node** (<code>[CfnResource](#aws-cdk-core-cfnresource)</code>)  The CfnResource to check.
+* **parameter** (<code>any</code>)  The value to attempt to resolve.
+
+__Returns__:
+* <code>any</code>
 
 
 

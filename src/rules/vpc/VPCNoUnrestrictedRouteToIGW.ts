@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnRoute } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Route tables do not have unrestricted routes ('0.0.0.0/0' or '::/0') to IGWs
@@ -15,11 +15,11 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnRoute) {
       if (node.gatewayId != undefined) {
-        const destinationCidrBlock = resolveIfPrimitive(
+        const destinationCidrBlock = NagRules.resolveIfPrimitive(
           node,
           node.destinationCidrBlock
         );
-        const destinationIpv6CidrBlock = resolveIfPrimitive(
+        const destinationIpv6CidrBlock = NagRules.resolveIfPrimitive(
           node,
           node.destinationIpv6CidrBlock
         );

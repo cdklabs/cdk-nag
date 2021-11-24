@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnRole, CfnUser, CfnGroup, CfnPolicy } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * IAM Groups, Users, and Roles do not contain inline policies

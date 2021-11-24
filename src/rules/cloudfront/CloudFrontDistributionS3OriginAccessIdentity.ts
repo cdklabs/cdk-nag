@@ -8,7 +8,7 @@ import {
   CfnStreamingDistribution,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * CloudFront distributions use an origin access identity for S3 origins

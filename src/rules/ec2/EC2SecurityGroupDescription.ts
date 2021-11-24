@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Security Groups have descriptions
@@ -14,7 +14,10 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecurityGroup) {
-      const description = resolveIfPrimitive(node, node.groupDescription);
+      const description = NagRules.resolveIfPrimitive(
+        node,
+        node.groupDescription
+      );
       if (description.length < 2) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CLBs are not used for incoming HTTP/HTTPS traffic. Use ALBs instead.
@@ -17,7 +17,10 @@ export default Object.defineProperty(
       const listeners = Stack.of(node).resolve(node.listeners);
       for (const listener of listeners) {
         const resolvedListener = Stack.of(node).resolve(listener);
-        const protocol = resolveIfPrimitive(node, resolvedListener.protocol);
+        const protocol = NagRules.resolveIfPrimitive(
+          node,
+          resolvedListener.protocol
+        );
         if (
           protocol.toLowerCase() == 'http' ||
           protocol.toLowerCase() == 'https'

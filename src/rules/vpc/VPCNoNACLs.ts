@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnNetworkAcl, CfnNetworkAclEntry } from '@aws-cdk/aws-ec2';
 import { CfnResource } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * VPCs do not implement network ACLs

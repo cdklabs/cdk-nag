@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster } from '@aws-cdk/aws-docdb';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Document DB clusters have encryption at rest enabled
@@ -17,7 +17,10 @@ export default Object.defineProperty(
       if (node.storageEncrypted == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const storageEncrypted = resolveIfPrimitive(node, node.storageEncrypted);
+      const storageEncrypted = NagRules.resolveIfPrimitive(
+        node,
+        node.storageEncrypted
+      );
       if (!storageEncrypted) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

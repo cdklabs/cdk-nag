@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnTable } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * DynamoDB tables have Point-in-time Recovery enabled
@@ -21,7 +21,10 @@ export default Object.defineProperty(
       const pitr = Stack.of(node).resolve(
         node.pointInTimeRecoverySpecification
       );
-      const enabled = resolveIfPrimitive(node, pitr.pointInTimeRecoveryEnabled);
+      const enabled = NagRules.resolveIfPrimitive(
+        node,
+        pitr.pointInTimeRecoveryEnabled
+      );
       if (!enabled) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

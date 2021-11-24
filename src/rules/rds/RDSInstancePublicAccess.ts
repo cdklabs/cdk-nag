@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * RDS DB instances are not publicly accessible
@@ -14,7 +14,10 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const publicAccess = resolveIfPrimitive(node, node.publiclyAccessible);
+      const publicAccess = NagRules.resolveIfPrimitive(
+        node,
+        node.publiclyAccessible
+      );
       if (publicAccess !== false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnQueue } from '@aws-cdk/aws-sqs';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * SQS queues have a dead-letter queue enabled or have a cdk_nag rule suppression indicating they are a dead-letter queue.

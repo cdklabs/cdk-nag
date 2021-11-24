@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnDomain as LegacyCfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs
@@ -30,7 +30,7 @@ export default Object.defineProperty(
         if (resolvedLog == undefined) {
           return NagRuleCompliance.NON_COMPLIANT;
         }
-        const enabled = resolveIfPrimitive(node, resolvedLog.enabled);
+        const enabled = NagRules.resolveIfPrimitive(node, resolvedLog.enabled);
         if (!enabled) {
           return NagRuleCompliance.NON_COMPLIANT;
         }

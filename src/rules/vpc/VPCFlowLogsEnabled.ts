@@ -5,10 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnVPC, CfnFlowLog } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import {
-  resolveResourceFromInstrinsic,
-  NagRuleCompliance,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * VPCs have Flow Logs enabled
@@ -17,7 +14,10 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnVPC) {
-      const vpcLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const vpcLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnFlowLog) {
@@ -48,7 +48,7 @@ function isMatchingCompliantFlowLog(
   node: CfnFlowLog,
   vpcLogicalId: string
 ): boolean {
-  const resourceLogicalId = resolveResourceFromInstrinsic(
+  const resourceLogicalId = NagRules.resolveResourceFromInstrinsic(
     node,
     node.resourceId
   );
