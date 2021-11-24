@@ -5,10 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnCluster, CfnClusterParameterGroup } from '@aws-cdk/aws-redshift';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import {
-  resolveResourceFromInstrinsic,
-  NagRuleCompliance,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters require TLS/SSL encryption
@@ -18,7 +15,7 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const clusterParameterGroupName = resolveResourceFromInstrinsic(
+      const clusterParameterGroupName = NagRules.resolveResourceFromInstrinsic(
         node,
         node.clusterParameterGroupName
       );
@@ -56,7 +53,10 @@ function isMatchingParameterGroup(
   node: CfnClusterParameterGroup,
   parameterGroupName: string
 ): boolean {
-  const parameterGroupLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+  const parameterGroupLogicalId = NagRules.resolveResourceFromInstrinsic(
+    node,
+    node.ref
+  );
   if (
     parameterGroupName !== parameterGroupLogicalId ||
     node.parameters == undefined

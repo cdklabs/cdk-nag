@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster } from '@aws-cdk/aws-docdb';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Document DB clusters do not use the default endpoint port
@@ -14,7 +14,7 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
-      const port = resolveIfPrimitive(node, node.port);
+      const port = NagRules.resolveIfPrimitive(node, node.port);
       if (port == undefined || port == 27017) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

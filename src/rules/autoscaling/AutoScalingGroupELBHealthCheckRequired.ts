@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 /**
  * Auto Scaling groups which are associated with load balancers utilize ELB health checks
  * @param node the CfnResource to check
@@ -19,7 +19,10 @@ export default Object.defineProperty(
         (otherLBs != undefined && otherLBs.length > 0) ||
         (classicLBs != undefined && classicLBs.length > 0)
       ) {
-        const healthCheckType = resolveIfPrimitive(node, node.healthCheckType);
+        const healthCheckType = NagRules.resolveIfPrimitive(
+          node,
+          node.healthCheckType
+        );
         if (healthCheckType != undefined) {
           if (healthCheckType != 'ELB') {
             return NagRuleCompliance.NON_COMPLIANT;

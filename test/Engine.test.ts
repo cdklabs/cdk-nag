@@ -28,10 +28,10 @@ import {
   AwsSolutionsChecks,
   NagMessageLevel,
   NagPack,
-  resolveIfPrimitive,
   NagPackProps,
   NagRuleCompliance,
   IApplyRule,
+  NagRules,
 } from '../src';
 
 describe('Rule suppression system', () => {
@@ -619,10 +619,10 @@ describe('Rule exception handling', () => {
       bucketName: param.valueAsString,
     });
     expect(() => {
-      resolveIfPrimitive(bucket, bucket.bucketName);
+      NagRules.resolveIfPrimitive(bucket, bucket.bucketName);
     }).toThrowError('{"Ref":"pParam"}');
     expect(() => {
-      resolveIfPrimitive(bucket, bucket.objectLockEnabled);
+      NagRules.resolveIfPrimitive(bucket, bucket.objectLockEnabled);
     }).not.toThrowError();
   });
 });

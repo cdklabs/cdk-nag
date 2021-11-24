@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CLB listeners are configured for secure (HTTPs or SSL) protocols for client communication
@@ -17,8 +17,11 @@ export default Object.defineProperty(
       const listeners = Stack.of(node).resolve(node.listeners);
       for (const listener of listeners) {
         const resolvedListener = Stack.of(node).resolve(listener);
-        const protocol = resolveIfPrimitive(node, resolvedListener.protocol);
-        const instanceProtocol = resolveIfPrimitive(
+        const protocol = NagRules.resolveIfPrimitive(
+          node,
+          resolvedListener.protocol
+        );
+        const instanceProtocol = NagRules.resolveIfPrimitive(
           node,
           resolvedListener.instanceProtocol
         );

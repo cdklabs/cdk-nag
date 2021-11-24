@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDistribution } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CloudFront distributions may require Geo restrictions
@@ -26,7 +26,7 @@ export default Object.defineProperty(
         const geoRestrictions = Stack.of(node).resolve(
           restrictions.geoRestriction
         );
-        const restrictionType = resolveIfPrimitive(
+        const restrictionType = NagRules.resolveIfPrimitive(
           node,
           geoRestrictions.restrictionType
         );

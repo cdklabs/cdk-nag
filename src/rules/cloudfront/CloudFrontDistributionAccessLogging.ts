@@ -8,7 +8,7 @@ import {
   CfnStreamingDistribution,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CloudFront distributions have access logging enabled
@@ -32,7 +32,7 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       const logging = Stack.of(node).resolve(distributionConfig.logging);
-      const enabled = resolveIfPrimitive(node, logging.enabled);
+      const enabled = NagRules.resolveIfPrimitive(node, logging.enabled);
       if (!enabled) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

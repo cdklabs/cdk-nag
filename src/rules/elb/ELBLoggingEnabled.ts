@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnLoadBalancer as CfnLoadBalancerV2 } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * ELBs have access logs enabled
@@ -21,7 +21,10 @@ export default Object.defineProperty(
       const accessLoggingPolicy = Stack.of(node).resolve(
         node.accessLoggingPolicy
       );
-      const enabled = resolveIfPrimitive(node, accessLoggingPolicy.enabled);
+      const enabled = NagRules.resolveIfPrimitive(
+        node,
+        accessLoggingPolicy.enabled
+      );
 
       if (enabled == false) {
         return NagRuleCompliance.NON_COMPLIANT;

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster } from '@aws-cdk/aws-docdb';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Document DB clusters have the username and password stored in Secrets Manager
@@ -14,8 +14,11 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
-      const masterUsername = resolveIfPrimitive(node, node.masterUsername);
-      const masterUserPassword = resolveIfPrimitive(
+      const masterUsername = NagRules.resolveIfPrimitive(
+        node,
+        node.masterUsername
+      );
+      const masterUserPassword = NagRules.resolveIfPrimitive(
         node,
         node.masterUserPassword
       );

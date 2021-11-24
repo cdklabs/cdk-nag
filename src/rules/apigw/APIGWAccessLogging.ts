@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnStage } from '@aws-cdk/aws-apigateway';
 import { CfnStage as CfnV2Stage } from '@aws-cdk/aws-apigatewayv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 /**
  * APIs have access logging enabled
  * @param node the CfnResource to check

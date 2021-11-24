@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Codebuild projects have privileged mode disabled
@@ -15,7 +15,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnProject) {
       const environment = Stack.of(node).resolve(node.environment);
-      const privilegedMode = resolveIfPrimitive(
+      const privilegedMode = NagRules.resolveIfPrimitive(
         node,
         environment.privilegedMode
       );

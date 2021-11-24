@@ -11,7 +11,7 @@ import {
   CfnRole,
 } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * IAM policies do not grant full access

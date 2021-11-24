@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Codebuild projects use an AWS KMS key for encryption
@@ -14,7 +14,10 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnProject) {
-      const encryptionKey = resolveIfPrimitive(node, node.encryptionKey);
+      const encryptionKey = NagRules.resolveIfPrimitive(
+        node,
+        node.encryptionKey
+      );
       if (encryptionKey == undefined || encryptionKey == 'alias/aws/s3') {
         return NagRuleCompliance.NON_COMPLIANT;
       }

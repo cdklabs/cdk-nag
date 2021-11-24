@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnLoadBalancer } from '@aws-cdk/aws-elasticloadbalancing';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CLBs use at least two AZs with the Cross-Zone Load Balancing feature enabled
@@ -27,7 +27,7 @@ export default Object.defineProperty(
       } else if (node.subnets.length < 2) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const crossZone = resolveIfPrimitive(node, node.crossZone);
+      const crossZone = NagRules.resolveIfPrimitive(node, node.crossZone);
       if (crossZone != true) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

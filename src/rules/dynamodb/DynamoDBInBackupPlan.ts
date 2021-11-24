@@ -6,10 +6,7 @@ import { parse } from 'path';
 import { CfnBackupSelection } from '@aws-cdk/aws-backup';
 import { CfnTable } from '@aws-cdk/aws-dynamodb';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import {
-  resolveResourceFromInstrinsic,
-  NagRuleCompliance,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * DynamoDB tables are part of AWS Backup plan(s)
@@ -19,7 +16,10 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnTable) {
-      const tableLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const tableLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
       const tableName = Stack.of(node).resolve(node.tableName);
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {

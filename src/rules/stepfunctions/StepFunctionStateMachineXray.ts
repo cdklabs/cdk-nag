@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnStateMachine } from '@aws-cdk/aws-stepfunctions';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Step Function have X-Ray tracing enabled
@@ -20,7 +20,10 @@ export default Object.defineProperty(
       if (tracingConfiguration == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const enabled = resolveIfPrimitive(node, tracingConfiguration.enabled);
+      const enabled = NagRules.resolveIfPrimitive(
+        node,
+        tracingConfiguration.enabled
+      );
       if (!enabled) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

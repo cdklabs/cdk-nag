@@ -9,10 +9,7 @@ import {
   CfnSecretTargetAttachment,
 } from '@aws-cdk/aws-secretsmanager';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import {
-  resolveResourceFromInstrinsic,
-  NagRuleCompliance,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Secrets have automatic rotation scheduled
@@ -21,7 +18,10 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecret) {
-      const secretLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const secretLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
       const secretTargetAttachmentLogicalIds = Array<string>();
       const cfnSecretTargetAttachments = Array<CfnSecretTargetAttachment>();
       const cfnRotationSchedules = Array<CfnRotationSchedule>();
@@ -79,9 +79,12 @@ function getMatchingSecretTargetAttachment(
   node: CfnSecretTargetAttachment,
   secretLogicalId: string
 ): string {
-  const resourceSecretId = resolveResourceFromInstrinsic(node, node.secretId);
+  const resourceSecretId = NagRules.resolveResourceFromInstrinsic(
+    node,
+    node.secretId
+  );
   if (secretLogicalId === resourceSecretId) {
-    return resolveResourceFromInstrinsic(node, node.ref);
+    return NagRules.resolveResourceFromInstrinsic(node, node.ref);
   }
   return '';
 }
@@ -98,7 +101,10 @@ function isMatchingRotationSchedule(
   secretLogicalId: string,
   secretTargetAttachmentLogicalIds: string[]
 ): boolean {
-  const resourceSecretId = resolveResourceFromInstrinsic(node, node.secretId);
+  const resourceSecretId = NagRules.resolveResourceFromInstrinsic(
+    node,
+    node.secretId
+  );
   if (
     secretLogicalId === resourceSecretId ||
     secretTargetAttachmentLogicalIds.includes(resourceSecretId)

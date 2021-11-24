@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBInstance } from '@aws-cdk/aws-rds';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * RDS DB instances are configured to export all possible log types to CloudWatch
@@ -14,7 +14,9 @@ import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const dbType = JSON.stringify(resolveIfPrimitive(node, node.engine));
+      const dbType = JSON.stringify(
+        NagRules.resolveIfPrimitive(node, node.engine)
+      );
       const dbLogs = JSON.stringify(
         Stack.of(node).resolve(node.enableCloudwatchLogsExports)
       );
