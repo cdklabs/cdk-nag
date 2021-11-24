@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnLaunchConfiguration } from 'aws-cdk-lib/aws-autoscaling';
 import { CfnInstance } from 'aws-cdk-lib/aws-ec2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * EC2 instances have detailed monitoring enabled
@@ -15,13 +15,16 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInstance) {
-      const monitoring = resolveIfPrimitive(node, node.monitoring);
+      const monitoring = NagRules.resolveIfPrimitive(node, node.monitoring);
       if (monitoring == undefined || monitoring == false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnLaunchConfiguration) {
-      const monitoring = resolveIfPrimitive(node, node.instanceMonitoring);
+      const monitoring = NagRules.resolveIfPrimitive(
+        node,
+        node.instanceMonitoring
+      );
       if (monitoring != undefined && monitoring == false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

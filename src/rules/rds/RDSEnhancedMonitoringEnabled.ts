@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * RDS DB instances have enhanced monitoring enabled
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const enhancedMonitoring = resolveIfPrimitive(
+      const enhancedMonitoring = NagRules.resolveIfPrimitive(
         node,
         node.monitoringInterval
       );

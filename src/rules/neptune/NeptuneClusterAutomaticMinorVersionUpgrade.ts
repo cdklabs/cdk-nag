@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBInstance } from 'aws-cdk-lib/aws-neptune';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Neptune DB instances have Auto Minor Version Upgrade enabled
@@ -17,7 +17,7 @@ export default Object.defineProperty(
       if (node.autoMinorVersionUpgrade == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const autoMinorVersionUpgrade = resolveIfPrimitive(
+      const autoMinorVersionUpgrade = NagRules.resolveIfPrimitive(
         node,
         node.autoMinorVersionUpgrade
       );

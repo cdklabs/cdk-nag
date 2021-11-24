@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancing';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CLBs use ACM-managed certificates
@@ -20,7 +20,7 @@ export default Object.defineProperty(
         //Iterate through listeners, checking if secured ACM certs are used
         for (const listener of listeners) {
           const resolvedListener = Stack.of(node).resolve(listener);
-          const listenerARN = resolveIfPrimitive(
+          const listenerARN = NagRules.resolveIfPrimitive(
             node,
             resolvedListener.sslCertificateId
           );

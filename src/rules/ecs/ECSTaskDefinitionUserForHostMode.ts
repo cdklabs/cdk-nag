@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnTaskDefinition, NetworkMode } from 'aws-cdk-lib/aws-ecs';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Containers in ECS task definitions configured for host networking have 'privileged' set to true and a non-empty non-root 'user'
@@ -22,11 +22,14 @@ export default Object.defineProperty(
           for (const containerDefinition of containerDefinitions) {
             const resolvedDefinition =
               Stack.of(node).resolve(containerDefinition);
-            const privileged = resolveIfPrimitive(
+            const privileged = NagRules.resolveIfPrimitive(
               node,
               resolvedDefinition.privileged
             );
-            const user = resolveIfPrimitive(node, resolvedDefinition.user);
+            const user = NagRules.resolveIfPrimitive(
+              node,
+              resolvedDefinition.user
+            );
             if (privileged !== true || user === undefined) {
               return NagRuleCompliance.NON_COMPLIANT;
             }

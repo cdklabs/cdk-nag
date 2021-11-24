@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnNotebookInstance } from 'aws-cdk-lib/aws-sagemaker';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * SageMaker notebook instances have direct internet access disabled
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnNotebookInstance) {
-      const directInternetAccess = resolveIfPrimitive(
+      const directInternetAccess = NagRules.resolveIfPrimitive(
         node,
         node.directInternetAccess
       );

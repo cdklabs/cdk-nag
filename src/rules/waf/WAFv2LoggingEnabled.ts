@@ -5,10 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnWebACL, CfnLoggingConfiguration } from 'aws-cdk-lib/aws-wafv2';
-import {
-  NagRuleCompliance,
-  resolveResourceFromInstrinsic,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * WAFv2 web ACLs have logging enabled
@@ -17,7 +14,10 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnWebACL) {
-      const webAclLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const webAclLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
       const webAclName = Stack.of(node).resolve(node.name);
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {

@@ -8,7 +8,7 @@ import {
   CfnCacheCluster,
   CfnReplicationGroup,
 } from 'aws-cdk-lib/aws-elasticache';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * ElastiCache clusters are provisioned in a VPC

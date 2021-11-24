@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-msk';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * MSK clusters send broker logs to a supported destination
@@ -22,7 +22,7 @@ export default Object.defineProperty(
       let enabled = false;
       const s3 = Stack.of(node).resolve(resolvedBrokerLogs.s3);
       if (s3 != undefined) {
-        const s3Enabled = resolveIfPrimitive(node, s3.enabled);
+        const s3Enabled = NagRules.resolveIfPrimitive(node, s3.enabled);
         if (s3Enabled) {
           enabled = true;
         }
@@ -31,7 +31,7 @@ export default Object.defineProperty(
         resolvedBrokerLogs.cloudWatchLogs
       );
       if (cloudWatchLogs != undefined) {
-        const cloudWatchLogsEnabled = resolveIfPrimitive(
+        const cloudWatchLogsEnabled = NagRules.resolveIfPrimitive(
           node,
           cloudWatchLogs.enabled
         );
@@ -41,7 +41,10 @@ export default Object.defineProperty(
       }
       const firehose = Stack.of(node).resolve(resolvedBrokerLogs.firehose);
       if (firehose != undefined) {
-        const firehoseEnabled = resolveIfPrimitive(node, firehose.enabled);
+        const firehoseEnabled = NagRules.resolveIfPrimitive(
+          node,
+          firehose.enabled
+        );
         if (firehoseEnabled) {
           enabled = true;
         }

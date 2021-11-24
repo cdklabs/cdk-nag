@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Lambda functions are configured with function-level concurrent execution limits
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFunction) {
-      const reservedConcurrentExecutions = resolveIfPrimitive(
+      const reservedConcurrentExecutions = NagRules.resolveIfPrimitive(
         node,
         node.reservedConcurrentExecutions
       );

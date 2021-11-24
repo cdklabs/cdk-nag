@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  *  RDS DB instances and Aurora DB clusters do not use the default endpoint ports
@@ -17,9 +17,12 @@ export default Object.defineProperty(
       if (node.port == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const port = resolveIfPrimitive(node, node.port);
-      const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
-      const engineMode = resolveIfPrimitive(node, node.engineMode);
+      const port = NagRules.resolveIfPrimitive(node, node.port);
+      const engine = NagRules.resolveIfPrimitive(
+        node,
+        node.engine
+      ).toLowerCase();
+      const engineMode = NagRules.resolveIfPrimitive(node, node.engineMode);
       if (
         engineMode == undefined ||
         engineMode.toLowerCase() == 'provisioned'
@@ -40,8 +43,11 @@ export default Object.defineProperty(
       if (node.engine == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const port = resolveIfPrimitive(node, node.port);
-      const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
+      const port = NagRules.resolveIfPrimitive(node, node.port);
+      const engine = NagRules.resolveIfPrimitive(
+        node,
+        node.engine
+      ).toLowerCase();
       if (port == undefined) {
         if (!engine.includes('aurora')) {
           return NagRuleCompliance.NON_COMPLIANT;

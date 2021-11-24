@@ -7,22 +7,22 @@
   resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.0.0-rc.31.tgz#a19548309a2a3ed41368eca7436cf8bb20b7a982"
   integrity sha512-X7qlxzljC1PMS6YfgNsXwqj3Z9YDFczmA9wjydfpvrC20WyX2ncMWnrb45t1PMqUhUTKP5HHTD5MyV2SjadqSg==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.0.0-rc.31"
+    "aws-cdk-lib/cloudformation-diff" "2.0.0-rc.31"
 
-"@aws-cdk/cfnspec@2.0.0-rc.31":
+"aws-cdk-lib/cfnspec@2.0.0-rc.31":
   version "2.0.0-rc.31"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.0.0-rc.31.tgz#f946e93ab6081929d608867fcc6f0abad45030ea"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/cfnspec/-/cfnspec-2.0.0-rc.31.tgz#f946e93ab6081929d608867fcc6f0abad45030ea"
   integrity sha512-oo7xDXdy1efGMBoYR2k3siAZpaxslYk9aMM4M4Sm0gj1Gs1Dlc0HeAQsWrMpvJ9xk2l9W/51aHcaGZXBkPfE7Q==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.0.0-rc.31":
+"aws-cdk-lib/cloudformation-diff@2.0.0-rc.31":
   version "2.0.0-rc.31"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.0.0-rc.31.tgz#442af26475ca3b7f28883c112f932713ca6129f2"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/cloudformation-diff/-/cloudformation-diff-2.0.0-rc.31.tgz#442af26475ca3b7f28883c112f932713ca6129f2"
   integrity sha512-+/LsJYDf5fYIKS5RARJkQ7wZgnd8Tsq4q7bvmEppNOHiKDtLoGTBs5NZCnV/DCd5kfZpoo71aBapu5/3ROs2gA==
   dependencies:
-    "@aws-cdk/cfnspec" "2.0.0-rc.31"
+    "aws-cdk-lib/cfnspec" "2.0.0-rc.31"
     "@types/node" "^10.17.60"
     colors "^1.4.0"
     diff "^5.0.0"

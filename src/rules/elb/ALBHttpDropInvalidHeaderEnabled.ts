@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Application Load Balancers are enabled to drop invalid headers
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnLoadBalancer) {
-      const type = resolveIfPrimitive(node, node.type);
+      const type = NagRules.resolveIfPrimitive(node, node.type);
       if (type == undefined || type == 'application') {
         const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
         if (attributes != undefined) {

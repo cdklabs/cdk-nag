@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnInstance } from 'aws-cdk-lib/aws-ec2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 const EBS_OPTIMIZED_SUPPORTED = [
   'c1.xlarge',
@@ -36,7 +36,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInstance) {
       const instanceType = node.instanceType
-        ? resolveIfPrimitive(node, node.instanceType)
+        ? NagRules.resolveIfPrimitive(node, node.instanceType)
         : DEFAULT_TYPE;
       const ebsOptimized = Stack.of(node).resolve(node.ebsOptimized);
       if (

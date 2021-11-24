@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnIdentityPool } from 'aws-cdk-lib/aws-cognito';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Cognito identity pools do not allow for unauthenticated logins without a valid reason
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnIdentityPool) {
-      const allowUnauthenticatedIdentities = resolveIfPrimitive(
+      const allowUnauthenticatedIdentities = NagRules.resolveIfPrimitive(
         node,
         node.allowUnauthenticatedIdentities
       );

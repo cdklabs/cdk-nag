@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDomain as LegacyCfnDomain } from 'aws-cdk-lib/aws-elasticsearch';
 import { CfnDomain } from 'aws-cdk-lib/aws-opensearchservice';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * OpenSearch Service domains are node-to-node encrypted
@@ -19,7 +19,10 @@ export default Object.defineProperty(
         node.nodeToNodeEncryptionOptions
       );
       if (encryptedNodeToNode != undefined) {
-        const enabled = resolveIfPrimitive(node, encryptedNodeToNode.enabled);
+        const enabled = NagRules.resolveIfPrimitive(
+          node,
+          encryptedNodeToNode.enabled
+        );
         if (enabled !== true) {
           return NagRuleCompliance.NON_COMPLIANT;
         }

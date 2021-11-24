@@ -8,7 +8,7 @@ import {
   CfnCacheCluster,
   CfnReplicationGroup,
 } from 'aws-cdk-lib/aws-elasticache';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * ElastiCache Redis clusters retain automatic backups for at least 15 days
@@ -17,14 +17,23 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCacheCluster) {
-      const engine = resolveIfPrimitive(node, node.engine.toLowerCase());
-      const retention = resolveIfPrimitive(node, node.snapshotRetentionLimit);
+      const engine = NagRules.resolveIfPrimitive(
+        node,
+        node.engine.toLowerCase()
+      );
+      const retention = NagRules.resolveIfPrimitive(
+        node,
+        node.snapshotRetentionLimit
+      );
       if (engine == 'redis' && (retention == undefined || retention < 15)) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnReplicationGroup) {
-      const retention = resolveIfPrimitive(node, node.snapshotRetentionLimit);
+      const retention = NagRules.resolveIfPrimitive(
+        node,
+        node.snapshotRetentionLimit
+      );
       if (retention == undefined || retention < 15) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

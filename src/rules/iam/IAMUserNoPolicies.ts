@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnPolicy, CfnManagedPolicy, CfnUser } from 'aws-cdk-lib/aws-iam';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 /**
  * IAM policies are not attached at the user level
  * @param node the CfnResource to check

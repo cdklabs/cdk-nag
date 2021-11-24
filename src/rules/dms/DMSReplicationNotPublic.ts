@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * DMS replication instances are not public
@@ -14,7 +14,10 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnReplicationInstance) {
-      const publicAccess = resolveIfPrimitive(node, node.publiclyAccessible);
+      const publicAccess = NagRules.resolveIfPrimitive(
+        node,
+        node.publiclyAccessible
+      );
       if (publicAccess !== false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

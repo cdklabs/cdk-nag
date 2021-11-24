@@ -6,10 +6,7 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnBackupSelection } from 'aws-cdk-lib/aws-backup';
 import { CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import {
-  NagRuleCompliance,
-  resolveResourceFromInstrinsic,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * RDS DB Instances are part of AWS Backup plan(s)
@@ -19,7 +16,10 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const dbLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const dbLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnBackupSelection) {

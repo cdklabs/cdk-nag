@@ -5,10 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnCluster, CfnClusterParameterGroup } from 'aws-cdk-lib/aws-redshift';
-import {
-  NagRuleCompliance,
-  resolveResourceFromInstrinsic,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters have user user activity logging enabled
@@ -17,7 +14,7 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const clusterParameterGroupName = resolveResourceFromInstrinsic(
+      const clusterParameterGroupName = NagRules.resolveResourceFromInstrinsic(
         node,
         node.clusterParameterGroupName
       );
@@ -27,10 +24,8 @@ export default Object.defineProperty(
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnClusterParameterGroup) {
-          const childParameterGroupName = resolveResourceFromInstrinsic(
-            node,
-            child.ref
-          );
+          const childParameterGroupName =
+            NagRules.resolveResourceFromInstrinsic(node, child.ref);
           if (childParameterGroupName === clusterParameterGroupName) {
             found = isCompliantClusterParameterGroup(child);
             break;

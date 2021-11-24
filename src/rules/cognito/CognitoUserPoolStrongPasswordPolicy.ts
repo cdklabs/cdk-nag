@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnUserPool } from 'aws-cdk-lib/aws-cognito';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Cognito user pools have password policies that minimally specify a password length of at least 8 characters, as well as requiring uppercase, numeric, and special characters
@@ -23,7 +23,7 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
 
-      const minimumLength = resolveIfPrimitive(
+      const minimumLength = NagRules.resolveIfPrimitive(
         node,
         passwordPolicy.minimumLength
       );
@@ -31,7 +31,7 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
 
-      const requireUppercase = resolveIfPrimitive(
+      const requireUppercase = NagRules.resolveIfPrimitive(
         node,
         passwordPolicy.requireUppercase
       );
@@ -39,7 +39,7 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
 
-      const requireNumbers = resolveIfPrimitive(
+      const requireNumbers = NagRules.resolveIfPrimitive(
         node,
         passwordPolicy.requireNumbers
       );
@@ -47,7 +47,7 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
 
-      const requireSymbols = resolveIfPrimitive(
+      const requireSymbols = NagRules.resolveIfPrimitive(
         node,
         passwordPolicy.requireSymbols
       );

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled

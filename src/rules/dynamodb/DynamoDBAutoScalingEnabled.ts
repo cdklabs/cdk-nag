@@ -6,10 +6,7 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnScalableTarget } from 'aws-cdk-lib/aws-applicationautoscaling';
 import { CfnTable, BillingMode } from 'aws-cdk-lib/aws-dynamodb';
-import {
-  NagRuleCompliance,
-  resolveResourceFromInstrinsic,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Provisioned capacity DynamoDB tables have auto-scaling enabled on their indexes
@@ -20,12 +17,15 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnTable) {
       if (
-        resolveResourceFromInstrinsic(node, node.billingMode) !==
+        NagRules.resolveResourceFromInstrinsic(node, node.billingMode) !==
         BillingMode.PAY_PER_REQUEST
       ) {
         const indexWriteMatches = [''];
         const indexReadMatches = [''];
-        const tableLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+        const tableLogicalId = NagRules.resolveResourceFromInstrinsic(
+          node,
+          node.ref
+        );
         const tableName = Stack.of(node).resolve(node.tableName);
         const globalSecondaryIndexes = Stack.of(node).resolve(
           node.globalSecondaryIndexes

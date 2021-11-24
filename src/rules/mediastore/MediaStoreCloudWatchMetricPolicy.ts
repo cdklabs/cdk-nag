@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnContainer } from 'aws-cdk-lib/aws-mediastore';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Media Store containers define metric policies to send metrics to CloudWatch
@@ -18,7 +18,7 @@ export default Object.defineProperty(
       if (metricPolicy == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const containerLevelMetrics = resolveIfPrimitive(
+      const containerLevelMetrics = NagRules.resolveIfPrimitive(
         node,
         metricPolicy.containerLevelMetrics
       );

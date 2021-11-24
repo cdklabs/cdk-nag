@@ -8,7 +8,7 @@ import {
   CfnReplicationGroup,
   CfnCacheCluster,
 } from 'aws-cdk-lib/aws-elasticache';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * ElastiCache clusters do not use the default endpoint ports
@@ -17,11 +17,11 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCacheCluster) {
-      const port = resolveIfPrimitive(node, node.port);
+      const port = NagRules.resolveIfPrimitive(node, node.port);
       if (port == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const engine = resolveIfPrimitive(node, node.engine);
+      const engine = NagRules.resolveIfPrimitive(node, node.engine);
       if (engine.toLowerCase() == 'redis' && port == 6379) {
         return NagRuleCompliance.NON_COMPLIANT;
       } else if (engine.toLowerCase() == 'memcached' && port == 11211) {
@@ -29,11 +29,11 @@ export default Object.defineProperty(
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnReplicationGroup) {
-      const port = resolveIfPrimitive(node, node.port);
+      const port = NagRules.resolveIfPrimitive(node, node.port);
       if (port == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const engine = resolveIfPrimitive(node, node.engine);
+      const engine = NagRules.resolveIfPrimitive(node, node.engine);
       if (
         (engine == undefined || engine.toLowerCase() == 'redis') &&
         port == 6379

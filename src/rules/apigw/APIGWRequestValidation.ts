@@ -5,10 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnRequestValidator, CfnRestApi } from 'aws-cdk-lib/aws-apigateway';
-import {
-  NagRuleCompliance,
-  resolveResourceFromInstrinsic,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Rest APIs have request validation enabled
@@ -17,7 +14,10 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnRestApi) {
-      const apiLogicalId = resolveResourceFromInstrinsic(node, node.ref);
+      const apiLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnRequestValidator) {
@@ -49,7 +49,10 @@ function isMatchingRequestValidator(
   node: CfnRequestValidator,
   apiLogicalId: string
 ): boolean {
-  const resourceLogicalId = resolveResourceFromInstrinsic(node, node.restApiId);
+  const resourceLogicalId = NagRules.resolveResourceFromInstrinsic(
+    node,
+    node.restApiId
+  );
   if (resourceLogicalId === apiLogicalId) {
     return true;
   }

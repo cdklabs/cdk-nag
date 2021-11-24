@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters do not allow public access
@@ -14,7 +14,10 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const publicAccess = resolveIfPrimitive(node, node.publiclyAccessible);
+      const publicAccess = NagRules.resolveIfPrimitive(
+        node,
+        node.publiclyAccessible
+      );
       if (publicAccess === true) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

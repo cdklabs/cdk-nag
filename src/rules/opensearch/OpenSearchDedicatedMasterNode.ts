@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDomain as LegacyCfnDomain } from 'aws-cdk-lib/aws-elasticsearch';
 import { CfnDomain } from 'aws-cdk-lib/aws-opensearchservice';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * OpenSearch Service domains use dedicated master nodes
@@ -21,7 +21,7 @@ export default Object.defineProperty(
       if (elasticsearchClusterConfig == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const dedicatedMasterEnabled = resolveIfPrimitive(
+      const dedicatedMasterEnabled = NagRules.resolveIfPrimitive(
         node,
         elasticsearchClusterConfig.dedicatedMasterEnabled
       );
@@ -34,7 +34,7 @@ export default Object.defineProperty(
       if (clusterConfig == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const dedicatedMasterEnabled = resolveIfPrimitive(
+      const dedicatedMasterEnabled = NagRules.resolveIfPrimitive(
         node,
         clusterConfig.dedicatedMasterEnabled
       );

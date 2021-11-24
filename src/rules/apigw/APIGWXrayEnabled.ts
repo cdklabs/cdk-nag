@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnStage } from 'aws-cdk-lib/aws-apigateway';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 /**
  * API Gateway REST API stages have X-Ray tracing enabled
  * @param node the CfnResource to check
@@ -13,7 +13,10 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStage) {
-      const tracingEnabled = resolveIfPrimitive(node, node.tracingEnabled);
+      const tracingEnabled = NagRules.resolveIfPrimitive(
+        node,
+        node.tracingEnabled
+      );
       if (tracingEnabled !== true) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
