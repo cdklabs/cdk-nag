@@ -11,23 +11,27 @@ import {
   CfnGroup,
   CfnRole,
 } from 'aws-cdk-lib/aws-iam';
+import { NagRuleCompliance } from '../..';
 
 /**
  * IAM policies do not grant full access
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
       if (checkDocument(node, node.policyDocument)) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnGroup || node instanceof CfnRole) {
       if (node.policies != undefined && checkDocument(node, node.policies)) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

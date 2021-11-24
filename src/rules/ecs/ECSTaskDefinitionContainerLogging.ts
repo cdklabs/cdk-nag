@@ -5,21 +5,21 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-ecs';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * ECS Task Definition has awslogs logging enabled at the minimum
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
       if (node.configuration == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const configuration = Stack.of(node).resolve(node.configuration);
       if (configuration.executeCommandConfiguration == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const executeCommandConfiguration = resolveIfPrimitive(
         node,
@@ -29,10 +29,12 @@ export default Object.defineProperty(
         executeCommandConfiguration.logging == undefined ||
         executeCommandConfiguration.logging == 'NONE'
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

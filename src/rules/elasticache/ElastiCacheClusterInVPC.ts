@@ -8,13 +8,14 @@ import {
   CfnCacheCluster,
   CfnReplicationGroup,
 } from 'aws-cdk-lib/aws-elasticache';
+import { NagRuleCompliance } from '../..';
 
 /**
  * ElastiCache clusters are provisioned in a VPC
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (
       node instanceof CfnCacheCluster ||
       node instanceof CfnReplicationGroup
@@ -23,10 +24,12 @@ export default Object.defineProperty(
         node.cacheSubnetGroupName == undefined ||
         node.cacheSubnetGroupName.length == 0
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

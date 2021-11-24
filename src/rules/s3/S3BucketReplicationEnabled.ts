@@ -5,17 +5,18 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
+import { NagRuleCompliance } from '../..';
 
 /**
  * S3 Buckets have replication enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
       const replication = Stack.of(node).resolve(node.replicationConfiguration);
       if (replication === undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const rules = Stack.of(node).resolve(replication.rules);
       let found = false;
@@ -27,10 +28,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

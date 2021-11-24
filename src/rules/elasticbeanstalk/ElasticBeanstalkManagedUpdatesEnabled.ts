@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnEnvironment } from 'aws-cdk-lib/aws-elasticbeanstalk';
+import { NagRuleCompliance } from '../..';
 
 /**
  * Elastic Beanstalk environments have managed updates enabled
@@ -12,11 +13,11 @@ import { CfnEnvironment } from 'aws-cdk-lib/aws-elasticbeanstalk';
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnEnvironment) {
       const optionSettings = Stack.of(node).resolve(node.optionSettings);
       if (optionSettings == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       let foundEnabled = false;
       let foundLevel = false;
@@ -46,10 +47,12 @@ export default Object.defineProperty(
         }
       }
       if (!foundEnabled || !foundLevel) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

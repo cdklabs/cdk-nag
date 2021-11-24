@@ -9,14 +9,14 @@ import {
   OriginProtocolPolicy,
   SecurityPolicyProtocol,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * CloudFront distributions do not use SSLv3 or TLSv1 for communication to the origin
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDistribution) {
       const distributionConfig = Stack.of(node).resolve(
         node.distributionConfig
@@ -34,10 +34,10 @@ export default Object.defineProperty(
               customOriginConfig.originProtocolPolicy
             );
             if (originProtocolPolicy != OriginProtocolPolicy.HTTPS_ONLY) {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
             if (customOriginConfig.originSslProtocols == undefined) {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
             const outdatedValues = [
               SecurityPolicyProtocol.SSL_V3,
@@ -51,14 +51,16 @@ export default Object.defineProperty(
             });
             for (const outdated of outdatedValues) {
               if (lowerCaseProtocols.includes(outdated.toLowerCase())) {
-                return false;
+                return NagRuleCompliance.NON_COMPLIANT;
               }
             }
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -5,17 +5,18 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { NagRuleCompliance } from '../..';
 
 /**
  * CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnAlarm) {
       const actionsEnabled = Stack.of(node).resolve(node.actionsEnabled);
       if (actionsEnabled === false) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       // Actions can be an array with a token that then resolves to an empty array or undefined
       const alarmActions = Stack.of(node).resolve(node.alarmActions);
@@ -31,10 +32,12 @@ export default Object.defineProperty(
       const totalActions =
         totalAlarmActions + totalInsufficientDataActions + totalOkActions;
       if (totalActions == 0) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

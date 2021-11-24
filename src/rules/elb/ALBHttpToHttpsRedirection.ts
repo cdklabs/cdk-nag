@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnListener } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * ALB HTTP listeners are configured to redirect to HTTPS
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnListener) {
       let found = false;
       const protocol = resolveIfPrimitive(node, node.protocol);
@@ -27,11 +27,12 @@ export default Object.defineProperty(
             found = true;
           }
         }
-        if (!found) return false;
+        if (!found) return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Athena workgroups encrypt query results
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnWorkGroup) {
       const workGroupConfiguration = Stack.of(node).resolve(
         node.workGroupConfiguration
@@ -22,7 +22,7 @@ export default Object.defineProperty(
           node.workGroupConfigurationUpdates
         );
         if (workGroupConfigurationUpdates == undefined) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
         const resultConfigurationUpdates = Stack.of(node).resolve(
           workGroupConfigurationUpdates.resultConfigurationUpdates
@@ -43,12 +43,12 @@ export default Object.defineProperty(
             removeEncryptionConfiguration &&
             encryptionConfiguration == undefined
           ) {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           } else if (
             encryptionConfiguration != undefined &&
             !enforceWorkGroupConfiguration
           ) {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       } else {
@@ -57,25 +57,27 @@ export default Object.defineProperty(
           workGroupConfiguration.enforceWorkGroupConfiguration
         );
         if (!enforceWorkGroupConfiguration) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
         const resultConfiguration = Stack.of(node).resolve(
           workGroupConfiguration.resultConfiguration
         );
 
         if (resultConfiguration == undefined) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
         const encryptionConfiguration = Stack.of(node).resolve(
           resultConfiguration.encryptionConfiguration
         );
 
         if (encryptionConfiguration == undefined) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

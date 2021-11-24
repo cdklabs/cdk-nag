@@ -5,17 +5,17 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  *  RDS DB instances and Aurora DB clusters do not use the default endpoint ports
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
       if (node.port == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const port = resolveIfPrimitive(node, node.port);
       const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
@@ -25,41 +25,42 @@ export default Object.defineProperty(
         engineMode.toLowerCase() == 'provisioned'
       ) {
         if (engine.includes('aurora') && port == 3306) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       } else if (
         (engine == 'aurora' || engine == 'aurora-mysql') &&
         port == 3306
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       } else if (engine == 'aurora-postgresql' && port == 5432) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
-      return true;
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnDBInstance) {
       if (node.engine == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const port = resolveIfPrimitive(node, node.port);
       const engine = resolveIfPrimitive(node, node.engine).toLowerCase();
       if (port == undefined) {
         if (!engine.includes('aurora')) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       } else {
         if ((engine == 'mariadb' || engine == 'mysql') && port == 3306) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         } else if (engine == 'postgres' && port == 5432) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         } else if (engine.includes('oracle') && port == 1521) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         } else if (engine.includes('sqlserver') && port == 1433) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
-      return true;
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

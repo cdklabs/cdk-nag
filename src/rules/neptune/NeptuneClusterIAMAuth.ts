@@ -5,24 +5,26 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-neptune';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 
 /**
  * Neptune DB clusters have IAM Database Authentication enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
       if (node.iamAuthEnabled == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const iamAuthEnabled = resolveIfPrimitive(node, node.iamAuthEnabled);
       if (!iamAuthEnabled) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

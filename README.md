@@ -30,6 +30,8 @@ See [RULES](./RULES.md) for more information on all the available packs.
 
 ## Usage
 
+For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-nagpackprops)
+
 <details>
 <summary>cdk</summary>
 

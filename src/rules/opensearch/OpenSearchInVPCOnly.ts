@@ -6,24 +6,27 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDomain as LegacyCfnDomain } from 'aws-cdk-lib/aws-elasticsearch';
 import { CfnDomain } from 'aws-cdk-lib/aws-opensearchservice';
+import { NagRuleCompliance } from '../..';
 
 /**
  * OpenSearch Service domains are within VPCs
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof LegacyCfnDomain || node instanceof CfnDomain) {
       const vpcOptions = Stack.of(node).resolve(node.vpcOptions);
       if (vpcOptions === undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const subnetIds = Stack.of(node).resolve(vpcOptions.subnetIds);
       if (subnetIds === undefined || subnetIds.length === 0) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

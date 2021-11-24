@@ -5,13 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { NagRuleCompliance } from '../..';
 
 /**
  * ALBs, NLBs, and GLBs have deletion protection enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnLoadBalancer) {
       const attributes = Stack.of(node).resolve(node.loadBalancerAttributes);
       if (attributes != undefined) {
@@ -28,13 +29,15 @@ export default Object.defineProperty(
           }
         }
         if (!deletionProtectionEnabled) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       } else {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }
