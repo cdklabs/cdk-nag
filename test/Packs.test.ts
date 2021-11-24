@@ -17,7 +17,22 @@ import {
 
 describe('Check NagPack Details', () => {
   describe('AwsSolutions', () => {
-    const pack = new AwsSolutionsChecks();
+    class AwsSolutionsChecksExtended extends AwsSolutionsChecks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
+        const ruleSuffix = params.ruleSuffixOverride
+          ? params.ruleSuffixOverride
+          : params.rule.name;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
+        if (params.level === NagMessageLevel.WARN) {
+          this.actualWarnings.push(ruleId);
+        } else {
+          this.actualErrors.push(ruleId);
+        }
+      }
+    }
+    const pack = new AwsSolutionsChecksExtended();
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('AwsSolutions');
     });
@@ -143,30 +158,32 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-SQS3',
         'AwsSolutions-VPC7',
       ];
-      const actualWarnings = new Array<string>();
-      const actualErrors = new Array<string>();
-      jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
+      jest.spyOn(pack, 'applyRule');
+      const stack = new Stack();
+      Aspects.of(stack).add(pack);
+      new CfnResource(stack, 'rTestResource', { type: 'foo' });
+      SynthUtils.synthesize(stack).messages;
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
+  describe('HIPAA-Security', () => {
+    class HIPAASecurityChecksExtended extends HIPAASecurityChecks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         if (params.level === NagMessageLevel.WARN) {
-          actualWarnings.push(ruleId);
+          this.actualWarnings.push(ruleId);
         } else {
-          actualErrors.push(ruleId);
+          this.actualErrors.push(ruleId);
         }
-        return ruleId;
-      });
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
-      new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
-      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
-      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
-    });
-  });
-  describe('HIPAA-Security', () => {
-    const pack = new HIPAASecurityChecks();
+      }
+    }
+    const pack = new HIPAASecurityChecksExtended();
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('HIPAA.Security');
     });
@@ -261,30 +278,32 @@ describe('Check NagPack Details', () => {
         'HIPAA.Security-VPCSubnetAutoAssignPublicIpDisabled',
         'HIPAA.Security-WAFv2LoggingEnabled',
       ];
-      const actualWarnings = new Array<string>();
-      const actualErrors = new Array<string>();
-      jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
+      jest.spyOn(pack, 'applyRule');
+      const stack = new Stack();
+      Aspects.of(stack).add(pack);
+      new CfnResource(stack, 'rTestResource', { type: 'foo' });
+      SynthUtils.synthesize(stack).messages;
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
+  describe('NIST-800-53-R4', () => {
+    class NIST80053R4ChecksExtended extends NIST80053R4Checks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         if (params.level === NagMessageLevel.WARN) {
-          actualWarnings.push(ruleId);
+          this.actualWarnings.push(ruleId);
         } else {
-          actualErrors.push(ruleId);
+          this.actualErrors.push(ruleId);
         }
-        return ruleId;
-      });
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
-      new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
-      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
-      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
-    });
-  });
-  describe('NIST-800-53-R4', () => {
-    const pack = new NIST80053R4Checks();
+      }
+    }
+    const pack = new NIST80053R4ChecksExtended();
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('NIST.800.53.R4');
     });
@@ -359,30 +378,32 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R4-VPCFlowLogsEnabled',
         'NIST.800.53.R4-WAFv2LoggingEnabled',
       ];
-      const actualWarnings = new Array<string>();
-      const actualErrors = new Array<string>();
-      jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
+      jest.spyOn(pack, 'applyRule');
+      const stack = new Stack();
+      Aspects.of(stack).add(pack);
+      new CfnResource(stack, 'rTestResource', { type: 'foo' });
+      SynthUtils.synthesize(stack).messages;
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
+  describe('NIST-800-53-R5', () => {
+    class NIST80053R5ChecksExtended extends NIST80053R5Checks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         if (params.level === NagMessageLevel.WARN) {
-          actualWarnings.push(ruleId);
+          this.actualWarnings.push(ruleId);
         } else {
-          actualErrors.push(ruleId);
+          this.actualErrors.push(ruleId);
         }
-        return ruleId;
-      });
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
-      new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
-      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
-      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
-    });
-  });
-  describe('NIST-800-53-R5', () => {
-    const pack = new NIST80053R5Checks();
+      }
+    }
+    const pack = new NIST80053R5ChecksExtended();
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('NIST.800.53.R5');
     });
@@ -472,30 +493,32 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R5-VPCSubnetAutoAssignPublicIpDisabled',
         'NIST.800.53.R5-WAFv2LoggingEnabled',
       ];
-      const actualWarnings = new Array<string>();
-      const actualErrors = new Array<string>();
-      jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
+      jest.spyOn(pack, 'applyRule');
+      const stack = new Stack();
+      Aspects.of(stack).add(pack);
+      new CfnResource(stack, 'rTestResource', { type: 'foo' });
+      SynthUtils.synthesize(stack).messages;
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
+  describe('PCI-DSS-3.2.1', () => {
+    class PCIDSS321ChecksExtended extends PCIDSS321Checks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
         const ruleSuffix = params.ruleSuffixOverride
           ? params.ruleSuffixOverride
           : params.rule.name;
         const ruleId = `${pack.readPackName}-${ruleSuffix}`;
         if (params.level === NagMessageLevel.WARN) {
-          actualWarnings.push(ruleId);
+          this.actualWarnings.push(ruleId);
         } else {
-          actualErrors.push(ruleId);
+          this.actualErrors.push(ruleId);
         }
-        return ruleId;
-      });
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
-      new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
-      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
-      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
-    });
-  });
-  describe('PCI-DSS-3.2.1', () => {
-    const pack = new PCIDSS321Checks();
+      }
+    }
+    const pack = new PCIDSS321ChecksExtended();
     test('Pack Name is correct', () => {
       expect(pack.readPackName).toStrictEqual('PCI.DSS.321');
     });
@@ -570,26 +593,13 @@ describe('Check NagPack Details', () => {
         'PCI.DSS.321-VPCSubnetAutoAssignPublicIpDisabled',
         'PCI.DSS.321-WAFv2LoggingEnabled',
       ];
-      const actualWarnings = new Array<string>();
-      const actualErrors = new Array<string>();
-      jest.spyOn(pack, 'applyRule').mockImplementation((params: IApplyRule) => {
-        const ruleSuffix = params.ruleSuffixOverride
-          ? params.ruleSuffixOverride
-          : params.rule.name;
-        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
-        if (params.level === NagMessageLevel.WARN) {
-          actualWarnings.push(ruleId);
-        } else {
-          actualErrors.push(ruleId);
-        }
-        return ruleId;
-      });
+      jest.spyOn(pack, 'applyRule');
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
-      expect(actualWarnings.sort()).toEqual(expectedWarnings.sort());
-      expect(actualErrors.sort()).toEqual(expectedErrors.sort());
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });
   });
 });

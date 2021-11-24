@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnAutoScalingGroup } from '@aws-cdk/aws-autoscaling';
 import { CfnResource } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Auto Scaling Groups have properly configured health checks
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnAutoScalingGroup) {
       const healthCheckType = resolveIfPrimitive(node, node.healthCheckType);
       const healthCheckGracePeriod = resolveIfPrimitive(
@@ -24,10 +24,12 @@ export default Object.defineProperty(
         healthCheckType == 'ELB' &&
         healthCheckGracePeriod == undefined
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

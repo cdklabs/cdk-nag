@@ -8,13 +8,14 @@ import {
   CfnStreamingDistribution,
 } from '@aws-cdk/aws-cloudfront';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * CloudFront distributions use an origin access identity for S3 origins
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDistribution) {
       const distributionConfig = Stack.of(node).resolve(
         node.distributionConfig
@@ -30,7 +31,7 @@ export default Object.defineProperty(
             /^.+\.s3(?:-website)?(?:\..+)?(?:(?:\.amazonaws\.com(?:\.cn)?)|(?:\.c2s\.ic\.gov)|(?:\.sc2s\.sgov\.gov))$/;
           if (s3Regex.test(resolvedDomainName)) {
             if (resolvedOrigin.s3OriginConfig == undefined) {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
             const resolvedConfig = Stack.of(node).resolve(
               resolvedOrigin.s3OriginConfig
@@ -39,11 +40,12 @@ export default Object.defineProperty(
               resolvedConfig.originAccessIdentity == undefined ||
               resolvedConfig.originAccessIdentity.replace(/\s/g, '').length == 0
             ) {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnStreamingDistribution) {
       const distributionConfig = Stack.of(node).resolve(
         node.streamingDistributionConfig
@@ -52,10 +54,12 @@ export default Object.defineProperty(
         distributionConfig.s3Origin
       );
       if (resolvedOrigin.originAccessIdentity.replace(/\s/g, '').length == 0) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

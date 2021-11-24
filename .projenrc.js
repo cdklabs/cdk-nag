@@ -105,6 +105,7 @@ const project = new AwsCdkConstructLibrary({
 });
 project.package.addField('resolutions', {
   'ansi-regex': '^5.0.1',
+  'json-schema': '^0.4.0',
 });
 project.package.addField('prettier', {
   singleQuote: true,

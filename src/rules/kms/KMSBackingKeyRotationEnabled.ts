@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnKey, KeySpec } from '@aws-cdk/aws-kms';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * KMS Symmetric keys have automatic key rotation enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnKey) {
       const keySpec = Stack.of(node).resolve(node.keySpec);
       if (keySpec == undefined || keySpec == KeySpec.SYMMETRIC_DEFAULT) {
@@ -21,11 +21,13 @@ export default Object.defineProperty(
           node.enableKeyRotation
         );
         if (enableKeyRotation !== true) {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

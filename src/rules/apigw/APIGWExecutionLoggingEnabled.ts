@@ -5,16 +5,17 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnStage, MethodLoggingLevel } from '@aws-cdk/aws-apigateway';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * API Gateway stages have logging enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStage) {
       if (node.methodSettings == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const methodSettings = Stack.of(node).resolve(node.methodSettings);
       let found = false;
@@ -31,10 +32,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

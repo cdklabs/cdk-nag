@@ -5,20 +5,23 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnQueue } from '@aws-cdk/aws-sqs';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * SQS queues have server-side encryption enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnQueue) {
       const kmsMasterKeyId = Stack.of(node).resolve(node.kmsMasterKeyId);
       if (kmsMasterKeyId == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

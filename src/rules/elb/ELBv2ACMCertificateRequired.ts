@@ -5,17 +5,18 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnListener } from '@aws-cdk/aws-elasticloadbalancingv2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * ALB, NLB, and GLB listeners use ACM-managed certificates
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnListener) {
       const certificates = Stack.of(node).resolve(node.certificates);
       if (certificates == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       let found = false;
       for (const certificate of certificates) {
@@ -26,10 +27,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

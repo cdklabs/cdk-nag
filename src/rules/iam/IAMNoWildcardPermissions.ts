@@ -11,13 +11,14 @@ import {
   CfnManagedPolicy,
 } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (
       node instanceof CfnGroup ||
       node instanceof CfnUser ||
@@ -31,17 +32,20 @@ export default Object.defineProperty(
             resolvedPolicy.policyDocument
           );
           if (JSON.stringify(resolvedPolicyDocument).includes('*')) {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
       const policyDocument = Stack.of(node).resolve(node.policyDocument);
       if (JSON.stringify(policyDocument).includes('*')) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

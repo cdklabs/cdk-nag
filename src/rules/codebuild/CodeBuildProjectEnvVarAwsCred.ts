@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * CodeBuild projects do not store AWS credentials as plaintext environment variables
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnProject) {
       //Check for the presence of OAUTH
       const environment = Stack.of(node).resolve(node.environment);
@@ -28,13 +28,15 @@ export default Object.defineProperty(
           if (name == 'AWS_ACCESS_KEY_ID' || name == 'AWS_SECRET_ACCESS_KEY') {
             //is this credential being stored as plaintext?
             if (type == undefined || type == 'PLAINTEXT') {
-              return false;
+              return NagRuleCompliance.NON_COMPLIANT;
             }
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

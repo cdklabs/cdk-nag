@@ -5,25 +5,29 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnPolicy, CfnManagedPolicy, CfnUser } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 /**
  * IAM policies are not attached at the user level
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnPolicy || node instanceof CfnManagedPolicy) {
       const policyUsers = Stack.of(node).resolve(node.users);
       if (policyUsers != undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnUser) {
       const policies = Stack.of(node).resolve(node.policies);
       const managedPolicyArns = Stack.of(node).resolve(node.managedPolicyArns);
       if (policies != undefined || managedPolicyArns != undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

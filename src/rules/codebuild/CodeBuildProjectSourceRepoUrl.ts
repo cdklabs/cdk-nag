@@ -5,28 +5,30 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnProject } from '@aws-cdk/aws-codebuild';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnProject) {
       //Check for the presence of OAUTH
       const projectSource = Stack.of(node).resolve(node.source);
       const projectAuth = Stack.of(node).resolve(projectSource.auth);
       if (projectAuth == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       } else {
         const projectAuthType = resolveIfPrimitive(node, projectAuth.type);
         if (projectAuthType != 'OAUTH') {
-          return false;
+          return NagRuleCompliance.NON_COMPLIANT;
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

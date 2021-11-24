@@ -3,16 +3,16 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnCluster, ClientBrokerEncryption } from '@aws-cdk/aws-msk';
+import { CfnCluster } from '@aws-cdk/aws-msk';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * MSK clusters only uses TLS communication between clients and brokers
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
       const encryptionInfo = Stack.of(node).resolve(node.encryptionInfo);
       if (encryptionInfo != undefined) {
@@ -24,16 +24,15 @@ export default Object.defineProperty(
             node,
             encryptionInTransit.clientBroker
           );
-          if (
-            clientBroker != undefined &&
-            clientBroker != ClientBrokerEncryption.TLS
-          ) {
-            return false;
+          if (clientBroker != undefined && clientBroker != 'TLS') {
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

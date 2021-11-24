@@ -5,14 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * Security Groups do not allow for unrestricted SSH traffic
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecurityGroup) {
       const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
       if (ingressRules != undefined) {
@@ -35,16 +35,17 @@ export default Object.defineProperty(
                 toPort == -1 ||
                 ipProtocol == '-1'
               ) {
-                return false;
+                return NagRuleCompliance.NON_COMPLIANT;
               }
             } else {
               if (fromPort == 22 || ipProtocol == '-1') {
-                return false;
+                return NagRuleCompliance.NON_COMPLIANT;
               }
             }
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnSecurityGroupIngress) {
       const ipProtocol = resolveIfPrimitive(node, node.ipProtocol);
       const cidrIp = resolveIfPrimitive(node, node.cidrIp);
@@ -63,16 +64,18 @@ export default Object.defineProperty(
             toPort == -1 ||
             ipProtocol == '-1'
           ) {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         } else {
           if (fromPort == 22 || ipProtocol == '-1') {
-            return false;
+            return NagRuleCompliance.NON_COMPLIANT;
           }
         }
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

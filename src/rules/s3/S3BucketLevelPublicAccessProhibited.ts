@@ -5,17 +5,17 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnBucket } from '@aws-cdk/aws-s3';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveIfPrimitive } from '../../nag-pack';
+import { resolveIfPrimitive, NagRuleCompliance } from '../../nag-pack';
 
 /**
  * S3 Buckets prohibit public access through bucket level settings
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
       if (node.publicAccessBlockConfiguration == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       const publicAccess = Stack.of(node).resolve(
         node.publicAccessBlockConfiguration
@@ -42,10 +42,12 @@ export default Object.defineProperty(
         ignorePublicAcls !== true ||
         restrictPublicBuckets !== true
       ) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

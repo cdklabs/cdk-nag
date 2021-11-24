@@ -5,21 +5,24 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnInstance } from '@aws-cdk/aws-ec2';
 import { CfnResource, Stack } from '@aws-cdk/core';
+import { NagRuleCompliance } from '../../nag-pack';
 
 /**
  * EC2 instances are created within VPCs
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInstance) {
       //If we are in a VPC, then we'll have a subnet
       const subnetId = Stack.of(node).resolve(node.subnetId);
       if (subnetId == undefined) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }

@@ -5,7 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnGroup, CfnUser, CfnUserToGroupAddition } from '@aws-cdk/aws-iam';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { resolveResourceFromInstrinsic } from '../../nag-pack';
+import {
+  resolveResourceFromInstrinsic,
+  NagRuleCompliance,
+} from '../../nag-pack';
 
 /**
  * IAM Groups have at least one IAM User
@@ -13,7 +16,7 @@ import { resolveResourceFromInstrinsic } from '../../nag-pack';
  */
 
 export default Object.defineProperty(
-  (node: CfnResource): boolean => {
+  (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnGroup) {
       const groupLogicalId = resolveResourceFromInstrinsic(node, node.ref);
       const groupName = Stack.of(node).resolve(node.groupName);
@@ -32,10 +35,12 @@ export default Object.defineProperty(
         }
       }
       if (!found) {
-        return false;
+        return NagRuleCompliance.NON_COMPLIANT;
       }
+      return NagRuleCompliance.COMPLIANT;
+    } else {
+      return NagRuleCompliance.NOT_APPLICABLE;
     }
-    return true;
   },
   'name',
   { value: parse(__filename).name }
