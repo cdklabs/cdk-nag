@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * Kinesis Data Firehose delivery stream have server-side encryption enabled

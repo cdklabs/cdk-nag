@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters have automated snapshots enabled and the retention period is between 1 and 35 days
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const automatedSnapshotRetentionPeriod = resolveIfPrimitive(
+      const automatedSnapshotRetentionPeriod = NagRules.resolveIfPrimitive(
         node,
         node.automatedSnapshotRetentionPeriod
       );

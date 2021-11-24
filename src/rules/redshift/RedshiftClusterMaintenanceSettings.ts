@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters have version upgrades enabled, automated snapshot retention periods enabled, and explicit maintenance windows configured
@@ -14,11 +14,11 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const allowVersionUpgrade = resolveIfPrimitive(
+      const allowVersionUpgrade = NagRules.resolveIfPrimitive(
         node,
         node.allowVersionUpgrade
       );
-      const automatedSnapshotRetentionPeriod = resolveIfPrimitive(
+      const automatedSnapshotRetentionPeriod = NagRules.resolveIfPrimitive(
         node,
         node.automatedSnapshotRetentionPeriod
       );

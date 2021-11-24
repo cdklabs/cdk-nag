@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnReplicationGroup } from 'aws-cdk-lib/aws-elasticache';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * ElastiCache Redis clusters have both encryption in transit and at rest enabled
@@ -20,8 +20,14 @@ export default Object.defineProperty(
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const rest = resolveIfPrimitive(node, node.atRestEncryptionEnabled);
-      const transit = resolveIfPrimitive(node, node.transitEncryptionEnabled);
+      const rest = NagRules.resolveIfPrimitive(
+        node,
+        node.atRestEncryptionEnabled
+      );
+      const transit = NagRules.resolveIfPrimitive(
+        node,
+        node.transitEncryptionEnabled
+      );
       if (rest == false || transit == false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

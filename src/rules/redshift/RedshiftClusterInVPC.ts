@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * Redshift clusters are provisioned in a VPC

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * S3 Buckets are encrypted with a KMS Key by default
@@ -31,7 +31,7 @@ export default Object.defineProperty(
         if (defaultEncryption == undefined) {
           return NagRuleCompliance.NON_COMPLIANT;
         }
-        const sseAlgorithm = resolveIfPrimitive(
+        const sseAlgorithm = NagRules.resolveIfPrimitive(
           node,
           defaultEncryption.sseAlgorithm
         );

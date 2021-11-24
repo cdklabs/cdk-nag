@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnReplicationGroup } from 'aws-cdk-lib/aws-elasticache';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * ElastiCache Redis clusters use Redis AUTH for user authentication

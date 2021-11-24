@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnVolume } from 'aws-cdk-lib/aws-ec2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * EBS volumes have encryption enabled
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnVolume) {
-      const encryption = resolveIfPrimitive(node, node.encrypted);
+      const encryption = NagRules.resolveIfPrimitive(node, node.encrypted);
       if (encryption !== true) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

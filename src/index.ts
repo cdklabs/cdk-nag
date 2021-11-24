@@ -9,4 +9,5 @@ export * from './packs/nist-800-53-r5';
 export * from './packs/pci-dss-321';
 export * from './nag-pack';
 export * from './nag-suppressions';
+export * from './nag-rules';
 export * as rules from './rules';

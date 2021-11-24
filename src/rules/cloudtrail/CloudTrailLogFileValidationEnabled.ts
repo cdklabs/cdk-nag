@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnTrail } from 'aws-cdk-lib/aws-cloudtrail';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 /**
  * CloudTrail trails have log file validation enabled
  * @param node the CfnResource to check
@@ -13,7 +13,10 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnTrail) {
-      const enabled = resolveIfPrimitive(node, node.enableLogFileValidation);
+      const enabled = NagRules.resolveIfPrimitive(
+        node,
+        node.enableLogFileValidation
+      );
 
       if (enabled != true) {
         return NagRuleCompliance.NON_COMPLIANT;

@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnUserPool } from 'aws-cdk-lib/aws-cognito';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Cognito user pools have AdvancedSecurityMode set to ENFORCED
@@ -18,7 +18,7 @@ export default Object.defineProperty(
       if (userPoolAddOns == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const advancedSecurityMode = resolveIfPrimitive(
+      const advancedSecurityMode = NagRules.resolveIfPrimitive(
         node,
         userPoolAddOns.advancedSecurityMode
       );

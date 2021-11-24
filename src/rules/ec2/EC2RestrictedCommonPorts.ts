@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnSecurityGroupIngress, CfnSecurityGroup } from 'aws-cdk-lib/aws-ec2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 const BLOCKED_PORTS = [20, 21, 3389, 3309, 3306, 4333];
 
@@ -57,10 +57,10 @@ function testPort(
   portNum: Number
 ): boolean {
   //Does this rule apply to TCP traffic?
-  const ipProtocol = resolveIfPrimitive(node, rule.ipProtocol);
-  const cidrIp = resolveIfPrimitive(node, rule.cidrIp);
-  const fromPort = resolveIfPrimitive(node, rule.fromPort);
-  const toPort = resolveIfPrimitive(node, rule.toPort);
+  const ipProtocol = NagRules.resolveIfPrimitive(node, rule.ipProtocol);
+  const cidrIp = NagRules.resolveIfPrimitive(node, rule.cidrIp);
+  const fromPort = NagRules.resolveIfPrimitive(node, rule.fromPort);
+  const toPort = NagRules.resolveIfPrimitive(node, rule.toPort);
   if (ipProtocol === 'tcp') {
     //Does this rule allow all IPv4 addresses (unrestricted access)?
     if (cidrIp != undefined && cidrIp.includes('/0')) {

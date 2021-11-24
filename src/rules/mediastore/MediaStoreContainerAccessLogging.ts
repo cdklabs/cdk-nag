@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnContainer } from 'aws-cdk-lib/aws-mediastore';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Media Store containers have container access logging enabled
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnContainer) {
-      const accessLoggingEnabled = resolveIfPrimitive(
+      const accessLoggingEnabled = NagRules.resolveIfPrimitive(
         node,
         node.accessLoggingEnabled
       );

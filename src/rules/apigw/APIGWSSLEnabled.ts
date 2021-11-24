@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnStage } from 'aws-cdk-lib/aws-apigateway';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * API Gateway REST API stages are configured with SSL certificates

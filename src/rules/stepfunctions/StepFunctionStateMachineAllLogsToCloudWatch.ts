@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnStateMachine, LogLevel } from 'aws-cdk-lib/aws-stepfunctions';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Step Function log "ALL" events to CloudWatch Logs
@@ -20,7 +20,10 @@ export default Object.defineProperty(
       if (loggingConfiguration == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const level = resolveIfPrimitive(node, loggingConfiguration.level);
+      const level = NagRules.resolveIfPrimitive(
+        node,
+        loggingConfiguration.level
+      );
       if (level == undefined || level != LogLevel.ALL) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

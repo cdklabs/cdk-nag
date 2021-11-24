@@ -11,7 +11,7 @@ import {
   CfnGroup,
   CfnRole,
 } from 'aws-cdk-lib/aws-iam';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * IAM policies do not grant admin access

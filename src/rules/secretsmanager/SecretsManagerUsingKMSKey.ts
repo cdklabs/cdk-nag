@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Secrets are encrypted with KMS Customer managed keys
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecret) {
-      const kmsKeyId = resolveIfPrimitive(node, node.kmsKeyId);
+      const kmsKeyId = NagRules.resolveIfPrimitive(node, node.kmsKeyId);
       if (kmsKeyId === undefined || kmsKeyId === 'aws/secretsmanager') {
         return NagRuleCompliance.NON_COMPLIANT;
       }

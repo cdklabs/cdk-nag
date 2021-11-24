@@ -6,7 +6,7 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { AuthorizationType, CfnMethod } from 'aws-cdk-lib/aws-apigateway';
 import { CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * APIs implement authorization
@@ -15,7 +15,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnMethod || node instanceof CfnRoute) {
-      const authorizationType = resolveIfPrimitive(
+      const authorizationType = NagRules.resolveIfPrimitive(
         node,
         node.authorizationType
       );

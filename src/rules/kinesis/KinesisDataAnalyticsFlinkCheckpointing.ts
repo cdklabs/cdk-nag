@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnApplicationV2 } from 'aws-cdk-lib/aws-kinesisanalytics';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Kinesis Data Analytics Flink Applications have checkpointing enabled
@@ -34,10 +34,12 @@ export default Object.defineProperty(
           return NagRuleCompliance.NON_COMPLIANT;
         }
         if (
-          resolveIfPrimitive(node, checkpointConfiguration.configurationType) ==
-          'CUSTOM'
+          NagRules.resolveIfPrimitive(
+            node,
+            checkpointConfiguration.configurationType
+          ) == 'CUSTOM'
         ) {
-          const enabled = resolveIfPrimitive(
+          const enabled = NagRules.resolveIfPrimitive(
             node,
             checkpointConfiguration.checkpointingEnabled
           );

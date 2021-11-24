@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  *  Non-Aurora RDS DB instances have multi-AZ support enabled
@@ -14,8 +14,8 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const multiAz = resolveIfPrimitive(node, node.multiAz);
-      const engine = resolveIfPrimitive(node, node.engine);
+      const multiAz = NagRules.resolveIfPrimitive(node, node.multiAz);
+      const engine = NagRules.resolveIfPrimitive(node, node.engine);
       if (
         !multiAz &&
         (engine == undefined || !engine.toLowerCase().includes('aurora'))

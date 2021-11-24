@@ -6,10 +6,7 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnStage } from 'aws-cdk-lib/aws-apigateway';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
-import {
-  NagRuleCompliance,
-  resolveResourceFromInstrinsic,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Rest API stages are associated with AWS WAFv2 web ACLs
@@ -18,9 +15,18 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStage) {
-      const stageLogicalId = resolveResourceFromInstrinsic(node, node.ref);
-      const stageName = resolveResourceFromInstrinsic(node, node.stageName);
-      const restApiId = resolveResourceFromInstrinsic(node, node.restApiId);
+      const stageLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.ref
+      );
+      const stageName = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.stageName
+      );
+      const restApiId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.restApiId
+      );
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnWebACLAssociation) {

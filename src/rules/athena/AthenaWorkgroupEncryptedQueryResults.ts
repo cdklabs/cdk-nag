@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Athena workgroups encrypt query results
@@ -28,14 +28,14 @@ export default Object.defineProperty(
           workGroupConfigurationUpdates.resultConfigurationUpdates
         );
         if (resultConfigurationUpdates != undefined) {
-          const removeEncryptionConfiguration = resolveIfPrimitive(
+          const removeEncryptionConfiguration = NagRules.resolveIfPrimitive(
             node,
             resultConfigurationUpdates.removeEncryptionConfiguration
           );
           const encryptionConfiguration = Stack.of(node).resolve(
             resultConfigurationUpdates.encryptionConfiguration
           );
-          const enforceWorkGroupConfiguration = resolveIfPrimitive(
+          const enforceWorkGroupConfiguration = NagRules.resolveIfPrimitive(
             node,
             workGroupConfigurationUpdates.enforceWorkGroupConfiguration
           );
@@ -52,7 +52,7 @@ export default Object.defineProperty(
           }
         }
       } else {
-        const enforceWorkGroupConfiguration = resolveIfPrimitive(
+        const enforceWorkGroupConfiguration = NagRules.resolveIfPrimitive(
           node,
           workGroupConfiguration.enforceWorkGroupConfiguration
         );

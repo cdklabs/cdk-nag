@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnEnvironment } from 'aws-cdk-lib/aws-elasticbeanstalk';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * EC2 instances in Elastic Beanstalk environments upload rotated logs to S3

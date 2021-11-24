@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-ecs';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * ECS Task Definition has awslogs logging enabled at the minimum
@@ -21,7 +21,7 @@ export default Object.defineProperty(
       if (configuration.executeCommandConfiguration == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const executeCommandConfiguration = resolveIfPrimitive(
+      const executeCommandConfiguration = NagRules.resolveIfPrimitive(
         node,
         configuration.executeCommandConfiguration
       );

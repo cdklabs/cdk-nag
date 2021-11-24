@@ -9,7 +9,7 @@ import {
   OriginProtocolPolicy,
   SecurityPolicyProtocol,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * CloudFront distributions do not use SSLv3 or TLSv1 for communication to the origin
@@ -29,7 +29,7 @@ export default Object.defineProperty(
             const customOriginConfig = Stack.of(node).resolve(
               resolvedOrigin.customOriginConfig
             );
-            const originProtocolPolicy = resolveIfPrimitive(
+            const originProtocolPolicy = NagRules.resolveIfPrimitive(
               node,
               customOriginConfig.originProtocolPolicy
             );

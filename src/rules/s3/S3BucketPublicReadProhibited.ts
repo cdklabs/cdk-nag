@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * S3 Buckets prohibit public read access through their Block Public Access configurations and bucket ACLs
@@ -19,15 +19,18 @@ export default Object.defineProperty(
       );
       if (
         publicAccessBlockConfiguration === undefined ||
-        resolveIfPrimitive(
+        NagRules.resolveIfPrimitive(
           node,
           publicAccessBlockConfiguration.blockPublicPolicy
         ) !== true
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const accessControl = resolveIfPrimitive(node, node.accessControl);
-      const blockPublicAcls = resolveIfPrimitive(
+      const accessControl = NagRules.resolveIfPrimitive(
+        node,
+        node.accessControl
+      );
+      const blockPublicAcls = NagRules.resolveIfPrimitive(
         node,
         publicAccessBlockConfiguration.blockPublicAcls
       );

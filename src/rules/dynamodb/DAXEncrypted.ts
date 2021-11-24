@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-dax';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * DAX clusters have server-side encryption enabled
@@ -18,7 +18,10 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       const sseSpecification = Stack.of(node).resolve(node.sseSpecification);
-      const enabled = resolveIfPrimitive(node, sseSpecification.sseEnabled);
+      const enabled = NagRules.resolveIfPrimitive(
+        node,
+        sseSpecification.sseEnabled
+      );
       if (!enabled) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

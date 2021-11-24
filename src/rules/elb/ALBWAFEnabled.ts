@@ -6,11 +6,7 @@ import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
-import {
-  resolveIfPrimitive,
-  resolveResourceFromInstrinsic,
-  NagRuleCompliance,
-} from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * ALBs are associated with AWS WAFv2 web ACLs
@@ -20,9 +16,9 @@ import {
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnLoadBalancer) {
-      const type = resolveIfPrimitive(node, node.type);
+      const type = NagRules.resolveIfPrimitive(node, node.type);
       if (type === undefined || type === 'application') {
-        const loadBalancerLogicalId = resolveResourceFromInstrinsic(
+        const loadBalancerLogicalId = NagRules.resolveResourceFromInstrinsic(
           node,
           node.ref
         );

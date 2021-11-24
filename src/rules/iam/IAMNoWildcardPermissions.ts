@@ -11,7 +11,7 @@ import {
   CfnPolicy,
   CfnManagedPolicy,
 } from 'aws-cdk-lib/aws-iam';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission

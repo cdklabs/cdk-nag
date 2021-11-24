@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Redshift clusters have encryption and audit logging enabled
@@ -14,7 +14,7 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const encrypted = resolveIfPrimitive(node, node.encrypted);
+      const encrypted = NagRules.resolveIfPrimitive(node, node.encrypted);
       const loggingProperties = Stack.of(node).resolve(node.loggingProperties);
       if (!encrypted || loggingProperties == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;

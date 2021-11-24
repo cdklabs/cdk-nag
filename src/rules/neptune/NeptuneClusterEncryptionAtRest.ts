@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-neptune';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Neptune DB clusters have encryption at rest enabled
@@ -17,7 +17,10 @@ export default Object.defineProperty(
       if (node.storageEncrypted == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const storageEncrypted = resolveIfPrimitive(node, node.storageEncrypted);
+      const storageEncrypted = NagRules.resolveIfPrimitive(
+        node,
+        node.storageEncrypted
+      );
       if (!storageEncrypted) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

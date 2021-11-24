@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-docdb';
-import { NagRuleCompliance } from '../..';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * Document DB clusters have authenticate, createIndex, and dropCollection Log Exports enabled

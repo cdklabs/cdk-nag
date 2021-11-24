@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * S3 Buckets have versioningConfiguration enabled
@@ -19,7 +19,8 @@ export default Object.defineProperty(
       );
       if (
         versioningConfiguration === undefined ||
-        resolveIfPrimitive(node, versioningConfiguration.status) === 'Suspended'
+        NagRules.resolveIfPrimitive(node, versioningConfiguration.status) ===
+          'Suspended'
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

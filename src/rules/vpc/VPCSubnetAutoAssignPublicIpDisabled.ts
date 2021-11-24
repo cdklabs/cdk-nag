@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnSubnet } from 'aws-cdk-lib/aws-ec2';
-import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Subnets do not auto-assign public IP addresses
@@ -14,11 +14,11 @@ import { NagRuleCompliance, resolveIfPrimitive } from '../../nag-pack';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSubnet) {
-      const mapPublicIpOnLaunch = resolveIfPrimitive(
+      const mapPublicIpOnLaunch = NagRules.resolveIfPrimitive(
         node,
         node.mapPublicIpOnLaunch
       );
-      const assignIpv6AddressOnCreation = resolveIfPrimitive(
+      const assignIpv6AddressOnCreation = NagRules.resolveIfPrimitive(
         node,
         node.assignIpv6AddressOnCreation
       );

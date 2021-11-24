@@ -6,6 +6,7 @@ import { appendFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IAspect, Annotations, CfnResource, Stack, App } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
+import { NagRuleCompliance } from './nag-rules';
 import { NagPackSuppression } from './nag-suppressions';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
@@ -68,15 +69,6 @@ export interface IApplyRule {
 export enum NagMessageLevel {
   WARN = 'Warning',
   ERROR = 'Error',
-}
-
-/**
- * The compliance level of a resource in relation to a rule.
- */
-export enum NagRuleCompliance {
-  COMPLIANT = 'Compliant',
-  NON_COMPLIANT = 'Non-Compliant',
-  NOT_APPLICABLE = 'N/A',
 }
 
 /**
@@ -309,45 +301,4 @@ export abstract class NagPack implements IAspect {
     line.push(params.info);
     return line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n';
   }
-}
-
-/**
- * Use in cases where a primitive value must be known to pass a rule.
- * https://developer.mozilla.org/en-US/docs/Glossary/Primitive
- * @param node The CfnResource to check.
- * @param parameter The value to attempt to resolve.
- * @returns Return a value if resolves to a primitive data type, otherwise throw an error.
- */
-export function resolveIfPrimitive(node: CfnResource, parameter: any): any {
-  const resolvedValue = Stack.of(node).resolve(parameter);
-  if (resolvedValue === Object(resolvedValue)) {
-    throw Error(
-      `The parameter resolved to to a non-primitive value "${JSON.stringify(
-        resolvedValue
-      )}", therefore the rule could not be validated.`
-    );
-  } else {
-    return resolvedValue;
-  }
-}
-
-/**
- * Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
- * @param node The CfnResource to check.
- * @param parameter The value to attempt to resolve.
- * @returns Return the Logical resource Id if resolves to a intrinsic function, otherwise the resolved provided value.
- */
-export function resolveResourceFromInstrinsic(
-  node: CfnResource,
-  parameter: any
-): any {
-  const resolvedValue = Stack.of(node).resolve(parameter);
-  const ref = resolvedValue?.Ref;
-  const getAtt = resolvedValue?.['Fn::GetAtt'];
-  if (ref != undefined) {
-    return ref;
-  } else if (Array.isArray(getAtt) && getAtt.length > 0) {
-    return getAtt[0];
-  }
-  return resolvedValue;
 }
