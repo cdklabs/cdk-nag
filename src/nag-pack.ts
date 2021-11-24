@@ -274,7 +274,7 @@ export abstract class NagPack implements IAspect {
       this.reportStacks.push(fileName);
       writeFileSync(
         filePath,
-        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level\n'
+        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info\n'
       );
     }
     appendFileSync(filePath, line);
@@ -296,7 +296,7 @@ export abstract class NagPack implements IAspect {
       | 'UNKNOWN',
     explanation: string = ''
   ): string {
-    //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level
+    //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level | Rule Info
     const line = Array<string>();
     line.push(ruleId);
     line.push(params.node.node.path);
@@ -312,6 +312,7 @@ export abstract class NagPack implements IAspect {
       line.push('N/A');
     }
     line.push(params.level);
+    line.push(params.info);
     return line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n';
   }
 }
