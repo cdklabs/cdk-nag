@@ -26,5 +26,4 @@ project.package.addField('resolutions', {
   'jest-environment-jsdom':
     'https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.3.tgz',
 });
-
 project.synth();
