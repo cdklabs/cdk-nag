@@ -3,12 +3,13 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 const { AwsCdkConstructLibrary } = require('projen');
+const MAJOR = 1;
 const project = new AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
   cdkVersion: '1.123.0',
   defaultReleaseBranch: 'main',
-  majorVersion: 1,
+  majorVersion: MAJOR,
   releaseBranches: { 'v2-main': { majorVersion: 2 } },
   name: 'cdk-nag',
   description:
@@ -100,7 +101,30 @@ const project = new AwsCdkConstructLibrary({
     },
   },
   buildWorkflow: true,
+  workflowContainerImage: 'jsii/superchain:1-buster-slim-node12',
   release: true,
+  postBuildSteps: [
+    {
+      name: 'remove changelog',
+      run: 'rm dist/changelog.md',
+    },
+    {
+      name: 'Setup for monocdk build',
+      run: "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
+    },
+    {
+      name: 'Bump to next version',
+      run: 'npx projen bump',
+    },
+    {
+      name: 'Build for monocdk',
+      run: 'npx projen build',
+    },
+    {
+      name: 'Unbump',
+      run: 'npx projen unbump',
+    },
+  ],
   gitignore: ['.vscode'],
 });
 project.package.addField('resolutions', {
@@ -118,163 +142,40 @@ project.eslint.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.buildWorkflow.file.addOverride('jobs.build.steps', [
-  {
-    name: 'Checkout',
-    uses: 'actions/checkout@v2',
-    with: {
-      ref: '${{ github.event.pull_request.head.ref }}',
-      repository: '${{ github.event.pull_request.head.repo.full_name }}',
-    },
-  },
-  {
-    name: 'Setup Node.js',
-    uses: 'actions/setup-node@v2.2.0',
-    with: { 'node-version': '12.20.0' },
-  },
-  {
-    name: 'Install dependencies',
-    run: 'yarn install --check-files --frozen-lockfile',
-  },
-  {
-    name: 'Set git identity',
-    run: 'git config user.name "Automation"\ngit config user.email "github-actions@github.com"',
-  },
-  {
-    name: 'Build for cdk',
-    run: 'npx projen build',
-  },
-  {
-    name: 'Check for changes',
-    id: 'git_diff',
-    run: 'git diff --exit-code || echo "::set-output name=has_changes::true"',
-  },
-  {
-    if: 'steps.git_diff.outputs.has_changes',
-    name: 'Commit and push changes (if changed)',
-    run: 'git add .\ngit commit -m "chore: self mutation"\ngit push origin HEAD:${{ github.event.pull_request.head.ref }}',
-  },
-  {
-    if: 'steps.git_diff.outputs.has_changes',
-    name: 'Update status check (if changed)',
-    run: 'gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name }}/check-runs -F name="build" -F head_sha="$(git rev-parse HEAD)" -F status="completed" -F conclusion="success"',
-    env: {
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
-    },
-  },
-  {
-    if: 'steps.git_diff.outputs.has_changes',
-    name: 'Cancel workflow (if changed)',
-    run: 'gh api -X POST /repos/${{ github.event.pull_request.head.repo.full_name }}/actions/runs/${{ github.run_id }}/cancel',
-    env: {
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
-    },
-  },
-  {
-    name: 'Setup for monocdk build',
-    run: "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
-  },
-  {
-    name: 'Build for monocdk',
-    run: 'npx projen build',
-    env: {
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
-    },
-  },
-]);
-project.buildWorkflow.file.addOverride('jobs.build.container', {
-  image: 'jsii/superchain:1-buster-slim-node12',
-});
-project.release.addJobs({
-  release: {
-    runsOn: 'ubuntu-latest',
-    permissions: {
-      contents: 'write',
-    },
-    outputs: {
-      latest_commit: { stepId: 'git_remote', outputName: 'latest_commit' },
-    },
-    env: {
-      CI: 'true',
-      RELEASE: 'true',
-      MAJOR: 1,
-    },
-    steps: [
-      {
-        name: 'Checkout',
-        uses: 'actions/checkout@v2',
-        with: {
-          'fetch-depth': 0,
-        },
-      },
-      {
-        name: 'Set git identity',
-        run: 'git config user.name "Automation"\ngit config user.email "github-actions@github.com"',
-      },
-      {
-        name: 'Setup Node.js',
-        uses: 'actions/setup-node@v2.2.0',
-        with: { 'node-version': '12.20.0' },
-      },
-      {
-        name: 'Install dependencies',
-        run: 'yarn install --check-files --frozen-lockfile',
-      },
-      {
-        name: 'Bump to next version',
-        run: 'npx projen bump',
-      },
-      {
-        name: 'build',
-        run: 'npx projen build',
-      },
-      {
-        name: 'remove changelog',
-        run: 'rm dist/changelog.md',
-      },
-      {
-        name: 'Unbump',
-        run: 'npx projen unbump',
-      },
-      {
-        name: 'Anti-tamper check',
-        run: 'git diff --ignore-space-at-eol --exit-code',
-      },
-      {
-        name: 'Setup for monocdk build',
-        run: "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
-      },
-      {
-        name: 'Bump to next version',
-        run: 'npx projen bump',
-      },
-      {
-        name: 'Build for monocdk',
-        run: 'npx projen build',
-      },
-      {
-        name: 'Unbump',
-        run: 'npx projen unbump',
-      },
-      {
-        name: 'Check for new commits',
-        id: 'git_remote',
-        run: 'echo ::set-output name=latest_commit::"$(git ls-remote origin -h ${{ github.ref }} | cut -f1)"',
-      },
-      {
-        name: 'Upload artifact',
-        if: '${{ steps.git_remote.outputs.latest_commit == github.sha }}',
-        uses: 'actions/upload-artifact@v2.1.1',
-        with: {
-          name: 'dist',
-          path: 'dist',
-        },
-      },
-    ],
-    container: {
-      image: 'jsii/superchain:1-buster-slim-node12',
-    },
+const monocdkTask = project.addTask('release:monocdk', {
+  env: {
+    RELEASE: 'true',
+    MAJOR: MAJOR,
   },
 });
-
+monocdkTask.exec('git reset --hard', { name: 'reset changes' });
+monocdkTask.exec('[ -e dist/changelog.md ] && rm dist/changelog.md', {
+  name: 'remove changelog',
+});
+monocdkTask.exec(
+  "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
+  { name: 'Setup for monocdk build' }
+);
+monocdkTask.spawn('bump');
+monocdkTask.spawn('build');
+monocdkTask.spawn('unbump');
+monocdkTask.exec('git reset --hard', { name: 'reset changes' });
+const releaseWorkflow = project.tryFindObjectFile(
+  '.github/workflows/release.yml'
+);
+releaseWorkflow.addOverride('jobs.release.env.RELEASE', 'true');
+releaseWorkflow.addOverride('jobs.release.env.MAJOR', 1);
+project.buildWorkflow.file.addOverride(
+  'jobs.build.steps',
+  project.buildWorkflow.jobs.build.steps.concat([
+    {
+      name: 'Setup for monocdk build',
+      run: "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
+    },
+    {
+      name: 'Build for monocdk',
+      run: 'npx projen build',
+    },
+  ])
+);
 project.synth();

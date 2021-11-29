@@ -207,6 +207,31 @@
         }
       ]
     },
+    "release:monocdk": {
+      "name": "release:monocdk",
+      "env": {
+        "RELEASE": "true",
+        "MAJOR": 1
+      },
+      "steps": [
+        {
+          "exec": "git reset --hard",
+          "name": "reset changes"
+        },
+        {
+          "exec": "[ -e dist/changelog.md ] && rm dist/changelog.md",
+          "name": "remove changelog"
+        },
+        {
+          "exec": "rm yarn.lock\nrm .projenrc.js\nmv .projenrc.monocdk.js .projenrc.js\nfind ./src -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk/core,monocdk,g'\nfind ./src -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,@aws-cdk,monocdk,g'\nfind ./test -type f | xargs sed -i  's,monocdk/assert,@monocdk-experiment/assert,g'",
+          "name": "Setup for monocdk build"
+        },
+        {
+          "exec": "git reset --hard",
+          "name": "reset changes"
+        }
+      ]
+    },
     "release:v2-main": {
       "name": "release:v2-main",
       "description": "Prepare a release from \"v2-main\" branch",
