@@ -130,6 +130,8 @@ const project = new AwsCdkConstructLibrary({
 project.package.addField('resolutions', {
   'ansi-regex': '^5.0.1',
   'json-schema': '^0.4.0',
+  'jest-environment-jsdom':
+    'https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.1.3.tgz',
 });
 project.package.addField('prettier', {
   singleQuote: true,
