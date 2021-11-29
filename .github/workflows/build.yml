@@ -67,4 +67,4 @@ jobs:
       - name: Build for monocdk
         run: npx projen build
     container:
-      image: jsii/superchain:1-buster-slim-node12
+      image: jsii/superchain:1-buster-slim-node14

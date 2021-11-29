@@ -101,7 +101,7 @@ const project = new AwsCdkConstructLibrary({
     },
   },
   buildWorkflow: true,
-  workflowContainerImage: 'jsii/superchain:1-buster-slim-node12',
+  workflowContainerImage: 'jsii/superchain:1-buster-slim-node14',
   release: true,
   postBuildSteps: [
     {
