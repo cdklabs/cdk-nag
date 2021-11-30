@@ -158,7 +158,7 @@ describe('Rule suppression system', () => {
       })
     );
   });
-  test('Test supressions with addResourceSuppressions function on a CfnResource based Construct', () => {
+  test('Test suppressions with addResourceSuppressions function on a CfnResource based Construct', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     const test = new SecurityGroup(stack, 'rSg', {
@@ -289,6 +289,62 @@ describe('Rule suppression system', () => {
       },
     });
   });
+  test('addStackSuppressions function only applies new Suppressions once to dependant stacks', () => {
+    const stack = new Stack();
+    const nestedStack1 = new NestedStack(stack, 'rNestedStack1');
+    const nestedStack2 = new Stack(stack, 'rNestedStack2');
+    const suppression = [
+      {
+        id: 'AwsSolutions-EC23',
+        reason: 'lorem ipsum',
+      },
+    ];
+    NagSuppressions.addStackSuppressions(stack, suppression, true);
+    const rootMetadata =
+      stack.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    const nested1Metadata =
+      nestedStack1.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    const nested2Metadata =
+      nestedStack2.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    expect(rootMetadata).toEqual(suppression);
+    expect(nested1Metadata).toEqual(suppression);
+    expect(nested2Metadata).toEqual(suppression);
+  });
+  test('addStackSuppressions function does not apply duplicate suppression', () => {
+    const stack = new Stack();
+    const nestedStack1 = new NestedStack(stack, 'rNestedStack1');
+    const nestedStack2 = new Stack(stack, 'rNestedStack2');
+    const suppression = [
+      {
+        id: 'AwsSolutions-EC23',
+        reason: 'lorem ipsum',
+      },
+      {
+        id: 'AwsSolutions-EC23',
+        reason: 'lorem ipsum dolor',
+      },
+    ];
+    const duplicate = [
+      {
+        id: 'AwsSolutions-EC23',
+        reason: 'lorem ipsum',
+      },
+    ];
+    NagSuppressions.addStackSuppressions(
+      stack,
+      suppression.concat(duplicate),
+      true
+    );
+    const rootMetadata =
+      stack.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    const nested1Metadata =
+      nestedStack1.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    const nested2Metadata =
+      nestedStack2.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+    expect(rootMetadata).toEqual(suppression);
+    expect(nested1Metadata).toEqual(suppression);
+    expect(nested2Metadata).toEqual(suppression);
+  });
   test('addResourceSuppressions function enabled for dependant constructs', () => {
     const stack = new Stack();
     const user = new User(stack, 'rUser');
@@ -327,6 +383,88 @@ describe('Rule suppression system', () => {
       },
       1
     );
+  });
+  test('addResourceSuppressions function only applies new Suppressions once to dependant constructs', () => {
+    const stack = new Stack();
+    const vpc = new Vpc(stack, 'rVPC');
+    vpc.addFlowLog('rFlowLog1');
+    vpc.addFlowLog('rFlowLog2');
+    vpc.addFlowLog('rFlowLog3');
+    const suppressions = [
+      {
+        id: 'foo',
+        reason: 'Never gonna give you up.',
+      },
+      {
+        id: 'foo',
+        reason: 'Never gonna let you down.',
+      },
+      {
+        id: 'bar',
+        reason: 'Never gonna run around and desert you.',
+      },
+      {
+        id: 'baz',
+        reason: 'Never gonna make you cry.',
+      },
+      {
+        id: 'qux',
+        reason: 'Never gonna say goodbye.',
+      },
+      {
+        id: 'quux',
+        reason: 'Never gonna tell a lie and hurt you.',
+      },
+    ];
+    NagSuppressions.addResourceSuppressions(vpc, suppressions, true);
+    SynthUtils.synthesize(stack);
+    for (const child of vpc.node.findAll()) {
+      if (child instanceof CfnResource) {
+        expect(child.getMetadata('cdk_nag')?.rules_to_suppress).toEqual(
+          suppressions
+        );
+      }
+    }
+  });
+  test('addResourceSuppressions function does not apply duplicate suppression', () => {
+    const stack = new Stack();
+    const vpc = new Vpc(stack, 'rVPC');
+    vpc.addFlowLog('rFlowLog1');
+    vpc.addFlowLog('rFlowLog2');
+    vpc.addFlowLog('rFlowLog3');
+    const suppressions = [
+      {
+        id: 'foo',
+        reason: 'Never gonna give you up.',
+      },
+      {
+        id: 'foo',
+        reason: 'Never gonna let you down.',
+      },
+      {
+        id: 'bar',
+        reason: 'Never gonna run around and desert you.',
+      },
+    ];
+    const duplicate = [
+      {
+        id: 'bar',
+        reason: 'Never gonna run around and desert you.',
+      },
+    ];
+    NagSuppressions.addResourceSuppressions(
+      vpc,
+      suppressions.concat(duplicate),
+      true
+    );
+    SynthUtils.synthesize(stack);
+    for (const child of vpc.node.findAll()) {
+      if (child instanceof CfnResource) {
+        expect(child.getMetadata('cdk_nag')?.rules_to_suppress).toEqual(
+          suppressions
+        );
+      }
+    }
   });
   test('addResourceSuppressions function disabled for dependant constructs', () => {
     const stack = new Stack();
@@ -409,25 +547,6 @@ describe('Rule suppression system', () => {
     NagSuppressions.addResourceSuppressions(test, [suppression]);
     const metadata = test.getMetadata('cdk_nag')?.rules_to_suppress;
     expect(metadata).toContainEqual(expect.objectContaining(suppression));
-  });
-  test('Stack suppressions work on Nested Stacks', () => {
-    const stack = new Stack();
-    const nestedStack1 = new NestedStack(stack, 'rNestedStack1');
-    const nestedStack2 = new Stack(stack, 'rNestedStack2');
-    const suppression = {
-      id: 'AwsSolutions-EC23',
-      reason: 'lorem ipsum',
-    };
-    NagSuppressions.addStackSuppressions(stack, [suppression], true);
-    const rootMetadata =
-      stack.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
-    const nested1Metadata =
-      nestedStack1.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
-    const nested2Metadata =
-      nestedStack2.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
-    expect(rootMetadata).toContainEqual(expect.objectContaining(suppression));
-    expect(nested1Metadata).toEqual(rootMetadata);
-    expect(nested2Metadata).toEqual(rootMetadata);
   });
   test('suppressed rule logging enabled', () => {
     const stack = new Stack();
