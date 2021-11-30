@@ -47,17 +47,25 @@ export class NagSuppressions {
           );
         }
       }
-      const currentSuppressions = s.templateOptions.metadata?.cdk_nag;
-      if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
-        newSuppressions.unshift(...currentSuppressions.rules_to_suppress);
-      }
+      let currentSuppressions =
+        s.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
+      currentSuppressions = Array.isArray(currentSuppressions)
+        ? currentSuppressions
+        : [];
+      currentSuppressions.push(...newSuppressions);
+      const dedupSuppressions = new Set();
+      const result = currentSuppressions.filter((x: any) =>
+        !dedupSuppressions.has(JSON.stringify(x))
+          ? dedupSuppressions.add(JSON.stringify(x))
+          : false
+      );
       if (s.templateOptions.metadata) {
         s.templateOptions.metadata.cdk_nag = {
-          rules_to_suppress: newSuppressions,
+          rules_to_suppress: result,
         };
       } else {
         s.templateOptions.metadata = {
-          cdk_nag: { rules_to_suppress: newSuppressions },
+          cdk_nag: { rules_to_suppress: result },
         };
       }
     });
@@ -91,12 +99,20 @@ export class NagSuppressions {
         : child;
       if (possibleL1 instanceof CfnResource) {
         const resource = possibleL1 as CfnResource;
-        const currentSuppressions = resource.getMetadata('cdk_nag');
-        if (Array.isArray(currentSuppressions?.rules_to_suppress)) {
-          newSuppressions.unshift(...currentSuppressions.rules_to_suppress);
-        }
+        let currentSuppressions =
+          resource.getMetadata('cdk_nag')?.rules_to_suppress;
+        currentSuppressions = Array.isArray(currentSuppressions)
+          ? currentSuppressions
+          : [];
+        currentSuppressions.push(...newSuppressions);
+        const dedupSuppressions = new Set();
+        const result = currentSuppressions.filter((s: any) =>
+          !dedupSuppressions.has(JSON.stringify(s))
+            ? dedupSuppressions.add(JSON.stringify(s))
+            : false
+        );
         resource.addMetadata('cdk_nag', {
-          rules_to_suppress: newSuppressions,
+          rules_to_suppress: result,
         });
       }
     }
