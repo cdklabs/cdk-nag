@@ -4,12 +4,21 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
 import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
-import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  AnyPrincipal,
+  Effect,
+  PolicyDocument,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+  StarPrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import {
   Bucket,
   BucketAccessControl,
   BucketEncryption,
   CfnBucket,
+  CfnBucketPolicy,
 } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
@@ -21,6 +30,7 @@ import {
   S3BucketPublicWriteProhibited,
   S3BucketReplicationEnabled,
   S3BucketServerSideEncryptionEnabled,
+  S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
 } from '../../src/rules/s3';
@@ -40,6 +50,7 @@ class TestPack extends NagPack {
         S3BucketPublicWriteProhibited,
         S3BucketReplicationEnabled,
         S3BucketServerSideEncryptionEnabled,
+        S3BucketSSLRequestsOnly,
         S3BucketVersioningEnabled,
         S3DefaultEncryptionKMS,
       ];
@@ -400,6 +411,197 @@ describe('Amazon Simple Storage Service (S3)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining('S3BucketServerSideEncryptionEnabled:'),
+        }),
+      })
+    );
+  });
+
+  test('S3BucketSSLRequestsOnly: S3 Buckets require requests to use SSL', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new TestPack());
+    new CfnBucket(nonCompliant, 'rBucket');
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new TestPack());
+    new CfnBucket(nonCompliant2, 'rBucket', { bucketName: 'foo' });
+    new CfnBucketPolicy(nonCompliant2, 'rPolicy', {
+      bucket: 'foo',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['nots3:*'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+          }),
+        ],
+      }),
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const nonCompliant3 = new Stack();
+    Aspects.of(nonCompliant3).add(new TestPack());
+    new CfnBucket(nonCompliant3, 'rBucket', { bucketName: 'foo' });
+    new CfnBucketPolicy(nonCompliant3, 'rPolicy', {
+      bucket: 'foo',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['s3:*'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::food/*'],
+          }),
+        ],
+      }),
+    });
+    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
+    expect(messages3).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const nonCompliant4 = new Stack();
+    Aspects.of(nonCompliant4).add(new TestPack());
+    new CfnBucket(nonCompliant4, 'rBucket', { bucketName: 'foo' });
+    new CfnBucketPolicy(nonCompliant4, 'rPolicy', {
+      bucket: 'foo',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['s3:*'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/s/*'],
+          }),
+        ],
+      }),
+    });
+    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
+    expect(messages4).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const nonCompliant5 = new Stack();
+    Aspects.of(nonCompliant5).add(new TestPack());
+    new CfnBucketPolicy(nonCompliant5, 'rPolicy', {
+      bucket: 'foo',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['s3:*'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: [
+              'arn:aws:s3:::foo',
+              new Bucket(nonCompliant5, 'rBucket', { bucketName: 'foo' })
+                .bucketArn +
+                '/path' +
+                '/*',
+            ],
+          }),
+        ],
+      }),
+    });
+    const messages5 = SynthUtils.synthesize(nonCompliant5).messages;
+    expect(messages5).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const nonCompliant6 = new Stack();
+    Aspects.of(nonCompliant6).add(new TestPack());
+    new CfnBucket(nonCompliant6, 'rBucket', { bucketName: 'food' });
+    new CfnBucketPolicy(nonCompliant6, 'rPolicy', {
+      bucket: 'foo',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['s3:*'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+          }),
+        ],
+      }),
+    });
+    const messages6 = SynthUtils.synthesize(nonCompliant6).messages;
+    expect(messages6).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new TestPack());
+    const compliantBucket = new Bucket(compliant, 'rBucket');
+    new CfnBucketPolicy(compliant, 'rPolicy', {
+      bucket: compliantBucket.bucketName,
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['s3:getObject', 's3:*'],
+            effect: Effect.DENY,
+            principals: [new StarPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: [
+              compliantBucket.bucketArn,
+              compliantBucket.bucketArn + '/*',
+            ],
+          }),
+        ],
+      }),
+    });
+    new CfnBucket(compliant, 'rBucket2', { bucketName: 'foo' });
+    new CfnBucketPolicy(compliant, 'rPolicy2', {
+      bucket: 'foo',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['*', 's3:getObject'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: [
+              'arn:aws:s3:::foo',
+              'arn:aws:s3:::foo/*',
+              'arn:aws:s3:::foo/path/*',
+            ],
+          }),
+        ],
+      }),
+    });
+    const messages7 = SynthUtils.synthesize(compliant).messages;
+    expect(messages7).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('S3BucketSSLRequestsOnly:'),
         }),
       })
     );
