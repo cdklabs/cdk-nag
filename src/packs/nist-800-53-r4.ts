@@ -87,6 +87,7 @@ import {
   S3BucketPublicWriteProhibited,
   S3BucketReplicationEnabled,
   S3BucketServerSideEncryptionEnabled,
+  S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
 } from '../rules/s3';
 import {
@@ -770,6 +771,14 @@ export class NIST80053R4Checks extends NagPack {
         'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: S3BucketServerSideEncryptionEnabled,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The S3 Bucket does not require requests to use SSL - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).',
+      explanation:
+        'To help protect data in transit, ensure that your Amazon Simple Storage Service (Amazon S3) buckets require requests to use Secure Socket Layer (SSL). Because sensitive data can exist, enable encryption in transit to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: S3BucketSSLRequestsOnly,
       node: node,
     });
     this.applyRule({
