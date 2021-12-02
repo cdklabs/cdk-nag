@@ -48,7 +48,7 @@
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": "^3.4.1",
-    "jest": "^27.4.2",
+    "jest": "^27.4.3",
     "jest-junit": "^12",
     "jsii": "^1.46.0",
     "jsii-diff": "^1.46.0",
@@ -57,7 +57,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^11",
     "prettier": "^2.5.0",
-    "projen": "^0.35.0",
+    "projen": "^0.36.0",
     "standard-version": "^9",
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
