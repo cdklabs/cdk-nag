@@ -60,11 +60,13 @@ function isMatchingCompliantPolicy(
   const resolvedPolicyDocument = Stack.of(node).resolve(node.policyDocument);
   for (const statement of resolvedPolicyDocument.Statement) {
     const resolvedStatement = Stack.of(node).resolve(statement);
+    const secureTransport =
+      resolvedStatement?.Condition?.Bool?.['aws:SecureTransport'];
     if (
       resolvedStatement.Effect === 'Deny' &&
       checkMatchingAction(resolvedStatement.Action) === true &&
       checkMatchingPrincipal(resolvedStatement.Principal) === true &&
-      resolvedStatement?.Condition?.Bool?.['aws:SecureTransport'] === 'false' &&
+      (secureTransport === 'false' || secureTransport === false) &&
       checkMatchingResources(
         node,
         bucketLogicalId,
