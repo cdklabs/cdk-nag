@@ -596,6 +596,21 @@ describe('Amazon Simple Storage Service (S3)', () => {
         ],
       }),
     });
+    new CfnBucket(compliant, 'rBucket3', { bucketName: 'bar' });
+    new CfnBucketPolicy(compliant, 'rPolicy3', {
+      bucket: 'bar',
+      policyDocument: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ['*', 's3:getObject'],
+            effect: Effect.DENY,
+            principals: [new AnyPrincipal()],
+            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            resources: ['arn:aws:s3:::bar/*', 'arn:aws:s3:::bar'],
+          }),
+        ],
+      }),
+    });
     const messages7 = SynthUtils.synthesize(compliant).messages;
     expect(messages7).not.toContainEqual(
       expect.objectContaining({

@@ -145,14 +145,8 @@ function checkMatchingResources(
     bucketResourceRegexes.push(`(${bucketName}(?![\\w\\-]))`);
     bucketObjectsRegexes.push(`(${bucketName}(?![\\w\\-]).*\\/\\*)`);
   }
-  const fullBucketResourceRegex = new RegExp(
-    bucketResourceRegexes.join('|'),
-    'gm'
-  );
-  const fullBucketObjectsRegex = new RegExp(
-    bucketObjectsRegexes.join('|'),
-    'gm'
-  );
+  const fullBucketResourceRegex = new RegExp(bucketResourceRegexes.join('|'));
+  const fullBucketObjectsRegex = new RegExp(bucketObjectsRegexes.join('|'));
   let matchedBucketResource = false;
   let matchedObjectsResource = false;
   for (const resource of resources) {
