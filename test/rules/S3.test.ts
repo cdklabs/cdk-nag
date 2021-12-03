@@ -587,7 +587,7 @@ describe('Amazon Simple Storage Service (S3)', () => {
             actions: ['*', 's3:getObject'],
             effect: Effect.DENY,
             principals: [new AnyPrincipal()],
-            conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+            conditions: { Bool: { 'aws:SecureTransport': false } },
             resources: [
               'arn:aws:s3:::foo',
               'arn:aws:s3:::foo/*',
