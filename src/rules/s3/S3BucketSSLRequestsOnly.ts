@@ -60,11 +60,13 @@ function isMatchingCompliantPolicy(
   const resolvedPolicyDocument = Stack.of(node).resolve(node.policyDocument);
   for (const statement of resolvedPolicyDocument.Statement) {
     const resolvedStatement = Stack.of(node).resolve(statement);
+    const secureTransport =
+      resolvedStatement?.Condition?.Bool?.['aws:SecureTransport'];
     if (
       resolvedStatement.Effect === 'Deny' &&
       checkMatchingAction(resolvedStatement.Action) === true &&
       checkMatchingPrincipal(resolvedStatement.Principal) === true &&
-      resolvedStatement?.Condition?.Bool?.['aws:SecureTransport'] === 'false' &&
+      (secureTransport === 'false' || secureTransport === false) &&
       checkMatchingResources(
         node,
         bucketLogicalId,
@@ -145,14 +147,8 @@ function checkMatchingResources(
     bucketResourceRegexes.push(`(${bucketName}(?![\\w\\-]))`);
     bucketObjectsRegexes.push(`(${bucketName}(?![\\w\\-]).*\\/\\*)`);
   }
-  const fullBucketResourceRegex = new RegExp(
-    bucketResourceRegexes.join('|'),
-    'gm'
-  );
-  const fullBucketObjectsRegex = new RegExp(
-    bucketObjectsRegexes.join('|'),
-    'gm'
-  );
+  const fullBucketResourceRegex = new RegExp(bucketResourceRegexes.join('|'));
+  const fullBucketObjectsRegex = new RegExp(bucketObjectsRegexes.join('|'));
   let matchedBucketResource = false;
   let matchedObjectsResource = false;
   for (const resource of resources) {
