@@ -1873,7 +1873,7 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typescript-eslint/eslint-plugin@^5.5.0":
+"@typescript-eslint/eslint-plugin@^5":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.5.0.tgz#12d5f47f127af089b985f3a205c0e34a812f8fce"
   integrity sha512-4bV6fulqbuaO9UMXU0Ia0o6z6if+kmMRW8rMRyfqXj/eGrZZRGedS4n0adeGNnjr8LKAM495hrQ7Tea52UWmQA==
@@ -1899,7 +1899,7 @@
     eslint-scope "^5.1.1"
     eslint-utils "^3.0.0"
 
-"@typescript-eslint/parser@^5.5.0":
+"@typescript-eslint/parser@^5":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.5.0.tgz#a38070e225330b771074daa659118238793f7fcd"
   integrity sha512-JsXBU+kgQOAgzUn2jPrLA+Rd0Y1dswOlX3hp8MuRO1hQDs6xgHtbCXEiAu7bz5hyVURxbXcA2draasMbNqrhmg==
@@ -2039,7 +2039,7 @@ ansi-escapes@^4.2.1:
   dependencies:
     type-fest "^0.21.3"
 
-ansi-regex@^2.0.0, ansi-regex@^4.1.0, ansi-regex@^5.0.1:
+ansi-regex@^2.0.0, ansi-regex@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.1.tgz#082cb2c89c9fe8659a311a53bd6a4dc5301db304"
   integrity sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==
@@ -3030,9 +3030,9 @@ ecc-jsbn@~0.1.1:
     safer-buffer "^2.1.0"
 
 electron-to-chromium@^1.3.896:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.8.tgz#e1b7752ac1a75e39b5dd90cc7e29ea08b351c484"
-  integrity sha512-Cu5+dbg55+1E3ohlsa8HT0s4b8D0gBewXEGG8s5wBl8ynWv60VuvYW25GpsOeTVXpulhyU/U8JYZH+yxASSJBQ==
+  version "1.4.9"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.9.tgz#4854fa55f94f18f5d0ad4ac49034ff6443fff5b9"
+  integrity sha512-7AyB4SiLtGJbLACXezs8BDjDbZizuoiyHTQxbcvzfi5LYWRXVSFdmPvuDjtlWQmsVSONRicZfSBj3xgft0Wvrg==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -3253,7 +3253,7 @@ eslint-visitor-keys@^3.0.0, eslint-visitor-keys@^3.1.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-3.1.0.tgz#eee4acea891814cda67a7d8812d9647dd0179af2"
   integrity sha512-yWJFpu4DtjsWKkt5GeNBBuZMlNcYVs6vRCLoCVEJrTjaSB6LC98gFipNK/erM2Heg/E8mIK+hXG/pJMLK+eRZA==
 
-eslint@^8.3.0:
+eslint@^8:
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.3.0.tgz#a3c2409507403c1c7f6c42926111d6cbefbc3e85"
   integrity sha512-aIay56Ph6RxOTC7xyr59Kt3ewX185SaGnAr8eWukoPLeriCrvGjvAubxuvaXOfsxhtwV5g0uBOsyhAom4qJdww==
@@ -4510,13 +4510,13 @@ jest-jasmine2@^27.4.2:
     pretty-format "^27.4.2"
     throat "^6.0.1"
 
-jest-junit@^12:
-  version "12.3.0"
-  resolved "https://registry.yarnpkg.com/jest-junit/-/jest-junit-12.3.0.tgz#ee41a74e439eecdc8965f163f83035cce5998d6d"
-  integrity sha512-+NmE5ogsEjFppEl90GChrk7xgz8xzvF0f+ZT5AnhW6suJC93gvQtmQjfyjDnE0Z2nXJqEkxF0WXlvjG/J+wn/g==
+jest-junit@^13:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/jest-junit/-/jest-junit-13.0.0.tgz#479be347457aad98ae8a5983a23d7c3ec526c9a3"
+  integrity sha512-JSHR+Dhb32FGJaiKkqsB7AR3OqWKtldLd6ZH2+FJ8D4tsweb8Id8zEVReU4+OlrRO1ZluqJLQEETm+Q6/KilBg==
   dependencies:
     mkdirp "^1.0.4"
-    strip-ansi "^5.2.0"
+    strip-ansi "^6.0.1"
     uuid "^8.3.2"
     xml "^1.0.1"
 
@@ -4805,10 +4805,10 @@ jsii-diff@^1.46.0:
     typescript "~3.9.10"
     yargs "^16.2.0"
 
-jsii-docgen@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-4.2.0.tgz#e89041bc852be59c70c2f9d1a3cef76d4f1368b1"
-  integrity sha512-84AWH6nq+Yth8Of8pW0U3NvTAHrMVHc4Eh5qjq9yGmtxxU5G7lHonlYnexh0P3QpHYEnVFM1qtkmYklY2pfPGQ==
+jsii-docgen@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-4.2.3.tgz#e1e6a7600f2cdde943b5c308d1f35b1e9f00e01d"
+  integrity sha512-HiiP2CBLqTi/8Iip5485oxvq6sBRcUTHlbC+T9IzsBa69tF6z6yAzIPuhRWauLuONTxP+80XMXyA9PbhWVhG9Q==
   dependencies:
     "@jsii/spec" "^1.46.0"
     case "^1.6.3"
@@ -5909,10 +5909,10 @@ progress@^2.0.0, progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.36.0:
-  version "0.36.0"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.36.0.tgz#e3201f2963a50bb1be16ce37d7a0aa03f5f9907f"
-  integrity sha512-j8bN/CnvuBHDVri2We3lssMHJLWDO2r9lLi2e7RQeYz1UGYu4hu445SEyoi8inkf0D4TZrVFjNk3gLbCslMVBQ==
+projen@^0.36.4:
+  version "0.36.4"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.36.4.tgz#5489af42ed354c322df624f7ef65e54dc65984a2"
+  integrity sha512-rWgj0m46xW39/jv5Kqc6bqlrFH8lUWhLNWXC74v6hypNQ203l8UuG75Xt5RbAlgSOEmIkTsyaFgsfH6PsZ358g==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -6591,13 +6591,6 @@ strip-ansi@^3.0.0, strip-ansi@^3.0.1:
   integrity sha1-ajhfuIU9lS1f8F0Oiq+UJ43GPc8=
   dependencies:
     ansi-regex "^2.0.0"
-
-strip-ansi@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-5.2.0.tgz#8c9a536feb6afc962bdfa5b104a5091c1ad9c0ae"
-  integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
-  dependencies:
-    ansi-regex "^4.1.0"
 
 strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
