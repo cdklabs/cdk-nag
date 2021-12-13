@@ -73,6 +73,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '@aws-cdk/aws-wafv2',
     '@aws-cdk/core',
   ],
+  devDeps: ['@aws-cdk/assert@^1.123'],
   pullRequestTemplateContents: [
     '',
     '----',
