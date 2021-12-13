@@ -1,7 +1,7 @@
 {
   "dependencies": [
     {
-      "name": "@aws-cdk/assert",
+      "name": "@aws-cdk/assertions",
       "version": "^1.123.0",
       "type": "build"
     },
