@@ -2,6 +2,11 @@
   "dependencies": [
     {
       "name": "@aws-cdk/assert",
+      "version": "^1.123",
+      "type": "build"
+    },
+    {
+      "name": "@aws-cdk/assertions",
       "version": "^1.123.0",
       "type": "build"
     },
@@ -11,7 +16,7 @@
     },
     {
       "name": "@types/node",
-      "version": "^14.17.0",
+      "version": "^12",
       "type": "build"
     },
     {
@@ -80,7 +85,7 @@
     },
     {
       "name": "npm-check-updates",
-      "version": "^11",
+      "version": "^12",
       "type": "build"
     },
     {

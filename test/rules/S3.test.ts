@@ -6,12 +6,12 @@ import { SynthUtils } from '@aws-cdk/assert';
 import {
   AnyPrincipal,
   Effect,
+  PolicyDocument,
   PolicyStatement,
   Role,
   ServicePrincipal,
   StarPrincipal,
 } from '@aws-cdk/aws-iam';
-import { PolicyDocument } from '@aws-cdk/aws-iam/lib/policy-document';
 import {
   Bucket,
   BucketAccessControl,
