@@ -3040,9 +3040,9 @@ duplexer3@^0.1.4:
   integrity sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=
 
 electron-to-chromium@^1.4.17:
-  version "1.4.26"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.26.tgz#d71b9da220543cf10614a576c3d5ebbe43d96efb"
-  integrity sha512-cA1YwlRzO6TGp7yd3+KAqh9Tt6Z4CuuKqsAJP6uF/H5MQryjAGDhMhnY5cEXo8MaRCczpzSBhMPdqRIodkbZYw==
+  version "1.4.27"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.27.tgz#bfc6e798d8a56a17d658312f4b7ae1a7ca87724f"
+  integrity sha512-uZ95szi3zUbzRDx1zx/xnsCG+2xgZyy57pDOeaeO4r8zx5Dqe8Jv1ti8cunvBwJHVI5LzPuw8umKwZb3WKYxSQ==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4826,10 +4826,10 @@ jsii-diff@^1.49.0:
     typescript "~3.9.10"
     yargs "^16.2.0"
 
-jsii-docgen@^4.2.16:
-  version "4.2.16"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-4.2.16.tgz#0ab34ab8d73de6ee7d9acba33816253956f96009"
-  integrity sha512-ND3cphu+UmHKP19R+9X3aoNgrjM1NyVwv01VxxcEsylQsnGr22sChn7IEa9WkwohQY/IgX4RTVg4X1Osy0pK2g==
+jsii-docgen@^4.2.17:
+  version "4.2.17"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-4.2.17.tgz#fc0f7ac5df6954b2b464b15ad907fc399d47ce96"
+  integrity sha512-wpmfS3ifF45xkNnyCtwniJZK+YV2gsT98C9XGqod//qJQ0zr4HwqiHRMIaSp2ojPc9wiBP3AJvXkb7GCgjvDSg==
   dependencies:
     "@jsii/spec" "^1.49.0"
     case "^1.6.3"
