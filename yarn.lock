@@ -3,26 +3,26 @@
 
 
 "@aws-cdk/assert@^2.1":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.2.0.tgz#6421398adc3da09faad1da0bf6043996e0aef096"
-  integrity sha512-ZVjlFKIKyrrv21anXH4Yh/Hp6vR9IZG8v3Lopi+uqdi08mMLt+xTGahaLB2+JXO1cMdHaJpWJ2GozHGRouF2tA==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.3.0.tgz#b46517de85bd07286de3f551de87e0eae272d21b"
+  integrity sha512-UmHM55mBHuW+3VpG6ll5ilhs6gaaxIp4e9AJ4iXpVDHFMcHCZ8BcIOy0Z9mdZeiJYzFbi39G7FRxOAzOjAwVzg==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.2.0"
+    "@aws-cdk/cloudformation-diff" "2.3.0"
 
-"@aws-cdk/cfnspec@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.2.0.tgz#2d09b5bbdac4fdd248935ab37c74bd885a795936"
-  integrity sha512-5MNqXvUahQpA6hp+UClSsiJiBbkj1QCkNZUtd3O39vjdyaeQfBiTUKMLpsTVnPFWYtvrYqcjHy8n/o7mrmF9ZA==
+"@aws-cdk/cfnspec@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.3.0.tgz#e9cd449b7afd0a20c97c489a9fcc26668f02b8f9"
+  integrity sha512-RMFCR1Hu16XXG4o3ZU43IadbRVTx9iU23cD7308sfhryx2cfG4AeguHO2Md4ENrDtpL5nRa7N3LNeFi1+kBJUQ==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.2.0.tgz#8b76297f0c3d4ffc882108f07bd6cd6c94bfeeea"
-  integrity sha512-ue5Y9elCTg0EqjREt/fnDH63FfDy5rrEw6pe7CwvXdgD0ytWIfpfnDyl3U1Yfn5EhB5xB6yi7UzrKzJRnjvQUw==
+"@aws-cdk/cloudformation-diff@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.3.0.tgz#19cf7aea0ea2831dd61265a9940964adce125b51"
+  integrity sha512-GzOENR0C9CP0QyZDF41GgBUyaNKaGZKcNjX2tdEDvGxx8KzOJ9sPEUIfrwCI1CYmRO16mInAepkwAyK9PvMzkQ==
   dependencies:
-    "@aws-cdk/cfnspec" "2.2.0"
+    "@aws-cdk/cfnspec" "2.3.0"
     "@types/node" "^10.17.60"
     colors "^1.4.0"
     diff "^5.0.0"
@@ -2034,9 +2034,9 @@ duplexer3@^0.1.4:
   integrity sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=
 
 electron-to-chromium@^1.4.17:
-  version "1.4.26"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.26.tgz#d71b9da220543cf10614a576c3d5ebbe43d96efb"
-  integrity sha512-cA1YwlRzO6TGp7yd3+KAqh9Tt6Z4CuuKqsAJP6uF/H5MQryjAGDhMhnY5cEXo8MaRCczpzSBhMPdqRIodkbZYw==
+  version "1.4.27"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.27.tgz#bfc6e798d8a56a17d658312f4b7ae1a7ca87724f"
+  integrity sha512-uZ95szi3zUbzRDx1zx/xnsCG+2xgZyy57pDOeaeO4r8zx5Dqe8Jv1ti8cunvBwJHVI5LzPuw8umKwZb3WKYxSQ==
 
 emittery@^0.8.1:
   version "0.8.1"
