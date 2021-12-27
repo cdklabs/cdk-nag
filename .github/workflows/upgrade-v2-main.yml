@@ -20,6 +20,7 @@ jobs:
           ref: v2-main
       - name: Set git identity
         run: |-
+          git config --global init.defaultBranch main
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
       - name: Install dependencies
@@ -30,6 +31,8 @@ jobs:
         id: build
         run: npx projen build && echo "::set-output name=conclusion::success" || echo
           "::set-output name=conclusion::failure"
+      - name: Verify language bindings
+        run: npx projen package-all
       - name: Create Patch
         run: |-
           git add .
@@ -40,7 +43,7 @@ jobs:
           name: .upgrade.tmp.patch
           path: .upgrade.tmp.patch
     container:
-      image: jsii/superchain:1-buster-slim-node14
+      image: jsii/superchain:1-buster-slim
   pr:
     name: Create Pull Request
     needs: upgrade
@@ -56,6 +59,7 @@ jobs:
           ref: v2-main
       - name: Set git identity
         run: |-
+          git config --global init.defaultBranch main
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
       - name: Download patch
