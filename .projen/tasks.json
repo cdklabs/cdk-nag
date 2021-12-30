@@ -122,10 +122,10 @@
       "description": "Creates the distribution package",
       "steps": [
         {
-          "exec": "mkdir -p dist/js"
+          "exec": "mkdir -p dist"
         },
         {
-          "exec": "mv $(npm pack) dist/js/"
+          "exec": "rsync -a . dist --exclude .git --exclude node_modules"
         }
       ]
     },
@@ -149,7 +149,7 @@
           "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
-          "exec": "npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target js"
+          "exec": "npx jsii-pacmak@$jsii_version -v --target js"
         }
       ]
     },
@@ -161,7 +161,7 @@
           "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
-          "exec": "npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target python"
+          "exec": "npx jsii-pacmak@$jsii_version -v --target python"
         }
       ]
     },
