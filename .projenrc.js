@@ -127,6 +127,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   ],
   gitignore: ['.vscode'],
+  projenVersion: '0.45.4',
 });
 project.package.addField('resolutions', {
   'ansi-regex': '^5.0.1',
