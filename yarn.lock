@@ -2543,9 +2543,9 @@ colors@1.0.3:
   integrity sha1-BDP0TYCWgP3rYO0mDxsMJi6CpAs=
 
 colors@^1.4.0:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.1.tgz#57e798423c5fa9182f7531e4c587bfce9483175d"
-  integrity sha512-urbBmMVnD1vk0mUwCpnWv06P3f16EF+RMTtIXTkylJk5mAdfrMepu9B3hhSnL8DGkc1Ra6pENJHrXTKvcAZ0wA==
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.2.tgz#cd4fe227412ca2c75bb6f5683ec2e5e68de4f317"
+  integrity sha512-5QhJWPFZqkKIieXJPpCprdOytvH7v0AGWpu9K2jZ4LWkGg3dVBNoYPgGGRpEsc0jb8Boy0ElYrdjH9uXfhRSqw==
 
 combined-stream@^1.0.8:
   version "1.0.8"
@@ -2610,9 +2610,9 @@ console-control-strings@^1.0.0, console-control-strings@^1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.183"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.183.tgz#c5739cd69d6ab32a4dfd8cb92277321d1a1a4dd7"
-  integrity sha512-JeM0U7gS/zPv8yazZ8vAZmBGqRRsDavX6HADfvR3pxxqkqhwlsAfTVNyOSUHF50kN5+/fGW8xi2syHb6ZmGNhA==
+  version "3.3.184"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.184.tgz#299fbf73194a24ca960bd243311e00412101f245"
+  integrity sha512-zifixiwsiB7g8IFAuIb48M7fXXLiWr6fzt48WvIQF/wwtIcmZBD5FdvFpsXdaDXznnNfDln+oDI1X5M+bTwziA==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.13"
@@ -3423,9 +3423,9 @@ fast-diff@^1.1.2:
   integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
 
 fast-glob@^3.2.9:
-  version "3.2.9"
-  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.9.tgz#8f55f664b68a236bd29fa165817fc44f2b11faba"
-  integrity sha512-MBwILhhD92sziIrMQwpqcuGERF+BH99ei2a3XsGJuqEKcSycAL+w0HWokFenZXona+kjFr82Lf71eTxNRC06XQ==
+  version "3.2.10"
+  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.10.tgz#2734f83baa7f43b7fd41e13bc34438f4ffe284ee"
+  integrity sha512-s9nFhFnvR63wls6/kM88kQqDhMu0AfdjqouE2l5GVQPbqLgyFjjU5ry/r2yKsJxpb9Py1EYNqieFrmMaX4v++A==
   dependencies:
     "@nodelib/fs.stat" "^2.0.2"
     "@nodelib/fs.walk" "^1.2.3"
@@ -4827,10 +4827,10 @@ jsii-diff@^1.52.0:
     typescript "~3.9.10"
     yargs "^16.2.0"
 
-jsii-docgen@^4.2.34:
-  version "4.2.34"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-4.2.34.tgz#4834f92a5e6fc289c98c88957efaeea5d085e109"
-  integrity sha512-XUpWEA9xFrk+mFAo39jxf48XvpsRCLse6lFKLUzeWVFzJ1BbjfKAttu0P2XPrC/ZvdSutXi4xt8ViJSkwXwpKA==
+jsii-docgen@^4.2.35:
+  version "4.2.35"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-4.2.35.tgz#7b75bc8b94c85682b84f30b86f56bfb054249013"
+  integrity sha512-JHjta8yk30FX98MwJflfIKwMgZ4Pymt8KQ22fJyyDBBmTaBF8e0Vyy0UK6knwxQdTBcGrvYZStphW9bdzH3coQ==
   dependencies:
     "@jsii/spec" "^1.52.0"
     case "^1.6.3"
