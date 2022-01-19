@@ -12,7 +12,6 @@
     ".github/workflows/upgrade-main.yml",
     ".github/workflows/upgrade-v2-main.yml",
     ".gitignore",
-    ".mergify.yml",
     ".projen/deps.json",
     ".projen/files.json",
     ".projen/tasks.json",
