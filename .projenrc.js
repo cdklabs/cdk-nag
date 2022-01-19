@@ -101,6 +101,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
       },
     },
   },
+  githubOptions: {
+    mergify: false,
+  },
   buildWorkflow: true,
   workflowContainerImage: 'jsii/superchain:1-buster-slim-node14',
   release: true,

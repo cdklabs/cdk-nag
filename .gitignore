@@ -42,7 +42,6 @@ junit.xml
 /dist/version.txt
 !/.github/workflows/release.yml
 !/.github/workflows/release-v2-main.yml
-!/.mergify.yml
 !/.github/pull_request_template.md
 !/test/
 !/tsconfig.dev.json
