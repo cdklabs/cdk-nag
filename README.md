@@ -28,6 +28,8 @@ See [RULES](./RULES.md) for more information on all the available packs.
 4. [NIST 800-53 rev 5](./RULES.md#nist-800-53-rev-5)
 5. [PCI DSS 3.2.1](./RULES.md#pci-dss-321)
 
+Read the [NagPack developer docs](./docs/NagPack.md) if you are interested in creating your own pack.
+
 ## Usage
 
 For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-nagpackprops)
