@@ -4,8 +4,6 @@ queue_rules:
       - '#approved-reviews-by>=1'
       - -label~=(do-not-merge)
       - status-success=build
-      - status-success=package-js
-      - status-success=package-python
 pull_request_rules:
   - name: Automatic merge on approval and successful build
     actions:
@@ -21,5 +19,3 @@ pull_request_rules:
       - '#approved-reviews-by>=1'
       - -label~=(do-not-merge)
       - status-success=build
-      - status-success=package-js
-      - status-success=package-python
