@@ -57,10 +57,10 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^12",
     "prettier": "^2.5.1",
-    "projen": "^0.51.5",
+    "projen": "^0.51.8",
     "standard-version": "^9",
     "ts-jest": "^27.1.3",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.5"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.1.0",
