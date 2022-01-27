@@ -3,26 +3,26 @@
 
 
 "@aws-cdk/assert@^2.1":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.8.0.tgz#c9248188ef1eb1e6ac15a81985f99f3f77ecd685"
-  integrity sha512-NSSPMs2hXn42x7qWPhNCIg+CUAgqNZNuvU9v/EJo+xENADc+bm2X2y0RNJOjS5jcvMiy2AHtwT9Gj3uHd0S/IQ==
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.9.0.tgz#49fdbd935f6b6ee97b773089a70e6731936e1a00"
+  integrity sha512-HzkADKK06fCFefRQj7b5nMGVxNxa3DWGrWj1gYybAI/uWVj6n9xXD4AfUpJaZ/II+lCVILorzhXlfvnQ0YI3XQ==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.8.0"
+    "@aws-cdk/cloudformation-diff" "2.9.0"
 
-"@aws-cdk/cfnspec@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.8.0.tgz#9a33195bd16af86bf8654f7e085a4995bfb7dfc9"
-  integrity sha512-MLaTOu8IBRdaosXyAZF1xpubIeAPiNKtII7bw8JKOb07/HVUmdnNCStjPZCsPP5yQ4/OO2Qg2rPhPqocufpWlQ==
+"@aws-cdk/cfnspec@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.9.0.tgz#355dfc4610722b4b03dd0917473aca54d629eb82"
+  integrity sha512-1lvlwwi5ezf5snnHj6mKjCFU0u3Dp6ri769mHWR7gyGpHDQviq/qYRS9liRtxpTj54pGOa1iRWunUUacPHhtHQ==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.8.0.tgz#410366d5d4c8b47596a0757dd7390ca0894a71f3"
-  integrity sha512-9Z1b1oFBjP4r1dNgWaJF9Hg0+ND1OIsw6BWacFS7V016ZT055FttYD5bbaqlE09ZdjReDaDw6UHbE9s+IhD9sA==
+"@aws-cdk/cloudformation-diff@2.9.0":
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.9.0.tgz#2071ca6e2998532c38d6cb3c81411d4aa62e75cd"
+  integrity sha512-8sXIKHPuNwoZ9XdtnAwHU2qGCdD3CeSiMrNq9MXqMIyCX4mXsj8e2Osmx0dX9mHn7FFtPH0C1CLbqRleW4YPIQ==
   dependencies:
-    "@aws-cdk/cfnspec" "2.8.0"
+    "@aws-cdk/cfnspec" "2.9.0"
     "@types/node" "^10.17.60"
     chalk "^4"
     diff "^5.0.0"
@@ -1372,9 +1372,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001286:
-  version "1.0.30001301"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001301.tgz#ebc9086026534cab0dab99425d9c3b4425e5f450"
-  integrity sha512-csfD/GpHMqgEL3V3uIgosvh+SVIQvCh43SNu9HRbP1lnxkKm1kjDG4f32PP571JplkLjfS+mg2p1gxR7MYrrIA==
+  version "1.0.30001302"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001302.tgz#da57ce61c51177ef3661eeed7faef392d3790aaa"
+  integrity sha512-YYTMO+tfwvgUN+1ZnRViE53Ma1S/oETg+J2lISsqi/ZTNThj3ZYBOKP2rHwJc37oCsPqAzJ3w2puZHn0xlLPPw==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
@@ -2465,9 +2465,9 @@ flat-cache@^3.0.4:
     rimraf "^3.0.2"
 
 flatted@^3.1.0, flatted@^3.2.4:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.4.tgz#28d9969ea90661b5134259f312ab6aa7929ac5e2"
-  integrity sha512-8/sOawo8tJ4QOBX8YlQBMxL8+RLZfxMQOif9o0KUKTNTjMYElWPE0r/m5VNFxTRd0NSw8qSy8dajrwX4RYI1Hw==
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.5.tgz#76c8584f4fc843db64702a6bd04ab7a8bd666da3"
+  integrity sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==
 
 foreach@^2.0.5:
   version "2.0.5"
@@ -4843,10 +4843,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.52.0:
-  version "0.52.0"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.52.0.tgz#3829291c2162dbe4fffaa21624af430ed5fb3d35"
-  integrity sha512-HrUXs4XKtuFQbFzS25q1UN9W8XqSBii4DRRfkgsUuAcfJwkNSCqFaLX1MrZNsw7a5EnXjQsMPag2Rel8WbpeVA==
+projen@^0.52.3:
+  version "0.52.3"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.52.3.tgz#d5745a3ec7d56a7e64f75b84184c5200e6845eff"
+  integrity sha512-x0+Yt8R2/IYOgPt7vHZij42wx81GdcX01ainkgwK2uI11M0LnCJ+Xeg7y6CAjGqteAxUP/w4ZH6veg1GYb14ow==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
