@@ -2390,9 +2390,9 @@ camelcase@^6.2.0, camelcase@^6.2.1:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001286:
-  version "1.0.30001301"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001301.tgz#ebc9086026534cab0dab99425d9c3b4425e5f450"
-  integrity sha512-csfD/GpHMqgEL3V3uIgosvh+SVIQvCh43SNu9HRbP1lnxkKm1kjDG4f32PP571JplkLjfS+mg2p1gxR7MYrrIA==
+  version "1.0.30001302"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001302.tgz#da57ce61c51177ef3661eeed7faef392d3790aaa"
+  integrity sha512-YYTMO+tfwvgUN+1ZnRViE53Ma1S/oETg+J2lISsqi/ZTNThj3ZYBOKP2rHwJc37oCsPqAzJ3w2puZHn0xlLPPw==
 
 case@^1.6.3:
   version "1.6.3"
@@ -2610,9 +2610,9 @@ console-control-strings@^1.0.0, console-control-strings@^1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.199"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.199.tgz#34a3d4d4f5fe66c8725604c8a70f4e718b992c65"
-  integrity sha512-BKkU/yKQGwauX9lQR9jhw13l5vch3g9tgvUQyoKDoKPJp7+x8OhXmHmI+OZInonGAWz1g8BzKDtVS+Mj7nIGag==
+  version "3.3.200"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.200.tgz#5d126a7ab99b2017f2109f250ecfcbba4636b917"
+  integrity sha512-LpHHMB9Dvst9AKDnkR7To7ikFbaWsvZf8FPi40ZBRt7EzAgrJyOf20GQlb7tkF9Ln0Z2nUPlJgrj93sXT/UI/Q==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.13"
@@ -3512,9 +3512,9 @@ flat-cache@^3.0.4:
     rimraf "^3.0.2"
 
 flatted@^3.1.0, flatted@^3.2.4:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.4.tgz#28d9969ea90661b5134259f312ab6aa7929ac5e2"
-  integrity sha512-8/sOawo8tJ4QOBX8YlQBMxL8+RLZfxMQOif9o0KUKTNTjMYElWPE0r/m5VNFxTRd0NSw8qSy8dajrwX4RYI1Hw==
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.5.tgz#76c8584f4fc843db64702a6bd04ab7a8bd666da3"
+  integrity sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==
 
 foreach@^2.0.5:
   version "2.0.5"
