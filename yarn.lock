@@ -2610,9 +2610,9 @@ console-control-strings@^1.0.0, console-control-strings@^1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.203"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.203.tgz#405c5611ec69db42b3c735a6f75f348bf6d03c6c"
-  integrity sha512-9OVe84Ei5obY7yhnkMgmSg0moLHnCp+uprzCuUFBj6/tascetHqo1yKgjyTZ+W+TdVGV0JN6peMkQ9QGSN2Y8w==
+  version "3.3.204"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.204.tgz#2b487fdc44ff01ca2bc2e4362362d28df34ec3f8"
+  integrity sha512-+m9G6Se/knusaRbS2KUfmu3DhNCSL6OdSs2Vy4bPd3M5oTwdAx4JOamfmnn8wJRePtVX8+5cFiaKYqCVOdqOow==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.13"
