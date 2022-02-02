@@ -10,6 +10,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   cdkVersion: '1.123.0',
   defaultReleaseBranch: 'main',
   majorVersion: MAJOR,
+  npmDistTag: 'latest-1',
   releaseBranches: { 'v2-main': { majorVersion: 2 } },
   name: 'cdk-nag',
   description:
