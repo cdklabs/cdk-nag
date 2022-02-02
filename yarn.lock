@@ -1838,9 +1838,9 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "17.0.13"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.13.tgz#5ed7ed7c662948335fcad6c412bb42d99ea754e3"
-  integrity sha512-Y86MAxASe25hNzlDbsviXl8jQHb0RDvKt4c40ZJQ1Don0AAL0STLZSs4N+6gLEO55pedy7r2cLwS+ZDxPm/2Bw==
+  version "17.0.14"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.14.tgz#33b9b94f789a8fedd30a68efdbca4dbb06b61f20"
+  integrity sha512-SbjLmERksKOGzWzPNuW7fJM7fk3YXVTFiZWB/Hs99gwhk+/dnrQRPBQjPW9aO+fi1tAffi9PrwFvsmOKmDTyng==
 
 "@types/node@^10.17.60":
   version "10.17.60"
@@ -1848,9 +1848,9 @@
   integrity sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==
 
 "@types/node@^12":
-  version "12.20.42"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.42.tgz#2f021733232c2130c26f9eabbdd3bfd881774733"
-  integrity sha512-aI3/oo5DzyiI5R/xAhxxRzfZlWlsbbqdgxfTPkqu/Zt+23GXiJvMCyPJT4+xKSXOnLqoL8jJYMLTwvK2M3a5hw==
+  version "12.20.43"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.43.tgz#6cf47894da4a4748c62fccf720ba269e1b1ff5a4"
+  integrity sha512-HCfJdaYqJX3BCzeihgZrD7b85Cu05OC/GVJ4kEYIflwUs4jbnUlLLWoq7hw1LBcdvUyehO+gr6P5JQ895/2ZfA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -2610,9 +2610,9 @@ console-control-strings@^1.0.0, console-control-strings@^1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.205"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.205.tgz#92c5311ffee08d122d92f1856c495ebc489e85e2"
-  integrity sha512-l1c14p2mBQgE9ZxfVo5Er7390kZ0IWdHA8aU8Q1ZT/+BtqBSaEq9BCJ3ckG3r9zygZfFho1AZ1b1pKwozQFddQ==
+  version "3.3.206"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.206.tgz#16fdca04dce615836567f8f3b3c9eb3bfbd6ffde"
+  integrity sha512-8ABdBI+L6zc90+WyqxerFHowH4W2lwWHndO700lCagGtsGdqlPz28p8TJ/0acOEiyK9S3ObzPmFJ8n+Hrgiy2A==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.13"
@@ -3056,9 +3056,9 @@ duplexer3@^0.1.4:
   integrity sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=
 
 electron-to-chromium@^1.4.17:
-  version "1.4.58"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.58.tgz#cd980b08338210b591c25492857a518fe286b1d4"
-  integrity sha512-7LXwnKyqcEaMFVXOer+2JPfFs1D+ej7yRRrfZoIH1YlLQZ81OvBNwSCBBLtExVkoMQQgOWwO0FbZVge6U/8rhQ==
+  version "1.4.60"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.60.tgz#2b824d862f068a9794b2b75d66ad40ff44745f18"
+  integrity sha512-h53hbEiKC6hijelDgxgkgAUC3PKyR7TmIfvjHnBjUGPMg/3sBuTyG6eDormw+lY24uUJvHkUPzB8dpK8b2u3Sw==
 
 emittery@^0.8.1:
   version "0.8.1"
