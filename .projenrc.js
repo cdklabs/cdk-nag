@@ -9,7 +9,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   cdkVersion: '2.1.0',
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
-  npmDistTag: 'next',
+  npmDistTag: 'latest',
   name: 'cdk-nag',
   description:
     'Check CDK v2 applications for best practices using a combination on available rule packs.',
