@@ -8,7 +8,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * ECS Cluster has CloudWatch Container Insights Enabled
+ * ECS Clusters have CloudWatch Container Insights Enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

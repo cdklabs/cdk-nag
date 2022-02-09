@@ -93,6 +93,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-EC28',
         'AwsSolutions-EC29',
         'AwsSolutions-ECR1',
+        'AwsSolutions-ECS2',
         'AwsSolutions-ECS4',
         'AwsSolutions-ECS7',
         'AwsSolutions-EFS1',
