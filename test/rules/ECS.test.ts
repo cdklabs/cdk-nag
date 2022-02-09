@@ -17,6 +17,7 @@ import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,
+  ECSTaskDefinitionNoEnvironmentVariables,
   ECSTaskDefinitionUserForHostMode,
 } from '../../src/rules/ecs';
 
@@ -30,6 +31,7 @@ class TestPack extends NagPack {
       const rules = [
         ECSClusterCloudWatchContainerInsights,
         ECSTaskDefinitionContainerLogging,
+        ECSTaskDefinitionNoEnvironmentVariables,
         ECSTaskDefinitionUserForHostMode,
       ];
       rules.forEach((rule) => {
@@ -46,7 +48,7 @@ class TestPack extends NagPack {
 }
 
 describe('Amazon Elastic Container Service (Amazon ECS)', () => {
-  test('ECSClusterCloudWatchContainerInsights: ECS Cluster has CloudWatch Container Insights Enabled', () => {
+  test('ECSClusterCloudWatchContainerInsights: ECS Clusters have CloudWatch Container Insights Enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
     new Cluster(nonCompliant, 'rCluster', { containerInsights: false });
@@ -75,7 +77,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
     );
   });
 
-  test('ECSTaskDefinitionContainerLogging: ECS Task Definition has awslogs logging enabled at the minimum', () => {
+  test('ECSTaskDefinitionContainerLogging: ECS Task Definitions have awslogs logging enabled at the minimum', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
     new Cluster(nonCompliant, 'rCluster', {});
@@ -100,6 +102,46 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining('ECSTaskDefinitionContainerLogging:'),
+        }),
+      })
+    );
+  });
+
+  test('ECSTaskDefinitionNoEnvironmentVariables: Containers in ECS task definitions do not directly specify environment variables', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new TestPack());
+    new TaskDefinition(nonCompliant, 'rTaskDef', {
+      compatibility: Compatibility.EC2,
+    }).addContainer('rContainer', {
+      image: EcsOptimizedImage,
+      memoryReservationMiB: 42,
+      environment: { foo: 'bar' },
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'ECSTaskDefinitionNoEnvironmentVariables:'
+          ),
+        }),
+      })
+    );
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new TestPack());
+    new TaskDefinition(compliant, 'rTaskDef', {
+      compatibility: Compatibility.EC2,
+    }).addContainer('rContainer', {
+      image: EcsOptimizedImage,
+      memoryReservationMiB: 42,
+    });
+    const messages2 = SynthUtils.synthesize(compliant).messages;
+    expect(messages2).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'ECSTaskDefinitionNoEnvironmentVariables:'
+          ),
         }),
       })
     );
