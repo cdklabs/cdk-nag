@@ -61,6 +61,10 @@ import {
 } from '../rules/ecs';
 import { EFSEncrypted } from '../rules/efs';
 import {
+  EKSClusterControlPlaneLogs,
+  EKSClusterNoEndpointPublicAccess,
+} from '../rules/eks';
+import {
   ElastiCacheClusterInVPC,
   ElastiCacheClusterNonDefaultPort,
   ElastiCacheRedisClusterEncryption,
@@ -298,6 +302,24 @@ export class AwsSolutionsChecks extends NagPack {
         'Container logging allows operators to view and aggregate the logs from the container.',
       level: NagMessageLevel.ERROR,
       rule: ECSTaskDefinitionContainerLogging,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EKS1',
+      info: "The EKS cluster's Kubernetes API server endpoint has public access enabled.",
+      explanation:
+        "A cluster's Kubernetes API server endpoint should not be publicly accessible from the Internet in order to avoid exposing private data and minimizing security risks. The API server endpoints should only be accessible from within a AWS Virtual Private Cloud (VPC).",
+      level: NagMessageLevel.ERROR,
+      rule: EKSClusterNoEndpointPublicAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EKS2',
+      info: "The EKS Cluster does not publish 'api', 'audit', 'authenticator, 'controllerManager', and 'scheduler' control plane logs.",
+      explanation:
+        'EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs in your account. These logs make it easy for you to secure and run your clusters.',
+      level: NagMessageLevel.ERROR,
+      rule: EKSClusterControlPlaneLogs,
       node: node,
     });
     this.applyRule({
