@@ -18,6 +18,7 @@ export * as dynamodb from './dynamodb';
 export * as ec2 from './ec2';
 export * as ecr from './ecr';
 export * as ecs from './ecs';
+export * as eks from './eks';
 export * as efs from './efs';
 export * as elasticache from './elasticache';
 export * as elasticbeanstalk from './elasticbeanstalk';
