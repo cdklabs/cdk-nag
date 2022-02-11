@@ -105,6 +105,8 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-ELB4',
         'AwsSolutions-ELB5',
         'AwsSolutions-EMR2',
+        'AwsSolutions-EMR4',
+        'AwsSolutions-EMR5',
         'AwsSolutions-EMR6',
         'AwsSolutions-IAM4',
         'AwsSolutions-IAM5',
