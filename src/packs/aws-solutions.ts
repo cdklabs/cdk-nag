@@ -83,7 +83,12 @@ import {
   ELBLoggingEnabled,
   ELBTlsHttpsListenersOnly,
 } from '../rules/elb';
-import { EMRAuthEC2KeyPairOrKerberos, EMRS3AccessLogging } from '../rules/emr';
+import {
+  EMRAuthEC2KeyPairOrKerberos,
+  EMREncryptionInTransit,
+  EMRLocalDiskEncryption,
+  EMRS3AccessLogging,
+} from '../rules/emr';
 import { IAMNoManagedPolicies, IAMNoWildcardPermissions } from '../rules/iam';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
@@ -951,6 +956,24 @@ export class AwsSolutionsChecks extends NagPack {
         'Uploading logs to S3 enables the system to keep the logging data for historical purposes or to track and analyze the clusters behavior.',
       level: NagMessageLevel.ERROR,
       rule: EMRS3AccessLogging,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EMR4',
+      info: 'The EMR cluster does not use a security configuration with local disk encryption enabled.',
+      explanation:
+        'Local disk encryption uses a combination of open-source HDFS encryption and LUKS encryption to secure data at rest.',
+      level: NagMessageLevel.ERROR,
+      rule: EMRLocalDiskEncryption,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EMR5',
+      info: 'The EMR cluster does not use a security configuration with encryption in transit enabled and configured.',
+      explanation:
+        'EMR Clusters should have a method for encrypting data in transit using Transport Layer Security (TLS).',
+      level: NagMessageLevel.ERROR,
+      rule: EMREncryptionInTransit,
       node: node,
     });
     this.applyRule({
