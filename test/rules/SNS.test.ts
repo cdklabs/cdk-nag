@@ -14,7 +14,7 @@ import { Key } from '@aws-cdk/aws-kms';
 import { CfnTopicPolicy, Topic } from '@aws-cdk/aws-sns';
 import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
-import { SNSEncryptedKMS, SNSTopicSSLOnly } from '../../src/rules/sns';
+import { SNSEncryptedKMS, SNSTopicSSLRequestsOnly } from '../../src/rules/sns';
 
 class TestPack extends NagPack {
   constructor(props?: NagPackProps) {
@@ -23,7 +23,7 @@ class TestPack extends NagPack {
   }
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
-      const rules = [SNSEncryptedKMS, SNSTopicSSLOnly];
+      const rules = [SNSEncryptedKMS, SNSTopicSSLRequestsOnly];
       rules.forEach((rule) => {
         this.applyRule({
           info: 'foo.',
@@ -64,7 +64,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
     );
   });
 
-  test('SNSTopicSSLOnly: SNS topics require SSL requests', () => {
+  test('SNSTopicSSLRequestsOnly: SNS topics require SSL requests', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
     new Topic(nonCompliant, 'rTopic');
@@ -72,7 +72,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('SNSTopicSSLOnly:'),
+          data: expect.stringContaining('SNSTopicSSLRequestsOnly:'),
         }),
       })
     );
@@ -98,7 +98,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
     expect(messages2).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('SNSTopicSSLOnly:'),
+          data: expect.stringContaining('SNSTopicSSLRequestsOnly:'),
         }),
       })
     );
@@ -134,7 +134,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
     expect(messages3).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('SNSTopicSSLOnly:'),
+          data: expect.stringContaining('SNSTopicSSLRequestsOnly:'),
         }),
       })
     );

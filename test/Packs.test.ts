@@ -168,6 +168,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-SNS3',
         'AwsSolutions-SQS2',
         'AwsSolutions-SQS3',
+        'AwsSolutions-SQS4',
         'AwsSolutions-VPC7',
       ];
       jest.spyOn(pack, 'applyRule');

@@ -167,8 +167,12 @@ import {
   SageMakerNotebookNoDirectInternetAccess,
 } from '../rules/sagemaker';
 import { SecretsManagerRotationEnabled } from '../rules/secretsmanager';
-import { SNSEncryptedKMS, SNSTopicSSLOnly } from '../rules/sns';
-import { SQSQueueDLQ, SQSQueueSSE } from '../rules/sqs';
+import { SNSEncryptedKMS, SNSTopicSSLRequestsOnly } from '../rules/sns';
+import {
+  SQSQueueDLQ,
+  SQSQueueSSE,
+  SQSQueueSSLRequestsOnly,
+} from '../rules/sqs';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
   StepFunctionStateMachineXray,
@@ -1328,7 +1332,7 @@ export class AwsSolutionsChecks extends NagPack {
       explanation:
         'Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition in the topic policy to force requests to use SSL. If SSE is already enabled then this control is auto enforced.',
       level: NagMessageLevel.ERROR,
-      rule: SNSTopicSSLOnly,
+      rule: SNSTopicSSLRequestsOnly,
       node: node,
     });
     this.applyRule({
@@ -1347,6 +1351,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Using a DLQ helps maintain the queue flow and avoid losing data by detecting and mitigating failures and service disruptions on time.',
       level: NagMessageLevel.ERROR,
       rule: SQSQueueDLQ,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'SQS4',
+      info: 'The SQS queue does not require requests to use SSL.',
+      explanation:
+        'Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition in the queue policy to force requests to use SSL.',
+      level: NagMessageLevel.ERROR,
+      rule: SQSQueueSSLRequestsOnly,
       node: node,
     });
   }
