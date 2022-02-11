@@ -107,6 +107,7 @@ import {
   MediaStoreContainerCORSPolicy,
   MediaStoreContainerHasContainerPolicy,
   MediaStoreContainerLifecyclePolicy,
+  MediaStoreContainerSSLRequestsOnly,
 } from '../rules/mediastore';
 import {
   MSKBrokerLogging,
@@ -1334,6 +1335,15 @@ export class AwsSolutionsChecks extends NagPack {
         'The container should have access logging enabled to provide detailed records for the requests that are made to the container.',
       level: NagMessageLevel.ERROR,
       rule: MediaStoreContainerAccessLogging,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'MS3',
+      info: 'The MediaStore container does not require requests to use SSL.',
+      explanation:
+        'You can use HTTPS (TLS) to help prevent potential attackers from eavesdropping on or manipulating network traffic using person-in-the-middle or similar attacks. You should allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition on MediaStore container policies.',
+      level: NagMessageLevel.ERROR,
+      rule: MediaStoreContainerSSLRequestsOnly,
       node: node,
     });
     this.applyRule({
