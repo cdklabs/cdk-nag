@@ -25,8 +25,8 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
-    } // The CDK uses a Custom Resource with AWS SDK calls to create EKS Clusters
-    else if (node.cfnResourceType === 'Custom::AWSCDK-EKS-Cluster') {
+    } else if (node.cfnResourceType === 'Custom::AWSCDK-EKS-Cluster') {
+      // The CDK uses a Custom Resource with AWS SDK calls to create EKS Clusters
       const props = Stack.of(node).resolve((<any>node)._cfnProperties);
       const endpointPublicAccess = NagRules.resolveIfPrimitive(
         node,
