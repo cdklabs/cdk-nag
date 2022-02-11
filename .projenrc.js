@@ -6,7 +6,7 @@ const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.11.0',
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
   npmDistTag: 'latest',
@@ -14,7 +14,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   description:
     'Check CDK v2 applications for best practices using a combination on available rule packs.',
   repositoryUrl: 'https://github.com/cdklabs/cdk-nag.git',
-  devDeps: ['@aws-cdk/assert@^2.1'],
+  devDeps: ['@aws-cdk/assert@^2.11'],
   publishToPypi: {
     distName: 'cdk-nag',
     module: 'cdk_nag',

@@ -19,6 +19,8 @@ import {
   MysqlEngineVersion,
   OracleEngineVersion,
   CfnDBCluster,
+  CfnDBSecurityGroup,
+  CfnDBSecurityGroupIngress,
 } from 'aws-cdk-lib/aws-rds';
 import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';

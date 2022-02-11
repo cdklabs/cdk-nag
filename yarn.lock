@@ -9,27 +9,27 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@aws-cdk/assert@^2.1":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.11.0.tgz#06e9fdb762122d25dc135382d4983af9fdbc5db9"
-  integrity sha512-9aYhV5K6006vI70K+ye8aK79bQMoicfoOEMVNCHjjFa+oFym3DvrNA/fE6+UWXGpZi3MgvkzCjas+MGfL/21Sg==
+"@aws-cdk/assert@^2.11":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.12.0.tgz#dc663f4b0ad388814c1400821862809c7f4532af"
+  integrity sha512-CMwwUJu2KKBkfBcw34Ilf0ckGGt7vPw4BuZ2XftQLCVcdaAiO+SHTzQns6GfideXkgCj66levIyklm7Kd0KNrw==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.11.0"
+    "@aws-cdk/cloudformation-diff" "2.12.0"
 
-"@aws-cdk/cfnspec@2.11.0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.11.0.tgz#0f0039bff96bf4733473f3cbbf0a59467f682e11"
-  integrity sha512-Gljkx8PkO1VKdMKH5NcOXDKAh94VQtWnxK3tkbIV2hw58u93IwIUByWCcDZAJi8kNFN62nFpEoCp0y9UpE1rFg==
+"@aws-cdk/cfnspec@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.12.0.tgz#d17bf61bea5b34f600c7efb442ac134415319ed8"
+  integrity sha512-osUkHzU9Ne6gCajbvxvy9WN4GOTX0YfdFRLG0v9nAZ2V8zmS1NmlaqD7mxhE5bMtQXf9XUfrEWZc95ez5I4fOQ==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.11.0":
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.11.0.tgz#51194887e88b668afb3f03cb33e4c9e402559660"
-  integrity sha512-OpCxEt4kguFrXYCF+KOoHrImORnuWn+xzNB50HIlTYl+B5Vxx0f5WrIbs0ijA+qk59eZ3wmtQzNfFukGmO/7xg==
+"@aws-cdk/cloudformation-diff@2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.12.0.tgz#8b329b7851a2dcb0aa4fc5398534c6c212641bc5"
+  integrity sha512-mUENxzKdg/Da1WiDGPXSiwAUkmPtMeUCTHcsNVSFpdTlpLxRgo1Pe+Bm72g7SfUxFKi4zFsJioqA7xDkJnM2Lw==
   dependencies:
-    "@aws-cdk/cfnspec" "2.11.0"
+    "@aws-cdk/cfnspec" "2.12.0"
     "@types/node" "^10.17.60"
     chalk "^4"
     diff "^5.0.0"
@@ -1177,15 +1177,15 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-cdk-lib@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.1.0.tgz#2497484cfd4e2eeaba99b070bbfa54486d52ae34"
-  integrity sha512-W607G3aSrWpawpcqzIuUYKlU+grfvkbszyqikyVYqJgMHFCCQXq0S1ynPMzfQ49CwjlwZsu4LIsPM+dNR+Yj6g==
+aws-cdk-lib@2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.11.0.tgz#a837f856d337db7dbc727bd718da8113e4596652"
+  integrity sha512-zN0K65oOAi5vedvRL9vXTQrYrpYO8rLCyajBpEKwi8z2D/rGUM9jnH1NHseUCJwQuP+I78FcUQgeFNPO80PUeg==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
     case "1.6.3"
     fs-extra "^9.1.0"
-    ignore "^5.1.9"
+    ignore "^5.2.0"
     jsonschema "^1.4.0"
     minimatch "^3.0.4"
     punycode "^2.1.1"
@@ -2914,7 +2914,7 @@ ignore@^4.0.6:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
-ignore@^5.1.8, ignore@^5.1.9, ignore@^5.2.0:
+ignore@^5.1.8, ignore@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
   integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
