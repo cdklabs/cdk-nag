@@ -14,4 +14,5 @@ export { default as RDSInstancePublicAccess } from './RDSInstancePublicAccess';
 export { default as RDSLoggingEnabled } from './RDSLoggingEnabled';
 export { default as RDSMultiAZSupport } from './RDSMultiAZSupport';
 export { default as RDSNonDefaultPort } from './RDSNonDefaultPort';
+export { default as RDSRestrictedInbound } from './RDSRestrictedInbound';
 export { default as RDSStorageEncrypted } from './RDSStorageEncrypted';

@@ -138,7 +138,9 @@ import {
   AuroraMySQLPostgresIAMAuth,
   RDSInstanceBackupEnabled,
   RDSInstanceDeletionProtectionEnabled,
+  RDSMultiAZSupport,
   RDSNonDefaultPort,
+  RDSRestrictedInbound,
   RDSStorageEncrypted,
 } from '../rules/rds';
 import {
@@ -448,12 +450,30 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleSuffixOverride: 'RDS3',
+      info: 'The non-Aurora RDS DB instance does not have multi-AZ support enabled.',
+      explanation:
+        'Use multi-AZ deployment configurations for high availability and automatic failover support fully managed by AWS.',
+      level: NagMessageLevel.ERROR,
+      rule: RDSMultiAZSupport,
+      node: node,
+    });
+    this.applyRule({
       ruleSuffixOverride: 'RDS6',
       info: 'The RDS Aurora MySQL/PostgresSQL cluster does not have IAM Database Authentication enabled.',
       explanation:
         "With IAM Database Authentication enabled, the system doesn't have to use a password when connecting to the MySQL/PostgreSQL database instances, instead it uses an authentication token.",
       level: NagMessageLevel.ERROR,
       rule: AuroraMySQLPostgresIAMAuth,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'RDS8',
+      info: 'The RDS DB Security Group allows for 0.0.0.0/0 inbound access.',
+      explanation:
+        'RDS DB security groups should not allow access from 0.0.0.0/0 (i.e. anywhere, every machine that has the ability to establish a connection) in order to reduce the risk of unauthorized access.',
+      level: NagMessageLevel.ERROR,
+      rule: RDSRestrictedInbound,
       node: node,
     });
     this.applyRule({

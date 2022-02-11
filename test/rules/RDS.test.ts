@@ -18,6 +18,8 @@ import {
   MysqlEngineVersion,
   OracleEngineVersion,
   CfnDBCluster,
+  CfnDBSecurityGroup,
+  CfnDBSecurityGroupIngress,
 } from '@aws-cdk/aws-rds';
 import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
@@ -34,6 +36,7 @@ import {
   RDSLoggingEnabled,
   RDSMultiAZSupport,
   RDSNonDefaultPort,
+  RDSRestrictedInbound,
   RDSStorageEncrypted,
 } from '../../src/rules/rds';
 
@@ -57,6 +60,7 @@ class TestPack extends NagPack {
         RDSLoggingEnabled,
         RDSMultiAZSupport,
         RDSNonDefaultPort,
+        RDSRestrictedInbound,
         RDSStorageEncrypted,
       ];
       rules.forEach((rule) => {
@@ -682,6 +686,61 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining('RDSMultiAZSupport:'),
+        }),
+      })
+    );
+  });
+
+  test('RDSRestrictedInbound: RDS DB security groups do not allow for 0.0.0.0/0 inbound access', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new TestPack());
+    new CfnDBSecurityGroup(nonCompliant, 'rSg', {
+      groupDescription: 'The best description.',
+      dbSecurityGroupIngress: [{ cidrip: '1.1.1.1/0' }],
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('RDSRestrictedInbound:'),
+        }),
+      })
+    );
+
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new TestPack());
+    new CfnDBSecurityGroupIngress(nonCompliant2, 'rIngress', {
+      dbSecurityGroupName: 'foo',
+      cidrip: '0.0.0.0/0',
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('RDSRestrictedInbound:'),
+        }),
+      })
+    );
+
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new TestPack());
+    new CfnDBSecurityGroup(compliant, 'rSg', {
+      groupDescription: 'The best description.',
+      dbSecurityGroupIngress: [],
+    });
+    new CfnDBSecurityGroup(compliant, 'rSg2', {
+      groupDescription: 'The best description.',
+      dbSecurityGroupIngress: [],
+    });
+    new CfnDBSecurityGroupIngress(compliant, 'rIngress', {
+      dbSecurityGroupName: 'foo',
+      cidrip: '1.2.3.4/32',
+    });
+    const messages3 = SynthUtils.synthesize(compliant).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('RDSRestrictedInbound:'),
         }),
       })
     );
