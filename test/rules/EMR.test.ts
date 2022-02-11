@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
 import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
-import { CfnCluster } from 'aws-cdk-lib/aws-emr';
+import { CfnCluster, CfnSecurityConfiguration } from 'aws-cdk-lib/aws-emr';
 import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
 import {

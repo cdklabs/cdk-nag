@@ -112,7 +112,11 @@ describe('AWS Secrets Manager', () => {
     new Secret(compliant, 'rSecret2').addRotationSchedule(
       'rRotationSchedule2',
       {
-        rotationLambda: Function.fromFunctionArn(compliant, 'rLambda', 'foo'),
+        rotationLambda: Function.fromFunctionArn(
+          compliant,
+          'rLambda',
+          'arn:aws:lambda:us-east-1:111222333444:function:helloworld'
+        ),
         automaticallyAfter: Duration.days(30),
       }
     );

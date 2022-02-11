@@ -4,6 +4,14 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
 import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import {
+  PolicyDocument,
+  PolicyStatement,
+  Effect,
+  AnyPrincipal,
+  AccountRootPrincipal,
+  AccountPrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import { CfnContainer } from 'aws-cdk-lib/aws-mediastore';
 import { IConstruct } from 'constructs';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
