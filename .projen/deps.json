@@ -271,6 +271,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-glue",
+      "version": "^1.123.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-iam",
       "version": "^1.123.0",
       "type": "peer"
@@ -552,6 +557,11 @@
     },
     {
       "name": "@aws-cdk/aws-emr",
+      "version": "^1.123.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-glue",
       "version": "^1.123.0",
       "type": "runtime"
     },

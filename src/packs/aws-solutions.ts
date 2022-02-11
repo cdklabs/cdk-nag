@@ -57,8 +57,13 @@ import { ECROpenAccess } from '../rules/ecr';
 import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,
+  ECSTaskDefinitionNoEnvironmentVariables,
 } from '../rules/ecs';
 import { EFSEncrypted } from '../rules/efs';
+import {
+  EKSClusterControlPlaneLogs,
+  EKSClusterNoEndpointPublicAccess,
+} from '../rules/eks';
 import {
   ElastiCacheClusterInVPC,
   ElastiCacheClusterNonDefaultPort,
@@ -78,7 +83,16 @@ import {
   ELBLoggingEnabled,
   ELBTlsHttpsListenersOnly,
 } from '../rules/elb';
-import { EMRAuthEC2KeyPairOrKerberos, EMRS3AccessLogging } from '../rules/emr';
+import {
+  EMRAuthEC2KeyPairOrKerberos,
+  EMREncryptionInTransit,
+  EMRLocalDiskEncryption,
+  EMRS3AccessLogging,
+} from '../rules/emr';
+import {
+  GlueEncryptedCloudWatchLogs,
+  GlueJobBookmarkEncrypted,
+} from '../rules/glue';
 import { IAMNoManagedPolicies, IAMNoWildcardPermissions } from '../rules/iam';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
@@ -93,6 +107,7 @@ import {
   MediaStoreContainerCORSPolicy,
   MediaStoreContainerHasContainerPolicy,
   MediaStoreContainerLifecyclePolicy,
+  MediaStoreContainerSSLRequestsOnly,
 } from '../rules/mediastore';
 import {
   MSKBrokerLogging,
@@ -123,7 +138,9 @@ import {
   AuroraMySQLPostgresIAMAuth,
   RDSInstanceBackupEnabled,
   RDSInstanceDeletionProtectionEnabled,
+  RDSMultiAZSupport,
   RDSNonDefaultPort,
+  RDSRestrictedInbound,
   RDSStorageEncrypted,
 } from '../rules/rds';
 import {
@@ -150,8 +167,12 @@ import {
   SageMakerNotebookNoDirectInternetAccess,
 } from '../rules/sagemaker';
 import { SecretsManagerRotationEnabled } from '../rules/secretsmanager';
-import { SNSEncryptedKMS } from '../rules/sns';
-import { SQSQueueDLQ, SQSQueueSSE } from '../rules/sqs';
+import { SNSEncryptedKMS, SNSTopicSSLRequestsOnly } from '../rules/sns';
+import {
+  SQSQueueDLQ,
+  SQSQueueSSE,
+  SQSQueueSSLRequestsOnly,
+} from '../rules/sqs';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
   StepFunctionStateMachineXray,
@@ -273,6 +294,15 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleSuffixOverride: 'ECS2',
+      info: 'The ECS Task Definition includes a container definition that directly specifies environment variables.',
+      explanation:
+        'Use secrets to inject environment variables during container startup from AWS Systems Manager Parameter Store or Secrets Manager instead of directly specifying plaintext environment variables. Updates to direct environment variables require operators to change task definitions and perform new deployments.',
+      level: NagMessageLevel.ERROR,
+      rule: ECSTaskDefinitionNoEnvironmentVariables,
+      node: node,
+    });
+    this.applyRule({
       ruleSuffixOverride: 'ECS4',
       info: 'The ECS Cluster has CloudWatch Container Insights disabled.',
       explanation:
@@ -288,6 +318,24 @@ export class AwsSolutionsChecks extends NagPack {
         'Container logging allows operators to view and aggregate the logs from the container.',
       level: NagMessageLevel.ERROR,
       rule: ECSTaskDefinitionContainerLogging,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EKS1',
+      info: "The EKS cluster's Kubernetes API server endpoint has public access enabled.",
+      explanation:
+        "A cluster's Kubernetes API server endpoint should not be publicly accessible from the Internet in order to avoid exposing private data and minimizing security risks. The API server endpoints should only be accessible from within a AWS Virtual Private Cloud (VPC).",
+      level: NagMessageLevel.ERROR,
+      rule: EKSClusterNoEndpointPublicAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EKS2',
+      info: "The EKS Cluster does not publish 'api', 'audit', 'authenticator, 'controllerManager', and 'scheduler' control plane logs.",
+      explanation:
+        'EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs in your account. These logs make it easy for you to secure and run your clusters.',
+      level: NagMessageLevel.ERROR,
+      rule: EKSClusterControlPlaneLogs,
       node: node,
     });
     this.applyRule({
@@ -406,12 +454,30 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleSuffixOverride: 'RDS3',
+      info: 'The non-Aurora RDS DB instance does not have multi-AZ support enabled.',
+      explanation:
+        'Use multi-AZ deployment configurations for high availability and automatic failover support fully managed by AWS.',
+      level: NagMessageLevel.ERROR,
+      rule: RDSMultiAZSupport,
+      node: node,
+    });
+    this.applyRule({
       ruleSuffixOverride: 'RDS6',
       info: 'The RDS Aurora MySQL/PostgresSQL cluster does not have IAM Database Authentication enabled.',
       explanation:
         "With IAM Database Authentication enabled, the system doesn't have to use a password when connecting to the MySQL/PostgreSQL database instances, instead it uses an authentication token.",
       level: NagMessageLevel.ERROR,
       rule: AuroraMySQLPostgresIAMAuth,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'RDS8',
+      info: 'The RDS DB Security Group allows for 0.0.0.0/0 inbound access.',
+      explanation:
+        'RDS DB security groups should not allow access from 0.0.0.0/0 (i.e. anywhere, every machine that has the ability to establish a connection) in order to reduce the risk of unauthorized access.',
+      level: NagMessageLevel.ERROR,
+      rule: RDSRestrictedInbound,
       node: node,
     });
     this.applyRule({
@@ -931,12 +997,48 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleSuffixOverride: 'EMR4',
+      info: 'The EMR cluster does not use a security configuration with local disk encryption enabled.',
+      explanation:
+        'Local disk encryption uses a combination of open-source HDFS encryption and LUKS encryption to secure data at rest.',
+      level: NagMessageLevel.ERROR,
+      rule: EMRLocalDiskEncryption,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'EMR5',
+      info: 'The EMR cluster does not use a security configuration with encryption in transit enabled and configured.',
+      explanation:
+        'EMR Clusters should have a method for encrypting data in transit using Transport Layer Security (TLS).',
+      level: NagMessageLevel.ERROR,
+      rule: EMREncryptionInTransit,
+      node: node,
+    });
+    this.applyRule({
       ruleSuffixOverride: 'EMR6',
       info: 'The EMR cluster does not implement authentication via an EC2 Key Pair or Kerberos.',
       explanation:
         'SSH clients can use an EC2 key pair to authenticate to cluster instances. Alternatively, with EMR release version 5.10.0 or later, solutions can configure Kerberos to authenticate users and SSH connections to the master node.',
       level: NagMessageLevel.ERROR,
       rule: EMRAuthEC2KeyPairOrKerberos,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'GL1',
+      info: 'The Glue crawler or job does not use a security configuration with CloudWatch Log encryption enabled.',
+      explanation:
+        'Enabling encryption at rest helps prevent unauthorized users from getting access to the logging data published to CloudWatch Logs.',
+      level: NagMessageLevel.WARN,
+      rule: GlueEncryptedCloudWatchLogs,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'GL3',
+      info: 'The Glue job does not have use a security configuration with job bookmark encryption enabled.',
+      explanation:
+        'Job bookmark encryption encrypts bookmark data before it is sent to Amazon S3 for storage.',
+      level: NagMessageLevel.WARN,
+      rule: GlueJobBookmarkEncrypted,
       node: node,
     });
     this.applyRule({
@@ -1225,6 +1327,15 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
+      ruleSuffixOverride: 'SNS3',
+      info: 'The SNS Topic does not require requests to use SSL.',
+      explanation:
+        'Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition in the topic policy to force requests to use SSL. If SSE is already enabled then this control is auto enforced.',
+      level: NagMessageLevel.ERROR,
+      rule: SNSTopicSSLRequestsOnly,
+      node: node,
+    });
+    this.applyRule({
       ruleSuffixOverride: 'SQS2',
       info: 'The SQS Queue does not have server-side encryption enabled.',
       explanation:
@@ -1242,6 +1353,15 @@ export class AwsSolutionsChecks extends NagPack {
       rule: SQSQueueDLQ,
       node: node,
     });
+    this.applyRule({
+      ruleSuffixOverride: 'SQS4',
+      info: 'The SQS queue does not require requests to use SSL.',
+      explanation:
+        'Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition in the queue policy to force requests to use SSL.',
+      level: NagMessageLevel.ERROR,
+      rule: SQSQueueSSLRequestsOnly,
+      node: node,
+    });
   }
 
   /**
@@ -1257,6 +1377,15 @@ export class AwsSolutionsChecks extends NagPack {
         'The container should have access logging enabled to provide detailed records for the requests that are made to the container.',
       level: NagMessageLevel.ERROR,
       rule: MediaStoreContainerAccessLogging,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'MS3',
+      info: 'The MediaStore container does not require requests to use SSL.',
+      explanation:
+        'You can use HTTPS (TLS) to help prevent potential attackers from eavesdropping on or manipulating network traffic using person-in-the-middle or similar attacks. You should allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition on MediaStore container policies.',
+      level: NagMessageLevel.ERROR,
+      rule: MediaStoreContainerSSLRequestsOnly,
       node: node,
     });
     this.applyRule({
