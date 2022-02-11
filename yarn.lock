@@ -605,6 +605,24 @@
     "@aws-cdk/custom-resources" "1.144.0"
     constructs "^3.3.69"
 
+"@aws-cdk/aws-glue@^1.123.0":
+  version "1.144.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-glue/-/aws-glue-1.144.0.tgz#8f8e9890688e868853656a52e25161d7a9f33ec4"
+  integrity sha512-Q2sxWGCvL8k0YOlnwRypy2SfjH8rmoFKRT0XjvslQ69yuc0sH0auJbqzps16bpyKgDZRIp3rZXdgo/5VVo1BFw==
+  dependencies:
+    "@aws-cdk/assets" "1.144.0"
+    "@aws-cdk/aws-cloudwatch" "1.144.0"
+    "@aws-cdk/aws-ec2" "1.144.0"
+    "@aws-cdk/aws-events" "1.144.0"
+    "@aws-cdk/aws-iam" "1.144.0"
+    "@aws-cdk/aws-kms" "1.144.0"
+    "@aws-cdk/aws-logs" "1.144.0"
+    "@aws-cdk/aws-s3" "1.144.0"
+    "@aws-cdk/aws-s3-assets" "1.144.0"
+    "@aws-cdk/core" "1.144.0"
+    "@aws-cdk/custom-resources" "1.144.0"
+    constructs "^3.3.69"
+
 "@aws-cdk/aws-iam@1.144.0", "@aws-cdk/aws-iam@^1.123.0":
   version "1.144.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-iam/-/aws-iam-1.144.0.tgz#1a262c09f213d8baf5bffe2e125e50f5e815ec99"

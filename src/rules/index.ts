@@ -24,6 +24,7 @@ export * as elasticache from './elasticache';
 export * as elasticbeanstalk from './elasticbeanstalk';
 export * as elb from './elb';
 export * as emr from './emr';
+export * as glue from './glue';
 export * as iam from './iam';
 export * as kinesis from './kinesis';
 export * as kms from './kms';
