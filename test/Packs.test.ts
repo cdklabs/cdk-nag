@@ -164,6 +164,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-SM3',
         'AwsSolutions-SMG4',
         'AwsSolutions-SNS2',
+        'AwsSolutions-SNS3',
         'AwsSolutions-SQS2',
         'AwsSolutions-SQS3',
         'AwsSolutions-VPC7',

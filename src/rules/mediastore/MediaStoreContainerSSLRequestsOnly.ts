@@ -56,11 +56,11 @@ export default Object.defineProperty(
 function checkMatchingAction(actions: any): boolean {
   if (Array.isArray(actions)) {
     for (const action of actions) {
-      if (action === '*' || action === 'mediastore:*') {
+      if (action === '*' || action.toLowerCase() === 'mediastore:*') {
         return true;
       }
     }
-  } else if (actions === '*' || actions === 'mediastore:*') {
+  } else if (actions === '*' || actions.toLowerCase() === 'mediastore:*') {
     return true;
   }
   return false;
