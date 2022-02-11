@@ -115,6 +115,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-KDS1',
         'AwsSolutions-KMS5',
         'AwsSolutions-MS1',
+        'AwsSolutions-MS3',
         'AwsSolutions-MSK2',
         'AwsSolutions-MSK3',
         'AwsSolutions-MSK6',

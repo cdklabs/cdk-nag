@@ -13,6 +13,7 @@ import {
   MediaStoreContainerCORSPolicy,
   MediaStoreContainerHasContainerPolicy,
   MediaStoreContainerLifecyclePolicy,
+  MediaStoreContainerSSLRequestsOnly,
 } from '../../src/rules/mediastore';
 
 class TestPack extends NagPack {
@@ -28,6 +29,7 @@ class TestPack extends NagPack {
         MediaStoreContainerCORSPolicy,
         MediaStoreContainerHasContainerPolicy,
         MediaStoreContainerLifecyclePolicy,
+        MediaStoreContainerSSLRequestsOnly,
       ];
       rules.forEach((rule) => {
         this.applyRule({
@@ -202,6 +204,104 @@ describe('AWS Elemental MediaStore', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining('MediaStoreContainerLifecyclePolicy:'),
+        }),
+      })
+    );
+  });
+
+  test('MediaStoreContainerSSLRequestsOnly: Media Store containers require requests to use SSL', () => {
+    const nonCompliant = new Stack();
+    Aspects.of(nonCompliant).add(new TestPack());
+    new CfnContainer(nonCompliant, 'rMsContainer', {
+      containerName: 'foo',
+    });
+    const messages = SynthUtils.synthesize(nonCompliant).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('MediaStoreContainerSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const nonCompliant2 = new Stack();
+    Aspects.of(nonCompliant2).add(new TestPack());
+    new CfnContainer(nonCompliant2, 'rMsContainer', {
+      containerName: 'foo',
+      policy: JSON.stringify(
+        new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['mediastore:putObject'],
+              effect: Effect.DENY,
+              principals: [new AnyPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+              resources: [
+                'arn:aws:mediastore:us-east-1:111222333444:container/foo/*',
+              ],
+            }),
+          ],
+        }).toJSON()
+      ),
+    });
+    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
+    expect(messages2).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('MediaStoreContainerSSLRequestsOnly:'),
+        }),
+      })
+    );
+    const compliant = new Stack();
+    Aspects.of(compliant).add(new TestPack());
+    new CfnContainer(compliant, 'rMsContainer', {
+      containerName: 'foo',
+      policy: JSON.stringify(
+        new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['mediastore:*'],
+              effect: Effect.DENY,
+              principals: [new AccountRootPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+              resources: [
+                'arn:aws:mediastore:us-east-1:111222333444:container/foo/*',
+              ],
+            }),
+          ],
+        }).toJSON()
+      ),
+    });
+    new CfnContainer(compliant, 'rMsContainer2', {
+      containerName: 'bar',
+      policy: JSON.stringify(
+        new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['mediastore:putObject'],
+              effect: Effect.ALLOW,
+              principals: [new AccountPrincipal(123456789012)],
+              resources: [
+                'arn:aws:mediastore:us-east-1:111222333444:container/foo/*',
+              ],
+            }),
+            new PolicyStatement({
+              actions: ['mediastore:PutObject', '*'],
+              effect: Effect.DENY,
+              principals: [new AnyPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': false } },
+              resources: [
+                'arn:aws:mediastore:us-east-1:111222333444:container/foo/*',
+              ],
+            }),
+          ],
+        }).toJSON()
+      ),
+    });
+    const messages3 = SynthUtils.synthesize(compliant).messages;
+    expect(messages3).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('MediaStoreContainerSSLRequestsOnly:'),
         }),
       })
     );

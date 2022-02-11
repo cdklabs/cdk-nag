@@ -7,3 +7,4 @@ export { default as MediaStoreContainerAccessLogging } from './MediaStoreContain
 export { default as MediaStoreContainerCORSPolicy } from './MediaStoreContainerCORSPolicy';
 export { default as MediaStoreContainerHasContainerPolicy } from './MediaStoreContainerHasContainerPolicy';
 export { default as MediaStoreContainerLifecyclePolicy } from './MediaStoreContainerLifecyclePolicy';
+export { default as MediaStoreContainerSSLRequestsOnly } from './MediaStoreContainerSSLRequestsOnly';
