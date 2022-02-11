@@ -46,6 +46,8 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-COG2',
         'AwsSolutions-DDB3',
         'AwsSolutions-EB4',
+        'AwsSolutions-GL1',
+        'AwsSolutions-GL3',
         'AwsSolutions-KDA3',
         'AwsSolutions-KDS3',
         'AwsSolutions-MS4',

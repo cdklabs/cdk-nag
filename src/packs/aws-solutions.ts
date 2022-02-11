@@ -89,6 +89,10 @@ import {
   EMRLocalDiskEncryption,
   EMRS3AccessLogging,
 } from '../rules/emr';
+import {
+  GlueEncryptedCloudWatchLogs,
+  GlueJobBookmarkEncrypted,
+} from '../rules/glue';
 import { IAMNoManagedPolicies, IAMNoWildcardPermissions } from '../rules/iam';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
@@ -983,6 +987,24 @@ export class AwsSolutionsChecks extends NagPack {
         'SSH clients can use an EC2 key pair to authenticate to cluster instances. Alternatively, with EMR release version 5.10.0 or later, solutions can configure Kerberos to authenticate users and SSH connections to the master node.',
       level: NagMessageLevel.ERROR,
       rule: EMRAuthEC2KeyPairOrKerberos,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'GL1',
+      info: 'The Glue crawler or job does not use a security configuration with CloudWatch Log encryption enabled.',
+      explanation:
+        'Enabling encryption at rest helps prevent unauthorized users from getting access to the logging data published to CloudWatch Logs.',
+      level: NagMessageLevel.WARN,
+      rule: GlueEncryptedCloudWatchLogs,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'GL3',
+      info: 'The Glue job does not have use a security configuration with job bookmark encryption enabled.',
+      explanation:
+        'Job bookmark encryption encrypts bookmark data before it is sent to Amazon S3 for storage.',
+      level: NagMessageLevel.WARN,
+      rule: GlueJobBookmarkEncrypted,
       node: node,
     });
     this.applyRule({
