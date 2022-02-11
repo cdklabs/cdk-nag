@@ -24,7 +24,6 @@ export default Object.defineProperty(
         const resolvedStatement = Stack.of(node).resolve(statement);
         const secureTransport =
           resolvedStatement?.Condition?.Bool?.['aws:SecureTransport'];
-        console.log(secureTransport);
         if (
           resolvedStatement.Effect === 'Deny' &&
           checkMatchingAction(resolvedStatement.Action) === true &&
