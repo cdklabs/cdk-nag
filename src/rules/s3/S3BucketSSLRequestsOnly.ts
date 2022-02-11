@@ -89,11 +89,11 @@ function isMatchingCompliantPolicy(
 function checkMatchingAction(actions: any): boolean {
   if (Array.isArray(actions)) {
     for (const action of actions) {
-      if (action === '*' || action === 's3:*') {
+      if (action === '*' || action.toLowerCase() === 's3:*') {
         return true;
       }
     }
-  } else if (actions === '*' || actions === 's3:*') {
+  } else if (actions === '*' || actions.toLowerCase() === 's3:*') {
     return true;
   }
   return false;

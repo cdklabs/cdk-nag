@@ -167,7 +167,7 @@ import {
   SageMakerNotebookNoDirectInternetAccess,
 } from '../rules/sagemaker';
 import { SecretsManagerRotationEnabled } from '../rules/secretsmanager';
-import { SNSEncryptedKMS } from '../rules/sns';
+import { SNSEncryptedKMS, SNSTopicSSLOnly } from '../rules/sns';
 import { SQSQueueDLQ, SQSQueueSSE } from '../rules/sqs';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
@@ -1320,6 +1320,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Server side encryption adds additional protection of sensitive data delivered as messages to subscribers.',
       level: NagMessageLevel.ERROR,
       rule: SNSEncryptedKMS,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'SNS3',
+      info: 'The SNS Topic does not require requests to use SSL.',
+      explanation:
+        'Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition in the topic policy to force requests to use SSL. If SSE is already enabled then this control is auto enforced.',
+      level: NagMessageLevel.ERROR,
+      rule: SNSTopicSSLOnly,
       node: node,
     });
     this.applyRule({
