@@ -18,15 +18,11 @@ export default Object.defineProperty(
       if (logging === undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const clusterLogging = <CfnCluster.ClusterLoggingProperty>(
-        Stack.of(node).resolve(logging.clusterLogging)
-      );
+      const clusterLogging = Stack.of(node).resolve(logging.clusterLogging);
       if (clusterLogging === undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      const enabledTypes = <CfnCluster.LoggingTypeConfigProperty[]>(
-        Stack.of(node).resolve(clusterLogging.enabledTypes)
-      );
+      const enabledTypes = Stack.of(node).resolve(clusterLogging.enabledTypes);
       if (!Array.isArray(enabledTypes)) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
