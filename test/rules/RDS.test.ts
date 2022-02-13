@@ -8,6 +8,7 @@ import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
+  AuroraPostgresEngineVersion,
   CfnDBInstance,
   DatabaseCluster,
   DatabaseClusterEngine,
@@ -113,7 +114,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
     );
   });
 
-  test('AuroraMySQLLogging: RDS Aurora serverless clusters have all available Log Exports enabled', () => {
+  test('AuroraMySQLLogging: RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled', () => {
     const nonCompliant = new Stack();
     Aspects.of(nonCompliant).add(new TestPack());
     new CfnDBCluster(nonCompliant, 'rDbCluster', {
@@ -155,6 +156,12 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
     });
     new CfnDBCluster(compliant, 'rDbCluster3', {
       engine: 'aurora-mysql',
+    });
+    new DatabaseCluster(compliant, 'rDbCluster4', {
+      engine: DatabaseClusterEngine.auroraPostgres({
+        version: AuroraPostgresEngineVersion.VER_10_4,
+      }),
+      instanceProps: { vpc: new Vpc(compliant, 'rVpc') },
     });
     const messages2 = SynthUtils.synthesize(compliant).messages;
     expect(messages2).not.toContainEqual(
