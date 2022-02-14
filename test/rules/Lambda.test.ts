@@ -2,194 +2,114 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
 import { CfnFunction } from '@aws-cdk/aws-lambda';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   LambdaConcurrency,
   LambdaDLQ,
   LambdaInsideVPC,
 } from '../../src/rules/lambda';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [LambdaConcurrency, LambdaDLQ, LambdaInsideVPC];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([LambdaConcurrency, LambdaDLQ, LambdaInsideVPC]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('AWS Lambda', () => {
-  test('LambdaConcurrency: Lambda functions are configured with function-level concurrent execution limits', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnFunction(nonCompliant, 'rFunction', {
-      code: {},
-      role: 'somerole',
+  describe('LambdaConcurrency: Lambda functions are configured with function-level concurrent execution limits', () => {
+    const ruleId = 'LambdaConcurrency';
+    test('Noncompliance 1', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaConcurrency:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnFunction(nonCompliant2, 'rFunction', {
-      code: {},
-      role: 'somerole',
-      reservedConcurrentExecutions: 0,
+    test('Noncompliance 2', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        reservedConcurrentExecutions: 0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaConcurrency:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnFunction(compliant, 'rFunction', {
-      code: {},
-      role: 'somerole',
-      reservedConcurrentExecutions: 42,
+    test('Compliance', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        reservedConcurrentExecutions: 42,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaConcurrency:'),
-        }),
-      })
-    );
   });
 
-  test('LambdaDLQ: Lambda functions are configured with a dead-letter configuration', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnFunction(nonCompliant, 'rFunction', {
-      code: {},
-      role: 'somerole',
+  describe('LambdaDLQ: Lambda functions are configured with a dead-letter configuration', () => {
+    const ruleId = 'LambdaDLQ';
+    test('Noncompliance 1', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaDLQ:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnFunction(nonCompliant2, 'rFunction', {
-      code: {},
-      role: 'somerole',
-      deadLetterConfig: {},
+    test('Noncompliance 2', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        deadLetterConfig: {},
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaDLQ:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnFunction(compliant, 'rFunction', {
-      code: {},
-      role: 'somerole',
-      deadLetterConfig: { targetArn: 'mySnsTopicArn' },
+    test('Compliance', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        deadLetterConfig: { targetArn: 'mySnsTopicArn' },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaDLQ:'),
-        }),
-      })
-    );
   });
 
-  test('LambdaInsideVPC: Lambda functions are VPC enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnFunction(nonCompliant, 'rFunction', {
-      code: {},
-      role: 'somerole',
+  describe('LambdaInsideVPC: Lambda functions are VPC enabled', () => {
+    const ruleId = 'LambdaInsideVPC';
+    test('Noncompliance 1', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaInsideVPC:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnFunction(nonCompliant2, 'rFunction', {
-      code: {},
-      role: 'somerole',
-      vpcConfig: {
-        securityGroupIds: [],
-        subnetIds: [],
-      },
+    test('Noncompliance 2', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        vpcConfig: {
+          securityGroupIds: [],
+          subnetIds: [],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaInsideVPC:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnFunction(compliant, 'rFunction1', {
-      code: {},
-      role: 'somerole',
-      vpcConfig: {
-        securityGroupIds: ['somesecgroup'],
-      },
+    test('Compliance', () => {
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: 'somerole',
+        vpcConfig: {
+          securityGroupIds: ['somesecgroup'],
+        },
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: 'somerole',
+        vpcConfig: {
+          subnetIds: ['somesecgroup'],
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnFunction(compliant, 'rFunction2', {
-      code: {},
-      role: 'somerole',
-      vpcConfig: {
-        subnetIds: ['somesecgroup'],
-      },
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('LambdaInsideVPC:'),
-        }),
-      })
-    );
   });
 });
