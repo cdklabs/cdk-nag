@@ -5,12 +5,12 @@ SPDX-License-Identifier: Apache-2.0
 import {
   ScalableTarget,
   ServiceNamespace,
-} from '@aws-cdk/aws-applicationautoscaling';
-import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
-import { CfnCluster } from '@aws-cdk/aws-dax';
-import { AttributeType, BillingMode, Table } from '@aws-cdk/aws-dynamodb';
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-applicationautoscaling';
+import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import { CfnCluster } from 'aws-cdk-lib/aws-dax';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   DAXEncrypted,
   DynamoDBAutoScalingEnabled,

@@ -2,14 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { LogGroup } from '@aws-cdk/aws-logs';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import {
   StateMachine,
   Wait,
   WaitTime,
   LogLevel,
-} from '@aws-cdk/aws-stepfunctions';
-import { Aspects, Duration, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-stepfunctions';
+import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
   StepFunctionStateMachineXray,

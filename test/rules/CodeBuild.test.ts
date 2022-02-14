@@ -7,9 +7,9 @@ import {
   CfnProject,
   LinuxBuildImage,
   Project,
-} from '@aws-cdk/aws-codebuild';
-import { Key } from '@aws-cdk/aws-kms';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-codebuild';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   CodeBuildProjectEnvVarAwsCred,
   CodeBuildProjectKMSEncryptedArtifacts,

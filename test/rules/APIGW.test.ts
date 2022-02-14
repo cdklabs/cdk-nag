@@ -10,10 +10,10 @@ import {
   AuthorizationType,
   CfnRequestValidator,
   CfnRestApi,
-} from '@aws-cdk/aws-apigateway';
-import { CfnStage as CfnV2Stage, CfnRoute } from '@aws-cdk/aws-apigatewayv2';
-import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-apigateway';
+import { CfnStage as CfnV2Stage, CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
+import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   APIGWAccessLogging,
   APIGWAssociatedWithWAF,

@@ -19,8 +19,8 @@ import {
   CfnDomain,
   Domain,
   EngineVersion,
-} from '@aws-cdk/aws-opensearchservice';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-opensearchservice';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   OpenSearchAllowlistedIPs,
   OpenSearchDedicatedMasterNode,

@@ -8,10 +8,10 @@ import {
   Effect,
   AnyPrincipal,
   StarPrincipal,
-} from '@aws-cdk/aws-iam';
-import { Key } from '@aws-cdk/aws-kms';
-import { CfnTopicPolicy, Topic } from '@aws-cdk/aws-sns';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { CfnTopicPolicy, Topic } from 'aws-cdk-lib/aws-sns';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { SNSEncryptedKMS, SNSTopicSSLRequestsOnly } from '../../src/rules/sns';
 import { validateStack, TestType, TestPack } from './utils';
 

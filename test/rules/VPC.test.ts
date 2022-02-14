@@ -13,8 +13,8 @@ import {
   CfnFlowLog,
   FlowLogTrafficType,
   NetworkAcl,
-} from '@aws-cdk/aws-ec2';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,

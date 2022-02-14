@@ -2,9 +2,12 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { CfnEndpointConfig, CfnNotebookInstance } from '@aws-cdk/aws-sagemaker';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  CfnEndpointConfig,
+  CfnNotebookInstance,
+} from 'aws-cdk-lib/aws-sagemaker';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   SageMakerEndpointConfigurationKMSKeyConfigured,
   SageMakerNotebookInVPC,

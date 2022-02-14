@@ -9,8 +9,8 @@ import {
   EcsOptimizedImage,
   Cluster,
   ExecuteCommandLogging,
-} from '@aws-cdk/aws-ecs';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ecs';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,

@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnCluster, CfnClusterParameterGroup } from '@aws-cdk/aws-redshift';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnCluster, CfnClusterParameterGroup } from 'aws-cdk-lib/aws-redshift';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   RedshiftBackupEnabled,
   RedshiftClusterAuditLogging,

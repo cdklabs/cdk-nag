@@ -2,10 +2,11 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
-import { Vpc } from '@aws-cdk/aws-ec2';
+import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
+  AuroraPostgresEngineVersion,
   CfnDBInstance,
   DatabaseCluster,
   DatabaseClusterEngine,
@@ -19,8 +20,8 @@ import {
   CfnDBCluster,
   CfnDBSecurityGroup,
   CfnDBSecurityGroupIngress,
-} from '@aws-cdk/aws-rds';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-rds';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   AuroraMySQLBacktrack,
   AuroraMySQLLogging,

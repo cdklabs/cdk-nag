@@ -2,12 +2,12 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { StreamEncryption, Stream } from '@aws-cdk/aws-kinesis';
-import { CfnApplicationV2 } from '@aws-cdk/aws-kinesisanalytics';
-import { CfnDeliveryStream } from '@aws-cdk/aws-kinesisfirehose';
-import { Bucket } from '@aws-cdk/aws-s3';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { StreamEncryption, Stream } from 'aws-cdk-lib/aws-kinesis';
+import { CfnApplicationV2 } from 'aws-cdk-lib/aws-kinesisanalytics';
+import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
   KinesisDataFirehoseSSE,

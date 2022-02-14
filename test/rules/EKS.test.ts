@@ -8,8 +8,8 @@ import {
   ClusterLoggingTypes,
   EndpointAccess,
   KubernetesVersion,
-} from '@aws-cdk/aws-eks';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-eks';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   EKSClusterControlPlaneLogs,
   EKSClusterNoEndpointPublicAccess,

@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnWorkGroup } from '@aws-cdk/aws-athena';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { AthenaWorkgroupEncryptedQueryResults } from '../../src/rules/athena';
 import { TestPack, TestType, validateStack } from './utils';
 

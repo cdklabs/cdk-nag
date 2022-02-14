@@ -2,14 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnDBCluster, DatabaseCluster } from '@aws-cdk/aws-docdb';
+import { CfnDBCluster, DatabaseCluster } from 'aws-cdk-lib/aws-docdb';
 import {
   InstanceType,
   InstanceClass,
   InstanceSize,
   Vpc,
-} from '@aws-cdk/aws-ec2';
-import { Aspects, Duration, SecretValue, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Aspects, Duration, SecretValue, Stack } from 'aws-cdk-lib/core';
 import {
   DocumentDBClusterBackupRetentionPeriod,
   DocumentDBClusterEncryptionAtRest,

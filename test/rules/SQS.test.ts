@@ -8,10 +8,10 @@ import {
   Effect,
   AnyPrincipal,
   StarPrincipal,
-} from '@aws-cdk/aws-iam';
-import { Key } from '@aws-cdk/aws-kms';
-import { CfnQueuePolicy, Queue } from '@aws-cdk/aws-sqs';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { CfnQueuePolicy, Queue } from 'aws-cdk-lib/aws-sqs';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { NagSuppressions } from '../../src';
 import {
   SQSQueueDLQ,

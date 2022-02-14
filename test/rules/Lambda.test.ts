@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnFunction } from '@aws-cdk/aws-lambda';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   LambdaConcurrency,
   LambdaDLQ,

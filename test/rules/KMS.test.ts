@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Key, KeySpec } from '@aws-cdk/aws-kms';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Key, KeySpec } from 'aws-cdk-lib/aws-kms';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { KMSBackingKeyRotationEnabled } from '../../src/rules/kms';
 import { validateStack, TestType, TestPack } from './utils';
 

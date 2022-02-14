@@ -6,8 +6,8 @@ import {
   CfnCrawler,
   CfnJob,
   CfnSecurityConfiguration,
-} from '@aws-cdk/aws-glue';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-glue';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   GlueEncryptedCloudWatchLogs,
   GlueJobBookmarkEncrypted,

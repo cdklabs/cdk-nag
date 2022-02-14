@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnCluster } from '@aws-cdk/aws-msk';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnCluster } from 'aws-cdk-lib/aws-msk';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   MSKBrokerLogging,
   MSKBrokerToBrokerTLS,

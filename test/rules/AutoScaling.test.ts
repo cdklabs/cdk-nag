@@ -15,9 +15,9 @@ import {
   InstanceType,
   MachineImage,
   Vpc,
-} from '@aws-cdk/aws-ec2';
-import { Topic } from '@aws-cdk/aws-sns';
-import { Aspects, Duration, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
 import {
   AutoScalingGroupHealthCheck,
   AutoScalingGroupCooldownPeriod,

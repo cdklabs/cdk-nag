@@ -2,14 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Repository } from '@aws-cdk/aws-ecr';
+import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
   PolicyStatement,
   Effect,
   AccountPrincipal,
   AccountRootPrincipal,
-} from '@aws-cdk/aws-iam';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { ECROpenAccess } from '../../src/rules/ecr';
 import { validateStack, TestType, TestPack } from './utils';
 

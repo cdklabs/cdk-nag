@@ -2,10 +2,10 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Trail } from '@aws-cdk/aws-cloudtrail';
-import { Key } from '@aws-cdk/aws-kms';
-import { LogGroup } from '@aws-cdk/aws-logs';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Trail } from 'aws-cdk-lib/aws-cloudtrail';
+import { Key } from 'aws-cdk-lib/aws-kms';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   CloudTrailCloudWatchLogsEnabled,
   CloudTrailEncryptionEnabled,

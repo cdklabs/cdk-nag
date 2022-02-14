@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { AutoScalingGroup, Monitoring } from '@aws-cdk/aws-autoscaling';
-import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
+import { AutoScalingGroup, Monitoring } from 'aws-cdk-lib/aws-autoscaling';
+import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import {
   Instance,
   InstanceClass,
@@ -18,9 +18,9 @@ import {
   CfnSecurityGroup,
   InstanceSize,
   Volume,
-} from '@aws-cdk/aws-ec2';
-import { PolicyStatement } from '@aws-cdk/aws-iam';
-import { Aspects, Stack, Size } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Aspects, Stack, Size } from 'aws-cdk-lib/core';
 import {
   EC2EBSInBackupPlan,
   EC2EBSOptimizedInstance,

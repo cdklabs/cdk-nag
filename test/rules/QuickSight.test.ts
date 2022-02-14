@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnDataSource } from '@aws-cdk/aws-quicksight';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnDataSource } from 'aws-cdk-lib/aws-quicksight';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { QuicksightSSLConnections } from '../../src/rules/quicksight';
 import { validateStack, TestType, TestPack } from './utils';
 

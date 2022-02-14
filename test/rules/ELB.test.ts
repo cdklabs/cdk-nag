@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
-import { Vpc } from '@aws-cdk/aws-ec2';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   CfnLoadBalancer,
   LoadBalancer,
@@ -15,10 +15,10 @@ import {
   ListenerAction,
   ApplicationProtocol,
   CfnLoadBalancer as CfnLoadBalancerV2,
-} from '@aws-cdk/aws-elasticloadbalancingv2';
-import { Bucket } from '@aws-cdk/aws-s3';
-import { CfnWebACLAssociation } from '@aws-cdk/aws-wafv2';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   ALBHttpDropInvalidHeaderEnabled,
   ALBHttpToHttpsRedirection,

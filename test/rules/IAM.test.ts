@@ -14,9 +14,9 @@ import {
   ServicePrincipal,
   CfnUserToGroupAddition,
   PolicyDocument,
-} from '@aws-cdk/aws-iam';
-import { Bucket } from '@aws-cdk/aws-s3';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-iam';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   IAMGroupHasUsers,
   IAMNoInlinePolicy,

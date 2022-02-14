@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnCluster, CfnSecurityConfiguration } from '@aws-cdk/aws-emr';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnCluster, CfnSecurityConfiguration } from 'aws-cdk-lib/aws-emr';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   EMRAuthEC2KeyPairOrKerberos,
   EMREncryptionInTransit,

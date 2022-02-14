@@ -17,8 +17,8 @@ import {
   BucketEncryption,
   CfnBucket,
   CfnBucketPolicy,
-} from '@aws-cdk/aws-s3';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-s3';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   S3BucketDefaultLockEnabled,
   S3BucketLevelPublicAccessProhibited,

@@ -2,14 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { RestApi, AuthorizationType } from '@aws-cdk/aws-apigateway';
+import { RestApi, AuthorizationType } from 'aws-cdk-lib/aws-apigateway';
 import {
   UserPool,
   Mfa,
   CfnUserPool,
   CfnIdentityPool,
-} from '@aws-cdk/aws-cognito';
-import { Aspects, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cognito';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   CognitoUserPoolAPIGWAuthorizer,
   CognitoUserPoolAdvancedSecurityModeEnforced,

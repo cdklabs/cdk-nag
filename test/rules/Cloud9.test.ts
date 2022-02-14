@@ -2,9 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnEnvironmentEC2 } from '@aws-cdk/aws-cloud9';
-import { InstanceType, InstanceClass, InstanceSize } from '@aws-cdk/aws-ec2';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnEnvironmentEC2 } from 'aws-cdk-lib/aws-cloud9';
+import { InstanceType, InstanceClass, InstanceSize } from 'aws-cdk-lib/aws-ec2';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { Cloud9InstanceNoIngressSystemsManager } from '../../src/rules/cloud9';
 import { TestPack, validateStack, TestType } from './utils';
 

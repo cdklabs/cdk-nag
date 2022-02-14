@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnReplicationInstance } from '@aws-cdk/aws-dms';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { DMSReplicationNotPublic } from '../../src/rules/dms';
 import { validateStack, TestType, TestPack } from './utils';
 
