@@ -2,158 +2,96 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
 import { Alarm, Metric } from '@aws-cdk/aws-cloudwatch';
 import { Ec2Action, Ec2InstanceAction } from '@aws-cdk/aws-cloudwatch-actions';
 import { Key } from '@aws-cdk/aws-kms';
 import { CfnLogGroup, LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   CloudWatchAlarmAction,
   CloudWatchLogGroupEncrypted,
   CloudWatchLogGroupRetentionPeriod,
 } from '../../src/rules/cloudwatch';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        CloudWatchAlarmAction,
-        CloudWatchLogGroupEncrypted,
-        CloudWatchLogGroupRetentionPeriod,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  CloudWatchAlarmAction,
+  CloudWatchLogGroupEncrypted,
+  CloudWatchLogGroupRetentionPeriod,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon CloudWatch', () => {
-  test('CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Alarm(nonCompliant, 'rAlarm', {
-      metric: new Metric({
-        namespace: 'MyNamespace',
-        metricName: 'MyMetric',
-      }),
-      threshold: 100,
-      evaluationPeriods: 2,
-    }).addAlarmAction();
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchAlarmAction:'),
+  describe('CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled', () => {
+    const ruleId = 'CloudWatchAlarmAction';
+    test('Noncompliance 1', () => {
+      new Alarm(stack, 'rAlarm', {
+        metric: new Metric({
+          namespace: 'MyNamespace',
+          metricName: 'MyMetric',
         }),
-      })
-    );
+        threshold: 100,
+        evaluationPeriods: 2,
+      }).addAlarmAction();
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Alarm(stack, 'rAlarm', {
+        metric: new Metric({
+          namespace: 'MyNamespace',
+          metricName: 'MyMetric',
+        }),
+        threshold: 100,
+        evaluationPeriods: 2,
+        actionsEnabled: false,
+      }).addOkAction(new Ec2Action(Ec2InstanceAction.REBOOT));
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
 
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Alarm(nonCompliant2, 'rAlarm', {
-      metric: new Metric({
-        namespace: 'MyNamespace',
-        metricName: 'MyMetric',
-      }),
-      threshold: 100,
-      evaluationPeriods: 2,
-      actionsEnabled: false,
-    }).addOkAction(new Ec2Action(Ec2InstanceAction.REBOOT));
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchAlarmAction:'),
+    test('Compliance', () => {
+      new Alarm(stack, 'rAlarm', {
+        metric: new Metric({
+          namespace: 'MyNamespace',
+          metricName: 'MyMetric',
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Alarm(compliant, 'rAlarm', {
-      metric: new Metric({
-        namespace: 'MyNamespace',
-        metricName: 'MyMetric',
-      }),
-      threshold: 100,
-      evaluationPeriods: 2,
-    }).addOkAction(new Ec2Action(Ec2InstanceAction.REBOOT));
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchAlarmAction:'),
-        }),
-      })
-    );
+        threshold: 100,
+        evaluationPeriods: 2,
+      }).addOkAction(new Ec2Action(Ec2InstanceAction.REBOOT));
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LogGroup(nonCompliant, 'rLogGroup');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchLogGroupEncrypted:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LogGroup(compliant, 'rLogGroup', {
-      encryptionKey: new Key(compliant, 'rLogsKey'),
+  describe('CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
+    const ruleId = 'CloudWatchLogGroupEncrypted';
+    test('Noncompliance 1', () => {
+      new LogGroup(stack, 'rLogGroup');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchLogGroupEncrypted:'),
-        }),
-      })
-    );
+
+    test('Compliance', () => {
+      new LogGroup(stack, 'rLogGroup', {
+        encryptionKey: new Key(stack, 'rLogsKey'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CloudWatchLogGroupRetentionPeriod: CloudWatch Log Groups have an explicit retention period configured', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnLogGroup(nonCompliant, 'rLogGroup');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchLogGroupRetentionPeriod:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LogGroup(compliant, 'rLogGroup', {
-      retention: RetentionDays.ONE_YEAR,
+  describe('CloudWatchLogGroupRetentionPeriod: CloudWatch Log Groups have an explicit retention period configured', () => {
+    const ruleId = 'CloudWatchLogGroupRetentionPeriod';
+    test('Noncompliance ', () => {
+      new CfnLogGroup(stack, 'rLogGroup');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CloudWatchLogGroupRetentionPeriod:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new LogGroup(stack, 'rLogGroup', {
+        retention: RetentionDays.ONE_YEAR,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 });

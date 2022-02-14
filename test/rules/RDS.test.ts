@@ -2,7 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
 import { BackupPlan, BackupResource } from '@aws-cdk/aws-backup';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import {
@@ -22,8 +21,7 @@ import {
   CfnDBSecurityGroup,
   CfnDBSecurityGroupIngress,
 } from '@aws-cdk/aws-rds';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   AuroraMySQLBacktrack,
   AuroraMySQLLogging,
@@ -40,841 +38,521 @@ import {
   RDSRestrictedInbound,
   RDSStorageEncrypted,
 } from '../../src/rules/rds';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        AuroraMySQLBacktrack,
-        AuroraMySQLLogging,
-        AuroraMySQLPostgresIAMAuth,
-        RDSAutomaticMinorVersionUpgradeEnabled,
-        RDSEnhancedMonitoringEnabled,
-        RDSInBackupPlan,
-        RDSInstanceBackupEnabled,
-        RDSInstanceDeletionProtectionEnabled,
-        RDSInstancePublicAccess,
-        RDSLoggingEnabled,
-        RDSMultiAZSupport,
-        RDSNonDefaultPort,
-        RDSRestrictedInbound,
-        RDSStorageEncrypted,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  AuroraMySQLBacktrack,
+  AuroraMySQLLogging,
+  AuroraMySQLPostgresIAMAuth,
+  RDSAutomaticMinorVersionUpgradeEnabled,
+  RDSEnhancedMonitoringEnabled,
+  RDSInBackupPlan,
+  RDSInstanceBackupEnabled,
+  RDSInstanceDeletionProtectionEnabled,
+  RDSInstancePublicAccess,
+  RDSLoggingEnabled,
+  RDSMultiAZSupport,
+  RDSNonDefaultPort,
+  RDSRestrictedInbound,
+  RDSStorageEncrypted,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
-  test('AuroraMySQLBacktrack: RDS Aurora MySQL clusters have Backtrack enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
-    });
-
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AuroraMySQLBacktrack:'),
+  describe('AuroraMySQLBacktrack: RDS Aurora MySQL clusters have Backtrack enabled', () => {
+    const ruleId = 'AuroraMySQLBacktrack';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDbCluster', {
-      engine: 'aurora',
-      backtrackWindow: 42,
+        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AuroraMySQLBacktrack:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora',
+        backtrackWindow: 42,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('AuroraMySQLLogging: RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBCluster(nonCompliant, 'rDbCluster', {
-      engine: 'aurora-mysql',
-      engineMode: 'serverless',
-      scalingConfiguration: {
-        maxCapacity: 42,
-        minCapacity: 7,
-      },
-      enableCloudwatchLogsExports: ['audit', 'error'],
+  describe('AuroraMySQLLogging: RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled', () => {
+    const ruleId = 'AuroraMySQLLogging';
+    test('Noncompliance 1', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-mysql',
+        engineMode: 'serverless',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+        enableCloudwatchLogsExports: ['audit', 'error'],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AuroraMySQLLogging:'),
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-postgresql',
+        engineMode: 'serverless',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+      });
+      new CfnDBCluster(stack, 'rDbCluster2', {
+        engine: 'aurora-mysql',
+        engineMode: 'serverless',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+        enableCloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
+      });
+      new CfnDBCluster(stack, 'rDbCluster3', {
+        engine: 'aurora-mysql',
+      });
+      new DatabaseCluster(stack, 'rDbCluster4', {
+        engine: DatabaseClusterEngine.auroraPostgres({
+          version: AuroraPostgresEngineVersion.VER_10_4,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDbCluster', {
-      engine: 'aurora-postgresql',
-      engineMode: 'serverless',
-      scalingConfiguration: {
-        maxCapacity: 42,
-        minCapacity: 7,
-      },
+        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnDBCluster(compliant, 'rDbCluster2', {
-      engine: 'aurora-mysql',
-      engineMode: 'serverless',
-      scalingConfiguration: {
-        maxCapacity: 42,
-        minCapacity: 7,
-      },
-      enableCloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
-    });
-    new CfnDBCluster(compliant, 'rDbCluster3', {
-      engine: 'aurora-mysql',
-    });
-    new DatabaseCluster(compliant, 'rDbCluster4', {
-      engine: DatabaseClusterEngine.auroraPostgres({
-        version: AuroraPostgresEngineVersion.VER_10_4,
-      }),
-      instanceProps: { vpc: new Vpc(compliant, 'rVpc') },
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AuroraMySQLLogging:'),
-        }),
-      })
-    );
   });
 
-  test('AuroraMySQLPostgresIAMAuth: RDS Aurora MySQL/PostgresSQL clusters have IAM Database Authentication enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
-      iamAuthentication: false,
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AuroraMySQLPostgresIAMAuth:'),
+  describe('AuroraMySQLPostgresIAMAuth: RDS Aurora MySQL/PostgresSQL clusters have IAM Database Authentication enabled', () => {
+    const ruleId = 'AuroraMySQLPostgresIAMAuth';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const vpc = new Vpc(compliant, 'rVpc');
-    new DatabaseCluster(compliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      iamAuthentication: true,
-      instanceProps: { vpc: vpc },
+        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        iamAuthentication: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AuroraMySQLPostgresIAMAuth:'),
+    test('Compliance', () => {
+      const vpc = new Vpc(stack, 'rVpc');
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
+        iamAuthentication: true,
+        instanceProps: { vpc: vpc },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('RDSAutomaticMinorVersionUpgradeEnabled: RDS DB instances have automatic minor version upgrades enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBInstance(nonCompliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
-      autoMinorVersionUpgrade: false,
+  describe('RDSAutomaticMinorVersionUpgradeEnabled: RDS DB instances have automatic minor version upgrades enabled', () => {
+    const ruleId = 'RDSAutomaticMinorVersionUpgradeEnabled';
+    test('Noncompliance 1', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+        autoMinorVersionUpgrade: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'RDSAutomaticMinorVersionUpgradeEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBInstance(compliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
+    test('Compliance', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'RDSAutomaticMinorVersionUpgradeEnabled:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('RDSEnhancedMonitoring: RDS DB instances have enhanced monitoring enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBInstance(nonCompliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
-      monitoringInterval: 0,
+  describe('RDSEnhancedMonitoringEnabled: RDS DB instances have enhanced monitoring enabled', () => {
+    const ruleId = 'RDSEnhancedMonitoringEnabled';
+    test('Noncompliance 1', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+        monitoringInterval: 0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSEnhancedMonitoringEnabled:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBInstance(compliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
-      monitoringInterval: 15,
+    test('Compliance', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+        monitoringInterval: 15,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSEnhancedMonitoringEnabled:'),
-        }),
-      })
-    );
   });
 
-  test('RDSInBackupPlan: RDS DB Instances are part of AWS Backup plan(s)', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBInstance(nonCompliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
+  describe('RDSInBackupPlan: RDS DB Instances are part of AWS Backup plan(s)', () => {
+    const ruleId = 'RDSInBackupPlan';
+    test('Noncompliance 1', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSInBackupPlan:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    BackupPlan.dailyWeeklyMonthly5YearRetention(
-      compliant,
-      'rPlan'
-    ).addSelection('Selection', {
-      resources: [
-        BackupResource.fromRdsDatabaseInstance(
-          new DatabaseInstance(compliant, 'rDbInstance2', {
-            engine: DatabaseInstanceEngine.postgres({
-              version: PostgresEngineVersion.VER_13_2,
-            }),
-            vpc: new Vpc(compliant, 'rVpc2'),
-          })
-        ),
-      ],
+    test('Compliance', () => {
+      BackupPlan.dailyWeeklyMonthly5YearRetention(stack, 'rPlan').addSelection(
+        'Selection',
+        {
+          resources: [
+            BackupResource.fromRdsDatabaseInstance(
+              new DatabaseInstance(stack, 'rDbInstance2', {
+                engine: DatabaseInstanceEngine.postgres({
+                  version: PostgresEngineVersion.VER_13_2,
+                }),
+                vpc: new Vpc(stack, 'rVpc2'),
+              })
+            ),
+          ],
+        }
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSInBackupPlan:'),
-        }),
-      })
-    );
   });
 
-  test('RDSInstanceBackupEnabled: RDS DB instances have backup enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBInstance(nonCompliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
-      backupRetentionPeriod: 0,
+  describe('RDSInstanceBackupEnabled: RDS DB instances have backup enabled', () => {
+    const ruleId = 'RDSInstanceBackupEnabled';
+    test('Noncompliance 1', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+        backupRetentionPeriod: 0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSInstanceBackupEnabled:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBInstance(compliant, 'rDbInstance', {
-      dbInstanceClass: 'db.t3.micro',
+    test('Compliance', () => {
+      new CfnDBInstance(stack, 'rDbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+      });
+      new CfnDBInstance(stack, 'rDbInstance2', {
+        dbInstanceClass: 'db.t3.micro',
+        backupRetentionPeriod: 15,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnDBInstance(compliant, 'rDbInstance2', {
-      dbInstanceClass: 'db.t3.micro',
-      backupRetentionPeriod: 15,
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSInstanceBackupEnabled:'),
-        }),
-      })
-    );
   });
 
-  test('RDSInstanceDeletionProtectionEnabled: RDS DB instances and Aurora DB clusters have Deletion Protection enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'RDSInstanceDeletionProtectionEnabled:'
-          ),
+  describe('RDSInstanceDeletionProtectionEnabled: RDS DB instances and Aurora DB clusters have Deletion Protection enabled', () => {
+    const ruleId = 'RDSInstanceDeletionProtectionEnabled';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
-      deletionProtection: false,
+        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'RDSInstanceDeletionProtectionEnabled:'
-          ),
+    test('Noncompliance 2', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const vpc = new Vpc(compliant, 'rVpc');
-    new DatabaseCluster(compliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: vpc },
-      deletionProtection: true,
+        vpc: new Vpc(stack, 'rVpc'),
+        deletionProtection: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new DatabaseInstance(compliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc,
-      deletionProtection: true,
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'RDSInstanceDeletionProtectionEnabled:'
-          ),
+    test('Compliance', () => {
+      const vpc = new Vpc(stack, 'rVpc');
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
+        instanceProps: { vpc: vpc },
+        deletionProtection: true,
+      });
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
+        }),
+        vpc: vpc,
+        deletionProtection: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('RDSInstancePublicAccess: RDS DB instances are not publicly accessible', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    const vpc = new Vpc(nonCompliant, 'rVpc');
-    new DatabaseInstance(nonCompliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc,
-      publiclyAccessible: true,
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSInstancePublicAccess:'),
+  describe('RDSInstancePublicAccess: RDS DB instances are not publicly accessible', () => {
+    const ruleId = 'RDSInstancePublicAccess';
+    test('Noncompliance 1', () => {
+      const vpc = new Vpc(stack, 'rVpc');
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const vpc2 = new Vpc(compliant, 'rVpc');
-    new DatabaseInstance(compliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc2,
-      publiclyAccessible: false,
+        vpc: vpc,
+        publiclyAccessible: true,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSInstancePublicAccess:'),
+    test('Compliance', () => {
+      const vpc2 = new Vpc(stack, 'rVpc');
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
+        vpc: vpc2,
+        publiclyAccessible: false,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('RDSLoggingEnabled: RDS DB instances are configured to export all possible log types to CloudWatch', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseInstance(nonCompliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.mariaDb({
-        version: MariaDbEngineVersion.VER_10_2,
-      }),
-      port: 5432,
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
+  describe('RDSLoggingEnabled: RDS DB instances are configured to export all possible log types to CloudWatch', () => {
+    const ruleId = 'RDSLoggingEnabled';
+    test('Noncompliance 1', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.mariaDb({
+          version: MariaDbEngineVersion.VER_10_2,
         }),
-      })
-    );
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_10,
+        }),
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.sqlServerWeb({
+          version: SqlServerEngineVersion.VER_11,
+        }),
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+        cloudwatchLogsExports: ['error'],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.mysql({
+          version: MysqlEngineVersion.VER_8_0_25,
+        }),
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.oracleEe({
+          version: OracleEngineVersion.VER_19_0_0_0_2021_04_R1,
+        }),
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+        cloudwatchLogsExports: ['trace', 'listener'],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.mariaDb({
+          version: MariaDbEngineVersion.VER_10_2,
+        }),
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
+      });
 
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_10,
-      }),
-      port: 5432,
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
+      new DatabaseInstance(stack, 'rDbInstance2', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_11,
         }),
-      })
-    );
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc2'),
+        cloudwatchLogsExports: ['postgresql', 'upgrade'],
+      });
 
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new DatabaseInstance(nonCompliant3, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.sqlServerWeb({
-        version: SqlServerEngineVersion.VER_11,
-      }),
-      port: 5432,
-      vpc: new Vpc(nonCompliant3, 'rVpc'),
-      cloudwatchLogsExports: ['error'],
-    });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
+      new DatabaseInstance(stack, 'rDbInstance3', {
+        engine: DatabaseInstanceEngine.sqlServerEe({
+          version: SqlServerEngineVersion.VER_11,
         }),
-      })
-    );
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc3'),
+        cloudwatchLogsExports: ['agent', 'error'],
+      });
 
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new DatabaseInstance(nonCompliant4, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.mysql({
-        version: MysqlEngineVersion.VER_8_0_25,
-      }),
-      port: 5432,
-      vpc: new Vpc(nonCompliant4, 'rVpc'),
-    });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
+      new DatabaseInstance(stack, 'rDbInstance4', {
+        engine: DatabaseInstanceEngine.mysql({
+          version: MysqlEngineVersion.VER_8_0_25,
         }),
-      })
-    );
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc4'),
+        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
+      });
 
-    const nonCompliant5 = new Stack();
-    Aspects.of(nonCompliant5).add(new TestPack());
-    new DatabaseInstance(nonCompliant5, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.oracleEe({
-        version: OracleEngineVersion.VER_19_0_0_0_2021_04_R1,
-      }),
-      port: 5432,
-      vpc: new Vpc(nonCompliant5, 'rVpc'),
-      cloudwatchLogsExports: ['trace', 'listener'],
-    });
-    const messages5 = SynthUtils.synthesize(nonCompliant5).messages;
-    expect(messages5).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
+      new DatabaseInstance(stack, 'rDbInstance5', {
+        engine: DatabaseInstanceEngine.oracleSe2({
+          version: OracleEngineVersion.VER_19_0_0_0_2021_04_R1,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new DatabaseInstance(compliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.mariaDb({
-        version: MariaDbEngineVersion.VER_10_2,
-      }),
-      port: 5432,
-      vpc: new Vpc(compliant, 'rVpc'),
-      cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc5'),
+        cloudwatchLogsExports: [
+          'trace',
+          'listener',
+          'audit',
+          'alert',
+          'oemagent',
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages6 = SynthUtils.synthesize(compliant).messages;
-    expect(messages6).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
-        }),
-      })
-    );
-
-    const compliant2 = new Stack();
-    Aspects.of(compliant2).add(new TestPack());
-    new DatabaseInstance(compliant2, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_11,
-      }),
-      port: 5432,
-      vpc: new Vpc(compliant2, 'rVpc'),
-      cloudwatchLogsExports: ['postgresql', 'upgrade'],
-    });
-    const messages7 = SynthUtils.synthesize(compliant2).messages;
-    expect(messages7).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
-        }),
-      })
-    );
-
-    const compliant3 = new Stack();
-    Aspects.of(compliant3).add(new TestPack());
-    new DatabaseInstance(compliant3, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.sqlServerEe({
-        version: SqlServerEngineVersion.VER_11,
-      }),
-      port: 5432,
-      vpc: new Vpc(compliant3, 'rVpc'),
-      cloudwatchLogsExports: ['agent', 'error'],
-    });
-    const messages8 = SynthUtils.synthesize(compliant3).messages;
-    expect(messages8).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
-        }),
-      })
-    );
-
-    const compliant4 = new Stack();
-    Aspects.of(compliant4).add(new TestPack());
-    new DatabaseInstance(compliant4, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.mysql({
-        version: MysqlEngineVersion.VER_8_0_25,
-      }),
-      port: 5432,
-      vpc: new Vpc(compliant4, 'rVpc'),
-      cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
-    });
-    const messages9 = SynthUtils.synthesize(compliant4).messages;
-    expect(messages9).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
-        }),
-      })
-    );
-
-    const compliant5 = new Stack();
-    Aspects.of(compliant5).add(new TestPack());
-    new DatabaseInstance(compliant5, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.oracleSe2({
-        version: OracleEngineVersion.VER_19_0_0_0_2021_04_R1,
-      }),
-      port: 5432,
-      vpc: new Vpc(compliant5, 'rVpc'),
-      cloudwatchLogsExports: [
-        'trace',
-        'listener',
-        'audit',
-        'alert',
-        'oemagent',
-      ],
-    });
-    const messages10 = SynthUtils.synthesize(compliant5).messages;
-    expect(messages10).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSLoggingEnabled:'),
-        }),
-      })
-    );
   });
 
-  test('RDSMultiAZSupport: Non-Aurora RDS DB instances have multi-AZ support enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    const vpc = new Vpc(nonCompliant, 'rVpc');
-    new DatabaseInstance(nonCompliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc,
-      multiAz: false,
-    });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSMultiAZSupport:'),
+  describe('RDSMultiAZSupport: Non-Aurora RDS DB instances have multi-AZ support enabled', () => {
+    const ruleId = 'RDSMultiAZSupport';
+    test('Noncompliance 1', () => {
+      const vpc = new Vpc(stack, 'rVpc');
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const vpc2 = new Vpc(compliant, 'rVpc');
-    new DatabaseInstance(compliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc2,
-      multiAz: true,
+        vpc: vpc,
+        multiAz: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSMultiAZSupport:'),
+    test('Compliance', () => {
+      const vpc2 = new Vpc(stack, 'rVpc');
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
+        vpc: vpc2,
+        multiAz: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('RDSRestrictedInbound: RDS DB security groups do not allow for 0.0.0.0/0 inbound access', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBSecurityGroup(nonCompliant, 'rSg', {
-      groupDescription: 'The best description.',
-      dbSecurityGroupIngress: [{ cidrip: '1.1.1.1/0' }],
+  describe('RDSRestrictedInbound: RDS DB security groups do not allow for 0.0.0.0/0 inbound access', () => {
+    const ruleId = 'RDSRestrictedInbound';
+    test('Noncompliance 1', () => {
+      new CfnDBSecurityGroup(stack, 'rSg', {
+        groupDescription: 'The best description.',
+        dbSecurityGroupIngress: [{ cidrip: '1.1.1.1/0' }],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSRestrictedInbound:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnDBSecurityGroupIngress(nonCompliant2, 'rIngress', {
-      dbSecurityGroupName: 'foo',
-      cidrip: '0.0.0.0/0',
+    test('Noncompliance 2', () => {
+      new CfnDBSecurityGroupIngress(stack, 'rIngress', {
+        dbSecurityGroupName: 'foo',
+        cidrip: '0.0.0.0/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSRestrictedInbound:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBSecurityGroup(compliant, 'rSg', {
-      groupDescription: 'The best description.',
-      dbSecurityGroupIngress: [],
+    test('Compliance', () => {
+      new CfnDBSecurityGroup(stack, 'rSg', {
+        groupDescription: 'The best description.',
+        dbSecurityGroupIngress: [],
+      });
+      new CfnDBSecurityGroup(stack, 'rSg2', {
+        groupDescription: 'The best description.',
+        dbSecurityGroupIngress: [],
+      });
+      new CfnDBSecurityGroupIngress(stack, 'rIngress', {
+        dbSecurityGroupName: 'foo',
+        cidrip: '1.2.3.4/32',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnDBSecurityGroup(compliant, 'rSg2', {
-      groupDescription: 'The best description.',
-      dbSecurityGroupIngress: [],
-    });
-    new CfnDBSecurityGroupIngress(compliant, 'rIngress', {
-      dbSecurityGroupName: 'foo',
-      cidrip: '1.2.3.4/32',
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSRestrictedInbound:'),
-        }),
-      })
-    );
   });
 
-  test('RDSNonDefaultPort: RDS DB instances and Aurora DB clusters do not use the default endpoint ports', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSNonDefaultPort:'),
+  describe('RDSNonDefaultPort: RDS DB instances and Aurora DB clusters do not use the default endpoint ports', () => {
+    const ruleId = 'RDSNonDefaultPort';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      port: 5432,
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
+        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSNonDefaultPort:'),
+    test('Noncompliance 2', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const vpc = new Vpc(compliant, 'rVpc');
-    new DatabaseCluster(compliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: vpc },
-      port: 42,
+        port: 5432,
+        vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new DatabaseInstance(compliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc,
-      port: 42,
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSNonDefaultPort:'),
+    test('Compliance', () => {
+      const vpc = new Vpc(stack, 'rVpc');
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
+        instanceProps: { vpc: vpc },
+        port: 42,
+      });
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
+        }),
+        vpc: vpc,
+        port: 42,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('RDSStorageEncrypted: RDS DB instances and Aurora DB clusters have storage encryption enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: new Vpc(nonCompliant, 'rVpc') },
-      storageEncrypted: false,
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSStorageEncrypted:'),
+  describe('RDSStorageEncrypted: RDS DB instances and Aurora DB clusters have storage encryption enabled', () => {
+    const ruleId = 'RDSStorageEncrypted';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new DatabaseInstance(nonCompliant2, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
-      storageEncrypted: false,
+        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        storageEncrypted: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSStorageEncrypted:'),
+    test('Noncompliance 2', () => {
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
         }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const vpc = new Vpc(compliant, 'rVpc');
-    new DatabaseCluster(compliant, 'rDbCluster', {
-      engine: DatabaseClusterEngine.auroraMysql({
-        version: AuroraMysqlEngineVersion.VER_5_7_12,
-      }),
-      instanceProps: { vpc: vpc },
-      storageEncrypted: true,
+        vpc: new Vpc(stack, 'rVpc'),
+        storageEncrypted: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new DatabaseInstance(compliant, 'rDbInstance', {
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_2,
-      }),
-      vpc: vpc,
-      storageEncrypted: true,
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('RDSStorageEncrypted:'),
+    test('Compliance', () => {
+      const vpc = new Vpc(stack, 'rVpc');
+      new DatabaseCluster(stack, 'rDbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-      })
-    );
+        instanceProps: { vpc: vpc },
+        storageEncrypted: true,
+      });
+      new DatabaseInstance(stack, 'rDbInstance', {
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_2,
+        }),
+        vpc: vpc,
+        storageEncrypted: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 });

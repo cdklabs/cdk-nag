@@ -2,7 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
 import {
   User,
   Group,
@@ -17,8 +16,7 @@ import {
   PolicyDocument,
 } from '@aws-cdk/aws-iam';
 import { Bucket } from '@aws-cdk/aws-s3';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   IAMGroupHasUsers,
   IAMNoInlinePolicy,
@@ -29,535 +27,332 @@ import {
   IAMUserGroupMembership,
   IAMUserNoPolicies,
 } from '../../src/rules/iam';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        IAMGroupHasUsers,
-        IAMNoInlinePolicy,
-        IAMNoManagedPolicies,
-        IAMNoWildcardPermissions,
-        IAMPolicyNoStatementsWithAdminAccess,
-        IAMPolicyNoStatementsWithFullAccess,
-        IAMUserGroupMembership,
-        IAMUserNoPolicies,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  IAMGroupHasUsers,
+  IAMNoInlinePolicy,
+  IAMNoManagedPolicies,
+  IAMNoWildcardPermissions,
+  IAMPolicyNoStatementsWithAdminAccess,
+  IAMPolicyNoStatementsWithFullAccess,
+  IAMUserGroupMembership,
+  IAMUserNoPolicies,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('AWS Identity and Access Management Service (AWS IAM)', () => {
-  test('IAMGroupHasUsers: IAM Groups have at least one IAM User', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Group(nonCompliant, 'rGroup');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMGroupHasUsers:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Group(compliant, 'rGroup').addUser(new User(compliant, 'rUser'));
-    new Group(compliant, 'rGroup2', { groupName: 'foo' });
-    new User(compliant, 'rUser2').addToGroup(
-      Group.fromGroupArn(
-        compliant,
-        'rImportedGroup2',
-        'arn:aws:iam::123456789012:group/foo'
-      )
-    );
-    new Group(compliant, 'rGroup3', { groupName: 'baz' });
-    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition', {
-      groupName: 'baz',
-      users: ['bar'],
+  describe('IAMGroupHasUsers: IAM Groups have at least one IAM User', () => {
+    const ruleId = 'IAMGroupHasUsers';
+    test('Noncompliance 1', () => {
+      new Group(stack, 'rGroup');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnUserToGroupAddition(compliant, 'rUserToGroupAddition2', {
-      groupName: new Group(compliant, 'rGroup4').groupName,
-      users: ['bar'],
+    test('Compliance', () => {
+      new Group(stack, 'rGroup').addUser(new User(stack, 'rUser'));
+      new Group(stack, 'rGroup2', { groupName: 'foo' });
+      new User(stack, 'rUser2').addToGroup(
+        Group.fromGroupArn(
+          stack,
+          'rImportedGroup2',
+          'arn:aws:iam::123456789012:group/foo'
+        )
+      );
+      new Group(stack, 'rGroup3', { groupName: 'baz' });
+      new CfnUserToGroupAddition(stack, 'rUserToGroupAddition', {
+        groupName: 'baz',
+        users: ['bar'],
+      });
+      new CfnUserToGroupAddition(stack, 'rUserToGroupAddition2', {
+        groupName: new Group(stack, 'rGroup4').groupName,
+        users: ['bar'],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMGroupHasUsers:'),
-        }),
-      })
-    );
   });
 
-  test('IAMNoInlinePolicy: IAM Groups, Users, and Roles do not contain inline policies', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    const myPolicy = new Policy(nonCompliant, 'rPolicy');
-    myPolicy.addStatements(
-      new PolicyStatement({
-        actions: ['s3:PutObject'],
-        resources: [new Bucket(nonCompliant, 'rBucket').arnForObjects('*')],
-      })
-    );
-    myPolicy.attachToUser(new User(nonCompliant, 'rUser'));
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoInlinePolicy:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Role(nonCompliant2, 'rUser', {
-      assumedBy: new ServicePrincipal('sns.amazonaws.com'),
-    }).addToPolicy(
-      new PolicyStatement({
-        actions: ['s3:PutObject'],
-        resources: [new Bucket(nonCompliant2, 'rBucket').arnForObjects('*')],
-      })
-    );
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoInlinePolicy:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const myGroup = new Group(compliant, 'rGroup');
-    const myManagedPolicy = new ManagedPolicy(compliant, 'rManagedPolicy');
-    myManagedPolicy.addStatements(
-      new PolicyStatement({
-        actions: ['s3:PutObject'],
-        resources: [new Bucket(compliant, 'rBucket').arnForObjects('*')],
-      })
-    );
-    myGroup.addManagedPolicy(myManagedPolicy);
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoInlinePolicy:'),
-        }),
-      })
-    );
+  describe('IAMNoInlinePolicy: IAM Groups, Users, and Roles do not contain inline policies', () => {
+    const ruleId = 'IAMNoInlinePolicy';
+    test('Noncompliance 1', () => {
+      const myPolicy = new Policy(stack, 'rPolicy');
+      myPolicy.addStatements(
+        new PolicyStatement({
+          actions: ['s3:PutObject'],
+          resources: [new Bucket(stack, 'rBucket').arnForObjects('*')],
+        })
+      );
+      myPolicy.attachToUser(new User(stack, 'rUser'));
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Role(stack, 'rUser', {
+        assumedBy: new ServicePrincipal('sns.amazonaws.com'),
+      }).addToPolicy(
+        new PolicyStatement({
+          actions: ['s3:PutObject'],
+          resources: [new Bucket(stack, 'rBucket').arnForObjects('*')],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      const myGroup = new Group(stack, 'rGroup');
+      const myManagedPolicy = new ManagedPolicy(stack, 'rManagedPolicy');
+      myManagedPolicy.addStatements(
+        new PolicyStatement({
+          actions: ['s3:PutObject'],
+          resources: [new Bucket(stack, 'rBucket').arnForObjects('*')],
+        })
+      );
+      myGroup.addManagedPolicy(myManagedPolicy);
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('IAMNoManagedPolicies: IAM users, roles, and groups do not use AWS managed policies', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Role(nonCompliant, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-      managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('foo')],
+  describe('IAMNoManagedPolicies: IAM users, roles, and groups do not use AWS managed policies', () => {
+    const ruleId = 'IAMNoManagedPolicies';
+    test('Noncompliance 1', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+        managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('foo')],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoManagedPolicies:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Role(compliant, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-      managedPolicies: [
-        ManagedPolicy.fromManagedPolicyName(compliant, 'rPolicyWithRef', 'foo'),
-        ManagedPolicy.fromManagedPolicyArn(
-          compliant,
-          'rPolicyWithNumber',
-          'arn:aws:iam::123456789012:policy/teststack'
-        ),
-      ],
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoManagedPolicies:'),
-        }),
-      })
-    );
-  });
 
-  test('IAMNoWildcardPermissions: IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Role(nonCompliant, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-      inlinePolicies: {
-        foo: new PolicyDocument({
-          statements: [
-            new PolicyStatement({
-              actions: ['s3:PutObject'],
-              resources: ['*'],
-            }),
-          ],
-        }),
-      },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoWildcardPermissions:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Group(nonCompliant2, 'rGroup').addToPolicy(
-      new PolicyStatement({
-        actions: ['s3:*'],
-        resources: [new Bucket(nonCompliant2, 'rBucket').bucketArn],
-      })
-    );
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoWildcardPermissions:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const user = new User(compliant, 'rUser');
-    user.addToPolicy(
-      new PolicyStatement({
-        actions: ['s3:ListBucket'],
-        resources: [new Bucket(compliant, 'rBucket').bucketArn],
-      })
-    );
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMNoWildcardPermissions:'),
-        }),
-      })
-    );
-  });
-
-  test('IAMPolicyNoStatementsWithAdminAccess: IAM policies do not grant admin access', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new ManagedPolicy(nonCompliant, 'rManagedPolicy').addStatements(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['*'],
-        resources: ['arn*'],
-      })
-    );
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'IAMPolicyNoStatementsWithAdminAccess:'
+    test('Compliance', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+        managedPolicies: [
+          ManagedPolicy.fromManagedPolicyName(stack, 'rPolicyWithRef', 'foo'),
+          ManagedPolicy.fromManagedPolicyArn(
+            stack,
+            'rPolicyWithNumber',
+            'arn:aws:iam::123456789012:policy/describestack'
           ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Group(nonCompliant2, 'rGroup');
-    new ManagedPolicy(nonCompliant2, 'rManagedPolicy').addStatements(
-      new PolicyStatement({
-        actions: ['glacier:DescribeJob'],
-        resources: ['*'],
-      }),
-      new PolicyStatement({
-        actions: ['glacier:DescribeJob', '*'],
-        resources: ['*'],
-      })
-    );
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'IAMPolicyNoStatementsWithAdminAccess:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new Role(nonCompliant3, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-    }).addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        resources: ['*'],
-        actions: ['glacier:DescribeJob', '*'],
-      })
-    );
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'IAMPolicyNoStatementsWithAdminAccess:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new Role(nonCompliant4, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-    }).addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        resources: ['arn:aws:s3:::examplebucket', '*'],
-        actions: ['s3:CreateBucket', '*'],
-      })
-    );
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'IAMPolicyNoStatementsWithAdminAccess:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new ManagedPolicy(compliant, 'rManagedPolicy').addStatements(
-      new PolicyStatement({
-        actions: ['glacier:DescribeJob'],
-        resources: ['*'],
-      }),
-      new PolicyStatement({
-        actions: ['glacier:*'],
-        resources: ['*'],
-      }),
-      new PolicyStatement({
-        actions: ['s3:*'],
-        resources: ['arn:aws:s3:::examplebucket1/*'],
-      })
-    );
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'IAMPolicyNoStatementsWithAdminAccess:'
-          ),
-        }),
-      })
-    );
-  });
-
-  test('IAMPolicyNoStatementsWithFullAccess: IAM policies do not grant full access', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new ManagedPolicy(nonCompliant, 'rManagedPolicy').addStatements(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['*'],
-        resources: ['arn*'],
-      })
-    );
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMPolicyNoStatementsWithFullAccess:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Group(nonCompliant2, 'rGroup');
-    new ManagedPolicy(nonCompliant2, 'rManagedPolicy').addStatements(
-      new PolicyStatement({
-        actions: ['s3:*'],
-        resources: ['arn:aws:s3:::awsexamplebucket1'],
-      })
-    );
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMPolicyNoStatementsWithFullAccess:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new Role(nonCompliant3, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-    }).addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        resources: ['arn:aws:s3:::awsexamplebucket1'],
-        actions: ['s3:GetBucketAcl', '*'],
-      })
-    );
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMPolicyNoStatementsWithFullAccess:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new Role(nonCompliant4, 'rRole', {
-      assumedBy: new AccountRootPrincipal(),
-    }).addToPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        resources: ['arn:aws:s3:::awsexamplebucket1'],
-        actions: ['s3:GetBucketAcl', 's3:*'],
-      })
-    );
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMPolicyNoStatementsWithFullAccess:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new ManagedPolicy(compliant, 'rManagedPolicy').addStatements(
-      new PolicyStatement({
-        actions: ['glacier:DescribeJob'],
-        resources: ['*'],
-      }),
-      new PolicyStatement({
-        actions: ['s3:ListAllMyBuckets'],
-        resources: ['arn:aws:s3:::*'],
-      }),
-      new PolicyStatement({
-        actions: ['s3:ListAllMyBuckets'],
-        resources: ['*'],
-      })
-    );
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMPolicyNoStatementsWithFullAccess:'),
-        }),
-      })
-    );
-  });
-
-  test('IAMUserGroupMembership: IAM users are assigned to at least one group', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new User(nonCompliant, 'rUser');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMUserGroupMembership:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Group(compliant, 'rGroup').addUser(new User(compliant, 'rUser'));
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMUserGroupMembership:'),
-        }),
-      })
-    );
-  });
-
-  test('IAMUserNoPolicies: IAM policies are not attached at the user level', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Policy(nonCompliant, 'rPolicy', {
-      users: [new User(nonCompliant, 'rUser')],
-    }).addStatements(
-      new PolicyStatement({
-        actions: ['s3:PutObject'],
-        resources: [new Bucket(nonCompliant, 'rBucket').arnForObjects('*')],
-      })
-    );
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMUserNoPolicies:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new User(nonCompliant2, 'rUser', {
-      managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess'),
-      ],
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMUserNoPolicies:'),
-        }),
-      })
-    );
+  });
 
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const myGroup = new Group(compliant, 'rGroup');
-    myGroup.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess')
-    );
-    myGroup.addUser(new User(compliant, 'rUser'));
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('IAMUserNoPolicies:'),
+  describe('IAMNoWildcardPermissions: IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission', () => {
+    const ruleId = 'IAMNoWildcardPermissions';
+    test('Noncompliance 1', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:PutObject'],
+                resources: ['*'],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Group(stack, 'rGroup').addToPolicy(
+        new PolicyStatement({
+          actions: ['s3:*'],
+          resources: [new Bucket(stack, 'rBucket').bucketArn],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      const user = new User(stack, 'rUser');
+      user.addToPolicy(
+        new PolicyStatement({
+          actions: ['s3:ListBucket'],
+          resources: [new Bucket(stack, 'rBucket').bucketArn],
+        })
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('IAMPolicyNoStatementsWithAdminAccess: IAM policies do not grant admin access', () => {
+    const ruleId = 'IAMPolicyNoStatementsWithAdminAccess';
+    test('Noncompliance 1', () => {
+      new ManagedPolicy(stack, 'rManagedPolicy').addStatements(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['*'],
+          resources: ['arn*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Group(stack, 'rGroup');
+      new ManagedPolicy(stack, 'rManagedPolicy').addStatements(
+        new PolicyStatement({
+          actions: ['glacier:DescribeJob'],
+          resources: ['*'],
         }),
-      })
-    );
+        new PolicyStatement({
+          actions: ['glacier:DescribeJob', '*'],
+          resources: ['*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+      }).addToPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: ['*'],
+          actions: ['glacier:DescribeJob', '*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+      }).addToPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: ['arn:aws:s3:::examplebucket', '*'],
+          actions: ['s3:CreateBucket', '*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new ManagedPolicy(stack, 'rManagedPolicy').addStatements(
+        new PolicyStatement({
+          actions: ['glacier:DescribeJob'],
+          resources: ['*'],
+        }),
+        new PolicyStatement({
+          actions: ['glacier:*'],
+          resources: ['*'],
+        }),
+        new PolicyStatement({
+          actions: ['s3:*'],
+          resources: ['arn:aws:s3:::examplebucket1/*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('IAMPolicyNoStatementsWithFullAccess: IAM policies do not grant full access', () => {
+    const ruleId = 'IAMPolicyNoStatementsWithFullAccess';
+    test('Noncompliance 1', () => {
+      new ManagedPolicy(stack, 'rManagedPolicy').addStatements(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['*'],
+          resources: ['arn*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Group(stack, 'rGroup');
+      new ManagedPolicy(stack, 'rManagedPolicy').addStatements(
+        new PolicyStatement({
+          actions: ['s3:*'],
+          resources: ['arn:aws:s3:::awsexamplebucket1'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+      }).addToPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: ['arn:aws:s3:::awsexamplebucket1'],
+          actions: ['s3:GetBucketAcl', '*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+      }).addToPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: ['arn:aws:s3:::awsexamplebucket1'],
+          actions: ['s3:GetBucketAcl', 's3:*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new ManagedPolicy(stack, 'rManagedPolicy').addStatements(
+        new PolicyStatement({
+          actions: ['glacier:DescribeJob'],
+          resources: ['*'],
+        }),
+        new PolicyStatement({
+          actions: ['s3:ListAllMyBuckets'],
+          resources: ['arn:aws:s3:::*'],
+        }),
+        new PolicyStatement({
+          actions: ['s3:ListAllMyBuckets'],
+          resources: ['*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('IAMUserGroupMembership: IAM users are assigned to at least one group', () => {
+    const ruleId = 'IAMUserGroupMembership';
+    test('Noncompliance 1', () => {
+      new User(stack, 'rUser');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Group(stack, 'rGroup').addUser(new User(stack, 'rUser'));
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('IAMUserNoPolicies: IAM policies are not attached at the user level', () => {
+    const ruleId = 'IAMUserNoPolicies';
+    test('Noncompliance 1', () => {
+      new Policy(stack, 'rPolicy', {
+        users: [new User(stack, 'rUser')],
+      }).addStatements(
+        new PolicyStatement({
+          actions: ['s3:PutObject'],
+          resources: [new Bucket(stack, 'rBucket').arnForObjects('*')],
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new User(stack, 'rUser', {
+        managedPolicies: [
+          ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess'),
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      const myGroup = new Group(stack, 'rGroup');
+      myGroup.addManagedPolicy(
+        ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess')
+      );
+      myGroup.addUser(new User(stack, 'rUser'));
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 });

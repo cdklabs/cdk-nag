@@ -2,7 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
 import { RestApi, AuthorizationType } from '@aws-cdk/aws-apigateway';
 import {
   UserPool,
@@ -10,8 +9,7 @@ import {
   CfnUserPool,
   CfnIdentityPool,
 } from '@aws-cdk/aws-cognito';
-import { Aspects, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   CognitoUserPoolAPIGWAuthorizer,
   CognitoUserPoolAdvancedSecurityModeEnforced,
@@ -19,231 +17,119 @@ import {
   CognitoUserPoolNoUnauthenticatedLogins,
   CognitoUserPoolStrongPasswordPolicy,
 } from '../../src/rules/cognito';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        CognitoUserPoolAPIGWAuthorizer,
-        CognitoUserPoolAdvancedSecurityModeEnforced,
-        CognitoUserPoolMFA,
-        CognitoUserPoolNoUnauthenticatedLogins,
-        CognitoUserPoolStrongPasswordPolicy,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  CognitoUserPoolAPIGWAuthorizer,
+  CognitoUserPoolAdvancedSecurityModeEnforced,
+  CognitoUserPoolMFA,
+  CognitoUserPoolNoUnauthenticatedLogins,
+  CognitoUserPoolStrongPasswordPolicy,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon Cognito', () => {
-  test('CognitoUserPoolStrongPasswordPolicy: Cognito user pools have password policies that minimally specify a password length of at least 8 characters, as well as requiring uppercase, numeric, and special characters ', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new UserPool(nonCompliant, 'rUserPool');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolStrongPasswordPolicy:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new UserPool(nonCompliant2, 'rUserPool', {
-      passwordPolicy: {
-        minLength: 8,
-        requireUppercase: true,
-        requireDigits: true,
-      },
+  describe('CognitoUserPoolStrongPasswordPolicy: Cognito user pools have password policies that minimally specify a password length of at least 8 characters, as well as requiring uppercase, numeric, and special characters ', () => {
+    const ruleId = 'CognitoUserPoolStrongPasswordPolicy';
+    test('Noncompliance 1', () => {
+      new UserPool(stack, 'rUserPool');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolStrongPasswordPolicy:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new UserPool(compliant, 'rUserPool', {
-      passwordPolicy: {
-        minLength: 8,
-        requireUppercase: true,
-        requireDigits: true,
-        requireSymbols: true,
-      },
+    test('Noncompliance 2', () => {
+      new UserPool(stack, 'rUserPool', {
+        passwordPolicy: {
+          minLength: 8,
+          requireUppercase: true,
+          requireDigits: true,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolStrongPasswordPolicy:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new UserPool(stack, 'rUserPool', {
+        passwordPolicy: {
+          minLength: 8,
+          requireUppercase: true,
+          requireDigits: true,
+          requireSymbols: true,
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CognitoUserPoolMFA: Cognito user pools require MFA', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new UserPool(nonCompliant, 'rUserPool');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolMFA:'),
-        }),
-      })
-    );
+  describe('CognitoUserPoolMFA: Cognito user pools require MFA', () => {
+    const ruleId = 'CognitoUserPoolMFA';
+    test('Noncompliance 1', () => {
+      new UserPool(stack, 'rUserPool');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new UserPool(stack, 'rUserPool', { mfa: Mfa.OPTIONAL });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
 
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new UserPool(nonCompliant2, 'rUserPool', { mfa: Mfa.OPTIONAL });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolMFA:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new UserPool(compliant, 'rUserPool', { mfa: Mfa.REQUIRED });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolMFA:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new UserPool(stack, 'rUserPool', { mfa: Mfa.REQUIRED });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CognitoUserPoolAdvancedSecurityModeEnforced: Cognito user pools have AdvancedSecurityMode set to ENFORCED', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new UserPool(nonCompliant, 'rUserPool');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CognitoUserPoolAdvancedSecurityModeEnforced:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnUserPool(nonCompliant2, 'rUserPool', {
-      userPoolAddOns: { advancedSecurityMode: 'OFF' },
+  describe('CognitoUserPoolAdvancedSecurityModeEnforced: Cognito user pools have AdvancedSecurityMode set to ENFORCED', () => {
+    const ruleId = 'CognitoUserPoolAdvancedSecurityModeEnforced';
+    test('Noncompliance 1', () => {
+      new UserPool(stack, 'rUserPool');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CognitoUserPoolAdvancedSecurityModeEnforced:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnUserPool(compliant, 'rUserPool', {
-      userPoolAddOns: { advancedSecurityMode: 'ENFORCED' },
+    test('Noncompliance 2', () => {
+      new CfnUserPool(stack, 'rUserPool', {
+        userPoolAddOns: { advancedSecurityMode: 'OFF' },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CognitoUserPoolAdvancedSecurityModeEnforced:'
-          ),
-        }),
-      })
-    );
+
+    test('Compliance', () => {
+      new CfnUserPool(stack, 'rUserPool', {
+        userPoolAddOns: { advancedSecurityMode: 'ENFORCED' },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CognitoUserPoolAPIGWAuthorizer: Rest API methods use Cognito User Pool Authorizers', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new RestApi(nonCompliant, 'rRest').root.addMethod('ANY');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolAPIGWAuthorizer:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new RestApi(compliant, 'rRest').root.addMethod('ANY', undefined, {
-      authorizationType: AuthorizationType.COGNITO,
+  describe('CognitoUserPoolAPIGWAuthorizer: Rest API methods use Cognito User Pool Authorizers', () => {
+    const ruleId = 'CognitoUserPoolAPIGWAuthorizer';
+    test('Noncompliance 1', () => {
+      new RestApi(stack, 'rRest').root.addMethod('ANY');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CognitoUserPoolAPIGWAuthorizer:'),
-        }),
-      })
-    );
+
+    test('Compliance', () => {
+      new RestApi(stack, 'rRest').root.addMethod('ANY', undefined, {
+        authorizationType: AuthorizationType.COGNITO,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CognitoUserPoolNoUnauthenticatedLogins: Cognito identity pools do not allow for unauthenticated logins without a valid reason', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnIdentityPool(nonCompliant, 'rIdentityPool', {
-      allowUnauthenticatedIdentities: true,
+  describe('CognitoUserPoolNoUnauthenticatedLogins: Cognito identity pools do not allow for unauthenticated logins without a valid reason', () => {
+    const ruleId = 'CognitoUserPoolNoUnauthenticatedLogins';
+    test('Noncompliance 1', () => {
+      new CfnIdentityPool(stack, 'rIdentityPool', {
+        allowUnauthenticatedIdentities: true,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CognitoUserPoolNoUnauthenticatedLogins:'
-          ),
-        }),
-      })
-    );
 
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnIdentityPool(compliant, 'rIdentityPool', {
-      allowUnauthenticatedIdentities: false,
+    test('Compliance', () => {
+      new CfnIdentityPool(stack, 'rIdentityPool', {
+        allowUnauthenticatedIdentities: false,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CognitoUserPoolNoUnauthenticatedLogins:'
-          ),
-        }),
-      })
-    );
   });
 });
