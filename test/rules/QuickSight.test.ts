@@ -2,65 +2,36 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDataSource } from 'aws-cdk-lib/aws-quicksight';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { QuicksightSSLConnections } from '../../src/rules/quicksight';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [QuicksightSSLConnections];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([QuicksightSSLConnections]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon QuickSight', () => {
-  test('QuicksightSSLConnections: Quicksight data sources connections are configured to use SSL', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDataSource(nonCompliant, 'rDashboard', {
-      sslProperties: { disableSsl: true },
+  describe('QuicksightSSLConnections: Quicksight data sources connections are configured to use SSL', () => {
+    const ruleId = 'QuicksightSSLConnections';
+    test('Noncompliance 1', () => {
+      new CfnDataSource(stack, 'rDashboard', {
+        sslProperties: { disableSsl: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('QuicksightSSLConnections:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDataSource(compliant, 'rDashboard', {
-      sslProperties: { disableSsl: false },
+    test('Compliance', () => {
+      new CfnDataSource(stack, 'rDashboard', {
+        sslProperties: { disableSsl: false },
+      });
+      new CfnDataSource(stack, 'rDashboard2', {
+        sslProperties: {},
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnDataSource(compliant, 'rDashboard2', {
-      sslProperties: {},
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('QuicksightSSLConnections:'),
-        }),
-      })
-    );
   });
 });

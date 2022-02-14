@@ -2,201 +2,118 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
   CfnEndpointConfig,
   CfnNotebookInstance,
 } from 'aws-cdk-lib/aws-sagemaker';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   SageMakerEndpointConfigurationKMSKeyConfigured,
   SageMakerNotebookInVPC,
   SageMakerNotebookInstanceKMSKeyConfigured,
   SageMakerNotebookNoDirectInternetAccess,
 } from '../../src/rules/sagemaker';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        SageMakerEndpointConfigurationKMSKeyConfigured,
-        SageMakerNotebookInVPC,
-        SageMakerNotebookInstanceKMSKeyConfigured,
-        SageMakerNotebookNoDirectInternetAccess,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  SageMakerEndpointConfigurationKMSKeyConfigured,
+  SageMakerNotebookInVPC,
+  SageMakerNotebookInstanceKMSKeyConfigured,
+  SageMakerNotebookNoDirectInternetAccess,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon SageMaker', () => {
-  test('SageMakerEndpointConfigurationKMSKeyConfigured: SageMaker endpoints utilize a KMS key', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnEndpointConfig(nonCompliant, 'badendpoint', {
-      productionVariants: [],
+  describe('SageMakerEndpointConfigurationKMSKeyConfigured: SageMaker endpoints utilize a KMS key', () => {
+    const ruleId = 'SageMakerEndpointConfigurationKMSKeyConfigured';
+    test('Noncompliance 1', () => {
+      new CfnEndpointConfig(stack, 'badendpoint', {
+        productionVariants: [],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'SageMakerEndpointConfigurationKMSKeyConfigured:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnEndpointConfig(compliant, 'badendpoint', {
-      productionVariants: [],
-      kmsKeyId: 'somecoolIDkey',
+    test('Compliance', () => {
+      new CfnEndpointConfig(stack, 'badendpoint', {
+        productionVariants: [],
+        kmsKeyId: 'somecoolIDkey',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'SageMakerEndpointConfigurationKMSKeyConfigured:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('SageMakerNotebookInVPC: SageMaker notebook instances are provisioned inside a VPC', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnNotebookInstance(nonCompliant, 'rNotebook', {
-      instanceType: 'ml.t3.xlarge',
-      roleArn: new Role(nonCompliant, 'rNotebookRole', {
-        assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
-      }).roleArn,
+  describe('SageMakerNotebookInVPC: SageMaker notebook instances are provisioned inside a VPC', () => {
+    const ruleId = 'SageMakerNotebookInVPC';
+    test('Noncompliance 1', () => {
+      new CfnNotebookInstance(stack, 'rNotebook', {
+        instanceType: 'ml.t3.xlarge',
+        roleArn: new Role(stack, 'rNotebookRole', {
+          assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+        }).roleArn,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('SageMakerNotebookInVPC:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnNotebookInstance(compliant, 'rNotebook', {
-      instanceType: 'ml.t3.xlarge',
-      roleArn: new Role(compliant, 'rNotebookRole', {
-        assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
-      }).roleArn,
-      subnetId: 'subnet-0bb1c79de3EXAMPLE',
+    test('Compliance', () => {
+      new CfnNotebookInstance(stack, 'rNotebook', {
+        instanceType: 'ml.t3.xlarge',
+        roleArn: new Role(stack, 'rNotebookRole', {
+          assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+        }).roleArn,
+        subnetId: 'subnet-0bb1c79de3EXAMPLE',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('SageMakerNotebookInVPC:'),
-        }),
-      })
-    );
   });
 
-  test('SageMakerNotebookInstanceKMSKeyConfigured: SageMaker notebook instances utilize KMS keys for encryption at rest', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnNotebookInstance(nonCompliant, 'rNotebook', {
-      instanceType: 'ml.t3.xlarge',
-      roleArn: new Role(nonCompliant, 'rNotebookRole', {
-        assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
-      }).roleArn,
+  describe('SageMakerNotebookInstanceKMSKeyConfigured: SageMaker notebook instances utilize KMS keys for encryption at rest', () => {
+    const ruleId = 'SageMakerNotebookInstanceKMSKeyConfigured';
+    test('Noncompliance 1', () => {
+      new CfnNotebookInstance(stack, 'rNotebook', {
+        instanceType: 'ml.t3.xlarge',
+        roleArn: new Role(stack, 'rNotebookRole', {
+          assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+        }).roleArn,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'SageMakerNotebookInstanceKMSKeyConfigured:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnNotebookInstance(compliant, 'rNotebook', {
-      instanceType: 'ml.t3.xlarge',
-      roleArn: new Role(compliant, 'rNotebookRole', {
-        assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
-      }).roleArn,
-      kmsKeyId: '1234abcd-12ab-34cd-56ef-1234567890ab',
+    test('Compliance', () => {
+      new CfnNotebookInstance(stack, 'rNotebook', {
+        instanceType: 'ml.t3.xlarge',
+        roleArn: new Role(stack, 'rNotebookRole', {
+          assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+        }).roleArn,
+        kmsKeyId: '1234abcd-12ab-34cd-56ef-1234567890ab',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'SageMakerNotebookInstanceKMSKeyConfigured:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('SageMakerNotebookNoDirectInternetAccess: SageMaker notebook instances have direct internet access disabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnNotebookInstance(nonCompliant, 'rNotebook', {
-      instanceType: 'ml.t3.xlarge',
-      roleArn: new Role(nonCompliant, 'rNotebookRole', {
-        assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
-      }).roleArn,
+  describe('SageMakerNotebookNoDirectInternetAccess: SageMaker notebook instances have direct internet access disabled', () => {
+    const ruleId = 'SageMakerNotebookNoDirectInternetAccess';
+    test('Noncompliance 1', () => {
+      new CfnNotebookInstance(stack, 'rNotebook', {
+        instanceType: 'ml.t3.xlarge',
+        roleArn: new Role(stack, 'rNotebookRole', {
+          assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+        }).roleArn,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'SageMakerNotebookNoDirectInternetAccess:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnNotebookInstance(compliant, 'rNotebook', {
-      instanceType: 'ml.t3.xlarge',
-      roleArn: new Role(compliant, 'rNotebookRole', {
-        assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
-      }).roleArn,
-      subnetId: 'subnet-0bb1c79de3EXAMPLE',
-      directInternetAccess: 'Disabled',
+    test('Compliance', () => {
+      new CfnNotebookInstance(stack, 'rNotebook', {
+        instanceType: 'ml.t3.xlarge',
+        roleArn: new Role(stack, 'rNotebookRole', {
+          assumedBy: new ServicePrincipal('sagemaker.amazonaws.com'),
+        }).roleArn,
+        subnetId: 'subnet-0bb1c79de3EXAMPLE',
+        directInternetAccess: 'Disabled',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'SageMakerNotebookNoDirectInternetAccess:'
-          ),
-        }),
-      })
-    );
   });
 });

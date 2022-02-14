@@ -58,6 +58,7 @@ import { ECROpenAccess } from '../rules/ecr';
 import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,
+  ECSTaskDefinitionNoEnvironmentVariables,
 } from '../rules/ecs';
 import { EFSEncrypted } from '../rules/efs';
 import {
@@ -291,6 +292,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Removing * principals in an ECR Repository helps protect against unauthorized access.',
       level: NagMessageLevel.ERROR,
       rule: ECROpenAccess,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'ECS2',
+      info: 'The ECS Task Definition includes a container definition that directly specifies environment variables.',
+      explanation:
+        'Use secrets to inject environment variables during container startup from AWS Systems Manager Parameter Store or Secrets Manager instead of directly specifying plaintext environment variables. Updates to direct environment variables require operators to change task definitions and perform new deployments.',
+      level: NagMessageLevel.ERROR,
+      rule: ECSTaskDefinitionNoEnvironmentVariables,
       node: node,
     });
     this.applyRule({

@@ -2,63 +2,34 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { DMSReplicationNotPublic } from '../../src/rules/dms';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [DMSReplicationNotPublic];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([DMSReplicationNotPublic]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('AWS Database Migration Service (AWS DMS)', () => {
-  test('DMSReplicationNotPublic: DMS replication instances are not public', () => {
-    const positive = new Stack();
-    Aspects.of(positive).add(new TestPack());
-    new CfnReplicationInstance(positive, 'rInstance', {
-      replicationInstanceClass: 'dms.t2.micro',
+  describe('DMSReplicationNotPublic: DMS replication instances are not public', () => {
+    const ruleId = 'DMSReplicationNotPublic';
+    test('Noncompliance 1', () => {
+      new CfnReplicationInstance(stack, 'rInstance', {
+        replicationInstanceClass: 'dms.t2.micro',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(positive).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DMSReplicationNotPublic:'),
-        }),
-      })
-    );
-
-    const negative = new Stack();
-    Aspects.of(negative).add(new TestPack());
-    new CfnReplicationInstance(negative, 'rInstance', {
-      replicationInstanceClass: 'dms.t2.micro',
-      publiclyAccessible: false,
+    test('Compliance', () => {
+      new CfnReplicationInstance(stack, 'rInstance', {
+        replicationInstanceClass: 'dms.t2.micro',
+        publiclyAccessible: false,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(negative).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DMSReplicationNotPublic:'),
-        }),
-      })
-    );
   });
 });

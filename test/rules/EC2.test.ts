@@ -2,8 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack, Size } from 'aws-cdk-lib';
 import { AutoScalingGroup, Monitoring } from 'aws-cdk-lib/aws-autoscaling';
 import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import {
@@ -22,8 +20,7 @@ import {
   Volume,
 } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack, Size } from 'aws-cdk-lib/core';
 import {
   EC2EBSInBackupPlan,
   EC2EBSOptimizedInstance,
@@ -38,782 +35,504 @@ import {
   EC2RestrictedSSH,
   EC2SecurityGroupDescription,
 } from '../../src/rules/ec2';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        EC2EBSInBackupPlan,
-        EC2EBSOptimizedInstance,
-        EC2EBSVolumeEncrypted,
-        EC2InstanceDetailedMonitoringEnabled,
-        EC2InstanceNoPublicIp,
-        EC2InstanceProfileAttached,
-        EC2InstanceTerminationProtection,
-        EC2InstancesInVPC,
-        EC2RestrictedCommonPorts,
-        EC2RestrictedInbound,
-        EC2RestrictedSSH,
-        EC2SecurityGroupDescription,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  EC2EBSInBackupPlan,
+  EC2EBSOptimizedInstance,
+  EC2EBSVolumeEncrypted,
+  EC2InstanceDetailedMonitoringEnabled,
+  EC2InstanceNoPublicIp,
+  EC2InstanceProfileAttached,
+  EC2InstanceTerminationProtection,
+  EC2InstancesInVPC,
+  EC2RestrictedCommonPorts,
+  EC2RestrictedInbound,
+  EC2RestrictedSSH,
+  EC2SecurityGroupDescription,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
-  test('EC2EBSInBackupPlan: EBS volumes are part of AWS Backup plan(s)', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Volume(nonCompliant, 'rVolume', {
-      availabilityZone: 'us-east-1a',
-      size: Size.gibibytes(42),
+  describe('EC2EBSInBackupPlan: EBS volumes are part of AWS Backup plan(s)', () => {
+    const ruleId = 'EC2EBSInBackupPlan';
+    test('Noncompliance 1', () => {
+      new Volume(stack, 'rVolume', {
+        availabilityZone: 'us-east-1a',
+        size: Size.gibibytes(42),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSInBackupPlan:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Volume(nonCompliant2, 'rVolume', {
-      availabilityZone: 'us-east-1a',
-      size: Size.gibibytes(42),
+    test('Noncompliance 2', () => {
+      new Volume(stack, 'rVolume', {
+        availabilityZone: 'us-east-1a',
+        size: Size.gibibytes(42),
+      });
+      BackupPlan.dailyWeeklyMonthly5YearRetention(stack, 'rPlan').addSelection(
+        'Selection',
+        {
+          resources: [
+            BackupResource.fromArn(
+              'arn:aws:ec2:us-east-1:123456789012:volume/' +
+                new Volume(stack, 'rVolume2', {
+                  availabilityZone: 'us-east-1a',
+                  size: Size.gibibytes(42),
+                }).volumeId
+            ),
+          ],
+        }
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    BackupPlan.dailyWeeklyMonthly5YearRetention(
-      nonCompliant2,
-      'rPlan'
-    ).addSelection('Selection', {
-      resources: [
-        BackupResource.fromArn(
-          'arn:aws:ec2:us-east-1:123456789012:volume/' +
-            new Volume(nonCompliant2, 'rVolume2', {
-              availabilityZone: 'us-east-1a',
-              size: Size.gibibytes(42),
-            }).volumeId
-        ),
-      ],
+    test('Compliance', () => {
+      BackupPlan.dailyWeeklyMonthly5YearRetention(stack, 'rPlan').addSelection(
+        'Selection',
+        {
+          resources: [
+            BackupResource.fromArn(
+              'arn:aws:ec2:us-east-1:123456789012:volume/' +
+                new Volume(stack, 'rVolume', {
+                  availabilityZone: 'us-east-1a',
+                  size: Size.gibibytes(42),
+                }).volumeId
+            ),
+          ],
+        }
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSInBackupPlan:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    BackupPlan.dailyWeeklyMonthly5YearRetention(
-      compliant,
-      'rPlan'
-    ).addSelection('Selection', {
-      resources: [
-        BackupResource.fromArn(
-          'arn:aws:ec2:us-east-1:123456789012:volume/' +
-            new Volume(compliant, 'rVolume', {
-              availabilityZone: 'us-east-1a',
-              size: Size.gibibytes(42),
-            }).volumeId
-        ),
-      ],
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSInBackupPlan:'),
-        }),
-      })
-    );
   });
 
-  test('EC2EBSOptimizedInstance: EC2 instance types that support EBS optimization and are not EBS optimized by default have EBS optimization enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Instance(nonCompliant, 'rInstance', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
-      machineImage: MachineImage.latestAmazonLinux(),
+  describe('EC2EBSOptimizedInstance: EC2 instance types that support EBS optimization and are not EBS optimized by default have EBS optimization enabled', () => {
+    const ruleId = 'EC2EBSOptimizedInstance';
+    test('Noncompliance 1', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSOptimizedInstance:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Instance(compliant, 'rInstance', {
-      vpc: new Vpc(compliant, 'rVpc'),
-      instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
-      machineImage: MachineImage.latestAmazonLinux(),
-    }).instance.ebsOptimized = true;
-    new Instance(compliant, 'rInstance2', {
-      vpc: new Vpc(compliant, 'rVpc2'),
-      instanceType: InstanceType.of(InstanceClass.A1, InstanceSize.MEDIUM),
-      machineImage: MachineImage.latestAmazonLinux(),
+    test('Compliance', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
+        machineImage: MachineImage.latestAmazonLinux(),
+      }).instance.ebsOptimized = true;
+      new Instance(stack, 'rInstance2', {
+        vpc: new Vpc(stack, 'rVpc2'),
+        instanceType: InstanceType.of(InstanceClass.A1, InstanceSize.MEDIUM),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      new CfnInstance(stack, 'rInstance3');
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnInstance(compliant, 'rInstance3');
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSOptimizedInstance:'),
-        }),
-      })
-    );
   });
 
-  test('EC2InstanceDetailedMonitoringEnabled: EC2 instances have detailed monitoring enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Instance(nonCompliant, 'rInstance', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
+  describe('EC2InstanceDetailedMonitoringEnabled: EC2 instances have detailed monitoring enabled', () => {
+    const ruleId = 'EC2InstanceDetailedMonitoringEnabled';
+    test('Noncompliance 1', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'EC2InstanceDetailedMonitoringEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new AutoScalingGroup(nonCompliant2, 'rAsg', {
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
-      instanceMonitoring: Monitoring.BASIC,
+    test('Noncompliance 1', () => {
+      new AutoScalingGroup(stack, 'rAsg', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+        instanceMonitoring: Monitoring.BASIC,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'EC2InstanceDetailedMonitoringEnabled:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Instance(compliant, 'rInstance', {
-      vpc: new Vpc(compliant, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
-    }).instance.monitoring = true;
-
-    new AutoScalingGroup(compliant, 'rAsg', {
-      vpc: new Vpc(compliant, 'rVpc2'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
-      instanceMonitoring: Monitoring.DETAILED,
+    test('Compliance', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+      }).instance.monitoring = true;
+      new AutoScalingGroup(stack, 'rAsg', {
+        vpc: new Vpc(stack, 'rVpc2'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+        instanceMonitoring: Monitoring.DETAILED,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'EC2InstanceDetailedMonitoringEnabled:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('EC2InstanceNoPublicIp: EC2 instances do not have public IPs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnInstance(nonCompliant, 'rInstance', {
-      imageId: 'nonCompliantInstance',
-      networkInterfaces: [
-        {
-          associatePublicIpAddress: true,
-          deviceIndex: '0',
-        },
-      ],
+  describe('EC2InstanceNoPublicIp: EC2 instances do not have public IPs', () => {
+    const ruleId = 'EC2InstanceNoPublicIp';
+    test('Noncompliance 1', () => {
+      new CfnInstance(stack, 'rInstance', {
+        imageId: 'nonCompliantInstance',
+        networkInterfaces: [
+          {
+            associatePublicIpAddress: true,
+            deviceIndex: '0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstanceNoPublicIp:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnInstance(compliant, 'rInstance1', {
-      imageId: 'compliantInstance',
-      networkInterfaces: [
-        {
-          associatePublicIpAddress: false,
-          deviceIndex: '0',
-        },
-      ],
+    test('Compliance', () => {
+      new CfnInstance(stack, 'rInstance1', {
+        imageId: 'compliantInstance',
+        networkInterfaces: [
+          {
+            associatePublicIpAddress: false,
+            deviceIndex: '0',
+          },
+        ],
+      });
+      new CfnInstance(stack, 'rInstance2', {
+        imageId: 'compliantInstance',
+        networkInterfaces: [],
+      });
+      new Instance(stack, 'rInstance3', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnInstance(compliant, 'rInstance2', {
-      imageId: 'compliantInstance',
-      networkInterfaces: [],
-    });
-    new Instance(compliant, 'rInstance3', {
-      vpc: new Vpc(compliant, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstanceNoPublicIp:'),
-        }),
-      })
-    );
   });
 
-  test('EC2InstanceProfileAttached: EC2 instances have an instance profile attached', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnInstance(nonCompliant, 'rInstance');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstanceProfileAttached:'),
-        }),
-      })
-    );
+  describe('EC2InstanceProfileAttached: EC2 instances have an instance profile attached', () => {
+    const ruleId = 'EC2InstanceProfileAttached';
+    test('Noncompliance 1', () => {
+      new CfnInstance(stack, 'rInstance');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
 
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Instance(compliant, 'rInstance', {
-      vpc: new Vpc(compliant, 'rVpc'),
-      instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
-      machineImage: MachineImage.latestAmazonLinux(),
-    }).addToRolePolicy(
-      new PolicyStatement({
-        actions: ['s3:ListAllMyBuckets'],
-        resources: ['arn:aws:s3:::*'],
-      })
-    );
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstanceProfileAttached:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
+        machineImage: MachineImage.latestAmazonLinux(),
+      }).addToRolePolicy(
+        new PolicyStatement({
+          actions: ['s3:ListAllMyBuckets'],
+          resources: ['arn:aws:s3:::*'],
+        })
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('EC2InstanceTerminationProtection: EC2 Instances outside of an ASG have Termination Protection enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Instance(nonCompliant, 'rInstance', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
+  describe('EC2InstanceTerminationProtection: EC2 Instances outside of an ASG have Termination Protection enabled', () => {
+    const ruleId = 'EC2InstanceTerminationProtection';
+    test('Noncompliance 1', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstanceTerminationProtection:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const instance = new Instance(compliant, 'rInstance', {
-      vpc: new Vpc(compliant, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
+
+    test('Compliance', () => {
+      const instance = new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      instance.instance.disableApiTermination = true;
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    instance.instance.disableApiTermination = true;
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstanceTerminationProtection:'),
-        }),
-      })
-    );
   });
 
-  test('EC2InstancesInVPC: EC2 instances are created within VPCs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnInstance(nonCompliant, 'rInstance1', {
-      imageId: 'nonCompliantInstance',
+  describe('EC2InstancesInVPC: EC2 instances are created within VPCs', () => {
+    const ruleId = 'EC2InstancesInVPC';
+    test('Noncompliance 1', () => {
+      new CfnInstance(stack, 'rInstance1', {
+        imageId: 'nonCompliantInstance',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstancesInVPC:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnInstance(compliant, 'rInstance2', {
-      imageId: 'compliantInstance',
-      subnetId: 'TestSubnet',
+    test('Compliance', () => {
+      new CfnInstance(stack, 'rInstance2', {
+        imageId: 'compliantInstance',
+        subnetId: 'describeSubnet',
+      });
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux(),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new Instance(nonCompliant, 'rInstance', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      instanceType: new InstanceType(InstanceClass.T3),
-      machineImage: MachineImage.latestAmazonLinux(),
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2InstancesInVPC:'),
-        }),
-      })
-    );
   });
 
-  test('EC2RestrictedCommonPorts: EC2 instances have all common TCP ports restricted for ingress IPv4 traffic', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnSecurityGroup(nonCompliant, 'rSecurityGroup', {
-      groupDescription: 'security group tcp port 20 open',
-      securityGroupIngress: [
-        {
-          fromPort: 20,
-          ipProtocol: 'tcp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
+  describe('EC2RestrictedCommonPorts: EC2 instances have all common TCP ports restricted for ingress IPv4 traffic', () => {
+    const ruleId = 'EC2RestrictedCommonPorts';
+    test('Noncompliance 1', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group tcp port 20 open',
+        securityGroupIngress: [
+          {
+            fromPort: 20,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedCommonPorts:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnSecurityGroup(nonCompliant2, 'rSecurityGroup', {
-      groupDescription: 'security group with SSH unrestricted',
-      securityGroupIngress: [
-        {
-          fromPort: 21,
-          ipProtocol: 'tcp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
+    test('Noncompliance 2', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group with SSH unrestricted',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedCommonPorts:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new SecurityGroup(nonCompliant3, 'rSg', {
-      vpc: new Vpc(nonCompliant3, 'rVpc'),
-    }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedCommonPorts:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new CfnSecurityGroup(nonCompliant4, 'rSecurityGroup', {
-      groupDescription: 'security group with port 21 open',
-      securityGroupIngress: [
-        {
-          fromPort: 1,
-          toPort: 10000,
-          ipProtocol: 'tcp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
+    test('Noncompliance 3', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+      }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedCommonPorts:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnSecurityGroup(compliant, 'rSecurityGroup1', {
-      groupDescription: 'security group with no rules',
-      securityGroupIngress: [],
+    test('Noncompliance 4', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group with port 21 open',
+        securityGroupIngress: [
+          {
+            fromPort: 1,
+            toPort: 10000,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnSecurityGroup(compliant, 'rSecurityGroup2', {
-      groupDescription:
-        'security group with SSH ingress allowed for a specific IP address',
-      securityGroupIngress: [
-        {
-          fromPort: 21,
-          ipProtocol: 'tcp',
-          cidrIp: '72.21.210.165',
-        },
-      ],
+    test('Compliance', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup1', {
+        groupDescription: 'security group with no rules',
+        securityGroupIngress: [],
+      });
+      new CfnSecurityGroup(stack, 'rSecurityGroup2', {
+        groupDescription:
+          'security group with SSH ingress allowed for a specific IP address',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'tcp',
+            cidrIp: '72.21.210.165',
+          },
+        ],
+      });
+      new CfnSecurityGroup(stack, 'rSecurityGroup3', {
+        groupDescription:
+          'security group with an open-world ingress rule for HTTP traffic',
+        securityGroupIngress: [
+          {
+            fromPort: 80,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      new CfnSecurityGroup(stack, 'rSecurityGroup4', {
+        groupDescription: 'security group allowing unrestricted udp traffic',
+        securityGroupIngress: [
+          {
+            fromPort: 21,
+            ipProtocol: 'udp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnSecurityGroup(compliant, 'rSecurityGroup3', {
-      groupDescription:
-        'security group with an open-world ingress rule for HTTP traffic',
-      securityGroupIngress: [
-        {
-          fromPort: 80,
-          ipProtocol: 'tcp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
-    });
-    new CfnSecurityGroup(compliant, 'rSecurityGroup4', {
-      groupDescription: 'security group allowing unrestricted udp traffic',
-      securityGroupIngress: [
-        {
-          fromPort: 21,
-          ipProtocol: 'udp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
-    });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedCommonPorts:'),
-        }),
-      })
-    );
   });
 
-  test('EC2RestrictedInbound: EC2 security groups do not allow for 0.0.0.0/0 or ::/0 inbound access', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new SecurityGroup(nonCompliant, 'rSg', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-    }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedInbound:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnSecurityGroupIngress(nonCompliant2, 'rIngress', {
-      ipProtocol: 'tcp',
-      cidrIp: '0.0.0.0/0',
+  describe('EC2RestrictedInbound: EC2 security groups do not allow for 0.0.0.0/0 or ::/0 inbound access', () => {
+    const ruleId = 'EC2RestrictedInbound';
+    test('Noncompliance 1', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+      }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedInbound:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new CfnSecurityGroupIngress(nonCompliant3, 'rIngress', {
-      ipProtocol: 'tcp',
-      cidrIpv6: 'ff:ff:ff:ff:ff:ff:ff:ff/0',
+    test('Noncompliance 2', () => {
+      new CfnSecurityGroupIngress(stack, 'rIngress', {
+        ipProtocol: 'tcp',
+        cidrIp: '0.0.0.0/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedInbound:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new SecurityGroup(nonCompliant4, 'rSg', {
-      vpc: new Vpc(nonCompliant4, 'rVpc'),
-    }).addIngressRule(Peer.anyIpv6(), Port.allTraffic());
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedInbound:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new SecurityGroup(compliant, 'rSg', {
-      vpc: new Vpc(compliant, 'rVpc'),
-    }).addIngressRule(Peer.ipv4('1.2.3.4/32'), Port.allTraffic());
-
-    new CfnSecurityGroupIngress(compliant, 'rIngress', {
-      ipProtocol: 'tcp',
-      cidrIp: '1.2.3.4/32',
+    test('Noncompliance 3', () => {
+      new CfnSecurityGroupIngress(stack, 'rIngress', {
+        ipProtocol: 'tcp',
+        cidrIpv6: 'ff:ff:ff:ff:ff:ff:ff:ff/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnSecurityGroupIngress(compliant, 'rIngress2', {
-      ipProtocol: 'tcp',
-      cidrIpv6: '1234:5678:9abc:def1:2345:6789:abcd:ef12/128',
+    test('Noncompliance 4', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+      }).addIngressRule(Peer.anyIpv6(), Port.allTraffic());
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new SecurityGroup(compliant, 'rSg2', {
-      vpc: new Vpc(compliant, 'rVpc2'),
+    test('Compliance', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+      }).addIngressRule(Peer.ipv4('1.2.3.4/32'), Port.allTraffic());
+      new CfnSecurityGroupIngress(stack, 'rIngress', {
+        ipProtocol: 'tcp',
+        cidrIp: '1.2.3.4/32',
+      });
+      new CfnSecurityGroupIngress(stack, 'rIngress2', {
+        ipProtocol: 'tcp',
+        cidrIpv6: '1234:5678:9abc:def1:2345:6789:abcd:ef12/128',
+      });
+      new SecurityGroup(stack, 'rSg2', {
+        vpc: new Vpc(stack, 'rVpc2'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedInbound:'),
-        }),
-      })
-    );
   });
 
-  test('EC2RestrictedSSH: Security Groups do not allow for unrestricted SSH traffic', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnSecurityGroup(nonCompliant, 'rSecurityGroup', {
-      groupDescription: 'security group with SSH unrestricted',
-      securityGroupIngress: [
-        {
-          fromPort: 22,
-          ipProtocol: 'tcp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
+  describe('EC2RestrictedSSH: Security Groups do not allow for unrestricted SSH traffic', () => {
+    const ruleId = 'EC2RestrictedSSH';
+    test('Noncompliance 1', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group with SSH unrestricted',
+        securityGroupIngress: [
+          {
+            fromPort: 22,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedSSH:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnSecurityGroup(nonCompliant2, 'rSecurityGroup', {
-      groupDescription: 'security group with SSH unrestricted',
-      securityGroupIngress: [
-        {
-          fromPort: 22,
-          ipProtocol: 'tcp',
-          cidrIpv6: '::/0',
-        },
-      ],
+    test('Noncompliance 2', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group with SSH unrestricted',
+        securityGroupIngress: [
+          {
+            fromPort: 22,
+            ipProtocol: 'tcp',
+            cidrIpv6: '::/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedSSH:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new SecurityGroup(nonCompliant3, 'rSg', {
-      vpc: new Vpc(nonCompliant3, 'rVpc'),
-    }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedSSH:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new CfnSecurityGroup(nonCompliant4, 'rSecurityGroup', {
-      groupDescription: 'security group with SSH unrestricted',
-      securityGroupIngress: [
-        {
-          fromPort: 1,
-          toPort: 10000,
-          ipProtocol: 'tcp',
-          cidrIpv6: '::/0',
-        },
-      ],
+    test('Noncompliance 3', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+      }).addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedSSH:'),
-        }),
-      })
-    );
-
-    const nonCompliant5 = new Stack();
-    Aspects.of(nonCompliant5).add(new TestPack());
-    new CfnSecurityGroupIngress(nonCompliant5, 'rSgIngress', {
-      fromPort: 1,
-      toPort: 10000,
-      ipProtocol: 'tcp',
-      cidrIp: '1.0.0.0/0',
+    test('Noncompliance 4', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group with SSH unrestricted',
+        securityGroupIngress: [
+          {
+            fromPort: 1,
+            toPort: 10000,
+            ipProtocol: 'tcp',
+            cidrIpv6: '::/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages5 = SynthUtils.synthesize(nonCompliant5).messages;
-    expect(messages5).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedSSH:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnSecurityGroup(compliant, 'rSecurityGroup1', {
-      groupDescription: 'security group with no rules',
-      securityGroupIngress: [],
+    test('Noncompliance 5', () => {
+      new CfnSecurityGroupIngress(stack, 'rSgIngress', {
+        fromPort: 1,
+        toPort: 10000,
+        ipProtocol: 'tcp',
+        cidrIp: '1.0.0.0/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnSecurityGroup(compliant, 'rSecurityGroup2', {
-      groupDescription:
-        'security group with SSH ingress allowed for a specific IP address',
-      securityGroupIngress: [
-        {
-          fromPort: 22,
-          ipProtocol: 'tcp',
-          cidrIp: '72.21.210.165',
-        },
-      ],
+    test('Compliance', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup1', {
+        groupDescription: 'security group with no rules',
+        securityGroupIngress: [],
+      });
+      new CfnSecurityGroup(stack, 'rSecurityGroup2', {
+        groupDescription:
+          'security group with SSH ingress allowed for a specific IP address',
+        securityGroupIngress: [
+          {
+            fromPort: 22,
+            ipProtocol: 'tcp',
+            cidrIp: '72.21.210.165',
+          },
+        ],
+      });
+      new CfnSecurityGroup(stack, 'rSecurityGroup3', {
+        groupDescription:
+          'security group with an open-world ingress rule for HTTP traffic',
+        securityGroupIngress: [
+          {
+            fromPort: 80,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnSecurityGroup(compliant, 'rSecurityGroup3', {
-      groupDescription:
-        'security group with an open-world ingress rule for HTTP traffic',
-      securityGroupIngress: [
-        {
-          fromPort: 80,
-          ipProtocol: 'tcp',
-          cidrIp: '0.0.0.0/0',
-        },
-      ],
-    });
-    const messages6 = SynthUtils.synthesize(compliant).messages;
-    expect(messages6).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2RestrictedSSH:'),
-        }),
-      })
-    );
   });
 
-  test('EC2SecurityGroupDescription: Security Groups have descriptions', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new SecurityGroup(nonCompliant, 'rSg', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      description: ' ',
+  describe('EC2SecurityGroupDescription: Security Groups have descriptions', () => {
+    const ruleId = 'EC2SecurityGroupDescription';
+    test('Noncompliance 1', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+        description: ' ',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2SecurityGroupDescription:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new SecurityGroup(compliant, 'rSg', {
-      vpc: new Vpc(compliant, 'rVpc'),
-      description: 'lorem ipsum dolor sit amet',
+    test('Compliance', () => {
+      new SecurityGroup(stack, 'rSg', {
+        vpc: new Vpc(stack, 'rVpc'),
+        description: 'lorem ipsum dolor sit amet',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2SecurityGroupDescription:'),
-        }),
-      })
-    );
   });
 });
 
 describe('Amazon Elastic Block Store (EBS)', () => {
-  test('EC2EBSVolumeEncrypted: EBS volumes have encryption enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Volume(nonCompliant, 'rVolume', {
-      availabilityZone: nonCompliant.availabilityZones[0],
-      size: Size.gibibytes(42),
-      encrypted: false,
+  describe('EC2EBSVolumeEncrypted: EBS volumes have encryption enabled', () => {
+    const ruleId = 'EC2EBSVolumeEncrypted';
+    test('Noncompliance 1', () => {
+      new Volume(stack, 'rVolume', {
+        availabilityZone: stack.availabilityZones[0],
+        size: Size.gibibytes(42),
+        encrypted: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSVolumeEncrypted:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Volume(compliant, 'rVolume', {
-      availabilityZone: compliant.availabilityZones[0],
-      size: Size.gibibytes(42),
-      encrypted: true,
+    test('Compliance', () => {
+      new Volume(stack, 'rVolume', {
+        availabilityZone: stack.availabilityZones[0],
+        size: Size.gibibytes(42),
+        encrypted: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('EC2EBSVolumeEncrypted:'),
-        }),
-      })
-    );
   });
 });

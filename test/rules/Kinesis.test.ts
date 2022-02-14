@@ -2,220 +2,145 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { StreamEncryption, Stream } from 'aws-cdk-lib/aws-kinesis';
 import { CfnApplicationV2 } from 'aws-cdk-lib/aws-kinesisanalytics';
 import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
   KinesisDataFirehoseSSE,
   KinesisDataStreamDefaultKeyWhenSSE,
   KinesisDataStreamSSE,
 } from '../../src/rules/kinesis';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        KinesisDataAnalyticsFlinkCheckpointing,
-        KinesisDataFirehoseSSE,
-        KinesisDataStreamDefaultKeyWhenSSE,
-        KinesisDataStreamSSE,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  KinesisDataAnalyticsFlinkCheckpointing,
+  KinesisDataFirehoseSSE,
+  KinesisDataStreamDefaultKeyWhenSSE,
+  KinesisDataStreamSSE,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon Kinesis Data Analytics', () => {
-  test('KinesisDataAnalyticsFlinkCheckpointing: KDA Flink Applications have checkpointing enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnApplicationV2(nonCompliant, 'rFlinkApp', {
-      runtimeEnvironment: 'FLINK-1_11',
-      serviceExecutionRole: new Role(nonCompliant, 'rKdaRole', {
-        assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
-      }).roleArn,
+  describe('KinesisDataAnalyticsFlinkCheckpointing: KDA Flink Applications have checkpointing enabled', () => {
+    const ruleId = 'KinesisDataAnalyticsFlinkCheckpointing';
+    test('Noncompliance 1', () => {
+      new CfnApplicationV2(stack, 'rFlinkApp', {
+        runtimeEnvironment: 'FLINK-1_11',
+        serviceExecutionRole: new Role(stack, 'rKdaRole', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'KinesisDataAnalyticsFlinkCheckpointing:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnApplicationV2(compliant, 'rFlinkApp', {
-      runtimeEnvironment: 'FLINK-1_11',
-      serviceExecutionRole: new Role(compliant, 'rKdaRole', {
-        assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
-      }).roleArn,
-      applicationConfiguration: {
-        flinkApplicationConfiguration: {
-          checkpointConfiguration: {
-            configurationType: 'DEFAULT',
+    test('Compliance', () => {
+      new CfnApplicationV2(stack, 'rFlinkApp', {
+        runtimeEnvironment: 'FLINK-1_11',
+        serviceExecutionRole: new Role(stack, 'rKdaRole', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+        applicationConfiguration: {
+          flinkApplicationConfiguration: {
+            checkpointConfiguration: {
+              configurationType: 'DEFAULT',
+            },
           },
         },
-      },
-    });
-    new CfnApplicationV2(compliant, 'rFlinkApp2', {
-      runtimeEnvironment: 'FLINK-1_11',
-      serviceExecutionRole: new Role(compliant, 'rKdaRole2', {
-        assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
-      }).roleArn,
-      applicationConfiguration: {
-        flinkApplicationConfiguration: {
-          checkpointConfiguration: {
-            configurationType: 'CUSTOM',
-            checkpointingEnabled: true,
+      });
+      new CfnApplicationV2(stack, 'rFlinkApp2', {
+        runtimeEnvironment: 'FLINK-1_11',
+        serviceExecutionRole: new Role(stack, 'rKdaRole2', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+        applicationConfiguration: {
+          flinkApplicationConfiguration: {
+            checkpointConfiguration: {
+              configurationType: 'CUSTOM',
+              checkpointingEnabled: true,
+            },
           },
         },
-      },
+      });
+      new CfnApplicationV2(stack, 'rZeppelinApp', {
+        runtimeEnvironment: 'ZEPPELIN-FLINK-1_0',
+        serviceExecutionRole: new Role(stack, 'rKdaRole3', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnApplicationV2(compliant, 'rZeppelinApp', {
-      runtimeEnvironment: 'ZEPPELIN-FLINK-1_0',
-      serviceExecutionRole: new Role(compliant, 'rKdaRole3', {
-        assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
-      }).roleArn,
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'KinesisDataAnalyticsFlinkCheckpointing:'
-          ),
-        }),
-      })
-    );
   });
 });
 
 describe('Amazon Kinesis Data Firehose', () => {
-  test('KinesisDataFirehoseSSE: Kinesis Data Firehose delivery streams have server-side encryption enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDeliveryStream(nonCompliant, 'rKdf', {
-      s3DestinationConfiguration: {
-        bucketArn: new Bucket(nonCompliant, 'rDeliveryBucket').bucketArn,
-        roleArn: new Role(nonCompliant, 'rKdfRole', {
-          assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
-        }).roleArn,
-      },
+  describe('KinesisDataFirehoseSSE: Kinesis Data Firehose delivery streams have server-side encryption enabled', () => {
+    const ruleId = 'KinesisDataFirehoseSSE';
+    test('Noncompliance 1', () => {
+      new CfnDeliveryStream(stack, 'rKdf', {
+        s3DestinationConfiguration: {
+          bucketArn: new Bucket(stack, 'rDeliveryBucket').bucketArn,
+          roleArn: new Role(stack, 'rKdfRole', {
+            assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
+          }).roleArn,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('KinesisDataFirehoseSSE:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDeliveryStream(compliant, 'rKdf', {
-      s3DestinationConfiguration: {
-        bucketArn: new Bucket(compliant, 'rDeliveryBucket').bucketArn,
-        roleArn: new Role(compliant, 'rKdfRole', {
-          assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
-        }).roleArn,
-      },
-      deliveryStreamEncryptionConfigurationInput: {
-        keyType: 'AWS_OWNED_CMK',
-      },
+    test('Compliance', () => {
+      new CfnDeliveryStream(stack, 'rKdf', {
+        s3DestinationConfiguration: {
+          bucketArn: new Bucket(stack, 'rDeliveryBucket').bucketArn,
+          roleArn: new Role(stack, 'rKdfRole', {
+            assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
+          }).roleArn,
+        },
+        deliveryStreamEncryptionConfigurationInput: {
+          keyType: 'AWS_OWNED_CMK',
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('KinesisDataFirehoseSSE:'),
-        }),
-      })
-    );
   });
 });
 
 describe('Amazon Kinesis Data Streams (KDS)', () => {
-  test('KinesisDataStreamSSE: Kinesis Data Streams have server-side encryption enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Stream(nonCompliant, 'rKds', {
-      encryption: StreamEncryption.UNENCRYPTED,
+  describe('KinesisDataStreamSSE: Kinesis Data Streams have server-side encryption enabled', () => {
+    const ruleId = 'KinesisDataStreamSSE';
+    test('Noncompliance 1', () => {
+      new Stream(stack, 'rKds', {
+        encryption: StreamEncryption.UNENCRYPTED,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('KinesisDataStreamSSE:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Stream(compliant, 'rKds', { encryption: StreamEncryption.KMS });
-    new Stream(compliant, 'rKds2', { encryption: StreamEncryption.MANAGED });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('KinesisDataStreamSSE:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new Stream(stack, 'rKds', { encryption: StreamEncryption.KMS });
+      new Stream(stack, 'rKds2', { encryption: StreamEncryption.MANAGED });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('KinesisDataStreamDefaultKeyWhenSSE: Kinesis Data Streams use the "aws/kinesis" key when server-sided encryption is enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Stream(nonCompliant, 'rKds', {
-      encryption: StreamEncryption.KMS,
+  describe('KinesisDataStreamDefaultKeyWhenSSE: Kinesis Data Streams use the "aws/kinesis" key when server-sided encryption is enabled', () => {
+    const ruleId = 'KinesisDataStreamDefaultKeyWhenSSE';
+    test('Noncompliance 1', () => {
+      new Stream(stack, 'rKds', {
+        encryption: StreamEncryption.KMS,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('KinesisDataStreamDefaultKeyWhenSSE:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Stream(compliant, 'rKds', { encryption: StreamEncryption.MANAGED });
-    new Stream(compliant, 'rKds2', {
-      encryption: StreamEncryption.UNENCRYPTED,
+    test('Compliance', () => {
+      new Stream(stack, 'rKds', { encryption: StreamEncryption.MANAGED });
+      new Stream(stack, 'rKds2', {
+        encryption: StreamEncryption.UNENCRYPTED,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('KinesisDataStreamDefaultKeyWhenSSE:'),
-        }),
-      })
-    );
   });
 });
