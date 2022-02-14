@@ -2,23 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import {
-  Aspects,
-  CfnResource,
-  Duration,
-  SecretValue,
-  Stack,
-} from 'aws-cdk-lib';
-import { CfnDBCluster, DatabaseCluster } from 'aws-cdk-lib/aws-docdb';
+import { CfnDBCluster, DatabaseCluster } from '@aws-cdk/aws-docdb';
 import {
   InstanceType,
   InstanceClass,
   InstanceSize,
   Vpc,
-} from 'aws-cdk-lib/aws-ec2';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+} from '@aws-cdk/aws-ec2';
+import { Aspects, Duration, SecretValue, Stack } from '@aws-cdk/core';
 import {
   DocumentDBClusterBackupRetentionPeriod,
   DocumentDBClusterEncryptionAtRest,
@@ -26,263 +17,166 @@ import {
   DocumentDBClusterNonDefaultPort,
   DocumentDBCredentialsInSecretsManager,
 } from '../../src/rules/documentdb';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        DocumentDBClusterBackupRetentionPeriod,
-        DocumentDBClusterEncryptionAtRest,
-        DocumentDBClusterLogExports,
-        DocumentDBClusterNonDefaultPort,
-        DocumentDBCredentialsInSecretsManager,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  DocumentDBClusterBackupRetentionPeriod,
+  DocumentDBClusterEncryptionAtRest,
+  DocumentDBClusterLogExports,
+  DocumentDBClusterNonDefaultPort,
+  DocumentDBCredentialsInSecretsManager,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon DocumentDB (with MongoDB compatibility)', () => {
-  test('DocumentDBClusterEncryptionAtRest: Document DB clusters have encryption at rest enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
-      storageEncrypted: false,
+  describe('DocumentDBClusterEncryptionAtRest: Document DB clusters have encryption at rest enabled', () => {
+    const ruleId = 'DocumentDBClusterEncryptionAtRest';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+        storageEncrypted: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterEncryptionAtRest:'),
-        }),
-      })
-    );
 
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(compliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
-      storageEncrypted: true,
+    test('Compliance', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+        storageEncrypted: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterEncryptionAtRest:'),
-        }),
-      })
-    );
   });
 
-  test('DocumentDBClusterNonDefaultPort: Document DB clusters do not use the default endpoint port', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterNonDefaultPort:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(compliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
-      port: 42,
+  describe('DocumentDBClusterNonDefaultPort: Document DB clusters do not use the default endpoint port', () => {
+    const ruleId = 'DocumentDBClusterNonDefaultPort';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterNonDefaultPort:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+        port: 42,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('DocumentDBCredentialsInSecretsManager: Document DB clusters have the username and password stored in Secrets Manager', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      masterUser: {
-        username: 'foo',
-        password: SecretValue.secretsManager('bar'),
-      },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'DocumentDBCredentialsInSecretsManager:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(compliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
+  describe('DocumentDBCredentialsInSecretsManager: Document DB clusters have the username and password stored in Secrets Manager', () => {
+    const ruleId = 'DocumentDBCredentialsInSecretsManager';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: 'foo',
+          password: SecretValue.secretsManager('bar'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'DocumentDBCredentialsInSecretsManager:'
-          ),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('DocumentDBClusterBackupRetentionPeriod: Document DB clusters have a reasonable minimum backup retention period configured', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
+  describe('DocumentDBClusterBackupRetentionPeriod: Document DB clusters have a reasonable minimum backup retention period configured', () => {
+    const ruleId = 'DocumentDBClusterBackupRetentionPeriod';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'DocumentDBClusterBackupRetentionPeriod:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new DatabaseCluster(compliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(compliant, 'rVpc'),
-      backup: { retention: Duration.days(7) },
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
+    test('Compliance', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        backup: { retention: Duration.days(7) },
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'DocumentDBClusterBackupRetentionPeriod:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('DocumentDBClusterLogExports: Document DB clusters have authenticate, createIndex, and dropCollection Log Exports enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new DatabaseCluster(nonCompliant, 'rDatabaseCluster', {
-      instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-      vpc: new Vpc(nonCompliant, 'rVpc'),
-      masterUser: {
-        username: SecretValue.secretsManager('foo').toString(),
-        password: SecretValue.secretsManager('bar'),
-      },
+  describe('DocumentDBClusterLogExports: Document DB clusters have authenticate, createIndex, and dropCollection Log Exports enabled', () => {
+    const ruleId = 'DocumentDBClusterLogExports';
+    test('Noncompliance 1', () => {
+      new DatabaseCluster(stack, 'rDatabaseCluster', {
+        instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
+        vpc: new Vpc(stack, 'rVpc'),
+        masterUser: {
+          username: SecretValue.secretsManager('foo').toString(),
+          password: SecretValue.secretsManager('bar'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterLogExports:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnDBCluster(nonCompliant2, 'rDatabaseCluster', {
-      masterUsername: SecretValue.secretsManager('foo').toString(),
-      masterUserPassword: SecretValue.secretsManager('bar').toString(),
-      enableCloudwatchLogsExports: ['authenticate', 'dropCollection'],
+    test('Noncompliance 2', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        masterUsername: SecretValue.secretsManager('foo').toString(),
+        masterUserPassword: SecretValue.secretsManager('bar').toString(),
+        enableCloudwatchLogsExports: ['authenticate', 'dropCollection'],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterLogExports:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDatabaseCluster', {
-      masterUsername: SecretValue.secretsManager('foo').toString(),
-      masterUserPassword: SecretValue.secretsManager('bar').toString(),
-      enableCloudwatchLogsExports: [
-        'authenticate',
-        'createIndex',
-        'dropCollection',
-      ],
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        masterUsername: SecretValue.secretsManager('foo').toString(),
+        masterUserPassword: SecretValue.secretsManager('bar').toString(),
+        enableCloudwatchLogsExports: [
+          'authenticate',
+          'createIndex',
+          'dropCollection',
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('DocumentDBClusterLogExports:'),
-        }),
-      })
-    );
   });
 });

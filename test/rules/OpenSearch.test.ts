@@ -2,8 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   CfnDomain as LegacyCfnDomain,
   Domain as LegacyDomain,
@@ -21,9 +19,8 @@ import {
   CfnDomain,
   Domain,
   EngineVersion,
-} from 'aws-cdk-lib/aws-opensearchservice';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+} from '@aws-cdk/aws-opensearchservice';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   OpenSearchAllowlistedIPs,
   OpenSearchDedicatedMasterNode,
@@ -35,781 +32,465 @@ import {
   OpenSearchSlowLogsToCloudWatch,
   OpenSearchZoneAwareness,
 } from '../../src/rules/opensearch';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        OpenSearchAllowlistedIPs,
-        OpenSearchDedicatedMasterNode,
-        OpenSearchEncryptedAtRest,
-        OpenSearchErrorLogsToCloudWatch,
-        OpenSearchInVPCOnly,
-        OpenSearchNoUnsignedOrAnonymousAccess,
-        OpenSearchNodeToNodeEncryption,
-        OpenSearchSlowLogsToCloudWatch,
-        OpenSearchZoneAwareness,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  OpenSearchAllowlistedIPs,
+  OpenSearchDedicatedMasterNode,
+  OpenSearchEncryptedAtRest,
+  OpenSearchErrorLogsToCloudWatch,
+  OpenSearchInVPCOnly,
+  OpenSearchNoUnsignedOrAnonymousAccess,
+  OpenSearchNodeToNodeEncryption,
+  OpenSearchSlowLogsToCloudWatch,
+  OpenSearchZoneAwareness,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon OpenSearch Service', () => {
-  test('OpenSearchAllowlistedIPs: OpenSearch Service domains only grant access via allowlisted IP addresses', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant, 'rDomain', {
-      elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(nonCompliant, 'rRole', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-          }),
-        ],
-      }).toJSON(),
+  describe('OpenSearchAllowlistedIPs: OpenSearch Service domains only grant access via allowlisted IP addresses', () => {
+    const ruleId = 'OpenSearchAllowlistedIPs';
+    test('Noncompliance 1', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(stack, 'rRole', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchAllowlistedIPs:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnDomain(nonCompliant2, 'rDomain', {
-      engineVersion: EngineVersion.OPENSEARCH_1_0.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(nonCompliant2, 'rRole', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-          }),
-        ],
-      }).toJSON(),
+    test('Noncompliance 2', () => {
+      new CfnDomain(stack, 'rDomain', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(stack, 'rRole', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchAllowlistedIPs:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyCfnDomain(compliant, 'rDomain', {
-      elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(compliant, 'rRole', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-            conditions: {
-              IpAddress: {
-                'aws:sourceIp': ['42.42.42.42'],
+    test('Compliance', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(stack, 'rRole', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+              conditions: {
+                IpAddress: {
+                  'aws:sourceIp': ['42.42.42.42'],
+                },
               },
-            },
-          }),
-        ],
-      }).toJSON(),
-    });
-    new CfnDomain(compliant, 'rDomain2', {
-      engineVersion: EngineVersion.OPENSEARCH_1_0.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(compliant, 'rRole2', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-            conditions: {
-              IpAddress: {
-                'aws:sourceIp': ['42.42.42.42'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      new CfnDomain(stack, 'rDomain2', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(stack, 'rRole2', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+              conditions: {
+                IpAddress: {
+                  'aws:sourceIp': ['42.42.42.42'],
+                },
               },
-            },
-          }),
-        ],
-      }).toJSON(),
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchAllowlistedIPs:'),
-        }),
-      })
-    );
   });
 
-  test('OpenSearchDedicatedMasterNode: OpenSearch Service domains use dedicated master nodes', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
+  describe('OpenSearchDedicatedMasterNode: OpenSearch Service domains use dedicated master nodes', () => {
+    const ruleId = 'OpenSearchDedicatedMasterNode';
+    test('Noncompliance 1', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchDedicatedMasterNode:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
+    test('Noncompliance 2', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchDedicatedMasterNode:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyDomain(compliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      capacity: { masterNodes: 42 },
+    test('Compliance', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        capacity: { masterNodes: 42 },
+      });
+      new Domain(stack, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        capacity: { masterNodes: 42 },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new Domain(compliant, 'rDomain2', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      capacity: { masterNodes: 42 },
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchDedicatedMasterNode:'),
-        }),
-      })
-    );
   });
 
-  test('OpenSearchEncryptedAtRest: OpenSearch Service domains have encryption at rest enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant, 'rDomain', {});
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchEncryptedAtRest:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnDomain(nonCompliant2, 'rDomain', {});
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchEncryptedAtRest:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant3, 'rDomain', {
-      encryptionAtRestOptions: {
-        enabled: false,
-      },
+  describe('OpenSearchEncryptedAtRest: OpenSearch Service domains have encryption at rest enabled', () => {
+    const ruleId = 'OpenSearchEncryptedAtRest';
+    test('Noncompliance 1', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchEncryptedAtRest:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new CfnDomain(nonCompliant4, 'rDomain', {
-      encryptionAtRestOptions: {
-        enabled: false,
-      },
+    test('Noncompliance 2', () => {
+      new CfnDomain(stack, 'rDomain', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchEncryptedAtRest:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyCfnDomain(compliant, 'rDomain', {
-      encryptionAtRestOptions: {
-        enabled: true,
-      },
+    test('Noncompliance 3', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        encryptionAtRestOptions: {
+          enabled: false,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnDomain(compliant, 'rDomain2', {
-      encryptionAtRestOptions: {
-        enabled: true,
-      },
+    test('Noncompliance 4', () => {
+      new CfnDomain(stack, 'rDomain', {
+        encryptionAtRestOptions: {
+          enabled: false,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchEncryptedAtRest:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        encryptionAtRestOptions: {
+          enabled: true,
+        },
+      });
+      new CfnDomain(stack, 'rDomain2', {
+        encryptionAtRestOptions: {
+          enabled: true,
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('OpenSearchErrorLogsToCloudWatch: OpenSearch Service domains stream error logs to CloudWatch Logs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
+  describe('OpenSearchErrorLogsToCloudWatch: OpenSearch Service domains stream error logs to CloudWatch Logs', () => {
+    const ruleId = 'OpenSearchErrorLogsToCloudWatch';
+    test('Noncompliance 1', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchErrorLogsToCloudWatch:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
+    test('Noncompliance 2', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchErrorLogsToCloudWatch:'),
-        }),
-      })
-    );
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new LegacyDomain(nonCompliant3, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+    test('Noncompliance 3', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchErrorLogsToCloudWatch:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new Domain(nonCompliant4, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+    test('Noncompliance 4', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchErrorLogsToCloudWatch:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyDomain(compliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { appLogEnabled: true },
+    test('Compliance', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        logging: { appLogEnabled: true },
+      });
+      new Domain(stack, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        logging: { appLogEnabled: true },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new Domain(compliant, 'rDomain2', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { appLogEnabled: true },
-    });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchErrorLogsToCloudWatch:'),
-        }),
-      })
-    );
   });
 
-  test('OpenSearchInVPCOnly: OpenSearch Service domains are within VPCs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant, 'rDomain', {});
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchInVPCOnly:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnDomain(nonCompliant2, 'rDomain', {});
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchInVPCOnly:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant3, 'rDomain', {
-      vpcOptions: {
-        subnetIds: [],
-      },
+  describe('OpenSearchInVPCOnly: OpenSearch Service domains are within VPCs', () => {
+    const ruleId = 'OpenSearchInVPCOnly';
+    test('Noncompliance 1', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchInVPCOnly:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new CfnDomain(nonCompliant4, 'rDomain', {
-      vpcOptions: {
-        subnetIds: [],
-      },
+    test('Noncompliance 2', () => {
+      new CfnDomain(stack, 'rDomain', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchInVPCOnly:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyCfnDomain(compliant, 'rDomain', {
-      vpcOptions: {
-        subnetIds: ['mycoolsubnet'],
-      },
+    test('Noncompliance 3', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        vpcOptions: {
+          subnetIds: [],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnDomain(compliant, 'rDomain2', {
-      vpcOptions: {
-        subnetIds: ['mycoolsubnet'],
-      },
+    test('Noncompliance 4', () => {
+      new CfnDomain(stack, 'rDomain', {
+        vpcOptions: {
+          subnetIds: [],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchInVPCOnly:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        vpcOptions: {
+          subnetIds: ['mycoolsubnet'],
+        },
+      });
+      new CfnDomain(stack, 'rDomain2', {
+        vpcOptions: {
+          subnetIds: ['mycoolsubnet'],
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('OpenSearchNoUnsignedOrAnonymousAccess: OpenSearch Service domains do not allow for unsigned requests or anonymous access', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      accessPolicies: [],
+  describe('OpenSearchNoUnsignedOrAnonymousAccess: OpenSearch Service domains do not allow for unsigned requests or anonymous access', () => {
+    const ruleId = 'OpenSearchNoUnsignedOrAnonymousAccess';
+    test('Noncompliance 1', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        accessPolicies: [],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'OpenSearchNoUnsignedOrAnonymousAccess:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      accessPolicies: [],
+    test('Noncompliance 2', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        accessPolicies: [],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'OpenSearchNoUnsignedOrAnonymousAccess:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant3, 'rDomain', {
-      elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [new AnyPrincipal()],
-            resources: ['*'],
-          }),
-        ],
-      }).toJSON(),
+    test('Noncompliance 3', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [new AnyPrincipal()],
+              resources: ['*'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'OpenSearchNoUnsignedOrAnonymousAccess:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new CfnDomain(nonCompliant4, 'rDomain', {
-      engineVersion: EngineVersion.OPENSEARCH_1_0.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [new AnyPrincipal()],
-            resources: ['*'],
-          }),
-        ],
-      }).toJSON(),
+    test('Noncompliance 4', () => {
+      new CfnDomain(stack, 'rDomain', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [new AnyPrincipal()],
+              resources: ['*'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'OpenSearchNoUnsignedOrAnonymousAccess:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyCfnDomain(compliant, 'rDomain', {
-      elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(compliant, 'rRole', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-            conditions: {
-              IpAddress: {
-                'aws:sourceIp': ['42.42.42.42'],
+    test('Compliance', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(stack, 'rRole', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+              conditions: {
+                IpAddress: {
+                  'aws:sourceIp': ['42.42.42.42'],
+                },
               },
-            },
-          }),
-        ],
-      }).toJSON(),
-    });
-    new CfnDomain(compliant, 'rDomain2', {
-      engineVersion: EngineVersion.OPENSEARCH_1_0.version,
-      accessPolicies: new PolicyDocument({
-        statements: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(compliant, 'rRole2', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-            conditions: {
-              IpAddress: {
-                'aws:sourceIp': ['42.42.42.42'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      new CfnDomain(stack, 'rDomain2', {
+        engineVersion: EngineVersion.OPENSEARCH_1_0.version,
+        accessPolicies: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              effect: Effect.ALLOW,
+              principals: [
+                new Role(stack, 'rRole2', {
+                  assumedBy: new AccountRootPrincipal(),
+                }),
+              ],
+              resources: ['*'],
+              conditions: {
+                IpAddress: {
+                  'aws:sourceIp': ['42.42.42.42'],
+                },
               },
-            },
-          }),
-        ],
-      }).toJSON(),
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'OpenSearchNoUnsignedOrAnonymousAccess:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('OpenSearchNodeToNodeEncryption: OpenSearch Service domains are node-to-node encrypted', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant, 'rDomain', {});
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchNodeToNodeEncryption:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnDomain(nonCompliant2, 'rDomain', {});
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchNodeToNodeEncryption:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new LegacyCfnDomain(nonCompliant3, 'rDomain', {
-      nodeToNodeEncryptionOptions: {
-        enabled: false,
-      },
+  describe('OpenSearchNodeToNodeEncryption: OpenSearch Service domains are node-to-node encrypted', () => {
+    const ruleId = 'OpenSearchNodeToNodeEncryption';
+    test('Noncompliance 1', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchNodeToNodeEncryption:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new CfnDomain(nonCompliant4, 'rDomain', {
-      nodeToNodeEncryptionOptions: {
-        enabled: false,
-      },
+    test('Noncompliance 2', () => {
+      new CfnDomain(stack, 'rDomain', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchNodeToNodeEncryption:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyCfnDomain(compliant, 'rDomain', {
-      nodeToNodeEncryptionOptions: {
-        enabled: true,
-      },
+    test('Noncompliance 3', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        nodeToNodeEncryptionOptions: {
+          enabled: false,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    new CfnDomain(compliant, 'rDomain2', {
-      nodeToNodeEncryptionOptions: {
-        enabled: true,
-      },
+    test('Noncompliance 4', () => {
+      new CfnDomain(stack, 'rDomain', {
+        nodeToNodeEncryptionOptions: {
+          enabled: false,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchNodeToNodeEncryption:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new LegacyCfnDomain(stack, 'rDomain', {
+        nodeToNodeEncryptionOptions: {
+          enabled: true,
+        },
+      });
+      new CfnDomain(stack, 'rDomain2', {
+        nodeToNodeEncryptionOptions: {
+          enabled: true,
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('OpenSearchSlowLogsToCloudWatch: OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
+  describe('OpenSearchSlowLogsToCloudWatch: OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
+    const ruleId = 'OpenSearchSlowLogsToCloudWatch';
+    test('Noncompliance 1', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchSlowLogsToCloudWatch:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
+    test('Noncompliance 2', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchSlowLogsToCloudWatch:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new LegacyDomain(nonCompliant3, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { slowIndexLogEnabled: true },
+    test('Noncompliance 3', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        logging: { slowIndexLogEnabled: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchSlowLogsToCloudWatch:'),
-        }),
-      })
-    );
-
-    const nonCompliant4 = new Stack();
-    Aspects.of(nonCompliant4).add(new TestPack());
-    new Domain(nonCompliant4, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { slowIndexLogEnabled: true },
+    test('Noncompliance 4', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        logging: { slowIndexLogEnabled: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages4 = SynthUtils.synthesize(nonCompliant4).messages;
-    expect(messages4).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchSlowLogsToCloudWatch:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyDomain(compliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+    test('Compliance', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+      });
+      new Domain(stack, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new Domain(compliant, 'rDomain2', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-    });
-    const messages5 = SynthUtils.synthesize(compliant).messages;
-    expect(messages5).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchSlowLogsToCloudWatch:'),
-        }),
-      })
-    );
   });
 
-  test('OpenSearchZoneAwareness: OpenSearch Service domains have Zone Awareness enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new LegacyDomain(nonCompliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
+  describe('OpenSearchZoneAwareness: OpenSearch Service domains have Zone Awareness enabled', () => {
+    const ruleId = 'OpenSearchZoneAwareness';
+    test('Noncompliance 1', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchZoneAwareness:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Domain(nonCompliant2, 'rDomain', {
-      version: EngineVersion.OPENSEARCH_1_0,
+    test('Noncompliance 2', () => {
+      new Domain(stack, 'rDomain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchZoneAwareness:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new LegacyDomain(compliant, 'rDomain', {
-      version: ElasticsearchVersion.V7_10,
-      capacity: { masterNodes: 42 },
-      zoneAwareness: { enabled: true },
+    test('Compliance', () => {
+      new LegacyDomain(stack, 'rDomain', {
+        version: ElasticsearchVersion.V7_10,
+        capacity: { masterNodes: 42 },
+        zoneAwareness: { enabled: true },
+      });
+      new Domain(stack, 'rDomain2', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        capacity: { masterNodes: 42 },
+        zoneAwareness: { enabled: true },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new Domain(compliant, 'rDomain2', {
-      version: EngineVersion.OPENSEARCH_1_0,
-      capacity: { masterNodes: 42 },
-      zoneAwareness: { enabled: true },
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('OpenSearchZoneAwareness:'),
-        }),
-      })
-    );
   });
 });

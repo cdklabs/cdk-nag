@@ -2,80 +2,44 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
-import { CfnGraphQLApi } from 'aws-cdk-lib/aws-appsync';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { CfnGraphQLApi } from '@aws-cdk/aws-appsync';
+import { Aspects, Stack } from '@aws-cdk/core';
 import { AppSyncGraphQLRequestLogging } from '../../src/rules/appsync';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [AppSyncGraphQLRequestLogging];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([AppSyncGraphQLRequestLogging]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
+
 describe('AWS AppSync', () => {
-  test('AppSyncGraphQLRequestLogging: GraphQL APIs have request leveling logging enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnGraphQLApi(nonCompliant, 'rGraphqlApi', {
-      authenticationType: 'AMAZON_COGNITO_USER_POOL',
-      name: 'foo',
+  describe('AppSyncGraphQLRequestLogging: GraphQL APIs have request leveling logging enabled', () => {
+    const ruleId = 'AppSyncGraphQLRequestLogging';
+    test('Noncompliance 1', () => {
+      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+        authenticationType: 'AMAZON_COGNITO_USER_POOL',
+        name: 'foo',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AppSyncGraphQLRequestLogging:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnGraphQLApi(nonCompliant2, 'rGraphqlApi', {
-      authenticationType: 'AMAZON_COGNITO_USER_POOL',
-      name: 'foo',
-      logConfig: { excludeVerboseContent: true },
+    test('Noncompliance 2', () => {
+      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+        authenticationType: 'AMAZON_COGNITO_USER_POOL',
+        name: 'foo',
+        logConfig: { excludeVerboseContent: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AppSyncGraphQLRequestLogging:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnGraphQLApi(compliant, 'rGraphqlApi', {
-      authenticationType: 'AMAZON_COGNITO_USER_POOL',
-      name: 'foo',
-      logConfig: { cloudWatchLogsRoleArn: 'foo' },
+    test('Compliance', () => {
+      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+        authenticationType: 'AMAZON_COGNITO_USER_POOL',
+        name: 'foo',
+        logConfig: { cloudWatchLogsRoleArn: 'foo' },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('AppSyncGraphQLRequestLogging:'),
-        }),
-      })
-    );
   });
 });

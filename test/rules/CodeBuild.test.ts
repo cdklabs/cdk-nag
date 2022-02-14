@@ -2,17 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   BuildSpec,
   CfnProject,
   LinuxBuildImage,
   Project,
-} from 'aws-cdk-lib/aws-codebuild';
-import { Key } from 'aws-cdk-lib/aws-kms';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+} from '@aws-cdk/aws-codebuild';
+import { Key } from '@aws-cdk/aws-kms';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   CodeBuildProjectEnvVarAwsCred,
   CodeBuildProjectKMSEncryptedArtifacts,
@@ -20,432 +17,329 @@ import {
   CodeBuildProjectPrivilegedModeDisabled,
   CodeBuildProjectSourceRepoUrl,
 } from '../../src/rules/codebuild';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        CodeBuildProjectEnvVarAwsCred,
-        CodeBuildProjectKMSEncryptedArtifacts,
-        CodeBuildProjectManagedImages,
-        CodeBuildProjectPrivilegedModeDisabled,
-        CodeBuildProjectSourceRepoUrl,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack(
+  [
+    CodeBuildProjectEnvVarAwsCred,
+    CodeBuildProjectKMSEncryptedArtifacts,
+    CodeBuildProjectManagedImages,
+    CodeBuildProjectPrivilegedModeDisabled,
+    CodeBuildProjectSourceRepoUrl,
+  ],
+  { verbose: true }
+);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon CodeBuild', () => {
-  test('CodeBuildProjectEnvVarAwsCred: CodeBuild projects do not store AWS credentials as plaintext environment variables', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnProject(nonCompliant, 'rProject1', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-        environmentVariables: [
-          {
-            name: 'AWS_ACCESS_KEY_ID',
-            type: 'PLAINTEXT',
-            value: 'myawsaccesskeyid',
-          },
-        ],
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+  describe('CodeBuildProjectEnvVarAwsCred: CodeBuild projects do not store AWS credentials as plaintext environment variables', () => {
+    const ruleId = 'CodeBuildProjectEnvVarAwsCred';
+    test('Noncompliance 1', () => {
+      new CfnProject(stack, 'rProject1', {
+        artifacts: {
+          type: 'no_artifacts',
         },
-      },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+          environmentVariables: [
+            {
+              name: 'AWS_ACCESS_KEY_ID',
+              type: 'PLAINTEXT',
+              value: 'myawsaccesskeyid',
+            },
+          ],
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new CfnProject(stack, 'rProject1', {
+        artifacts: {
+          type: 'no_artifacts',
+        },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+          environmentVariables: [
+            {
+              name: 'AWS_ACCESS_KEY_ID',
+              value: 'myawsaccesskeyid',
+            },
+          ],
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new CfnProject(stack, 'rProject1', {
+        artifacts: {
+          type: 'no_artifacts',
+        },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+          environmentVariables: [
+            {
+              name: 'AWS_SECRET_ACCESS_KEY',
+              value: 'myawsaccesskeyid',
+            },
+          ],
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectEnvVarAwsCred:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnProject(nonCompliant2, 'rProject1', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-        environmentVariables: [
-          {
-            name: 'AWS_ACCESS_KEY_ID',
-            value: 'myawsaccesskeyid',
-          },
-        ],
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+    test('Compliance', () => {
+      new CfnProject(stack, 'rProject1', {
+        artifacts: {
+          type: 'no_artifacts',
         },
-      },
-    });
-
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectEnvVarAwsCred:'),
-        }),
-      })
-    );
-
-    const nonCompliant3 = new Stack();
-    Aspects.of(nonCompliant3).add(new TestPack());
-    new CfnProject(nonCompliant3, 'rProject1', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-        environmentVariables: [
-          {
-            name: 'AWS_SECRET_ACCESS_KEY',
-            value: 'myawsaccesskeyid',
-          },
-        ],
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
         },
-      },
-    });
-
-    const messages3 = SynthUtils.synthesize(nonCompliant3).messages;
-    expect(messages3).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectEnvVarAwsCred:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnProject(compliant, 'rProject1', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
         },
-      },
-    });
+      });
 
-    new CfnProject(compliant, 'rProject2', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-        environmentVariables: [
-          {
-            name: 'AWS_ACCESS_KEY_ID',
-            type: 'PARAMETER_STORE',
-            value: 'myawsaccesskeyid',
-          },
-          {
-            name: 'AWS_SECRET_ACCESS_KEY',
-            type: 'PARAMETER_STORE',
-            value: 'myawssecretaccesskey',
-          },
-        ],
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+      new CfnProject(stack, 'rProject2', {
+        artifacts: {
+          type: 'no_artifacts',
         },
-      },
-    });
-
-    new CfnProject(compliant, 'rProject3', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-        environmentVariables: [
-          {
-            name: 'AWS_ACCESS_KEY_ID',
-            type: 'SECRETS_MANAGER',
-            value: 'myawsaccesskeyid',
-          },
-          {
-            name: 'AWS_SECRET_ACCESS_KEY',
-            type: 'SECRETS_MANAGER',
-            value: 'myawssecretaccesskey',
-          },
-        ],
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+          environmentVariables: [
+            {
+              name: 'AWS_ACCESS_KEY_ID',
+              type: 'PARAMETER_STORE',
+              value: 'myawsaccesskeyid',
+            },
+            {
+              name: 'AWS_SECRET_ACCESS_KEY',
+              type: 'PARAMETER_STORE',
+              value: 'myawssecretaccesskey',
+            },
+          ],
         },
-      },
-    });
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
+        },
+      });
 
-    const messages4 = SynthUtils.synthesize(compliant).messages;
-    expect(messages4).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectEnvVarAwsCred:'),
-        }),
-      })
-    );
+      new CfnProject(stack, 'rProject3', {
+        artifacts: {
+          type: 'no_artifacts',
+        },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+          environmentVariables: [
+            {
+              name: 'AWS_ACCESS_KEY_ID',
+              type: 'SECRETS_MANAGER',
+              value: 'myawsaccesskeyid',
+            },
+            {
+              name: 'AWS_SECRET_ACCESS_KEY',
+              type: 'SECRETS_MANAGER',
+              value: 'myawssecretaccesskey',
+            },
+          ],
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CodeBuildProjectKMSEncryptedArtifacts: Codebuild projects use an AWS KMS key for encryption', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Project(nonCompliant, 'rBuildProject', {
-      buildSpec: BuildSpec.fromObjectToYaml({
-        version: 0.2,
-        phases: {
-          build: {
-            commands: ['echo "foo"'],
+  describe('CodeBuildProjectKMSEncryptedArtifacts: Codebuild projects use an AWS KMS key for encryption', () => {
+    const ruleId = 'CodeBuildProjectKMSEncryptedArtifacts';
+    test('Noncompliance 1', () => {
+      new Project(stack, 'rBuildProject', {
+        buildSpec: BuildSpec.fromObjectToYaml({
+          version: 0.2,
+          phases: {
+            build: {
+              commands: ['echo "foo"'],
+            },
           },
-        },
-      }),
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CodeBuildProjectKMSEncryptedArtifacts:'
-          ),
         }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Project(compliant, 'rBuildProject', {
-      buildSpec: BuildSpec.fromObjectToYaml({
-        version: 0.2,
-        phases: {
-          build: {
-            commands: ['echo "foo"'],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance', () => {
+      new Project(stack, 'rBuildProject', {
+        buildSpec: BuildSpec.fromObjectToYaml({
+          version: 0.2,
+          phases: {
+            build: {
+              commands: ['echo "foo"'],
+            },
           },
-        },
-      }),
-      encryptionKey: new Key(compliant, 'rBuildKey'),
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CodeBuildProjectKMSEncryptedArtifacts:'
-          ),
         }),
-      })
-    );
+        encryptionKey: new Key(stack, 'rBuildKey'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CodeBuildProjectManagedImages: Codebuild projects use images provided by the CodeBuild service or have a cdk_nag suppression rule explaining the need for a custom image', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Project(nonCompliant, 'rBuildProject', {
-      buildSpec: BuildSpec.fromObjectToYaml({
-        version: 0.2,
+  describe('CodeBuildProjectManagedImages: Codebuild projects use images provided by the CodeBuild service or have a cdk_nag suppression rule explaining the need for a custom image', () => {
+    const ruleId = 'CodeBuildProjectManagedImages';
+    test('Noncompliance ', () => {
+      new Project(stack, 'rBuildProject', {
+        buildSpec: BuildSpec.fromObjectToYaml({
+          version: 0.2,
 
-        phases: {
-          build: {
-            commands: ['echo "foo"'],
+          phases: {
+            build: {
+              commands: ['echo "foo"'],
+            },
           },
-        },
-      }),
-      environment: {
-        buildImage: LinuxBuildImage.fromDockerRegistry('foo/bar:baz'),
-      },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectManagedImages:'),
         }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Project(compliant, 'rBuildProject', {
-      buildSpec: BuildSpec.fromObjectToYaml({
-        version: 0.2,
+        environment: {
+          buildImage: LinuxBuildImage.fromDockerRegistry('foo/bar:baz'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Project(stack, 'rBuildProject', {
+        buildSpec: BuildSpec.fromObjectToYaml({
+          version: 0.2,
 
-        phases: {
-          build: {
-            commands: ['echo "foo"'],
+          phases: {
+            build: {
+              commands: ['echo "foo"'],
+            },
           },
-        },
-      }),
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectManagedImages:'),
         }),
-      })
-    );
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CodeBuildProjectPrivilegedModeDisabled: Codebuild projects have privileged mode disabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Project(nonCompliant, 'rBuildProject', {
-      buildSpec: BuildSpec.fromObjectToYaml({
-        version: 0.2,
-        phases: {
-          build: {
-            commands: ['echo "foo"'],
+  describe('CodeBuildProjectPrivilegedModeDisabled: Codebuild projects have privileged mode disabled', () => {
+    const ruleId = 'CodeBuildProjectPrivilegedModeDisabled';
+    test('Noncompliance 1', () => {
+      new Project(stack, 'rBuildProject', {
+        buildSpec: BuildSpec.fromObjectToYaml({
+          version: 0.2,
+          phases: {
+            build: {
+              commands: ['echo "foo"'],
+            },
           },
-        },
-      }),
-      environment: {
-        privileged: true,
-      },
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CodeBuildProjectPrivilegedModeDisabled:'
-          ),
         }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Project(compliant, 'rBuildProject', {
-      buildSpec: BuildSpec.fromObjectToYaml({
-        version: 0.2,
-        phases: {
-          build: {
-            commands: ['echo "foo"'],
+        environment: {
+          privileged: true,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Project(stack, 'rBuildProject', {
+        buildSpec: BuildSpec.fromObjectToYaml({
+          version: 0.2,
+          phases: {
+            build: {
+              commands: ['echo "foo"'],
+            },
           },
-        },
-      }),
-    });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'CodeBuildProjectPrivilegedModeDisabled:'
-          ),
         }),
-      })
-    );
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('CodeBuildProjectSourceRepoUrl: Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnProject(nonCompliant, 'rProject1', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-      },
-    });
-
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectSourceRepoUrl:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnProject(compliant, 'rProject1', {
-      artifacts: {
-        type: 'no_artifacts',
-      },
-      environment: {
-        computeType: 'BUILD_GENERAL1_SMALL',
-        image: 'aws/CodeBuild/standard:4.0',
-        type: 'LINUX_CONTAINER',
-      },
-      serviceRole: 'someservicerole',
-      source: {
-        type: 'NO_SOURCE',
-        auth: {
-          type: 'OAUTH',
+  describe('CodeBuildProjectSourceRepoUrl: Codebuild projects with a GitHub or BitBucket source repository utilize OAUTH', () => {
+    const ruleId = 'CodeBuildProjectSourceRepoUrl';
+    test('Noncompliance 1', () => {
+      new CfnProject(stack, 'rProject1', {
+        artifacts: {
+          type: 'no_artifacts',
         },
-      },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    const messages6 = SynthUtils.synthesize(compliant).messages;
-    expect(messages6).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('CodeBuildProjectSourceRepoUrl:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new CfnProject(stack, 'rProject1', {
+        artifacts: {
+          type: 'no_artifacts',
+        },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'OAUTH',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 });

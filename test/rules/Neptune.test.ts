@@ -2,11 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
-import { CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-neptune';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { CfnDBCluster, CfnDBInstance } from '@aws-cdk/aws-neptune';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   NeptuneClusterAutomaticMinorVersionUpgrade,
   NeptuneClusterBackupRetentionPeriod,
@@ -14,183 +11,97 @@ import {
   NeptuneClusterIAMAuth,
   NeptuneClusterMultiAZ,
 } from '../../src/rules/neptune';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        NeptuneClusterAutomaticMinorVersionUpgrade,
-        NeptuneClusterBackupRetentionPeriod,
-        NeptuneClusterEncryptionAtRest,
-        NeptuneClusterIAMAuth,
-        NeptuneClusterMultiAZ,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  NeptuneClusterAutomaticMinorVersionUpgrade,
+  NeptuneClusterBackupRetentionPeriod,
+  NeptuneClusterEncryptionAtRest,
+  NeptuneClusterIAMAuth,
+  NeptuneClusterMultiAZ,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon Neptune', () => {
-  test('NeptuneClusterAutomaticMinorVersionUpgrade: Neptune DB instances have Auto Minor Version Upgrade enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBInstance(nonCompliant, 'rDatabaseInstance', {
-      dbInstanceClass: 'db.r4.2xlarge',
+  describe('NeptuneClusterAutomaticMinorVersionUpgrade: Neptune DB instances have Auto Minor Version Upgrade enabled', () => {
+    const ruleId = 'NeptuneClusterAutomaticMinorVersionUpgrade';
+    test('Noncompliance 1', () => {
+      new CfnDBInstance(stack, 'rDatabaseInstance', {
+        dbInstanceClass: 'db.r4.2xlarge',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NeptuneClusterAutomaticMinorVersionUpgrade:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBInstance(compliant, 'rDatabaseInstance', {
-      dbInstanceClass: 'db.r4.2xlarge',
-      autoMinorVersionUpgrade: true,
+    test('Compliance', () => {
+      new CfnDBInstance(stack, 'rDatabaseInstance', {
+        dbInstanceClass: 'db.r4.2xlarge',
+        autoMinorVersionUpgrade: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'NeptuneClusterAutomaticMinorVersionUpgrade:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('NeptuneClusterBackupRetentionPeriod: Neptune DB clusters have a reasonable minimum backup retention period configured', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBCluster(nonCompliant, 'rDatabaseCluster');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterBackupRetentionPeriod:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDatabaseCluster', {
-      backupRetentionPeriod: 7,
+  describe('NeptuneClusterBackupRetentionPeriod: Neptune DB clusters have a reasonable minimum backup retention period configured', () => {
+    const ruleId = 'NeptuneClusterBackupRetentionPeriod';
+    test('Noncompliance 1', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterBackupRetentionPeriod:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        backupRetentionPeriod: 7,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('NeptuneClusterEncryptionAtRest: Neptune DB clusters have encryption at rest enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBCluster(nonCompliant, 'rDatabaseCluster', {
-      storageEncrypted: false,
+  describe('NeptuneClusterEncryptionAtRest: Neptune DB clusters have encryption at rest enabled', () => {
+    const ruleId = 'NeptuneClusterEncryptionAtRest';
+    test('Noncompliance 1', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        storageEncrypted: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterEncryptionAtRest:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDatabaseCluster', { storageEncrypted: true });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterEncryptionAtRest:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', { storageEncrypted: true });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('NeptuneClusterIAMAuth: Neptune DB clusters have IAM Database Authentication enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBCluster(nonCompliant, 'rDatabaseCluster');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterIAMAuth:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDatabaseCluster', {
-      iamAuthEnabled: true,
+  describe('NeptuneClusterIAMAuth: Neptune DB clusters have IAM Database Authentication enabled', () => {
+    const ruleId = 'NeptuneClusterIAMAuth';
+    test('Noncompliance 1', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterIAMAuth:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        iamAuthEnabled: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('NeptuneClusterMultiAZ: Neptune DB clusters are deployed in a Multi-AZ configuration', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnDBCluster(nonCompliant, 'rDatabaseCluster', {
-      availabilityZones: ['us-east-1a'],
-      dbSubnetGroupName: 'foo',
+  describe('NeptuneClusterMultiAZ: Neptune DB clusters are deployed in a Multi-AZ configuration', () => {
+    const ruleId = 'NeptuneClusterMultiAZ';
+    test('Noncompliance 1', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        availabilityZones: ['us-east-1a'],
+        dbSubnetGroupName: 'foo',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterMultiAZ:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnDBCluster(compliant, 'rDatabaseCluster', {
-      availabilityZones: ['us-east-1a', 'us-east-1b'],
-      dbSubnetGroupName: 'foo',
+    test('Compliance', () => {
+      new CfnDBCluster(stack, 'rDatabaseCluster', {
+        availabilityZones: ['us-east-1a', 'us-east-1b'],
+        dbSubnetGroupName: 'foo',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('NeptuneClusterMultiAZ:'),
-        }),
-      })
-    );
   });
 });

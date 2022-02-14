@@ -2,119 +2,74 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Duration, Stack } from 'aws-cdk-lib';
-import { LogGroup } from 'aws-cdk-lib/aws-logs';
+import { LogGroup } from '@aws-cdk/aws-logs';
 import {
   StateMachine,
   Wait,
   WaitTime,
   LogLevel,
-} from 'aws-cdk-lib/aws-stepfunctions';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+} from '@aws-cdk/aws-stepfunctions';
+import { Aspects, Duration, Stack } from '@aws-cdk/core';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
   StepFunctionStateMachineXray,
 } from '../../src/rules/stepfunctions';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        StepFunctionStateMachineAllLogsToCloudWatch,
-        StepFunctionStateMachineXray,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  StepFunctionStateMachineAllLogsToCloudWatch,
+  StepFunctionStateMachineXray,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('AWS Step Functions', () => {
-  test('StepFunctionStateMachineAllLogsToCloudWatch: Step Function log "ALL" events to CloudWatch Logs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new StateMachine(nonCompliant, 'rStateMachine', {
-      definition: new Wait(nonCompliant, 'rWait30', {
-        time: WaitTime.duration(Duration.seconds(30)),
-      }),
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'StepFunctionStateMachineAllLogsToCloudWatch:'
-          ),
+  describe('StepFunctionStateMachineAllLogsToCloudWatch: Step Function log "ALL" events to CloudWatch Logs', () => {
+    const ruleId = 'StepFunctionStateMachineAllLogsToCloudWatch';
+    test('Noncompliance 1', () => {
+      new StateMachine(stack, 'rStateMachine', {
+        definition: new Wait(stack, 'rWait30', {
+          time: WaitTime.duration(Duration.seconds(30)),
         }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new StateMachine(compliant, 'rStateMachine', {
-      definition: new Wait(compliant, 'rWait30', {
-        time: WaitTime.duration(Duration.seconds(30)),
-      }),
-      logs: {
-        level: LogLevel.ALL,
-        destination: new LogGroup(compliant, 'rSfnLog'),
-      },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'StepFunctionStateMachineAllLogsToCloudWatch:'
-          ),
+    test('Compliance', () => {
+      new StateMachine(stack, 'rStateMachine', {
+        definition: new Wait(stack, 'rWait30', {
+          time: WaitTime.duration(Duration.seconds(30)),
         }),
-      })
-    );
+        logs: {
+          level: LogLevel.ALL,
+          destination: new LogGroup(stack, 'rSfnLog'),
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test('StepFunctionStateMachineXray: Step Function have X-Ray tracing enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new StateMachine(nonCompliant, 'rStateMachine', {
-      definition: new Wait(nonCompliant, 'rWait30', {
-        time: WaitTime.duration(Duration.seconds(30)),
-      }),
-    });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('StepFunctionStateMachineXray:'),
+  describe('StepFunctionStateMachineXray: Step Function have X-Ray tracing enabled', () => {
+    const ruleId = 'StepFunctionStateMachineXray';
+    test('Noncompliance 1', () => {
+      new StateMachine(stack, 'rStateMachine', {
+        definition: new Wait(stack, 'rWait30', {
+          time: WaitTime.duration(Duration.seconds(30)),
         }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new StateMachine(compliant, 'rStateMachine', {
-      definition: new Wait(compliant, 'rWait30', {
-        time: WaitTime.duration(Duration.seconds(30)),
-      }),
-      tracingEnabled: true,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('StepFunctionStateMachineXray:'),
+    test('Compliance', () => {
+      new StateMachine(stack, 'rStateMachine', {
+        definition: new Wait(stack, 'rWait30', {
+          time: WaitTime.duration(Duration.seconds(30)),
         }),
-      })
-    );
+        tracingEnabled: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 });

@@ -2,73 +2,42 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
-import { CfnEnvironmentEC2 } from 'aws-cdk-lib/aws-cloud9';
-import { InstanceType, InstanceClass, InstanceSize } from 'aws-cdk-lib/aws-ec2';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { CfnEnvironmentEC2 } from '@aws-cdk/aws-cloud9';
+import { InstanceType, InstanceClass, InstanceSize } from '@aws-cdk/aws-ec2';
+import { Aspects, Stack } from '@aws-cdk/core';
 import { Cloud9InstanceNoIngressSystemsManager } from '../../src/rules/cloud9';
+import { TestPack, validateStack, TestType } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [Cloud9InstanceNoIngressSystemsManager];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([Cloud9InstanceNoIngressSystemsManager]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('AWS Cloud9', () => {
-  test('Cloud9InstanceNoIngressSystemsManager: Cloud9 instances use no-ingress EC2 instances with AWS Systems Manager', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnEnvironmentEC2(nonCompliant, 'rC9Env', {
-      instanceType: InstanceType.of(
-        InstanceClass.T2,
-        InstanceSize.MICRO
-      ).toString(),
+  describe('Cloud9InstanceNoIngressSystemsManager: Cloud9 instances use no-ingress EC2 instances with AWS Systems Manager', () => {
+    const ruleId = 'Cloud9InstanceNoIngressSystemsManager';
+    test('Noncompliance ', () => {
+      new CfnEnvironmentEC2(stack, 'rC9Env', {
+        instanceType: InstanceType.of(
+          InstanceClass.T2,
+          InstanceSize.MICRO
+        ).toString(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'Cloud9InstanceNoIngressSystemsManager:'
-          ),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnEnvironmentEC2(compliant, 'rC9Env', {
-      instanceType: InstanceType.of(
-        InstanceClass.T2,
-        InstanceSize.MICRO
-      ).toString(),
-      connectionType: 'CONNECT_SSM',
+
+    test('Compliance', () => {
+      new CfnEnvironmentEC2(stack, 'rC9Env', {
+        instanceType: InstanceType.of(
+          InstanceClass.T2,
+          InstanceSize.MICRO
+        ).toString(),
+        connectionType: 'CONNECT_SSM',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'Cloud9InstanceNoIngressSystemsManager:'
-          ),
-        }),
-      })
-    );
   });
 });

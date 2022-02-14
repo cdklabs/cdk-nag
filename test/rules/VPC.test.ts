@@ -2,8 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   CfnVPC,
   CfnRoute,
@@ -15,9 +13,8 @@ import {
   CfnFlowLog,
   FlowLogTrafficType,
   NetworkAcl,
-} from 'aws-cdk-lib/aws-ec2';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+} from '@aws-cdk/aws-ec2';
+import { Aspects, Stack } from '@aws-cdk/core';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,
@@ -25,259 +22,146 @@ import {
   VPCNoUnrestrictedRouteToIGW,
   VPCSubnetAutoAssignPublicIpDisabled,
 } from '../../src/rules/vpc';
+import { TestPack, validateStack, TestType } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        VPCDefaultSecurityGroupClosed,
-        VPCFlowLogsEnabled,
-        VPCNoNACLs,
-        VPCNoUnrestrictedRouteToIGW,
-        VPCSubnetAutoAssignPublicIpDisabled,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  VPCDefaultSecurityGroupClosed,
+  VPCFlowLogsEnabled,
+  VPCNoNACLs,
+  VPCNoUnrestrictedRouteToIGW,
+  VPCSubnetAutoAssignPublicIpDisabled,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon Virtual Private Cloud (VPC)', () => {
-  test('VPCDefaultSecurityGroupClosed: VPCs have their default security group closed', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnVPC(nonCompliant, 'rVPC', {
-      cidrBlock: '1.1.1.1',
+  describe('VPCDefaultSecurityGroupClosed: VPCs have their default security group closed', () => {
+    const ruleId = 'VPCDefaultSecurityGroupClosed';
+    test('Noncompliance 1', () => {
+      new CfnVPC(stack, 'rVPC', {
+        cidrBlock: '1.1.1.1',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCDefaultSecurityGroupClosed:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCDefaultSecurityGroupClosed:'),
-        }),
-      })
-    );
   });
 
-  test('VPCFlowLogsEnabled: VPCs have Flow Logs enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Vpc(nonCompliant, 'rVpc');
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCFlowLogsEnabled:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new Vpc(nonCompliant2, 'rVpc');
-    new FlowLog(nonCompliant2, 'rFlowLog', {
-      resourceType: FlowLogResourceType.fromVpc(
-        Vpc.fromVpcAttributes(nonCompliant2, 'rLookupVpc', {
-          vpcId: 'foo',
-          availabilityZones: ['us-east-1a'],
-        })
-      ),
+  describe('VPCFlowLogsEnabled: VPCs have Flow Logs enabled', () => {
+    const ruleId = 'VPCFlowLogsEnabled';
+    test('Noncompliance 1', () => {
+      new Vpc(stack, 'rVpc');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCFlowLogsEnabled:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    const compliantVpc = new Vpc(compliant, 'rVpc1');
-    new FlowLog(compliant, 'rFlowFlog1', {
-      resourceType: FlowLogResourceType.fromVpc(compliantVpc),
+    test('Noncompliance 2', () => {
+      new Vpc(stack, 'rVpc');
+      new FlowLog(stack, 'rFlowLog', {
+        resourceType: FlowLogResourceType.fromVpc(
+          Vpc.fromVpcAttributes(stack, 'rLookupVpc', {
+            vpcId: 'foo',
+            availabilityZones: ['us-east-1a'],
+          })
+        ),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const compliantVpc2 = new Vpc(compliant, 'rVpc2');
-    new CfnFlowLog(compliant, 'rCfnFlowLog', {
-      resourceId: compliantVpc2.vpcId,
-      resourceType: 'VPC',
-      trafficType: FlowLogTrafficType.ALL,
+    test('Compliance', () => {
+      const compliantVpc = new Vpc(stack, 'rVpc1');
+      new FlowLog(stack, 'rFlowFlog1', {
+        resourceType: FlowLogResourceType.fromVpc(compliantVpc),
+      });
+      const compliantVpc2 = new Vpc(stack, 'rVpc2');
+      new CfnFlowLog(stack, 'rCfnFlowLog', {
+        resourceId: compliantVpc2.vpcId,
+        resourceType: 'VPC',
+        trafficType: FlowLogTrafficType.ALL,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCFlowLogsEnabled:'),
-        }),
-      })
-    );
   });
 
-  test('VPCNoNACLs: VPCs do not implement network ACLs', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new NetworkAcl(nonCompliant, 'rNacl', {
-      vpc: new Vpc(nonCompliant, 'rVpc'),
+  describe('VPCNoNACLs: VPCs do not implement network ACLs', () => {
+    const ruleId = 'VPCNoNACLs';
+    test('Noncompliance 1', () => {
+      new NetworkAcl(stack, 'rNacl', {
+        vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCNoNACLs:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new NetworkAcl(nonCompliant2, 'rNacl', {
-      vpc: new Vpc(nonCompliant2, 'rVpc'),
+    test('Noncompliance 2', () => {
+      new NetworkAcl(stack, 'rNacl', {
+        vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCNoNACLs:'),
-        }),
-      })
-    );
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Vpc(compliant, 'rVpc');
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCNoNACLs:'),
-        }),
-      })
-    );
+    test('Compliance', () => {
+      new Vpc(stack, 'rVpc');
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
-  test("VPCNoUnrestrictedRouteToIGW: Route tables do not have unrestricted routes ('0.0.0.0/0' or '::/0') to IGWs - (Control ID: 164.312(e)(1))", () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnRoute(nonCompliant, 'rRoute', {
-      routeTableId: 'foo',
-      gatewayId: 'igw-bar',
-      destinationCidrBlock: '42.42.42.42/0',
+  describe("VPCNoUnrestrictedRouteToIGW: Route tables do not have unrestricted routes ('0.0.0.0/0' or '::/0') to IGWs - (Control ID: 164.312(e)(1))", () => {
+    const ruleId = 'VPCNoUnrestrictedRouteToIGW';
+    test('Noncompliance 1', () => {
+      new CfnRoute(stack, 'rRoute', {
+        routeTableId: 'foo',
+        gatewayId: 'igw-bar',
+        destinationCidrBlock: '42.42.42.42/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCNoUnrestrictedRouteToIGW:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnRoute(nonCompliant2, 'rRoute', {
-      routeTableId: 'foo',
-      gatewayId: 'igw-bar',
-      destinationIpv6CidrBlock: 'ff:ff:ff:ff:ff:ff:ff:ff/0',
+    test('Noncompliance 2', () => {
+      new CfnRoute(stack, 'rRoute', {
+        routeTableId: 'foo',
+        gatewayId: 'igw-bar',
+        destinationIpv6CidrBlock: 'ff:ff:ff:ff:ff:ff:ff:ff/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCNoUnrestrictedRouteToIGW:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnRoute(compliant, 'rRoute', {
-      routeTableId: 'foo',
-      natGatewayId: 'nat-foo',
-      destinationCidrBlock: '42.42.42.42/0',
+    test('Compliance', () => {
+      new CfnRoute(stack, 'rRoute', {
+        routeTableId: 'foo',
+        natGatewayId: 'nat-foo',
+        destinationCidrBlock: '42.42.42.42/0',
+      });
+      new CfnRoute(stack, 'rRoute2', {
+        routeTableId: 'foo',
+        gatewayId: 'igw-bar',
+        destinationCidrBlock: '42.42.42.42/32',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnRoute(compliant, 'rRoute2', {
-      routeTableId: 'foo',
-      gatewayId: 'igw-bar',
-      destinationCidrBlock: '42.42.42.42/32',
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCNoUnrestrictedRouteToIGW:'),
-        }),
-      })
-    );
   });
 
-  test('VPCSubnetAutoAssignPublicIpDisabled: Subnets do not auto-assign public IP addresses', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new Subnet(nonCompliant, 'rSubnet', {
-      availabilityZone: 'foo',
-      vpcId: 'bar',
-      cidrBlock: 'baz',
-      mapPublicIpOnLaunch: true,
+  describe('VPCSubnetAutoAssignPublicIpDisabled: Subnets do not auto-assign public IP addresses', () => {
+    const ruleId = 'VPCSubnetAutoAssignPublicIpDisabled';
+    test('Noncompliance 1', () => {
+      new Subnet(stack, 'rSubnet', {
+        availabilityZone: 'foo',
+        vpcId: 'bar',
+        cidrBlock: 'baz',
+        mapPublicIpOnLaunch: true,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCSubnetAutoAssignPublicIpDisabled:'),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnSubnet(nonCompliant2, 'rSubnet', {
-      availabilityZone: 'foo',
-      vpcId: 'bar',
-      cidrBlock: 'baz',
-      assignIpv6AddressOnCreation: true,
+    test('Noncompliance 2', () => {
+      new CfnSubnet(stack, 'rSubnet', {
+        availabilityZone: 'foo',
+        vpcId: 'bar',
+        cidrBlock: 'baz',
+        assignIpv6AddressOnCreation: true,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCSubnetAutoAssignPublicIpDisabled:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new Subnet(compliant, 'rSubnet', {
-      availabilityZone: 'foo',
-      vpcId: 'bar',
-      cidrBlock: 'baz',
+    test('Compliance', () => {
+      new Subnet(stack, 'rSubnet', {
+        availabilityZone: 'foo',
+        vpcId: 'bar',
+        cidrBlock: 'baz',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('VPCSubnetAutoAssignPublicIpDisabled:'),
-        }),
-      })
-    );
   });
 });

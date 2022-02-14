@@ -2,14 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, SecretValue, Stack } from 'aws-cdk-lib';
-import {
-  CfnCacheCluster,
-  CfnReplicationGroup,
-} from 'aws-cdk-lib/aws-elasticache';
-import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src';
+import { CfnCacheCluster, CfnReplicationGroup } from '@aws-cdk/aws-elasticache';
+import { Aspects, SecretValue, Stack } from '@aws-cdk/core';
 import {
   ElastiCacheClusterInVPC,
   ElastiCacheClusterNonDefaultPort,
@@ -18,325 +12,202 @@ import {
   ElastiCacheRedisClusterMultiAZ,
   ElastiCacheRedisClusterRedisAuth,
 } from '../../src/rules/elasticache';
+import { validateStack, TestType, TestPack } from './utils';
 
-class TestPack extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
-    this.packName = 'Test';
-  }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      const rules = [
-        ElastiCacheClusterInVPC,
-        ElastiCacheClusterNonDefaultPort,
-        ElastiCacheRedisClusterAutomaticBackup,
-        ElastiCacheRedisClusterEncryption,
-        ElastiCacheRedisClusterMultiAZ,
-        ElastiCacheRedisClusterRedisAuth,
-      ];
-      rules.forEach((rule) => {
-        this.applyRule({
-          info: 'foo.',
-          explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
-          rule: rule,
-          node: node,
-        });
-      });
-    }
-  }
-}
+const testPack = new TestPack([
+  ElastiCacheClusterInVPC,
+  ElastiCacheClusterNonDefaultPort,
+  ElastiCacheRedisClusterAutomaticBackup,
+  ElastiCacheRedisClusterEncryption,
+  ElastiCacheRedisClusterMultiAZ,
+  ElastiCacheRedisClusterRedisAuth,
+]);
+let stack: Stack;
+
+beforeEach(() => {
+  stack = new Stack();
+  Aspects.of(stack).add(testPack);
+});
 
 describe('Amazon ElastiCache', () => {
-  test('ElastiCacheClusterInVPC: ElastiCache clusters are provisioned in a VPC', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnCacheCluster(nonCompliant, 'rAec', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'memcached',
-      numCacheNodes: 42,
+  describe('ElastiCacheClusterInVPC: ElastiCache clusters are provisioned in a VPC', () => {
+    const ruleId = 'ElastiCacheClusterInVPC';
+    test('Noncompliance 1', () => {
+      new CfnCacheCluster(stack, 'rAec', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'memcached',
+        numCacheNodes: 42,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheClusterInVPC:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnReplicationGroup(nonCompliant2, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
+    test('Noncompliance 2', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheClusterInVPC:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnCacheCluster(compliant, 'rAec', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'memcached',
-      numCacheNodes: 42,
-      cacheSubnetGroupName: 'lorem',
+    test('Compliance', () => {
+      new CfnCacheCluster(stack, 'rAec', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'memcached',
+        numCacheNodes: 42,
+        cacheSubnetGroupName: 'lorem',
+      });
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheSubnetGroupName: 'lorem',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnReplicationGroup(compliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheSubnetGroupName: 'lorem',
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheClusterInVPC:'),
-        }),
-      })
-    );
   });
 
-  test('ElastiCacheClusterNonDefaultPort: ElastiCache clusters do not use the default endpoint ports', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnCacheCluster(nonCompliant, 'rAec', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'memcached',
-      numCacheNodes: 42,
-      port: 11211,
+  describe('ElastiCacheClusterNonDefaultPort: ElastiCache clusters do not use the default endpoint ports', () => {
+    const ruleId = 'ElastiCacheClusterNonDefaultPort';
+    test('Noncompliance 1', () => {
+      new CfnCacheCluster(stack, 'rAec', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'memcached',
+        numCacheNodes: 42,
+        port: 11211,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheClusterNonDefaultPort:'),
-        }),
-      })
-    );
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnReplicationGroup(nonCompliant2, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      port: 6379,
+    test('Noncompliance 2', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        port: 6379,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheClusterNonDefaultPort:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnCacheCluster(compliant, 'rAec', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'memcached',
-      numCacheNodes: 42,
-      port: 42,
+    test('Compliance', () => {
+      new CfnCacheCluster(stack, 'rAec', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'memcached',
+        numCacheNodes: 42,
+        port: 42,
+      });
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheSubnetGroupName: 'lorem',
+        multiAzEnabled: true,
+        port: 42,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnReplicationGroup(compliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheSubnetGroupName: 'lorem',
-      multiAzEnabled: true,
-      port: 42,
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheClusterNonDefaultPort:'),
-        }),
-      })
-    );
   });
 
-  test('ElastiCacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnCacheCluster(nonCompliant, 'rAec', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      numCacheNodes: 42,
-      snapshotRetentionLimit: 14,
-      port: 11211,
+  describe('ElastiCacheRedisClusterAutomaticBackup: ElastiCache Redis clusters retain automatic backups for at least 15 days', () => {
+    const ruleId = 'ElastiCacheRedisClusterAutomaticBackup';
+    test('Noncompliance 1', () => {
+      new CfnCacheCluster(stack, 'rAec', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        numCacheNodes: 42,
+        snapshotRetentionLimit: 14,
+        port: 11211,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'ElastiCacheRedisClusterAutomaticBackup:'
-          ),
-        }),
-      })
-    );
-
-    const nonCompliant2 = new Stack();
-    Aspects.of(nonCompliant2).add(new TestPack());
-    new CfnReplicationGroup(nonCompliant2, 'rAecGroup', {
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
+    test('Noncompliance 2', () => {
+      new CfnReplicationGroup(stack, 'rAecGroup', {
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(nonCompliant2).messages;
-    expect(messages2).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'ElastiCacheRedisClusterAutomaticBackup:'
-          ),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnCacheCluster(compliant, 'rAec', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      numCacheNodes: 42,
-      snapshotRetentionLimit: 16,
-      port: 42,
+    test('Compliance', () => {
+      new CfnCacheCluster(stack, 'rAec', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        numCacheNodes: 42,
+        snapshotRetentionLimit: 16,
+        port: 42,
+      });
+      new CfnReplicationGroup(stack, 'rAecGroup', {
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        snapshotRetentionLimit: 16,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    new CfnReplicationGroup(compliant, 'rAecGroup', {
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      snapshotRetentionLimit: 16,
-    });
-    const messages3 = SynthUtils.synthesize(compliant).messages;
-    expect(messages3).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'ElastiCacheRedisClusterAutomaticBackup:'
-          ),
-        }),
-      })
-    );
   });
 
-  test('ElastiCacheRedisClusterEncryption: ElastiCache Redis clusters have both encryption in transit and at rest enabled', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnReplicationGroup(nonCompliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      atRestEncryptionEnabled: true,
+  describe('ElastiCacheRedisClusterEncryption: ElastiCache Redis clusters have both encryption in transit and at rest enabled', () => {
+    const ruleId = 'ElastiCacheRedisClusterEncryption';
+    test('Noncompliance 1', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        atRestEncryptionEnabled: true,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheRedisClusterEncryption:'),
-        }),
-      })
-    );
 
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnReplicationGroup(compliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheSubnetGroupName: 'lorem',
-      atRestEncryptionEnabled: true,
-      transitEncryptionEnabled: true,
+    test('Compliance', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheSubnetGroupName: 'lorem',
+        atRestEncryptionEnabled: true,
+        transitEncryptionEnabled: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheRedisClusterEncryption:'),
-        }),
-      })
-    );
   });
 
-  test('ElastiCacheRedisClusterMultiAZ: ElastiCache Redis clusters are deployed in a Multi-AZ configuration', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnReplicationGroup(nonCompliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
+  describe('ElastiCacheRedisClusterMultiAZ: ElastiCache Redis clusters are deployed in a Multi-AZ configuration', () => {
+    const ruleId = 'ElastiCacheRedisClusterMultiAZ';
+    test('Noncompliance 1', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheRedisClusterMultiAZ:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnReplicationGroup(compliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheSubnetGroupName: 'lorem',
-      multiAzEnabled: true,
+    test('Compliance', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheSubnetGroupName: 'lorem',
+        multiAzEnabled: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheRedisClusterMultiAZ:'),
-        }),
-      })
-    );
   });
 
-  test('ElastiCacheRedisClusterRedisAuth: ElastiCache Redis clusters use Redis AUTH for user authentication', () => {
-    const nonCompliant = new Stack();
-    Aspects.of(nonCompliant).add(new TestPack());
-    new CfnReplicationGroup(nonCompliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      engine: 'redis',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
+  describe('ElastiCacheRedisClusterRedisAuth: ElastiCache Redis clusters use Redis AUTH for user authentication', () => {
+    const ruleId = 'ElastiCacheRedisClusterRedisAuth';
+    test('Noncompliance 1', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    const messages = SynthUtils.synthesize(nonCompliant).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheRedisClusterRedisAuth:'),
-        }),
-      })
-    );
-
-    const compliant = new Stack();
-    Aspects.of(compliant).add(new TestPack());
-    new CfnReplicationGroup(compliant, 'rRedisGroup', {
-      cacheNodeType: 'cache.t3.micro',
-      replicationGroupDescription: 'lorem ipsum dolor sit amet',
-      cacheSubnetGroupName: 'lorem',
-      transitEncryptionEnabled: true,
-      authToken: SecretValue.secretsManager('foo').toString(),
-      port: 42,
+    test('Compliance', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        cacheSubnetGroupName: 'lorem',
+        transitEncryptionEnabled: true,
+        authToken: SecretValue.secretsManager('foo').toString(),
+        port: 42,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    const messages2 = SynthUtils.synthesize(compliant).messages;
-    expect(messages2).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('ElastiCacheRedisClusterRedisAuth:'),
-        }),
-      })
-    );
   });
 });
