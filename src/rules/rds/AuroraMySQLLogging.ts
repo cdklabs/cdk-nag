@@ -18,10 +18,7 @@ export default Object.defineProperty(
         node,
         node.engine
       ).toLowerCase();
-      const engineMode = NagRules.resolveIfPrimitive(
-        node,
-        node.engineMode
-      ).toLowerCase();
+      const engineMode = NagRules.resolveIfPrimitive(node, node.engineMode);
       if (
         engineMode != undefined &&
         engineMode.toLowerCase() == 'serverless' &&
