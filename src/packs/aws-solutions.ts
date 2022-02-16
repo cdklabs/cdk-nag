@@ -90,6 +90,7 @@ import {
   EMRLocalDiskEncryption,
   EMRS3AccessLogging,
 } from '../rules/emr';
+import { EventBusOpenAccess } from '../rules/eventbridge';
 import {
   GlueEncryptedCloudWatchLogs,
   GlueJobBookmarkEncrypted,
@@ -1318,6 +1319,15 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkApplicationIntegration(node: CfnResource): void {
+    this.applyRule({
+      ruleSuffixOverride: 'EVB1',
+      info: 'The event bus policy allows for open access.',
+      explanation:
+        'An open policy ("*" principal without a condition) grants anonymous access to an event bus. Use a condition to limit the permission to accounts that fulfill a certain requirement, such as being a member of a certain AWS organization.',
+      level: NagMessageLevel.ERROR,
+      rule: EventBusOpenAccess,
+      node: node,
+    });
     this.applyRule({
       ruleSuffixOverride: 'SNS2',
       info: 'The SNS Topic does not have server-side encryption enabled.',
