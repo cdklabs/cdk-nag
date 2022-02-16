@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnEventBusPolicy } from '@aws-cdk/aws-events';
-import { CfnResource, Stack } from '@aws-cdk/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnEventBusPolicy } from 'aws-cdk-lib/aws-events';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**

@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnEventBusPolicy } from '@aws-cdk/aws-events';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Aspects, Stack } from 'aws-cdk-lib';
+import { CfnEventBusPolicy } from 'aws-cdk-lib/aws-events';
 import { EventBusOpenAccess } from '../../src/rules/eventbridge';
 import { validateStack, TestType, TestPack } from './utils';
 
