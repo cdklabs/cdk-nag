@@ -50,6 +50,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '@aws-cdk/aws-elasticloadbalancingv2',
     '@aws-cdk/aws-elasticsearch',
     '@aws-cdk/aws-emr',
+    '@aws-cdk/aws-events',
     '@aws-cdk/aws-glue',
     '@aws-cdk/aws-iam',
     '@aws-cdk/aws-kinesis',

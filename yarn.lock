@@ -586,7 +586,7 @@
     "@aws-cdk/core" "1.144.0"
     constructs "^3.3.69"
 
-"@aws-cdk/aws-events@1.144.0":
+"@aws-cdk/aws-events@1.144.0", "@aws-cdk/aws-events@^1.123.0":
   version "1.144.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-events/-/aws-events-1.144.0.tgz#e8e0b72ef93c984f462cd613dfdb6e45676395e0"
   integrity sha512-/ksVrO+T4YUNhPlfx/mQBw1hBfARAY+tbM8vmWgkWm0kU2X3DukZy3QIzF1tBYiMZ1+vO7fzixKb36lcc2uCRw==
