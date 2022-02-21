@@ -135,7 +135,13 @@ export class CdkTestStack extends Stack {
     // Enable adding suppressions to child constructs
     NagSuppressions.addResourceSuppressions(
       user,
-      [{ id: 'AwsSolutions-IAM5', reason: 'lorem ipsum' }],
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'lorem ipsum',
+          appliesTo: ['Resource::arn:aws:s3:::bucket_name/*'], // optional
+        },
+      ],
       true
     );
   }

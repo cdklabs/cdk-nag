@@ -156,7 +156,7 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
           }),
         },
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(stack, `${ruleId}[Resource::*]`, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
       new Group(stack, 'rGroup').addToPolicy(
@@ -165,7 +165,7 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
           resources: [new Bucket(stack, 'rBucket').bucketArn],
         })
       );
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(stack, `${ruleId}[Action::s3:*]`, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
       const user = new User(stack, 'rUser');

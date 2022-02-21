@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
 import { CfnResource, IConstruct, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../src';
+import { NagRuleResult } from '../../src';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src/nag-pack';
 
 export enum TestType {
@@ -41,9 +41,9 @@ export function validateStack(stack: Stack, ruleId: String, type: TestType) {
 }
 
 export class TestPack extends NagPack {
-  readonly rules: ((node: CfnResource) => NagRuleCompliance)[];
+  readonly rules: ((node: CfnResource) => NagRuleResult)[];
   constructor(
-    rules: ((node: CfnResource) => NagRuleCompliance)[],
+    rules: ((node: CfnResource) => NagRuleResult)[],
     props?: NagPackProps
   ) {
     super(props);

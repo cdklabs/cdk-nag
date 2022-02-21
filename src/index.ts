@@ -10,4 +10,5 @@ export * from './packs/pci-dss-321';
 export * from './nag-pack';
 export * from './nag-suppressions';
 export * from './nag-rules';
+export * from './models/nag-suppression';
 export * as rules from './rules';

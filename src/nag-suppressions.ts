@@ -3,20 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { IConstruct, CfnResource, Stack } from '@aws-cdk/core';
-
-/**
- * Interface for creating a rule suppression
- */
-export interface NagPackSuppression {
-  /**
-   * The id of the rule to ignore
-   */
-  readonly id: string;
-  /**
-   * The reason to ignore the rule (minimum 10 characters)
-   */
-  readonly reason: string;
-}
+import { NagPackSuppression } from './models/nag-suppression';
+import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
 /**
  * Helper class with methods to add cdk-nag suppressions to cdk resources
@@ -47,27 +35,16 @@ export class NagSuppressions {
           );
         }
       }
-      let currentSuppressions =
-        s.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
-      currentSuppressions = Array.isArray(currentSuppressions)
-        ? currentSuppressions
-        : [];
-      currentSuppressions.push(...newSuppressions);
-      const dedupSuppressions = new Set();
-      const result = currentSuppressions.filter((x: any) =>
-        !dedupSuppressions.has(JSON.stringify(x))
-          ? dedupSuppressions.add(JSON.stringify(x))
-          : false
+
+      let metadata = s.templateOptions.metadata?.cdk_nag ?? {};
+      metadata = NagSuppressionHelper.addRulesToMetadata(
+        metadata,
+        newSuppressions
       );
-      if (s.templateOptions.metadata) {
-        s.templateOptions.metadata.cdk_nag = {
-          rules_to_suppress: result,
-        };
-      } else {
-        s.templateOptions.metadata = {
-          cdk_nag: { rules_to_suppress: result },
-        };
+      if (!s.templateOptions.metadata) {
+        s.templateOptions.metadata = {};
       }
+      s.templateOptions.metadata.cdk_nag = metadata;
     });
   }
 
@@ -99,21 +76,12 @@ export class NagSuppressions {
         : child;
       if (possibleL1 instanceof CfnResource) {
         const resource = possibleL1 as CfnResource;
-        let currentSuppressions =
-          resource.getMetadata('cdk_nag')?.rules_to_suppress;
-        currentSuppressions = Array.isArray(currentSuppressions)
-          ? currentSuppressions
-          : [];
-        currentSuppressions.push(...newSuppressions);
-        const dedupSuppressions = new Set();
-        const result = currentSuppressions.filter((s: any) =>
-          !dedupSuppressions.has(JSON.stringify(s))
-            ? dedupSuppressions.add(JSON.stringify(s))
-            : false
+        let metadata = resource.getMetadata('cdk_nag');
+        metadata = NagSuppressionHelper.addRulesToMetadata(
+          metadata,
+          newSuppressions
         );
-        resource.addMetadata('cdk_nag', {
-          rules_to_suppress: result,
-        });
+        resource.addMetadata('cdk_nag', metadata);
       }
     }
   }
