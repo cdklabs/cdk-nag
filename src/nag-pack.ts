@@ -4,10 +4,11 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { appendFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { IAspect, Annotations, CfnResource, Stack, App } from 'aws-cdk-lib';
+import { IAspect, Annotations, CfnResource, App } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { NagRuleCompliance } from './nag-rules';
-import { NagPackSuppression } from './nag-suppressions';
+import { NagPackSuppression } from './models/nag-suppression';
+import { NagRuleCompliance, NagRuleResult, NagRuleFindings } from './nag-rules';
+import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 const SUPPRESSION_ID = 'CdkNagSuppression';
@@ -60,7 +61,7 @@ export interface IApplyRule {
    * The callback to the rule.
    * @param node The CfnResource to check.
    */
-  rule(node: CfnResource): NagRuleCompliance;
+  rule(node: CfnResource): NagRuleResult;
 }
 
 /**
@@ -113,12 +114,7 @@ export abstract class NagPack implements IAspect {
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
       );
     }
-    let resourceIgnores = params.node.getMetadata('cdk_nag')?.rules_to_suppress;
-    resourceIgnores = resourceIgnores ? resourceIgnores : [];
-    let stackIgnores = Stack.of(params.node).templateOptions.metadata?.cdk_nag
-      ?.rules_to_suppress;
-    stackIgnores = stackIgnores ? stackIgnores : [];
-    const allIgnores = resourceIgnores.concat(stackIgnores);
+    const allIgnores = NagSuppressionHelper.getSuppressions(params.node);
     const ruleSuffix = params.ruleSuffixOverride
       ? params.ruleSuffixOverride
       : params.rule.name;
@@ -130,40 +126,51 @@ export abstract class NagPack implements IAspect {
         ruleCompliance === NagRuleCompliance.COMPLIANT
       ) {
         this.writeToStackComplianceReport(params, ruleId, ruleCompliance);
-      } else if (ruleCompliance === NagRuleCompliance.NON_COMPLIANT) {
-        const reason = this.ignoreRule(allIgnores, ruleId);
-        if (this.reports === true) {
-          this.writeToStackComplianceReport(
-            params,
+      } else if (this.isNonCompliant(ruleCompliance)) {
+        const findings = this.asFindings(ruleCompliance);
+        for (const findingId of findings) {
+          const suppressionReason = this.ignoreRule(
+            allIgnores,
             ruleId,
-            ruleCompliance,
-            reason
+            findingId
           );
-        }
-        if (reason) {
-          if (this.logIgnores === true) {
-            const message = this.createMessage(
-              SUPPRESSION_ID,
-              `${ruleId} was triggered but suppressed.`,
-              `Provided reason: "${reason}"`
+
+          if (this.reports === true) {
+            this.writeToStackComplianceReport(
+              params,
+              ruleId,
+              NagRuleCompliance.NON_COMPLIANT,
+              suppressionReason
             );
-            Annotations.of(params.node).addInfo(message);
           }
-        } else {
-          const message = this.createMessage(
-            ruleId,
-            params.info,
-            params.explanation
-          );
-          if (params.level == NagMessageLevel.ERROR) {
-            Annotations.of(params.node).addError(message);
-          } else if (params.level == NagMessageLevel.WARN) {
-            Annotations.of(params.node).addWarning(message);
+
+          if (suppressionReason) {
+            if (this.logIgnores === true) {
+              const message = this.createMessage(
+                SUPPRESSION_ID,
+                findingId,
+                `${ruleId} was triggered but suppressed.`,
+                `Provided reason: "${suppressionReason}"`
+              );
+              Annotations.of(params.node).addInfo(message);
+            }
+          } else {
+            const message = this.createMessage(
+              ruleId,
+              findingId,
+              params.info,
+              params.explanation
+            );
+            if (params.level == NagMessageLevel.ERROR) {
+              Annotations.of(params.node).addError(message);
+            } else if (params.level == NagMessageLevel.WARN) {
+              Annotations.of(params.node).addWarning(message);
+            }
           }
         }
       }
     } catch (error) {
-      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID);
+      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID, '');
       if (this.reports === true) {
         this.writeToStackComplianceReport(params, ruleId, 'UNKNOWN', reason);
       }
@@ -171,6 +178,7 @@ export abstract class NagPack implements IAspect {
         if (this.logIgnores === true) {
           const message = this.createMessage(
             SUPPRESSION_ID,
+            '',
             `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
             reason
           );
@@ -180,6 +188,7 @@ export abstract class NagPack implements IAspect {
         const information = `'${ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
         const message = this.createMessage(
           VALIDATION_FAILURE_ID,
+          '',
           information,
           (error as Error).message
         );
@@ -192,17 +201,29 @@ export abstract class NagPack implements IAspect {
    * Check whether a specific rule should be ignored.
    * @param ignores The ignores listed in cdk-nag metadata.
    * @param ruleId The id of the rule to ignore.
+   * @param findingId The id of the finding that is being checked.
    * @returns The reason the rule was ignored, or an empty string.
    */
-  protected ignoreRule(ignores: NagPackSuppression[], ruleId: string): string {
+  protected ignoreRule(
+    ignores: NagPackSuppression[],
+    ruleId: string,
+    findingId: string
+  ): string {
     for (let ignore of ignores) {
       if (
         ignore.id &&
         ignore.reason &&
         JSON.stringify(ignore.reason).length >= 10
       ) {
-        if (ignore.id == ruleId) {
-          return ignore.reason;
+        if (ruleId === ignore.id) {
+          if (!ignore.appliesTo) {
+            // the rule is not granular so it always applies
+            return ignore.reason;
+          }
+          if (findingId && ignore.appliesTo.includes(findingId)) {
+            // the rule is granular so the findingId must match
+            return `[${findingId}] ${ignore.reason}`;
+          }
         }
       } else {
         throw Error(
@@ -218,16 +239,20 @@ export abstract class NagPack implements IAspect {
   /**
    * The message to output to the console when a rule is triggered.
    * @param ruleId The id of the rule.
+   * @param findingId The id of the finding.
    * @param info Why the rule was triggered.
    * @param explanation Why the rule exists.
    * @returns The formatted message string.
    */
   protected createMessage(
     ruleId: string,
+    findingId: string,
     info: string,
     explanation: string
   ): string {
-    let message = `${ruleId}: ${info}`;
+    let message = findingId
+      ? `${ruleId}[${findingId}]: ${info}`
+      : `${ruleId}: ${info}`;
     return this.verbose ? `${message} ${explanation}\n` : `${message}\n`;
   }
 
@@ -300,5 +325,20 @@ export abstract class NagPack implements IAspect {
     line.push(params.level);
     line.push(params.info);
     return line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n';
+  }
+
+  private isNonCompliant(ruleResult: NagRuleResult) {
+    return (
+      ruleResult === NagRuleCompliance.NON_COMPLIANT ||
+      Array.isArray(ruleResult)
+    );
+  }
+
+  private asFindings(ruleResult: NagRuleResult): NagRuleFindings {
+    if (Array.isArray(ruleResult)) {
+      return ruleResult;
+    } else {
+      return [''];
+    }
   }
 }

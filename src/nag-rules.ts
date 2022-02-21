@@ -13,6 +13,16 @@ export enum NagRuleCompliance {
   NOT_APPLICABLE = 'N/A',
 }
 
+export type NagRuleFinding = string;
+
+export type NagRuleFindings = NagRuleFinding[];
+
+/**
+ * The result of a rule check. Can either be `NagRuleCompliance`
+ * or an array of individual findings
+ */
+export type NagRuleResult = NagRuleCompliance | NagRuleFindings;
+
 /**
  * Helper class with methods for rule creation
  */
