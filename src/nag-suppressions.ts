@@ -26,21 +26,11 @@ export class NagSuppressions {
       ? stack.node.findAll().filter((x): x is Stack => x instanceof Stack)
       : [stack];
     stacks.forEach((s) => {
-      const newSuppressions = [];
-      for (const suppression of suppressions) {
-        if (suppression.reason.length >= 10) {
-          newSuppressions.push(suppression);
-        } else {
-          throw Error(
-            `${s.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
-          );
-        }
-      }
-
+      NagSuppressionHelper.assertSuppressionsAreValid(s.node.id, suppressions);
       let metadata = s.templateOptions.metadata?.cdk_nag ?? {};
       metadata = NagSuppressionHelper.addRulesToMetadata(
         metadata,
-        newSuppressions
+        suppressions
       );
       if (!s.templateOptions.metadata) {
         s.templateOptions.metadata = {};
@@ -60,16 +50,10 @@ export class NagSuppressions {
     suppressions: NagPackSuppression[],
     applyToChildren: boolean = false
   ): void {
-    const newSuppressions = [];
-    for (const suppression of suppressions) {
-      if (suppression.reason.length >= 10) {
-        newSuppressions.push(suppression);
-      } else {
-        throw Error(
-          `${construct.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
-        );
-      }
-    }
+    NagSuppressionHelper.assertSuppressionsAreValid(
+      construct.node.id,
+      suppressions
+    );
     const constructs = applyToChildren ? construct.node.findAll() : [construct];
     for (const child of constructs) {
       const possibleL1 = child.node.defaultChild
@@ -80,7 +64,7 @@ export class NagSuppressions {
         let metadata = resource.getMetadata('cdk_nag');
         metadata = NagSuppressionHelper.addRulesToMetadata(
           metadata,
-          newSuppressions
+          suppressions
         );
         resource.addMetadata('cdk_nag', metadata);
       }

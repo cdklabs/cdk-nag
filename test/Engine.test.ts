@@ -55,6 +55,40 @@ describe('Rule suppression system', () => {
       })
     );
   });
+  test('Fine grained permission cannot be added via rule id [resource]', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const user = new User(stack, 'rUser');
+    expect(() =>
+      NagSuppressions.addResourceSuppressions(
+        user,
+        [
+          {
+            id: 'AwsSolutions-IAM5[Action::s3:*]',
+            reason: 'Incorrect suppression.',
+          },
+        ],
+        true
+      )
+    ).toThrowError();
+  });
+  test('Fine grained permission cannot be added via rule id [stack]', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    new User(stack, 'rUser');
+    expect(() =>
+      NagSuppressions.addStackSuppressions(
+        stack,
+        [
+          {
+            id: 'AwsSolutions-IAM5[Action::s3:*]',
+            reason: 'Incorrect suppression.',
+          },
+        ],
+        true
+      )
+    ).toThrowError();
+  });
   test('Test granular suppression when suppressed coarsely', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
