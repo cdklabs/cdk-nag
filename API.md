@@ -73,6 +73,11 @@ visit(node: IConstruct): void
 
 * **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`id`](#cdknagnagpacksuppressionpropertyid)<span title="Required">*</span> | `string` | The id of the rule to ignore. |
+| [`reason`](#cdknagnagpacksuppressionpropertyreason)<span title="Required">*</span> | `string` | The reason to ignore the rule (minimum 10 characters). |
+| [`appliesTo`](#cdknagnagpacksuppressionpropertyappliesto) | `string`[] | Rule specific granular suppressions. |
 
 
 
@@ -84,8 +89,19 @@ Check for HIPAA Security compliance.
 
 Based on the HIPAA Security AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-hipaa_security.html
 
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Extends__: [NagPack](#cdk-nag-nagpack)
+##### `appliesTo`<sup>Optional</sup> <a name="cdk-nag.NagPackSuppression.property.appliesTo" id="cdknagnagpacksuppressionpropertyappliesto"></a>
+
+```typescript
+public readonly appliesTo: string[];
+```
+
+- *Type:* `string`[]
+
+Rule specific granular suppressions.
+
+---
+
+## Classes <a name="Classes" id="classes"></a>
 
 ### Initializer
 
