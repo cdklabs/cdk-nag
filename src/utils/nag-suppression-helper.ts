@@ -54,4 +54,38 @@ export class NagSuppressionHelper {
       NagSuppressionHelper.toApiFormat
     );
   }
+
+  static assertSuppressionsAreValid(
+    id: string,
+    suppressions: NagPackSuppression[]
+  ): void {
+    const errors = suppressions
+      .map(NagSuppressionHelper.getSuppressionFormatError)
+      .filter((errorMessage) => !!errorMessage);
+
+    if (errors.length) {
+      throw Error(
+        `${id}: ${errors.join(
+          ''
+        )}\nSee https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
+      );
+    }
+  }
+
+  private static getSuppressionFormatError(
+    suppression: NagPackSuppression
+  ): string {
+    let errors = '';
+    const finding = suppression.id.match(/\[.*\]/);
+    if (finding) {
+      errors += `The suppression 'id' contains a finding '${finding}. A finding must be suppressed using 'applies_to'.`;
+    }
+    if (suppression.reason.length < 10) {
+      errors +=
+        "The suppression must have a 'reason' of 10 characters or more.";
+    }
+    return errors
+      ? `\n\tError(s) detected in suppression with 'id' ${suppression.id}. ${errors}`
+      : '';
+  }
 }
