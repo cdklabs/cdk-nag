@@ -95,7 +95,8 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -119,7 +120,8 @@ export class CdkTestStack extends Stack {
 
 ```typescript
 import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -135,7 +137,13 @@ export class CdkTestStack extends Stack {
     // Enable adding suppressions to child constructs
     NagSuppressions.addResourceSuppressions(
       user,
-      [{ id: 'AwsSolutions-IAM5', reason: 'lorem ipsum' }],
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'lorem ipsum',
+          appliesTo: ['Resource::arn:aws:s3:::bucket_name/*'], // optional
+        },
+      ],
       true
     );
   }
@@ -174,8 +182,9 @@ If you received the following error on synth/deploy
 ```typescript
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -191,6 +200,77 @@ export class CdkTestStack extends Stack {
     );
   }
 }
+```
+
+</details>
+
+<details>
+  <summary>Example 5) Granular Suppressions of findings</summary>
+
+Certain rules support granular suppressions of `findings`. If you received the following errors on synth/deploy
+
+```bash
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+```
+
+By applying the following suppressions
+
+```typescript
+import { User } from 'aws-cdk-lib/aws-iam';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { NagSuppressions } from 'cdk-nag';
+
+export class CdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    const firstUser = new User(this, 'rFirstUser');
+    firstUser.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+    const secondUser = new User(this, 'rSecondUser');
+    secondUser.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+    NagSuppressions.addResourceSuppressions(
+      firstUser,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            "Only suppress AwsSolutions-IAM5 's3:*' finding on First User.",
+          appliesTo: ['Action::s3:*'],
+        },
+      ],
+      true
+    );
+    NagSuppressions.addResourceSuppressions(
+      secondUser,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Suppress all AwsSolutions-IAM5 findings on Second User.',
+        },
+      ],
+      true
+    );
+  }
+}
+```
+
+You would see the following error on synth/deploy
+
+```bash
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
 ```
 
 </details>
@@ -211,7 +291,8 @@ import {
   Vpc,
   CfnInstance,
 } from 'aws-cdk-lib/aws-ec2';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -241,7 +322,7 @@ export class CdkTestStack extends Stack {
 You can use cdk-nag on existing CloudFormation templates by using the [cloudformation-include](https://docs.aws.amazon.com/cdk/latest/guide/use_cfn_template.html#use_cfn_template_install) module.
 
 <details>
-  <summary>Example) CloudFormation template with suppression</summary>
+  <summary>Example 1) CloudFormation template with suppression</summary>
 
 Sample CloudFormation template with suppression
 
@@ -285,7 +366,8 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -301,6 +383,97 @@ export class CdkTestStack extends Stack {
         {
           id: 'AwsSolutions-S2',
           reason: 'at least 10 characters',
+        },
+      ]
+    );
+  }
+}
+```
+
+</details>
+
+<details>
+  <summary>Example 2) CloudFormation template with granular suppressions</summary>
+
+Sample CloudFormation template with suppression
+
+```json
+{
+  "Resources": {
+    "myPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*"
+              ],
+              "Effect": "Allow",
+              "Resource": ["some-key-arn"]
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "Allow key data access",
+              "applies_to": [
+                "Action::kms:ReEncrypt*",
+                "Action::kms:GenerateDataKey*"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+Sample App
+
+```typescript
+import { App, Aspects } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks } from 'cdk-nag';
+
+const app = new App();
+new CdkTestStack(app, 'CdkNagDemo');
+Aspects.of(app).add(new AwsSolutionsChecks());
+```
+
+Sample Stack with imported template
+
+```typescript
+import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
+import { NagSuppressions } from 'cdk-nag';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
+export class CdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    new CfnInclude(this, 'Template', {
+      templateFile: 'my-template.json',
+    });
+    // Add any additional suppressions
+    NagSuppressions.addResourceSuppressionsByPath(
+      this,
+      '/CdkNagDemo/Template/myPolicy',
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Allow key data access',
+          appliesTo: ['Action::kms:ReEncrypt*', 'Action::kms:GenerateDataKey*'],
         },
       ]
     );

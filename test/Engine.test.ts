@@ -55,6 +55,113 @@ describe('Rule suppression system', () => {
       })
     );
   });
+  test('Fine grained permission cannot be added via rule id [resource]', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const user = new User(stack, 'rUser');
+    expect(() =>
+      NagSuppressions.addResourceSuppressions(
+        user,
+        [
+          {
+            id: 'AwsSolutions-IAM5[Action::s3:*]',
+            reason: 'Incorrect suppression.',
+          },
+        ],
+        true
+      )
+    ).toThrowError();
+  });
+  test('Fine grained permission cannot be added via rule id [stack]', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    new User(stack, 'rUser');
+    expect(() =>
+      NagSuppressions.addStackSuppressions(
+        stack,
+        [
+          {
+            id: 'AwsSolutions-IAM5[Action::s3:*]',
+            reason: 'Incorrect suppression.',
+          },
+        ],
+        true
+      )
+    ).toThrowError();
+  });
+  test('Test granular suppression when suppressed coarsely', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const user = new User(stack, 'rUser');
+    user.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+    NagSuppressions.addResourceSuppressions(
+      user,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Every finding is suppressed.',
+        },
+      ],
+      true
+    );
+    const { messages } = SynthUtils.synthesize(stack);
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-IAM5[Action::s3:*]:'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-IAM5[Resource::*]:'),
+        }),
+      })
+    );
+  });
+  test('Test granular suppression when suppressed finely', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const user = new User(stack, 'rUser');
+    user.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+    NagSuppressions.addResourceSuppressions(
+      user,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Every finding is suppressed.',
+          appliesTo: ['Action::s3:*'],
+        },
+      ],
+      true
+    );
+    const { messages } = SynthUtils.synthesize(stack);
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-IAM5[Action::s3:*]:'),
+        }),
+      })
+    );
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-IAM5[Resource::*]:'),
+        }),
+      })
+    );
+  });
   test('Test rule suppression does not overrite aws:cdk:path', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());

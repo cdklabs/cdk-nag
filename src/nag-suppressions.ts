@@ -4,20 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-
-/**
- * Interface for creating a rule suppression
- */
-export interface NagPackSuppression {
-  /**
-   * The id of the rule to ignore
-   */
-  readonly id: string;
-  /**
-   * The reason to ignore the rule (minimum 10 characters)
-   */
-  readonly reason: string;
-}
+import { NagPackSuppression } from './models/nag-suppression';
+import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
 /**
  * Helper class with methods to add cdk-nag suppressions to cdk resources
@@ -38,37 +26,16 @@ export class NagSuppressions {
       ? stack.node.findAll().filter((x): x is Stack => x instanceof Stack)
       : [stack];
     stacks.forEach((s) => {
-      const newSuppressions = [];
-      for (const suppression of suppressions) {
-        if (suppression.reason.length >= 10) {
-          newSuppressions.push(suppression);
-        } else {
-          throw Error(
-            `${s.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
-          );
-        }
-      }
-      let currentSuppressions =
-        s.templateOptions.metadata?.cdk_nag?.rules_to_suppress;
-      currentSuppressions = Array.isArray(currentSuppressions)
-        ? currentSuppressions
-        : [];
-      currentSuppressions.push(...newSuppressions);
-      const dedupSuppressions = new Set();
-      const result = currentSuppressions.filter((x: any) =>
-        !dedupSuppressions.has(JSON.stringify(x))
-          ? dedupSuppressions.add(JSON.stringify(x))
-          : false
+      NagSuppressionHelper.assertSuppressionsAreValid(s.node.id, suppressions);
+      let metadata = s.templateOptions.metadata?.cdk_nag ?? {};
+      metadata = NagSuppressionHelper.addRulesToMetadata(
+        metadata,
+        suppressions
       );
-      if (s.templateOptions.metadata) {
-        s.templateOptions.metadata.cdk_nag = {
-          rules_to_suppress: result,
-        };
-      } else {
-        s.templateOptions.metadata = {
-          cdk_nag: { rules_to_suppress: result },
-        };
+      if (!s.templateOptions.metadata) {
+        s.templateOptions.metadata = {};
       }
+      s.templateOptions.metadata.cdk_nag = metadata;
     });
   }
 
@@ -83,16 +50,10 @@ export class NagSuppressions {
     suppressions: NagPackSuppression[],
     applyToChildren: boolean = false
   ): void {
-    const newSuppressions = [];
-    for (const suppression of suppressions) {
-      if (suppression.reason.length >= 10) {
-        newSuppressions.push(suppression);
-      } else {
-        throw Error(
-          `${construct.node.id}: The cdk_nag suppression for ${suppression.id} must have a reason of 10 characters or more. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
-        );
-      }
-    }
+    NagSuppressionHelper.assertSuppressionsAreValid(
+      construct.node.id,
+      suppressions
+    );
     const constructs = applyToChildren ? construct.node.findAll() : [construct];
     for (const child of constructs) {
       const possibleL1 = child.node.defaultChild
@@ -100,21 +61,12 @@ export class NagSuppressions {
         : child;
       if (possibleL1 instanceof CfnResource) {
         const resource = possibleL1 as CfnResource;
-        let currentSuppressions =
-          resource.getMetadata('cdk_nag')?.rules_to_suppress;
-        currentSuppressions = Array.isArray(currentSuppressions)
-          ? currentSuppressions
-          : [];
-        currentSuppressions.push(...newSuppressions);
-        const dedupSuppressions = new Set();
-        const result = currentSuppressions.filter((s: any) =>
-          !dedupSuppressions.has(JSON.stringify(s))
-            ? dedupSuppressions.add(JSON.stringify(s))
-            : false
+        let metadata = resource.getMetadata('cdk_nag');
+        metadata = NagSuppressionHelper.addRulesToMetadata(
+          metadata,
+          suppressions
         );
-        resource.addMetadata('cdk_nag', {
-          rules_to_suppress: result,
-        });
+        resource.addMetadata('cdk_nag', metadata);
       }
     }
   }
