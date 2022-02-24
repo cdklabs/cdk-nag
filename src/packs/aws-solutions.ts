@@ -1207,7 +1207,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'IAM5',
       info: 'The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.',
       explanation:
-        'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators.',
+        'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators. ' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Action::<action>' for policy actions and 'Resource::<resource>' for resources. Example: appliesTo: ['Action::s3:*']",
       level: NagMessageLevel.ERROR,
       rule: IAMNoWildcardPermissions,
       node: node,

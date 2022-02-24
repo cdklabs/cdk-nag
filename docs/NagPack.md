@@ -48,6 +48,7 @@ import {
   NagPack,
   NagPackProps,
   NagRuleCompliance,
+  NagRuleResult,
   NagRules,
   rules,
 } from 'cdk-nag';
@@ -75,7 +76,7 @@ export class ExampleChecks extends NagPack {
         explanation:
           'This rule does not prevent deployment unless level is set to NagMessageLevel.ERROR.',
         level: NagMessageLevel.WARN,
-        rule: function (node2: CfnResource): NagRuleCompliance {
+        rule: function (node2: CfnResource): NagRuleResult {
           if (node2 instanceof CfnReplicationInstance) {
             const publicAccess = NagRules.resolveIfPrimitive(
               node2,

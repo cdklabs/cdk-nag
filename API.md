@@ -79,6 +79,7 @@ const nagPackSuppression: NagPackSuppression = { ... }
 | --- | --- | --- |
 | [`id`](#cdknagnagpacksuppressionpropertyid)<span title="Required">*</span> | `string` | The id of the rule to ignore. |
 | [`reason`](#cdknagnagpacksuppressionpropertyreason)<span title="Required">*</span> | `string` | The reason to ignore the rule (minimum 10 characters). |
+| [`appliesTo`](#cdknagnagpacksuppressionpropertyappliesto) | `string`[] | Rule specific granular suppressions. |
 
 ---
 
@@ -103,6 +104,18 @@ public readonly reason: string;
 - *Type:* `string`
 
 The reason to ignore the rule (minimum 10 characters).
+
+---
+
+##### `appliesTo`<sup>Optional</sup> <a name="cdk-nag.NagPackSuppression.property.appliesTo" id="cdknagnagpacksuppressionpropertyappliesto"></a>
+
+```typescript
+public readonly appliesTo: string[];
+```
+
+- *Type:* `string`[]
+
+Rule specific granular suppressions.
 
 ---
 

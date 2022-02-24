@@ -9,26 +9,27 @@ A rule contains an assertion to make against each individual resource in your CD
 
 ## Anatomy of a Rule
 
-A rule returns a `NagRuleCompliance` status.
+A rule returns a `NagRuleResult` which is either a `NagRuleCompliance` status or a list of findings.
 
-- `NON_COMPLIANT` - The resource that **does not meet** the requirements.
-- `COMPLIANT` - The resource that **meets** the requirements.
-- `NOT_APPLICABLE` - The rule **does not apply** to the given resource.
+- `NagRuleCompliance.NON_COMPLIANT` - The resource that **does not meet** the requirements.
+- `NagRuleCompliance.COMPLIANT` - The resource that **meets** the requirements.
+- `NagRuleCompliance.NOT_APPLICABLE` - The rule **does not apply** to the given resource.
   - Ex. The current resource is a S3 Bucket but the rule is for validating DMS Replication Instances.
+- `NagRuleFindings` A a string array with a list of all findings.
 
 ```typescript
 // CDK v2
 import { CfnResource } from 'aws-cdk-lib';
 // CDK v1
 // import { CfnResource } from '@aws-cdk/core';
-import { NagRuleCompliance, NagRules } from 'cdk-nag';
+import { NagRuleCompliance, NagRuleResult, NagRules } from 'cdk-nag';
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
 
 /**
  * DMS replication instances are not public
  * @param node the CfnResource to check
  */
-export function myRule(node: CfnResource): NagRuleCompliance {
+export function myRule(node: CfnResource): NagRuleResult {
   if (node instanceof CfnReplicationInstance) {
     const publicAccess = NagRules.resolveIfPrimitive(
       node,
@@ -36,6 +37,8 @@ export function myRule(node: CfnResource): NagRuleCompliance {
     );
     if (publicAccess !== false) {
       return NagRuleCompliance.NON_COMPLIANT;
+      // or, if your rule returns multiple violations
+      // return ['publicAccess', ...]
     }
     return NagRuleCompliance.COMPLIANT;
   } else {
@@ -70,10 +73,10 @@ You can use the [Object.defineProperty()](https://developer.mozilla.org/en-US/do
 import { CfnResource } from 'aws-cdk-lib';
 // CDK v1
 // import { CfnResource } from '@aws-cdk/core';
-import { NagRuleCompliance, NagRules } from 'cdk-nag';
+import { NagRuleCompliance, NagRuleResult, NagRules } from 'cdk-nag';
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
 
-export function myRule(node: CfnResource): NagRuleCompliance {
+export function myRule(node: CfnResource): NagRuleResult {
   if (node instanceof CfnReplicationInstance) {
     const publicAccess = NagRules.resolveIfPrimitive(
       node,
