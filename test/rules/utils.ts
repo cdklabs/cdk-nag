@@ -19,7 +19,7 @@ export function validateStack(stack: Stack, ruleId: String, type: TestType) {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining(`${ruleId}:`),
+          data: expect.stringMatching(`.*${ruleId}(\\[.*\\])?:`),
         }),
       })
     );
