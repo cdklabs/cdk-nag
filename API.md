@@ -73,11 +73,6 @@ visit(node: IConstruct): void
 
 * **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| [`id`](#cdknagnagpacksuppressionpropertyid)<span title="Required">*</span> | `string` | The id of the rule to ignore. |
-| [`reason`](#cdknagnagpacksuppressionpropertyreason)<span title="Required">*</span> | `string` | The reason to ignore the rule (minimum 10 characters). |
-| [`appliesTo`](#cdknagnagpacksuppressionpropertyappliesto) | `string`[] | Rule specific granular suppressions. |
 
 
 
@@ -89,19 +84,8 @@ Check for HIPAA Security compliance.
 
 Based on the HIPAA Security AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-hipaa_security.html
 
-##### `appliesTo`<sup>Optional</sup> <a name="cdk-nag.NagPackSuppression.property.appliesTo" id="cdknagnagpacksuppressionpropertyappliesto"></a>
-
-```typescript
-public readonly appliesTo: string[];
-```
-
-- *Type:* `string`[]
-
-Rule specific granular suppressions.
-
----
-
-## Classes <a name="Classes" id="classes"></a>
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
+__Extends__: [NagPack](#cdk-nag-nagpack)
 
 ### Initializer
 
@@ -301,31 +285,33 @@ protected createComplianceReportLine(params: IApplyRule, ruleId: string, complia
 __Returns__:
 * <code>string</code>
 
-#### protected createMessage(ruleId, info, explanation) <a id="cdk-nag-nagpack-createmessage"></a>
+#### protected createMessage(ruleId, findingId, info, explanation) <a id="cdk-nag-nagpack-createmessage"></a>
 
 The message to output to the console when a rule is triggered.
 
 ```ts
-protected createMessage(ruleId: string, info: string, explanation: string): string
+protected createMessage(ruleId: string, findingId: string, info: string, explanation: string): string
 ```
 
 * **ruleId** (<code>string</code>)  The id of the rule.
+* **findingId** (<code>string</code>)  The id of the finding.
 * **info** (<code>string</code>)  Why the rule was triggered.
 * **explanation** (<code>string</code>)  Why the rule exists.
 
 __Returns__:
 * <code>string</code>
 
-#### protected ignoreRule(ignores, ruleId) <a id="cdk-nag-nagpack-ignorerule"></a>
+#### protected ignoreRule(ignores, ruleId, findingId) <a id="cdk-nag-nagpack-ignorerule"></a>
 
 Check whether a specific rule should be ignored.
 
 ```ts
-protected ignoreRule(ignores: Array<NagPackSuppression>, ruleId: string): string
+protected ignoreRule(ignores: Array<NagPackSuppression>, ruleId: string, findingId: string): string
 ```
 
 * **ignores** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The ignores listed in cdk-nag metadata.
 * **ruleId** (<code>string</code>)  The id of the rule to ignore.
+* **findingId** (<code>string</code>)  The id of the finding that is being checked.
 
 __Returns__:
 * <code>string</code>
@@ -530,13 +516,13 @@ Name | Type | Description
 The callback to the rule.
 
 ```ts
-rule(node: CfnResource): NagRuleCompliance
+rule(node: CfnResource): NagRuleCompliance &#124; Array<string>
 ```
 
 * **node** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The CfnResource to check.
 
 __Returns__:
-* <code>[NagRuleCompliance](#cdk-nag-nagrulecompliance)</code>
+* <code>[NagRuleCompliance](#cdk-nag-nagrulecompliance) &#124; Array<string></code>
 
 
 
@@ -566,6 +552,7 @@ Name | Type | Description
 -----|------|-------------
 **id** | <code>string</code> | The id of the rule to ignore.
 **reason** | <code>string</code> | The reason to ignore the rule (minimum 10 characters).
+**appliesTo**? | <code>Array<string></code> | Rule specific granular suppressions.<br/>__*Optional*__
 
 
 
