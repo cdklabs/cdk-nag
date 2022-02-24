@@ -216,9 +216,9 @@ Certain rules support granular suppressions of `findings`. If you received the f
 By applying the following suppressions
 
 ```typescript
-import { User } from '@aws-cdk/aws-iam';
+import { User } from 'aws-cdk-lib/aws-iam';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { Construct, Stack, StackProps } from 'aws-cdk-lib';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -436,7 +436,7 @@ Sample CloudFormation template with suppression
 Sample App
 
 ```typescript
-import { App, Aspects } from '@aws-cdk/core';
+import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
@@ -448,9 +448,9 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 Sample Stack with imported template
 
 ```typescript
-import { CfnInclude } from '@aws-cdk/cloudformation-include';
+import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { Construct, Stack, StackProps } from 'aws-cdk-lib';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
