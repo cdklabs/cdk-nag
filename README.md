@@ -95,7 +95,8 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -119,7 +120,8 @@ export class CdkTestStack extends Stack {
 
 ```typescript
 import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -180,8 +182,9 @@ If you received the following error on synth/deploy
 ```typescript
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -217,8 +220,9 @@ By applying the following suppressions
 
 ```typescript
 import { User } from 'aws-cdk-lib/aws-iam';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -287,7 +291,8 @@ import {
   Vpc,
   CfnInstance,
 } from 'aws-cdk-lib/aws-ec2';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -361,7 +366,8 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -450,7 +456,8 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
