@@ -201,6 +201,76 @@ export class CdkTestStack extends Stack {
 
 </details>
 
+<details>
+  <summary>Example 5) Granular Suppressions of findings</summary>
+
+Certain rules support granular suppressions of `findings`. If you received the following errors on synth/deploy
+
+```bash
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+```
+
+By applying the following suppressions
+
+```typescript
+import { User } from '@aws-cdk/aws-iam';
+import { NagSuppressions } from 'cdk-nag';
+import { Construct, Stack, StackProps } from '@aws-cdk/core';
+
+export class CdkTestStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    const firstUser = new User(this, 'rFirstUser');
+    firstUser.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+    const secondUser = new User(this, 'rSecondUser');
+    secondUser.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+    NagSuppressions.addResourceSuppressions(
+      firstUser,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            "Only suppress AwsSolutions-IAM5 's3:*' finding on First User.",
+          appliesTo: ['Action::s3:*'],
+        },
+      ],
+      true
+    );
+    NagSuppressions.addResourceSuppressions(
+      secondUser,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Suppress all AwsSolutions-IAM5 findings on Second User.',
+        },
+      ],
+      true
+    );
+  }
+}
+```
+
+You would see the following error on synth/deploy
+
+```bash
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+```
+
+</details>
+
 ## Rules and Property Overrides
 
 In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by the cdk_nag. In this case you should remediate the issue and suppress the issue like in the following example.
