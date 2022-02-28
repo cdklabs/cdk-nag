@@ -237,6 +237,13 @@ export class CdkTestStack extends Stack {
         resources: ['*'],
       })
     );
+    const thirdUser = new User(this, 'rSecondUser');
+    thirdUser.addToPolicy(
+      new PolicyStatement({
+        actions: ['sqs:CreateQueue'],
+        resources: [`arn:aws:sqs:${this.region}:${this.account}:*`],
+      })
+    );
     NagSuppressions.addResourceSuppressions(
       firstUser,
       [
@@ -255,6 +262,21 @@ export class CdkTestStack extends Stack {
         {
           id: 'AwsSolutions-IAM5',
           reason: 'Suppress all AwsSolutions-IAM5 findings on Second User.',
+        },
+      ],
+      true
+    );
+    NagSuppressions.addResourceSuppressions(
+      thirdUser,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Suppress AwsSolutions-IAM5 on the SQS resource.',
+          appliesTo: [
+            {
+              regex: /^Resource::arn:aws:sqs:(.*):\*$/g.toString(),
+            },
+          ],
         },
       ],
       true

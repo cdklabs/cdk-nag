@@ -79,7 +79,7 @@ const nagPackSuppression: NagPackSuppression = { ... }
 | --- | --- | --- |
 | [`id`](#cdknagnagpacksuppressionpropertyid)<span title="Required">*</span> | `string` | The id of the rule to ignore. |
 | [`reason`](#cdknagnagpacksuppressionpropertyreason)<span title="Required">*</span> | `string` | The reason to ignore the rule (minimum 10 characters). |
-| [`appliesTo`](#cdknagnagpacksuppressionpropertyappliesto) | `string`[] | Rule specific granular suppressions. |
+| [`appliesTo`](#cdknagnagpacksuppressionpropertyappliesto) | `string` \| [`cdk-nag.RegexAppliesTo`](#cdk-nag.RegexAppliesTo)[] | Rule specific granular suppressions. |
 
 ---
 
@@ -110,12 +110,44 @@ The reason to ignore the rule (minimum 10 characters).
 ##### `appliesTo`<sup>Optional</sup> <a name="cdk-nag.NagPackSuppression.property.appliesTo" id="cdknagnagpacksuppressionpropertyappliesto"></a>
 
 ```typescript
-public readonly appliesTo: string[];
+public readonly appliesTo: string | RegexAppliesTo[];
 ```
 
-- *Type:* `string`[]
+- *Type:* `string` | [`cdk-nag.RegexAppliesTo`](#cdk-nag.RegexAppliesTo)[]
 
 Rule specific granular suppressions.
+
+---
+
+### RegexAppliesTo <a name="cdk-nag.RegexAppliesTo" id="cdknagregexappliesto"></a>
+
+A regular expression to apply to matching findings.
+
+#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
+
+```typescript
+import { RegexAppliesTo } from 'cdk-nag'
+
+const regexAppliesTo: RegexAppliesTo = { ... }
+```
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`regex`](#cdknagregexappliestopropertyregex)<span title="Required">*</span> | `string` | An ECMA-262 regex string. |
+
+---
+
+##### `regex`<sup>Required</sup> <a name="cdk-nag.RegexAppliesTo.property.regex" id="cdknagregexappliestopropertyregex"></a>
+
+```typescript
+public readonly regex: string;
+```
+
+- *Type:* `string`
+
+An ECMA-262 regex string.
 
 ---
 

@@ -167,6 +167,34 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
       );
       validateStack(stack, `${ruleId}[Action::s3:*]`, TestType.NON_COMPLIANCE);
     });
+
+    test('Noncompliance 3', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:PutObject'],
+                resources: [
+                  stack.formatArn({
+                    service: 's3',
+                    resource: 'myBucket',
+                    resourceName: '*',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(
+        stack,
+        `${ruleId}[Resource::arn:(AWS::Partition):s3:(AWS::Region):(AWS::AccountId):myBucket/*]`,
+        TestType.NON_COMPLIANCE
+      );
+    });
+
     test('Compliance', () => {
       const user = new User(stack, 'rUser');
       user.addToPolicy(
