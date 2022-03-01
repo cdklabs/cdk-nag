@@ -164,6 +164,45 @@ describe('Rule suppression system', () => {
       })
     );
   });
+  test('Test granular suppression when suppressed finely with a RegExp', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const user = new User(stack, 'rUser');
+    user.addToPolicy(
+      new PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['some-arn:mybucket/*'],
+      })
+    );
+    NagSuppressions.addResourceSuppressions(
+      user,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Suppression based on resource arn',
+          appliesTo: [{ regex: /^Resource::(.*):mybucket\/\*$/g.toString() }],
+        },
+      ],
+      true
+    );
+    const { messages } = SynthUtils.synthesize(stack);
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('AwsSolutions-IAM5[Action::s3:*]:'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'AwsSolutions-IAM5[Resource::some-arn:mybucket/*]:'
+          ),
+        }),
+      })
+    );
+  });
   test('Test rule suppression does not overrite aws:cdk:path', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
