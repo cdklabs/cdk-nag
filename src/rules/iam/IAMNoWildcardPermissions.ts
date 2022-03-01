@@ -17,6 +17,7 @@ import {
   NagRuleFindings,
   NagRuleFinding,
 } from '../../nag-rules';
+import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
 
 interface IAMPolicyDocument {
   Statement?: IAMPolicyStatement[];
@@ -80,7 +81,8 @@ const analyzePolicy = (policy: IAMPolicyDocument): NagRuleFindings => {
         .forEach((action) => result.add(action));
       const resources = normalizeArray(statement.Resource);
       resources
-        .filter((resource) => JSON.stringify(resource).includes('*'))
+        .map(flattenCfnReference)
+        .filter((resource) => resource.includes('*'))
         .map((resource) => `Resource::${resource}`)
         .forEach((resource) => result.add(resource));
     }
