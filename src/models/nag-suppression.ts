@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+
 /**
  * Interface for creating a rule suppression
  */
@@ -17,5 +18,20 @@ export interface NagPackSuppression {
   /**
    * Rule specific granular suppressions
    */
-  readonly appliesTo?: string[];
+  readonly appliesTo?: NagPackSuppressionAppliesTo[];
+}
+
+/**
+ * A granular suppression
+ */
+export type NagPackSuppressionAppliesTo = string | RegexAppliesTo;
+
+/**
+ * A regular expression to apply to matching findings
+ */
+export interface RegexAppliesTo {
+  /**
+   * An ECMA-262 regex string
+   */
+  readonly regex: string;
 }
