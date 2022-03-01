@@ -20,8 +20,10 @@ import {
   CfnParameter,
   CfnResource,
   IConstruct,
+  Names,
   NestedStack,
   Stack,
+  Token,
 } from '@aws-cdk/core';
 import {
   NagSuppressions,
@@ -933,7 +935,10 @@ describe('Report system', () => {
       this.lines.push(
         this.createComplianceReportLine(params, ruleId, compliance, explanation)
       );
-      const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
+      const stackName = params.node.stack.nested
+        ? Names.uniqueId(params.node.stack)
+        : params.node.stack.stackName;
+      const fileName = `${this.packName}-${stackName}-NagReport.csv`;
       if (!this.reportStacks.includes(fileName)) {
         this.reportStacks.push(fileName);
       }
@@ -952,6 +957,20 @@ describe('Report system', () => {
     new Bucket(stack2, 'rBucket');
     app.synth();
     expect(pack.readReportStacks.length).toEqual(2);
+  });
+  test('Nested Stack reports do not contain tokens in names', () => {
+    const app = new App();
+    const parent = new Stack(app, 'Parent');
+    const nested = new NestedStack(parent, 'Child', {});
+    console.log(app.outdir);
+    const pack = new TestPack();
+    Aspects.of(app).add(pack);
+    new Bucket(parent, 'rBucket');
+    new Bucket(nested, 'rBucket');
+    app.synth();
+    pack.readReportStacks.forEach((r) => {
+      expect(Token.isUnresolved(r)).toBeFalsy();
+    });
   });
   test('Compliant and Non-Compliant values are written properly', () => {
     const app = new App();

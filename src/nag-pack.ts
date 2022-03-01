@@ -10,6 +10,7 @@ import {
   Annotations,
   CfnResource,
   App,
+  Names,
 } from '@aws-cdk/core';
 import { NagPackSuppression } from './models/nag-suppression';
 import { NagRuleCompliance, NagRuleResult, NagRuleFindings } from './nag-rules';
@@ -270,7 +271,10 @@ export abstract class NagPack implements IAspect {
       explanation
     );
     let outDir = App.of(params.node)?.outdir;
-    const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
+    const stackName = params.node.stack.nested
+      ? Names.uniqueId(params.node.stack)
+      : params.node.stack.stackName;
+    const fileName = `${this.packName}-${stackName}-NagReport.csv`;
     const filePath = join(outDir ? outDir : '', fileName);
     if (!this.reportStacks.includes(fileName)) {
       this.reportStacks.push(fileName);
