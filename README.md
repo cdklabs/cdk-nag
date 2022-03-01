@@ -274,7 +274,7 @@ export class CdkTestStack extends Stack {
           reason: 'Suppress AwsSolutions-IAM5 on the SQS resource.',
           appliesTo: [
             {
-              regex: /^Resource::arn:aws:sqs:(.*):\*$/g.toString(),
+              regex: '/^Resource::arn:aws:sqs:(.*):\\*$/g',
             },
           ],
         },
