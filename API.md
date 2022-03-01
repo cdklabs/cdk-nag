@@ -20,6 +20,7 @@ Name|Description
 ----|-----------
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule pack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
+[RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
 
 
 **Interfaces**
@@ -552,7 +553,20 @@ Name | Type | Description
 -----|------|-------------
 **id** | <code>string</code> | The id of the rule to ignore.
 **reason** | <code>string</code> | The reason to ignore the rule (minimum 10 characters).
-**appliesTo**? | <code>Array<string></code> | Rule specific granular suppressions.<br/>__*Optional*__
+**appliesTo**? | <code>Array<string &#124; [RegexAppliesTo](#cdk-nag-regexappliesto)></code> | Rule specific granular suppressions.<br/>__*Optional*__
+
+
+
+## struct RegexAppliesTo  <a id="cdk-nag-regexappliesto"></a>
+
+
+A regular expression to apply to matching findings.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**regex** | <code>string</code> | An ECMA-262 regex string.
 
 
 

@@ -3,19 +3,23 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource, Stack } from 'aws-cdk-lib';
-import { NagPackSuppression } from '../models/nag-suppression';
+import {
+  NagPackSuppression,
+  NagPackSuppressionAppliesTo,
+} from '../models/nag-suppression';
 
 interface NagCfnMetadata {
   rules_to_suppress: NagCfnSuppression[];
 }
 
 interface NagCfnSuppression extends Omit<NagPackSuppression, 'appliesTo'> {
-  applies_to?: string[];
+  applies_to?: NagPackSuppressionAppliesTo[];
 }
 
 export class NagSuppressionHelper {
   static toCfnFormat(suppression: NagPackSuppression): NagCfnSuppression {
     const { appliesTo, ...result } = suppression;
+
     if (appliesTo) {
       (result as NagCfnSuppression).applies_to = appliesTo;
     }
@@ -23,7 +27,8 @@ export class NagSuppressionHelper {
   }
 
   static toApiFormat(suppression: NagCfnSuppression): NagPackSuppression {
-    const { applies_to, ...result } = suppression as any;
+    const { applies_to, ...result } = suppression;
+
     if (applies_to) {
       (result as any).appliesTo = applies_to;
     }
@@ -50,9 +55,11 @@ export class NagSuppressionHelper {
       node.getMetadata('cdk_nag')?.rules_to_suppress ?? [];
     const stackIgnores =
       Stack.of(node).templateOptions.metadata?.cdk_nag?.rules_to_suppress ?? [];
-    return [...resourceIgnores, ...stackIgnores].map(
+    const result = [...resourceIgnores, ...stackIgnores].map(
       NagSuppressionHelper.toApiFormat
     );
+    NagSuppressionHelper.assertSuppressionsAreValid(node.node.id, result);
+    return result;
   }
 
   static assertSuppressionsAreValid(
@@ -72,6 +79,37 @@ export class NagSuppressionHelper {
     }
   }
 
+  static doesApply(
+    suppression: NagPackSuppression,
+    ruleId: string,
+    findingId: string
+  ): boolean {
+    if (ruleId !== suppression.id) {
+      return false;
+    }
+
+    if (!suppression.appliesTo) {
+      // the rule is not granular so it always applies
+      return true;
+    }
+
+    if (
+      findingId &&
+      suppression.appliesTo.some((appliesTo) => {
+        if (typeof appliesTo === 'string') {
+          return appliesTo === findingId;
+        } else {
+          const regex = NagSuppressionHelper.toRegEx(appliesTo.regex);
+          return regex.test(findingId);
+        }
+      })
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   private static getSuppressionFormatError(
     suppression: NagPackSuppression
   ): string {
@@ -84,8 +122,30 @@ export class NagSuppressionHelper {
       errors +=
         "The suppression must have a 'reason' of 10 characters or more.";
     }
+    (suppression.appliesTo ?? []).forEach((appliesTo) => {
+      if (typeof appliesTo !== 'string') {
+        try {
+          NagSuppressionHelper.toRegEx(appliesTo.regex);
+        } catch (err) {
+          errors += (err as Error).message;
+        }
+      }
+    });
     return errors
       ? `\n\tError(s) detected in suppression with 'id' ${suppression.id}. ${errors}`
       : '';
+  }
+
+  private static toRegEx(s: string): RegExp {
+    try {
+      // verify that the regex is correctly formatted
+      const m = s.match(/\/(.*)\/(.*)?/);
+      if (!m) {
+        throw new Error();
+      }
+      return new RegExp(m[1], m[2] || '');
+    } catch {
+      throw new Error(`Invalid regular expression [${s}]`);
+    }
   }
 }
