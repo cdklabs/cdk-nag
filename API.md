@@ -20,6 +20,7 @@ Name|Description
 ----|-----------
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule pack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
+[RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
 
 
 **Interfaces**
@@ -73,14 +74,6 @@ visit(node: IConstruct): void
 
 * **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
 
-<<<<<<< HEAD
-=======
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| [`id`](#cdknagnagpacksuppressionpropertyid)<span title="Required">*</span> | `string` | The id of the rule to ignore. |
-| [`reason`](#cdknagnagpacksuppressionpropertyreason)<span title="Required">*</span> | `string` | The reason to ignore the rule (minimum 10 characters). |
-| [`appliesTo`](#cdknagnagpacksuppressionpropertyappliesto) | `string` \| [`cdk-nag.RegexAppliesTo`](#cdk-nag.RegexAppliesTo)[] | Rule specific granular suppressions. |
->>>>>>> 7afd988... fix(Nag Suppressions): IAM5 resource based granular suppressions need better serialisation (#667)
 
 
 
@@ -100,7 +93,6 @@ __Extends__: [NagPack](#cdk-nag-nagpack)
 
 
 
-<<<<<<< HEAD
 ```ts
 new HIPAASecurityChecks(props?: NagPackProps)
 ```
@@ -109,54 +101,9 @@ new HIPAASecurityChecks(props?: NagPackProps)
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
-=======
-```typescript
-public readonly appliesTo: string | RegexAppliesTo[];
-```
-
-- *Type:* `string` | [`cdk-nag.RegexAppliesTo`](#cdk-nag.RegexAppliesTo)[]
-
-Rule specific granular suppressions.
->>>>>>> 7afd988... fix(Nag Suppressions): IAM5 resource based granular suppressions need better serialisation (#667)
 
 
-<<<<<<< HEAD
 ### Methods
-=======
-### RegexAppliesTo <a name="cdk-nag.RegexAppliesTo" id="cdknagregexappliesto"></a>
-
-A regular expression to apply to matching findings.
-
-#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
-
-```typescript
-import { RegexAppliesTo } from 'cdk-nag'
-
-const regexAppliesTo: RegexAppliesTo = { ... }
-```
-
-#### Properties <a name="Properties" id="properties"></a>
-
-| **Name** | **Type** | **Description** |
-| --- | --- | --- |
-| [`regex`](#cdknagregexappliestopropertyregex)<span title="Required">*</span> | `string` | An ECMA-262 regex string. |
-
----
-
-##### `regex`<sup>Required</sup> <a name="cdk-nag.RegexAppliesTo.property.regex" id="cdknagregexappliestopropertyregex"></a>
-
-```typescript
-public readonly regex: string;
-```
-
-- *Type:* `string`
-
-An ECMA-262 regex string.
-
----
-
-## Classes <a name="Classes" id="classes"></a>
->>>>>>> 7afd988... fix(Nag Suppressions): IAM5 resource based granular suppressions need better serialisation (#667)
 
 
 #### visit(node) <a id="cdk-nag-hipaasecuritychecks-visit"></a>
@@ -606,7 +553,20 @@ Name | Type | Description
 -----|------|-------------
 **id** | <code>string</code> | The id of the rule to ignore.
 **reason** | <code>string</code> | The reason to ignore the rule (minimum 10 characters).
-**appliesTo**? | <code>Array<string></code> | Rule specific granular suppressions.<br/>__*Optional*__
+**appliesTo**? | <code>Array<string &#124; [RegexAppliesTo](#cdk-nag-regexappliesto)></code> | Rule specific granular suppressions.<br/>__*Optional*__
+
+
+
+## struct RegexAppliesTo  <a id="cdk-nag-regexappliesto"></a>
+
+
+A regular expression to apply to matching findings.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**regex** | <code>string</code> | An ECMA-262 regex string.
 
 
 
