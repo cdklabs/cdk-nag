@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { appendFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { IAspect, Annotations, CfnResource, App } from 'aws-cdk-lib';
+import { IAspect, Annotations, CfnResource, App, Names } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
 import { NagPackSuppression } from './models/nag-suppression';
 import { NagRuleCompliance, NagRuleResult, NagRuleFindings } from './nag-rules';
@@ -279,7 +279,10 @@ export abstract class NagPack implements IAspect {
       explanation
     );
     let outDir = App.of(params.node)?.outdir;
-    const fileName = `${this.packName}-${params.node.stack.stackName}-NagReport.csv`;
+    const stackName = params.node.stack.nested
+      ? Names.uniqueId(params.node.stack)
+      : params.node.stack.stackName;
+    const fileName = `${this.packName}-${stackName}-NagReport.csv`;
     const filePath = join(outDir ? outDir : '', fileName);
     if (!this.reportStacks.includes(fileName)) {
       this.reportStacks.push(fileName);
