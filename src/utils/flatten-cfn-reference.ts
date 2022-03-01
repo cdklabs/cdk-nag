@@ -49,7 +49,7 @@ export const flattenCfnReference = (reference: unknown): string => {
     }
     if (typeof node === 'string') {
       // Replace the template syntax that Fn::Sub uses with round brackets for easier suppression
-      return node.replace(/\${/g, '(').replace(/}/g, ')');
+      return node.replace(/\${/g, '<').replace(/}/g, '>');
     }
     if (isCfnFnJoin(node)) {
       const [delimiter, items] = node['Fn::Join'];
@@ -62,7 +62,7 @@ export const flattenCfnReference = (reference: unknown): string => {
 
     if (isCfnFnGetAtt(node)) {
       const [resource, attribute] = node['Fn::GetAtt'];
-      return `(${visit(resource)}.${visit(attribute)})`;
+      return `<${visit(resource)}.${visit(attribute)}>`;
     }
 
     if (isCfnFnImportValue(node)) {
@@ -70,7 +70,7 @@ export const flattenCfnReference = (reference: unknown): string => {
     }
 
     if (isCfnRef(node)) {
-      return `(${visit(node.Ref)})`;
+      return `<${visit(node.Ref)}>`;
     }
 
     // fallback

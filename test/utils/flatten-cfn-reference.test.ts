@@ -24,9 +24,10 @@ describe('Flatten CloudFormation Reference', () => {
     };
 
     expect(flattenCfnReference(obj)).toBe(
-      'arn:(AWS::Partition):s3:::cdk-62b12fb5cc-assets-(AWS::AccountId)-eu-west-2/*'
+      'arn:<AWS::Partition>:s3:::cdk-62b12fb5cc-assets-<AWS::AccountId>-eu-west-2/*'
     );
   });
+
   test('Test importvalue', () => {
     const obj = {
       'Fn::ImportValue': 'some-cross-stack-reference',
@@ -34,12 +35,13 @@ describe('Flatten CloudFormation Reference', () => {
 
     expect(flattenCfnReference(obj)).toBe('some-cross-stack-reference');
   });
+
   test('Test attribute', () => {
     const obj = {
       'Fn::GetAtt': ['another-resource', 'arn'],
     };
 
-    expect(flattenCfnReference(obj)).toBe('(another-resource.arn)');
+    expect(flattenCfnReference(obj)).toBe('<another-resource.arn>');
   });
 
   test('Test graceful reaction to invalid formats', () => {
@@ -51,16 +53,19 @@ describe('Flatten CloudFormation Reference', () => {
 
     expect(flattenCfnReference(obj)).toBe('{"function-not-covered":42}');
   });
+
   test('Ordinary strings are unchanged', () => {
     const obj = 'test string';
 
     expect(flattenCfnReference(obj)).toBe('test string');
   });
+
   test('strings with template syntax are simplified', () => {
     const obj = 'test ${string}';
 
-    expect(flattenCfnReference(obj)).toBe('test (string)');
+    expect(flattenCfnReference(obj)).toBe('test <string>');
   });
+
   test('Graceful reaction to undefined', () => {
     expect(flattenCfnReference(undefined)).toBe('');
   });

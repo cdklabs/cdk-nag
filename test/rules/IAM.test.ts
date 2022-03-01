@@ -190,7 +190,7 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
       });
       validateStack(
         stack,
-        `${ruleId}[Resource::arn:(AWS::Partition):s3:(AWS::Region):(AWS::AccountId):myBucket/*]`,
+        `${ruleId}[Resource::arn:<AWS::Partition>:s3:<AWS::Region>:<AWS::AccountId>:myBucket/*]`,
         TestType.NON_COMPLIANCE
       );
     });
