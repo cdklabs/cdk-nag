@@ -216,27 +216,13 @@ export abstract class NagPack implements IAspect {
     findingId: string
   ): string {
     for (let ignore of ignores) {
-      if (
-        ignore.id &&
-        ignore.reason &&
-        JSON.stringify(ignore.reason).length >= 10
-      ) {
-        if (ruleId === ignore.id) {
-          if (!ignore.appliesTo) {
-            // the rule is not granular so it always applies
-            return ignore.reason;
-          }
-          if (findingId && ignore.appliesTo.includes(findingId)) {
-            // the rule is granular so the findingId must match
-            return `[${findingId}] ${ignore.reason}`;
-          }
+      if (NagSuppressionHelper.doesApply(ignore, ruleId, findingId)) {
+        if (!ignore.appliesTo) {
+          // the rule is not granular so it always applies
+          return ignore.reason;
+        } else {
+          return `[${findingId}] ${ignore.reason}`;
         }
-      } else {
-        throw Error(
-          `Improperly formatted cdk_nag rule suppression detected: ${JSON.stringify(
-            ignore
-          )}. See https://github.com/cdklabs/cdk-nag#suppressing-a-rule for information on suppressing a rule.`
-        );
       }
     }
     return '';
