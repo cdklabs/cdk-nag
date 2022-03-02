@@ -334,7 +334,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'EKS2',
       info: "The EKS Cluster does not publish 'api', 'audit', 'authenticator, 'controllerManager', and 'scheduler' control plane logs.",
       explanation:
-        'EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs in your account. These logs make it easy for you to secure and run your clusters.',
+        'EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs in your account. These logs make it easy for you to secure and run your clusters.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::api'].",
       level: NagMessageLevel.ERROR,
       rule: EKSClusterControlPlaneLogs,
       node: node,

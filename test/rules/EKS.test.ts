@@ -67,22 +67,70 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
   });
   describe("EKSClusterControlPlaneLogs: EKS Clusters publish 'api', 'audit', 'authenticator, 'controllerManager', and 'scheduler' control plane logs", () => {
     const ruleId = 'EKSClusterControlPlaneLogs';
-    test('Noncompliance 1', () => {
+    test('Noncompliance 1: ', () => {
       new Cluster(stack, 'rCustomEKS', {
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PUBLIC,
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::api]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::audit]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::authenticator]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::controllerManager]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::scheduler]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 2', () => {
+    test("Noncompliance 2: expect findings for all logs except 'api logs", () => {
       new Cluster(stack, 'rCustomEKS', {
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PUBLIC,
         clusterLogging: [ClusterLoggingTypes.API],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::api\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::audit]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::authenticator]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::controllerManager]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::scheduler]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 3', () => {
+    test('Noncompliance 3: expect findings for all logs', () => {
       new CfnCluster(stack, 'rL1EKS', {
         version: 'foo',
         resourcesVpcConfig: {
@@ -91,9 +139,33 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
         },
         roleArn: 'foobar',
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::api]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::audit]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::authenticator]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::controllerManager]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::scheduler]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 4', () => {
+    test("Noncompliance 4: expect findings for all logs except 'api logs", () => {
       new CfnCluster(stack, 'rL1EKS', {
         version: 'foo',
         resourcesVpcConfig: {
@@ -111,7 +183,31 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
         },
         roleArn: 'foobar',
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::api\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::audit]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::authenticator]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::controllerManager]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::scheduler]`,
+        TestType.NON_COMPLIANCE
+      );
     });
     test('Compliance', () => {
       new Cluster(stack, 'rCustomEKS', {
