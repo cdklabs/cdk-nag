@@ -426,31 +426,67 @@ describe('Amazon OpenSearch Service', () => {
 
   describe('OpenSearchSlowLogsToCloudWatch: OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
     const ruleId = 'OpenSearchSlowLogsToCloudWatch';
-    test('Noncompliance 1', () => {
+    test('Noncompliance 1: expect findings for all logs on the Legacy Domain', () => {
       new LegacyDomain(stack, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::SEARCH_SLOW_LOGS]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::INDEX_SLOW_LOGS]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 2', () => {
+    test('Noncompliance 2: expect findings for all logs on the OpenSearch Domain', () => {
       new Domain(stack, 'rDomain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::SEARCH_SLOW_LOGS]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::INDEX_SLOW_LOGS]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 3', () => {
+    test("Noncompliance 3: expect finding for only 'INDEX_SLOW_LOGS' on the Legacy Domain", () => {
       new LegacyDomain(stack, 'rDomain', {
         version: ElasticsearchVersion.V7_10,
-        logging: { slowIndexLogEnabled: true },
+        logging: { slowSearchLogEnabled: true },
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::SEARCH_SLOW_LOGS\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::INDEX_SLOW_LOGS]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 4', () => {
+    test("Noncompliance 4: expect finding for only 'INDEX_SLOW_LOGS' on the OpenSearch Domain", () => {
       new Domain(stack, 'rDomain', {
         version: EngineVersion.OPENSEARCH_1_0,
-        logging: { slowIndexLogEnabled: true },
+        logging: { slowSearchLogEnabled: true },
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::SEARCH_SLOW_LOGS\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::INDEX_SLOW_LOGS]`,
+        TestType.NON_COMPLIANCE
+      );
     });
     test('Compliance', () => {
       new LegacyDomain(stack, 'rDomain', {

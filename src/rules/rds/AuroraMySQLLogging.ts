@@ -3,16 +3,21 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnResource } from 'aws-cdk-lib';
+import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDBCluster } from 'aws-cdk-lib/aws-rds';
-import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import {
+  NagRuleCompliance,
+  NagRuleFindings,
+  NagRuleResult,
+  NagRules,
+} from '../../nag-rules';
 
 /**
  * RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): NagRuleCompliance => {
+  (node: CfnResource): NagRuleResult => {
     if (node instanceof CfnDBCluster) {
       const engine = NagRules.resolveIfPrimitive(
         node,
@@ -25,16 +30,14 @@ export default Object.defineProperty(
         (engine.toLowerCase() == 'aurora' ||
           engine.toLowerCase() == 'aurora-mysql')
       ) {
-        if (node.enableCloudwatchLogsExports == undefined) {
-          return NagRuleCompliance.NON_COMPLIANT;
-        }
+        const exports =
+          Stack.of(node).resolve(node.enableCloudwatchLogsExports) ?? [];
         const needed = ['audit', 'error', 'general', 'slowquery'];
-        const exports = node.enableCloudwatchLogsExports.map((i) => {
-          return i.toLowerCase();
-        });
-        const compliant = needed.every((i) => exports.includes(i));
-        if (compliant !== true) {
-          return NagRuleCompliance.NON_COMPLIANT;
+        const findings: NagRuleFindings = needed
+          .filter((log) => !exports.includes(log))
+          .map((log) => `LogExport::${log}`);
+        if (findings.length) {
+          return findings;
         }
       }
       return NagRuleCompliance.COMPLIANT;

@@ -5,60 +5,37 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnDBInstance } from 'aws-cdk-lib/aws-rds';
-import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import {
+  NagRuleCompliance,
+  NagRuleFindings,
+  NagRuleResult,
+  NagRules,
+} from '../../nag-rules';
 
 /**
  * RDS DB instances are configured to export all possible log types to CloudWatch
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): NagRuleCompliance => {
+  (node: CfnResource): NagRuleResult => {
     if (node instanceof CfnDBInstance) {
-      const dbType = JSON.stringify(
-        NagRules.resolveIfPrimitive(node, node.engine)
-      );
-      const dbLogs = JSON.stringify(
-        Stack.of(node).resolve(node.enableCloudwatchLogsExports)
-      );
-      if (dbLogs == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
-      }
-
+      const dbType = String(NagRules.resolveIfPrimitive(node, node.engine));
+      const exports =
+        Stack.of(node).resolve(node.enableCloudwatchLogsExports) ?? [];
+      const needed: string[] = [];
       if (dbType.includes('mariadb') || dbType.includes('mysql')) {
-        if (
-          !(
-            dbLogs.includes('audit') &&
-            dbLogs.includes('error') &&
-            dbLogs.includes('general') &&
-            dbLogs.includes('slowquery')
-          )
-        )
-          return NagRuleCompliance.NON_COMPLIANT;
+        needed.push('audit', 'error', 'general', 'slowquery');
+      } else if (dbType.includes('postgres')) {
+        needed.push('postgresql', 'upgrade');
+      } else if (dbType.includes('oracle')) {
+        needed.push('audit', 'alert', 'listener', 'oemagent', 'trace');
+      } else if (dbType.includes('sqlserver')) {
+        needed.push('agent', 'error');
       }
-
-      if (dbType.includes('postgres')) {
-        if (!(dbLogs.includes('postgresql') && dbLogs.includes('upgrade')))
-          return NagRuleCompliance.NON_COMPLIANT;
-      }
-
-      if (dbType.includes('oracle')) {
-        if (
-          !(
-            dbLogs.includes('audit') &&
-            dbLogs.includes('alert') &&
-            dbLogs.includes('listener') &&
-            dbLogs.includes('oemagent') &&
-            dbLogs.includes('trace')
-          )
-        )
-          return NagRuleCompliance.NON_COMPLIANT;
-      }
-
-      if (dbType.includes('sqlserver')) {
-        if (!(dbLogs.includes('agent') && dbLogs.includes('error')))
-          return NagRuleCompliance.NON_COMPLIANT;
-      }
-      return NagRuleCompliance.COMPLIANT;
+      const findings: NagRuleFindings = needed
+        .filter((log) => !exports.includes(log))
+        .map((log) => `LogExport::${log}`);
+      return findings.length ? findings : NagRuleCompliance.COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }

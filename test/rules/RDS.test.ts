@@ -86,7 +86,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
 
   describe('AuroraMySQLLogging: RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled', () => {
     const ruleId = 'AuroraMySQLLogging';
-    test('Noncompliance 1', () => {
+    test("Noncompliance 1: expect findings for only 'general' and 'slowquery' logs", () => {
       new CfnDBCluster(stack, 'rDbCluster', {
         engine: 'aurora-mysql',
         engineMode: 'serverless',
@@ -96,7 +96,56 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         },
         enableCloudwatchLogsExports: ['audit', 'error'],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::audit\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::error\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::general]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::slowquery]`,
+        TestType.NON_COMPLIANCE
+      );
+    });
+    test('Noncompliance 1: expect findings for all logs', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-mysql',
+        engineMode: 'serverless',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+      });
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::audit]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::error]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::general]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::slowquery]`,
+        TestType.NON_COMPLIANCE
+      );
     });
     test('Compliance', () => {
       new CfnDBCluster(stack, 'rDbCluster', {
@@ -307,7 +356,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
 
   describe('RDSLoggingEnabled: RDS DB instances are configured to export all possible log types to CloudWatch', () => {
     const ruleId = 'RDSLoggingEnabled';
-    test('Noncompliance 1', () => {
+    test('Noncompliance 1: expect finding for all logs for MariaDB based engines', () => {
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.mariaDb({
           version: MariaDbEngineVersion.VER_10_2,
@@ -315,9 +364,16 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         port: 5432,
         vpc: new Vpc(stack, 'rVpc'),
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      const needed = ['audit', 'error', 'general', 'slowquery'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
     });
-    test('Noncompliance 2', () => {
+    test('Noncompliance 2: expect finding for all logs for PostgreSQL based engines', () => {
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.postgres({
           version: PostgresEngineVersion.VER_10,
@@ -325,9 +381,16 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         port: 5432,
         vpc: new Vpc(stack, 'rVpc'),
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      const needed = ['postgresql', 'upgrade'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
     });
-    test('Noncompliance 3', () => {
+    test("Noncompliance 3: expect finding for only 'agent' logs for SQL Server based engines", () => {
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.sqlServerWeb({
           version: SqlServerEngineVersion.VER_11,
@@ -336,9 +399,18 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         vpc: new Vpc(stack, 'rVpc'),
         cloudwatchLogsExports: ['error'],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::error\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::agent]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-    test('Noncompliance 4', () => {
+    test('Noncompliance 4: expect finding for all logs for MySQL based engines', () => {
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.mysql({
           version: MysqlEngineVersion.VER_8_0_25,
@@ -346,18 +418,31 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         port: 5432,
         vpc: new Vpc(stack, 'rVpc'),
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      const needed = ['audit', 'error', 'general', 'slowquery'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
     });
-    test('Noncompliance 5', () => {
+    test('Noncompliance 5: expect finding for all logs for Oracle based engines', () => {
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.oracleEe({
           version: OracleEngineVersion.VER_19_0_0_0_2021_04_R1,
         }),
         port: 5432,
         vpc: new Vpc(stack, 'rVpc'),
-        cloudwatchLogsExports: ['trace', 'listener'],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      const needed = ['audit', 'alert', 'listener', 'oemagent', 'trace'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
     });
     test('Compliance', () => {
       new DatabaseInstance(stack, 'rDbInstance', {

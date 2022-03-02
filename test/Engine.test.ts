@@ -962,7 +962,6 @@ describe('Report system', () => {
     const app = new App();
     const parent = new Stack(app, 'Parent');
     const nested = new NestedStack(parent, 'Child', {});
-    console.log(app.outdir);
     const pack = new TestPack();
     Aspects.of(app).add(pack);
     new Bucket(parent, 'rBucket');
