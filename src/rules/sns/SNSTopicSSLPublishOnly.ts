@@ -8,7 +8,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * SNS topics require SSL requests
+ * SNS topics require SSL requests for publishing
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
@@ -95,11 +95,11 @@ function isMatchingCompliantPolicy(
 function checkMatchingAction(actions: any): boolean {
   if (Array.isArray(actions)) {
     for (const action of actions) {
-      if (action === '*' || action.toLowerCase() === 'sns:*') {
+      if (action.toLowerCase() === 'sns:publish') {
         return true;
       }
     }
-  } else if (actions === '*' || actions.toLowerCase() === 'sns:*') {
+  } else if (actions.toLowerCase() === 'sns:publish') {
     return true;
   }
   return false;
