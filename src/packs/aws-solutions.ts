@@ -530,7 +530,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'RDS16',
       info: 'The RDS Aurora MySQL serverless cluster does not have audit, error, general, and slowquery Log Exports enabled.',
       explanation:
-        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database.',
+        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::audit'].",
       level: NagMessageLevel.ERROR,
       rule: AuroraMySQLLogging,
       node: node,

@@ -86,7 +86,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
 
   describe('AuroraMySQLLogging: RDS Aurora MySQL serverless clusters have audit, error, general, and slowquery Log Exports enabled', () => {
     const ruleId = 'AuroraMySQLLogging';
-    test('Noncompliance 1', () => {
+    test("Noncompliance 1: expect findings for only 'general' and 'slowquery' logs", () => {
       new CfnDBCluster(stack, 'rDbCluster', {
         engine: 'aurora-mysql',
         engineMode: 'serverless',
@@ -96,7 +96,56 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         },
         enableCloudwatchLogsExports: ['audit', 'error'],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::audit\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::error\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::general]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::slowquery]`,
+        TestType.NON_COMPLIANCE
+      );
+    });
+    test('Noncompliance 1: expect findings for all logs', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-mysql',
+        engineMode: 'serverless',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+      });
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::audit]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::error]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::general]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::slowquery]`,
+        TestType.NON_COMPLIANCE
+      );
     });
     test('Compliance', () => {
       new CfnDBCluster(stack, 'rDbCluster', {
