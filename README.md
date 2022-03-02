@@ -5,10 +5,12 @@ SPDX-License-Identifier: Apache-2.0
 
 # cdk-nag
 
-| Language   | cdk-nag                                                                                   | monocdk-nag                                                                                       |
-| ---------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Python     | [![PyPI version](https://badge.fury.io/py/cdk-nag.svg)](https://badge.fury.io/py/cdk-nag) | [![PyPI version](https://badge.fury.io/py/monocdk-nag.svg)](https://badge.fury.io/py/monocdk-nag) |
-| TypeScript | [![npm version](https://badge.fury.io/js/cdk-nag.svg)](https://badge.fury.io/js/cdk-nag)  | [![npm version](https://badge.fury.io/js/monocdk-nag.svg)](https://badge.fury.io/js/monocdk-nag)  |
+| Language   | cdk-nag                                                                                                                                                                            | monocdk-nag                                                                                                                                                                                |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Python     | [![PyPI version](https://badge.fury.io/py/cdk-nag.svg)](https://badge.fury.io/py/cdk-nag)                                                                                          | [![PyPI version](https://badge.fury.io/py/monocdk-nag.svg)](https://badge.fury.io/py/monocdk-nag)                                                                                          |
+| TypeScript | [![npm version](https://badge.fury.io/js/cdk-nag.svg)](https://badge.fury.io/js/cdk-nag)                                                                                           | [![npm version](https://badge.fury.io/js/monocdk-nag.svg)](https://badge.fury.io/js/monocdk-nag)                                                                                           |
+| Java       | [![Maven version](https://maven-badges.herokuapp.com/maven-central/io.github.cdklabs/cdknag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.cdklabs/cdknag) | [![Maven version](https://maven-badges.herokuapp.com/maven-central/io.github.cdklabs/monocdknag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.cdklabs/monocdknag) |
+| .NET       | [![NuGet version](https://badge.fury.io/nu/Cdklabs.CdkNag.svg)](https://badge.fury.io/nu/Cdklabs.CdkNag)                                                                           | [![NuGet version](https://badge.fury.io/nu/Cdklabs.MonocdkNag.svg)](https://badge.fury.io/nu/Cdklabs.MonocdkNag)                                                                           |
 
 - If your project uses cdk version **1.x.x** use `cdk-nag` **^1.0.0**
 - If your project uses cdk version **2.x.x** use `cdk-nag` **^2.0.0**
