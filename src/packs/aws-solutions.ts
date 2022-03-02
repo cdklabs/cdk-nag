@@ -334,7 +334,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'EKS2',
       info: "The EKS Cluster does not publish 'api', 'audit', 'authenticator, 'controllerManager', and 'scheduler' control plane logs.",
       explanation:
-        'EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs in your account. These logs make it easy for you to secure and run your clusters.',
+        'EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs in your account. These logs make it easy for you to secure and run your clusters.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::api'].",
       level: NagMessageLevel.ERROR,
       rule: EKSClusterControlPlaneLogs,
       node: node,
@@ -529,7 +530,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'RDS16',
       info: 'The RDS Aurora MySQL serverless cluster does not have audit, error, general, and slowquery Log Exports enabled.',
       explanation:
-        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database.',
+        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::audit'].",
       level: NagMessageLevel.ERROR,
       rule: AuroraMySQLLogging,
       node: node,
@@ -771,7 +773,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'DOC5',
       info: 'The Document DB cluster does not have authenticate, createIndex, and dropCollection Log Exports enabled.',
       explanation:
-        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.',
+        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::authenticate'].",
       level: NagMessageLevel.ERROR,
       rule: DocumentDBClusterLogExports,
       node: node,
@@ -1172,7 +1175,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'OS9',
       info: 'The OpenSearch Service domain does not minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs.',
       explanation:
-        'These logs enable operators to gain full insight into the performance of these operations.',
+        'These logs enable operators to gain full insight into the performance of these operations.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::SEARCH_SLOW_LOGS'].",
       level: NagMessageLevel.ERROR,
       rule: OpenSearchSlowLogsToCloudWatch,
       node: node,
@@ -1208,7 +1212,7 @@ export class AwsSolutionsChecks extends NagPack {
       info: 'The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.',
       explanation:
         'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators. ' +
-        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Action::<action>' for policy actions and 'Resource::<resource>' for resources. Example: appliesTo: ['Action::s3:*']",
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Action::<action>' for policy actions and 'Resource::<resource>' for resources. Example: appliesTo: ['Action::s3:*'].",
       level: NagMessageLevel.ERROR,
       rule: IAMNoWildcardPermissions,
       node: node,

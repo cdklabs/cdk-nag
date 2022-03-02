@@ -6,36 +6,33 @@ import { parse } from 'path';
 import { CfnDomain as LegacyCfnDomain } from '@aws-cdk/aws-elasticsearch';
 import { CfnDomain } from '@aws-cdk/aws-opensearchservice';
 import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import {
+  NagRuleCompliance,
+  NagRuleFindings,
+  NagRuleResult,
+  NagRules,
+} from '../../nag-rules';
 
 /**
  * OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): NagRuleCompliance => {
+  (node: CfnResource): NagRuleResult => {
     if (node instanceof LegacyCfnDomain || node instanceof CfnDomain) {
       const logPublishingOptions = Stack.of(node).resolve(
         node.logPublishingOptions
       );
-      if (logPublishingOptions == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
-      }
-      const requiredSlowLogs = [
-        logPublishingOptions?.SEARCH_SLOW_LOGS,
-        logPublishingOptions?.INDEX_SLOW_LOGS,
-      ];
+      const requiredSlowLogs = ['SEARCH_SLOW_LOGS', 'INDEX_SLOW_LOGS'];
+      const findings: NagRuleFindings = [];
       for (const log of requiredSlowLogs) {
-        const resolvedLog = Stack.of(node).resolve(log);
-        if (resolvedLog == undefined) {
-          return NagRuleCompliance.NON_COMPLIANT;
-        }
-        const enabled = NagRules.resolveIfPrimitive(node, resolvedLog.enabled);
+        const resolvedLog = Stack.of(node).resolve(logPublishingOptions?.[log]);
+        const enabled = NagRules.resolveIfPrimitive(node, resolvedLog?.enabled);
         if (!enabled) {
-          return NagRuleCompliance.NON_COMPLIANT;
+          findings.push(`LogExport::${log}`);
         }
       }
-      return NagRuleCompliance.COMPLIANT;
+      return findings.length ? findings : NagRuleCompliance.COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
