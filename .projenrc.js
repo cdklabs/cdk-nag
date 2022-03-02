@@ -19,9 +19,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'cdk-nag',
     module: 'cdk_nag',
   },
-  projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+  projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveOptions: {
-    allowedUsernames: ['dontirun'],
+    allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
@@ -29,7 +29,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+      secret: 'PROJEN_GITHUB_TOKEN',
       container: {
         image: 'jsii/superchain:1-buster-slim-node14',
       },
