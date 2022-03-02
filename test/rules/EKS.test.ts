@@ -98,7 +98,7 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
         TestType.NON_COMPLIANCE
       );
     });
-    test("Noncompliance 2: expect findings for all logs except 'api logs", () => {
+    test("Noncompliance 2: expect findings for all logs except 'api' logs", () => {
       new Cluster(stack, 'rCustomEKS', {
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PUBLIC,
@@ -165,7 +165,7 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
         TestType.NON_COMPLIANCE
       );
     });
-    test("Noncompliance 4: expect findings for all logs except 'api logs", () => {
+    test("Noncompliance 4: expect findings for all logs except 'api' logs", () => {
       new CfnCluster(stack, 'rL1EKS', {
         version: 'foo',
         resourcesVpcConfig: {

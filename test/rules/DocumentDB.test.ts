@@ -147,7 +147,7 @@ describe('Amazon DocumentDB (with MongoDB compatibility)', () => {
 
   describe('DocumentDBClusterLogExports: Document DB clusters have authenticate, createIndex, and dropCollection Log Exports enabled', () => {
     const ruleId = 'DocumentDBClusterLogExports';
-    test('Noncompliance 1', () => {
+    test('Noncompliance 1: expect findings for all logs', () => {
       new DatabaseCluster(stack, 'rDatabaseCluster', {
         instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
         vpc: new Vpc(stack, 'rVpc'),
@@ -172,12 +172,22 @@ describe('Amazon DocumentDB (with MongoDB compatibility)', () => {
         TestType.NON_COMPLIANCE
       );
     });
-    test('Noncompliance 2', () => {
+    test('Noncompliance 2: expect findings for only `createIndex` logs', () => {
       new CfnDBCluster(stack, 'rDatabaseCluster', {
         masterUsername: SecretValue.secretsManager('foo').toString(),
         masterUserPassword: SecretValue.secretsManager('bar').toString(),
         enableCloudwatchLogsExports: ['authenticate', 'dropCollection'],
       });
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::authenticate\\]`,
+        TestType.COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}\\[LogExport::dropCollection\\]`,
+        TestType.COMPLIANCE
+      );
       validateStack(
         stack,
         `${ruleId}[LogExport::createIndex]`,
