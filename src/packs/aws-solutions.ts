@@ -168,7 +168,7 @@ import {
   SageMakerNotebookNoDirectInternetAccess,
 } from '../rules/sagemaker';
 import { SecretsManagerRotationEnabled } from '../rules/secretsmanager';
-import { SNSEncryptedKMS, SNSTopicSSLRequestsOnly } from '../rules/sns';
+import { SNSEncryptedKMS, SNSTopicSSLPublishOnly } from '../rules/sns';
 import {
   SQSQueueDLQ,
   SQSQueueSSE,
@@ -1339,11 +1339,11 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'SNS3',
-      info: 'The SNS Topic does not require requests to use SSL.',
+      info: 'The SNS Topic does not require publishers to use SSL.',
       explanation:
-        'Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition in the topic policy to force requests to use SSL. If SSE is already enabled then this control is auto enforced.',
+        "Without HTTPS (TLS), a network-based attacker can eavesdrop on network traffic or manipulate it, using an attack such as man-in-the-middle. Allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition and the 'sns: Publish' action in the topic policy to force publishers to use SSL. If SSE is already enabled then this control is auto enforced.",
       level: NagMessageLevel.ERROR,
-      rule: SNSTopicSSLRequestsOnly,
+      rule: SNSTopicSSLPublishOnly,
       node: node,
     });
     this.applyRule({

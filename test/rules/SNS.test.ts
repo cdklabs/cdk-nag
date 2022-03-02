@@ -12,10 +12,10 @@ import {
 import { Key } from '@aws-cdk/aws-kms';
 import { CfnTopicPolicy, Topic } from '@aws-cdk/aws-sns';
 import { Aspects, Stack } from '@aws-cdk/core';
-import { SNSEncryptedKMS, SNSTopicSSLRequestsOnly } from '../../src/rules/sns';
+import { SNSEncryptedKMS, SNSTopicSSLPublishOnly } from '../../src/rules/sns';
 import { validateStack, TestType, TestPack } from './utils';
 
-const testPack = new TestPack([SNSEncryptedKMS, SNSTopicSSLRequestsOnly]);
+const testPack = new TestPack([SNSEncryptedKMS, SNSTopicSSLPublishOnly]);
 let stack: Stack;
 
 beforeEach(() => {
@@ -36,8 +36,8 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
     });
   });
 
-  describe('SNSTopicSSLRequestsOnly: SNS topics require SSL requests', () => {
-    const ruleId = 'SNSTopicSSLRequestsOnly';
+  describe('SNSTopicSSLPublishOnly: SNS topics require SSL requests for publishing', () => {
+    const ruleId = 'SNSTopicSSLPublishOnly';
     test('Noncompliance 1', () => {
       new Topic(stack, 'rTopic');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -49,7 +49,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
         policyDocument: new PolicyDocument({
           statements: [
             new PolicyStatement({
-              actions: ['SNS:*'],
+              actions: ['sns:publish'],
               effect: Effect.ALLOW,
               principals: [new AnyPrincipal()],
               conditions: { Bool: { 'aws:SecureTransport': false } },
@@ -65,7 +65,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
       new Topic(stack, 'rTopic2', { masterKey: new Key(stack, 'rKey') });
       new Topic(stack, 'rTopic3').addToResourcePolicy(
         new PolicyStatement({
-          actions: ['sns:publish', '*'],
+          actions: ['sns:publish', 'sns:subscribe'],
           effect: Effect.DENY,
           principals: [new AnyPrincipal()],
           conditions: { Bool: { 'aws:SecureTransport': 'false' } },
@@ -77,7 +77,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
         policyDocument: new PolicyDocument({
           statements: [
             new PolicyStatement({
-              actions: ['sns:*'],
+              actions: ['sns:Publish'],
               effect: Effect.DENY,
               principals: [new StarPrincipal()],
               conditions: { Bool: { 'aws:SecureTransport': false } },
