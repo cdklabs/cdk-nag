@@ -232,9 +232,20 @@
   "jsii": {
     "outdir": "dist",
     "targets": {
+      "java": {
+        "package": "io.github.cdklabs.cdknag",
+        "maven": {
+          "groupId": "io.github.cdklabs",
+          "artifactId": "cdknag"
+        }
+      },
       "python": {
         "distName": "cdk-nag",
         "module": "cdk_nag"
+      },
+      "dotnet": {
+        "namespace": "Cdklabs.CdkNag",
+        "packageId": "Cdklabs.CdkNag"
       }
     },
     "tsc": {
