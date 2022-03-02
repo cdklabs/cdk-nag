@@ -19,6 +19,16 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'monocdk-nag',
     module: 'monocdk_nag',
   },
+  publishToNuget: {
+    packageId: 'Cdklabs.MonocdkNag',
+    dotNetNamespace: 'Cdklabs.MonocdkNag',
+  },
+  publishToMaven: {
+    mavenGroupId: 'io.github.cdklabs',
+    javaPackage: 'io.github.cdklabs.monocdknag',
+    mavenArtifactId: 'monocdknag',
+    mavenEndpoint: 'https://s01.oss.sonatype.org',
+  },
 });
 project.package.addField('resolutions', {
   'ansi-regex': '^5.0.1',
