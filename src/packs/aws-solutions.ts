@@ -1174,7 +1174,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'OS9',
       info: 'The OpenSearch Service domain does not minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs.',
       explanation:
-        'These logs enable operators to gain full insight into the performance of these operations.',
+        'These logs enable operators to gain full insight into the performance of these operations.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::SEARCH_SLOW_LOGS'].",
       level: NagMessageLevel.ERROR,
       rule: OpenSearchSlowLogsToCloudWatch,
       node: node,
