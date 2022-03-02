@@ -771,7 +771,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'DOC5',
       info: 'The Document DB cluster does not have authenticate, createIndex, and dropCollection Log Exports enabled.',
       explanation:
-        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.',
+        'This allows operators to use CloudWatch to view logs to help diagnose problems in the database. The events recorded by the AWS DocumentDB audit logs include successful and failed authentication attempts, creating indexes or dropping a collection in a database within the DocumentDB cluster.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::authenticate'].",
       level: NagMessageLevel.ERROR,
       rule: DocumentDBClusterLogExports,
       node: node,
@@ -1208,7 +1209,7 @@ export class AwsSolutionsChecks extends NagPack {
       info: 'The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.',
       explanation:
         'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators. ' +
-        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Action::<action>' for policy actions and 'Resource::<resource>' for resources. Example: appliesTo: ['Action::s3:*']",
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Action::<action>' for policy actions and 'Resource::<resource>' for resources. Example: appliesTo: ['Action::s3:*'].",
       level: NagMessageLevel.ERROR,
       rule: IAMNoWildcardPermissions,
       node: node,

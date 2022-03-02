@@ -5,25 +5,25 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnDBCluster } from '@aws-cdk/aws-docdb';
 import { CfnResource } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-rules';
+import {
+  NagRuleCompliance,
+  NagRuleFindings,
+  NagRuleResult,
+} from '../../nag-rules';
 
 /**
  * Document DB clusters have authenticate, createIndex, and dropCollection Log Exports enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
-  (node: CfnResource): NagRuleCompliance => {
+  (node: CfnResource): NagRuleResult => {
     if (node instanceof CfnDBCluster) {
-      if (node.enableCloudwatchLogsExports == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
-      }
       const needed = ['authenticate', 'createIndex', 'dropCollection'];
-      const exports = node.enableCloudwatchLogsExports;
-      const compliant = needed.every((i) => exports.includes(i));
-      if (compliant !== true) {
-        return NagRuleCompliance.NON_COMPLIANT;
-      }
-      return NagRuleCompliance.COMPLIANT;
+      const exports = node.enableCloudwatchLogsExports ?? [];
+      const findings: NagRuleFindings = needed
+        .filter((log) => !exports.includes(log))
+        .map((log) => `LogExport::${log}`);
+      return findings.length ? findings : NagRuleCompliance.COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }

@@ -156,7 +156,21 @@ describe('Amazon DocumentDB (with MongoDB compatibility)', () => {
           password: SecretValue.secretsManager('bar'),
         },
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::authenticate]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::createIndex]`,
+        TestType.NON_COMPLIANCE
+      );
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::dropCollection]`,
+        TestType.NON_COMPLIANCE
+      );
     });
     test('Noncompliance 2', () => {
       new CfnDBCluster(stack, 'rDatabaseCluster', {
@@ -164,7 +178,11 @@ describe('Amazon DocumentDB (with MongoDB compatibility)', () => {
         masterUserPassword: SecretValue.secretsManager('bar').toString(),
         enableCloudwatchLogsExports: ['authenticate', 'dropCollection'],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[LogExport::createIndex]`,
+        TestType.NON_COMPLIANCE
+      );
     });
     test('Compliance', () => {
       new CfnDBCluster(stack, 'rDatabaseCluster', {
