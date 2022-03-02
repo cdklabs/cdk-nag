@@ -40,7 +40,7 @@ For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-na
 <summary>cdk</summary>
 
 ```typescript
-import { App, Aspects } from '@aws-cdk/core';
+import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
@@ -96,8 +96,9 @@ Aspects.of(app).add(new AwsSolutionsChecks());
   <summary>Example 1) Default Construct</summary>
 
 ```typescript
-import { SecurityGroup, Vpc, Peer, Port } from '@aws-cdk/aws-ec2';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -120,8 +121,9 @@ export class CdkTestStack extends Stack {
   <summary>Example 2) Child Constructs</summary>
 
 ```typescript
-import { User, PolicyStatement } from '@aws-cdk/aws-iam';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -156,7 +158,7 @@ export class CdkTestStack extends Stack {
   <summary>Example 3) Stack Level </summary>
 
 ```typescript
-import { App, Aspects } from '@aws-cdk/core';
+import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
 
@@ -180,10 +182,11 @@ If you received the following error on synth/deploy
 ```
 
 ```typescript
-import { Bucket } from '@aws-cdk/aws-s3';
-import { BucketDeployment } from '@aws-cdk/aws-s3-deployment';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -218,9 +221,10 @@ Certain rules support granular suppressions of `findings`. If you received the f
 By applying the following suppressions
 
 ```typescript
-import { User } from '@aws-cdk/aws-iam';
+import { User } from 'aws-cdk-lib/aws-iam';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -310,8 +314,9 @@ import {
   MachineImage,
   Vpc,
   CfnInstance,
-} from '@aws-cdk/aws-ec2';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
@@ -371,7 +376,7 @@ Sample CloudFormation template with suppression
 Sample App
 
 ```typescript
-import { App, Aspects } from '@aws-cdk/core';
+import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
@@ -383,9 +388,10 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 Sample Stack with imported template
 
 ```typescript
-import { CfnInclude } from '@aws-cdk/cloudformation-include';
+import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -460,7 +466,7 @@ Sample CloudFormation template with suppression
 Sample App
 
 ```typescript
-import { App, Aspects } from '@aws-cdk/core';
+import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
@@ -472,9 +478,10 @@ Aspects.of(app).add(new AwsSolutionsChecks());
 Sample Stack with imported template
 
 ```typescript
-import { CfnInclude } from '@aws-cdk/cloudformation-include';
+import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct, Stack, StackProps } from '@aws-cdk/core';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
