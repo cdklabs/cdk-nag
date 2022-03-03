@@ -162,6 +162,7 @@ import {
   S3BucketLoggingEnabled,
   S3BucketServerSideEncryptionEnabled,
   S3BucketSSLRequestsOnly,
+  S3WebBucketOAIAccess,
 } from '../rules/s3';
 import {
   SageMakerNotebookInstanceKMSKeyConfigured,
@@ -419,6 +420,15 @@ export class AwsSolutionsChecks extends NagPack {
         'The bucket should minimally have SSE enabled to help protect data-at-rest.',
       level: NagMessageLevel.ERROR,
       rule: S3BucketServerSideEncryptionEnabled,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'S5',
+      info: 'The S3 static website bucket either has an open world bucket policy or does not use a CloudFront Origin Access Identity (OAI) in the bucket policy for limited getObject and/or putObject permissions.',
+      explanation:
+        'An OAI allows you to provide access to content in your S3 static website bucket through CloudFront URLs without enabling public access through an open bucket policy, disabling S3 Block Public Access settings, and/or through object ACLs.',
+      level: NagMessageLevel.ERROR,
+      rule: S3WebBucketOAIAccess,
       node: node,
     });
     this.applyRule({

@@ -2,8 +2,10 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { OriginAccessIdentity } from 'aws-cdk-lib/aws-cloudfront';
 import {
   AnyPrincipal,
+  ArnPrincipal,
   Effect,
   PolicyDocument,
   PolicyStatement,
@@ -30,6 +32,7 @@ import {
   S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
+  S3WebBucketOAIAccess,
 } from '../../src/rules/s3';
 import { validateStack, TestType, TestPack } from './utils';
 
@@ -44,6 +47,7 @@ const testPack = new TestPack([
   S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
+  S3WebBucketOAIAccess,
 ]);
 let stack: Stack;
 
@@ -458,6 +462,119 @@ describe('Amazon Simple Storage Service (S3)', () => {
     });
     test('Compliance', () => {
       new Bucket(stack, 'rBucket', { encryption: BucketEncryption.KMS });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('S3WebBucketOAIAccess: S3 static website buckets do not have an open world bucket policy and use CloudFront Origin Access Identities in the bucket policy for limited getObject and/or putObject permissions', () => {
+    const ruleId = 'S3WebBucketOAIAccess';
+    test('Noncompliance 1', () => {
+      new CfnBucket(stack, 'rBucket', {
+        websiteConfiguration: {
+          indexDocument: 'index.html',
+          errorDocument: 'error.html',
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new CfnBucket(stack, 'rBucket', {
+        bucketName: 'foo',
+        websiteConfiguration: {
+          indexDocument: 'index.html',
+          errorDocument: 'error.html',
+        },
+      });
+      new CfnBucketPolicy(stack, 'rPolicy', {
+        bucket: 'foo',
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['*'],
+              effect: Effect.ALLOW,
+              principals: [new AnyPrincipal()],
+              resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+            }),
+            new PolicyStatement({
+              actions: ['s3:getobject'],
+              effect: Effect.ALLOW,
+              principals: [
+                new OriginAccessIdentity(stack, 'rOAI').grantPrincipal,
+              ],
+              resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+            }),
+          ],
+        }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new CfnBucket(stack, 'rBucket', {
+        bucketName: 'foo',
+        websiteConfiguration: {
+          indexDocument: 'index.html',
+          errorDocument: 'error.html',
+        },
+      });
+      new CfnBucketPolicy(stack, 'rPolicy', {
+        bucket: 'foo',
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['s3:getobject', 's3:*'],
+              effect: Effect.ALLOW,
+              principals: [
+                new OriginAccessIdentity(stack, 'rOAI').grantPrincipal,
+              ],
+              resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+            }),
+          ],
+        }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Bucket(stack, 'rBucket');
+      new CfnBucket(stack, 'rBucket2', {
+        bucketName: 'foo',
+        websiteConfiguration: {
+          indexDocument: 'index.html',
+          errorDocument: 'error.html',
+        },
+      });
+      new CfnBucketPolicy(stack, 'rPolicy2', {
+        bucket: 'foo',
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['s3:getobject'],
+              effect: Effect.ALLOW,
+              principals: [
+                new OriginAccessIdentity(stack, 'rOAI2').grantPrincipal,
+              ],
+              resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+            }),
+          ],
+        }),
+      });
+      const compliantBucket = new Bucket(stack, 'rBucket3', {
+        websiteIndexDocument: 'index.html',
+      });
+      compliantBucket.addToResourcePolicy(
+        new PolicyStatement({
+          actions: ['s3:getobject', 's3:putobject'],
+          effect: Effect.ALLOW,
+          principals: [
+            new ArnPrincipal(
+              'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EH1HDMB1FH2TC'
+            ),
+          ],
+          resources: [
+            compliantBucket.bucketArn,
+            compliantBucket.arnForObjects('*'),
+          ],
+        })
+      );
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });

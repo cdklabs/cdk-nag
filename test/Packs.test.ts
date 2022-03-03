@@ -158,6 +158,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-S1',
         'AwsSolutions-S2',
         'AwsSolutions-S3',
+        'AwsSolutions-S5',
         'AwsSolutions-S10',
         'AwsSolutions-SF1',
         'AwsSolutions-SF2',
