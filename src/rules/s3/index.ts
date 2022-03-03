@@ -12,3 +12,4 @@ export { default as S3BucketServerSideEncryptionEnabled } from './S3BucketServer
 export { default as S3BucketSSLRequestsOnly } from './S3BucketSSLRequestsOnly';
 export { default as S3BucketVersioningEnabled } from './S3BucketVersioningEnabled';
 export { default as S3DefaultEncryptionKMS } from './S3DefaultEncryptionKMS';
+export { default as S3WebBucketOAIAccess } from './S3WebBucketOAIAccess';
