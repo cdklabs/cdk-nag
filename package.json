@@ -60,7 +60,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^12",
     "prettier": "^2.5.1",
-    "projen": "^0.52.53",
+    "projen": "^0.52.55",
     "standard-version": "^9",
     "ts-jest": "^27.1.3",
     "typescript": "^4.6.2"
