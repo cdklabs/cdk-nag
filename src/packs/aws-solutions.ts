@@ -1213,7 +1213,8 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'IAM4',
       info: 'The IAM user, role, or group uses AWS managed policies.',
       explanation:
-        'An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.',
+        'An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.' +
+        "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Policy::<policy>' for AWS managed policies. Example: appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/foo'].",
       level: NagMessageLevel.ERROR,
       rule: IAMNoManagedPolicies,
       node: node,
