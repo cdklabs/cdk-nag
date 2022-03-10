@@ -121,9 +121,29 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
         assumedBy: new AccountRootPrincipal(),
         managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('foo')],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      validateStack(
+        stack,
+        `${ruleId}[Policy::arn:<AWS::Partition>:iam::aws:policy/foo]`,
+        TestType.NON_COMPLIANCE
+      );
     });
-
+    test('Noncompliance 2', () => {
+      new Role(stack, 'rRole', {
+        assumedBy: new AccountRootPrincipal(),
+        managedPolicies: [
+          ManagedPolicy.fromManagedPolicyArn(
+            stack,
+            'rManagedPolicy',
+            'arn:aws:iam::aws:policy/foo'
+          ),
+        ],
+      });
+      validateStack(
+        stack,
+        `${ruleId}[Policy::arn:aws:iam::aws:policy/foo]`,
+        TestType.NON_COMPLIANCE
+      );
+    });
     test('Compliance', () => {
       new Role(stack, 'rRole', {
         assumedBy: new AccountRootPrincipal(),
@@ -134,6 +154,19 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
             'rPolicyWithNumber',
             'arn:aws:iam::123456789012:policy/describestack'
           ),
+        ],
+      });
+      new Role(stack, 'rRole2', {
+        assumedBy: new AccountRootPrincipal(),
+        managedPolicies: [
+          new ManagedPolicy(stack, 'rCustomManagedPolicy', {
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:PutObject'],
+                resources: [new Bucket(stack, 'rBucket').arnForObjects('*')],
+              }),
+            ],
+          }),
         ],
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
