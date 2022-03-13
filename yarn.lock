@@ -10,26 +10,26 @@
     "@jridgewell/trace-mapping" "^0.3.0"
 
 "@aws-cdk/assert@^2.11":
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.15.0.tgz#a8a390757164aebe93168e5084b8e7fe93d5154f"
-  integrity sha512-ttuZtPyIEtYTjJUz9oC9Erl/6G/Y45QNGvWNqxEIFajUOuCHHd0vrJjuLHmm2qLFQf1VqLbQwgthwWTFFMz4WA==
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.16.0.tgz#90286a55420abfe6144d1d059c5b020743c7f61e"
+  integrity sha512-CHq1/8mW/g4I2aXuav5b/ilegQfyu/bJ5DNiL/nrwH6KQQj/WakDGWK0IdGWDJT+e8BD3h1kr+kd3V91eqjlag==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.15.0"
+    "@aws-cdk/cloudformation-diff" "2.16.0"
 
-"@aws-cdk/cfnspec@2.15.0":
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.15.0.tgz#41b757a3e3048f2423ae49f48e1786542ea6fc4f"
-  integrity sha512-b0nbIwMkm0380wxcM9cc5ElcFRdasbitXfKkDka3nxDYr3TykBiiOqRG4VA70uJ6BDTN+B2Fxs8PYIe2hWNjuw==
+"@aws-cdk/cfnspec@2.16.0":
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.16.0.tgz#5623aff2b9cdd54a76c2c9997a2fc09662148855"
+  integrity sha512-mnIDGvi0iuqP70wlasbW7gNdGf+/B2jL4azMfJjNZ9hRnT7Sgh9F7KpW88KJd0d8GfWgGR+VS6ufsaZGex+tyw==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.15.0":
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.15.0.tgz#d0dadd39b664ebc094b9f38dd6de71eae4981c5d"
-  integrity sha512-BKHf1wGfEQyABgKXdKJDamDLdBurycxG35KZmp2sf4VFQzGGt7/SPO+yLp/OBrORid2JkypHQ0ZFWPdf0jhQdw==
+"@aws-cdk/cloudformation-diff@2.16.0":
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.16.0.tgz#5c6094d880eda5f999f7d4f00119870b58199a33"
+  integrity sha512-EXl5PPf8CIXcDPZMjkjpwYw5Q7CfCG2FPQU8G6etPLVFWQVzGGtZ0L03xPunTzE2VT8g4V6bk9+1HAq1lP9wMA==
   dependencies:
-    "@aws-cdk/cfnspec" "2.15.0"
+    "@aws-cdk/cfnspec" "2.16.0"
     "@types/node" "^10.17.60"
     chalk "^4"
     diff "^5.0.0"
@@ -4169,17 +4169,17 @@ micromatch@^4.0.4:
     braces "^3.0.1"
     picomatch "^2.2.3"
 
-mime-db@1.51.0:
-  version "1.51.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.51.0.tgz#d9ff62451859b18342d960850dc3cfb77e63fb0c"
-  integrity sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g==
+mime-db@1.52.0:
+  version "1.52.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
+  integrity sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==
 
 mime-types@^2.1.12:
-  version "2.1.34"
-  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.34.tgz#5a712f9ec1503511a945803640fafe09d3793c24"
-  integrity sha512-6cP692WwGIs9XXdOO4++N+7qjqv0rqxxVvJ3VHPh/Sc9mVZcQP+ZGhkKiTvWMQRr2tbHkJP/Yn7Y0npb3ZBs4A==
+  version "2.1.35"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.35.tgz#381a871b62a734450660ae3deee44813f70d959a"
+  integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
   dependencies:
-    mime-db "1.51.0"
+    mime-db "1.52.0"
 
 mimic-fn@^2.1.0:
   version "2.1.0"
@@ -4865,10 +4865,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.52.66:
-  version "0.52.66"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.52.66.tgz#6bce602f08e3d9f7a6999a81c0deaf5dd9998940"
-  integrity sha512-RShwCNw4FMNRdaylmEj1tf1UyVXzMHT/ORvmHVT0LJizSh2LfWGayp1SshWT18mJ8EaVCsvDrm/k8OySxpgIOA==
+projen@^0.52.67:
+  version "0.52.67"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.52.67.tgz#c2c8e3d59e60ece7626baebbb5af964efe161f92"
+  integrity sha512-R52QEaQQAPaQbpaAJ4WKk+Uk+by1Npx3NvgFJrMpvynD6eQWqYKS8TQDLI/D4YWhUYjgG5y3NhcdjZxt183A/Q==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
