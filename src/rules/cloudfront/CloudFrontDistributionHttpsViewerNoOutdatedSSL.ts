@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
 import { CfnDistribution } from 'aws-cdk-lib/aws-cloudfront';
-import { CfnResource, Stack } from 'aws-cdk-lib/core';
+import { CfnResource, Stack } from 'aws-cdk-lib';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
