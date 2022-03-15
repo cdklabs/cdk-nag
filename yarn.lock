@@ -10,7 +10,7 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aws-cdk/assert@^2.11":
+"@aws-cdk/assert@^2.18":
   version "2.28.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.28.0.tgz#2d04eb43ba9f0993337d6191e82d1977ed21b22a"
   integrity sha512-0xkzSaO+Mk4wigNEQNF7h75TpU6qIKuuubf7BDrL0lMWJ3eayDcTvb5oxXihqKj8nHzv27BLMZ0phaofAknpBQ==
@@ -1213,17 +1213,17 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-cdk-lib@2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.11.0.tgz#a837f856d337db7dbc727bd718da8113e4596652"
-  integrity sha512-zN0K65oOAi5vedvRL9vXTQrYrpYO8rLCyajBpEKwi8z2D/rGUM9jnH1NHseUCJwQuP+I78FcUQgeFNPO80PUeg==
+aws-cdk-lib@2.18.0:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.18.0.tgz#a130edf9d90ec166d5c0f14d275ab49cbbe75261"
+  integrity sha512-4XpEqRgKSzDmcpeNGRqRlnWEltnt5+NoHWKpQDHUsAmyJ2QNQ5dYxVLIReaGiE9H8zS0rlpp3exuDEy0UgKj2Q==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
     case "1.6.3"
     fs-extra "^9.1.0"
     ignore "^5.2.0"
     jsonschema "^1.4.0"
-    minimatch "^3.0.4"
+    minimatch "^3.1.2"
     punycode "^2.1.1"
     semver "^7.3.5"
     yaml "1.10.2"

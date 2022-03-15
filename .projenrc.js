@@ -6,7 +6,7 @@ const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '2.11.0',
+  cdkVersion: '2.18.0',
   defaultReleaseBranch: 'main',
   majorVersion: 2,
   npmDistTag: 'latest',
@@ -14,7 +14,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   description:
     'Check CDK v2 applications for best practices using a combination on available rule packs.',
   repositoryUrl: 'https://github.com/cdklabs/cdk-nag.git',
-  devDeps: ['@aws-cdk/assert@^2.11'],
+  devDeps: ['@aws-cdk/assert@^2.18'],
   publishToPypi: {
     distName: 'cdk-nag',
     module: 'cdk_nag',
@@ -50,11 +50,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   buildWorkflow: true,
   release: true,
   gitignore: ['.vscode'],
-});
-project.package.addField('resolutions', {
-  'ansi-regex': '^5.0.1',
-  'json-schema': '^0.4.0',
-  '@types/prettier': '2.6.0',
 });
 project.package.addField('prettier', {
   singleQuote: true,

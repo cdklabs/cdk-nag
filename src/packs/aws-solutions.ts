@@ -105,6 +105,7 @@ import {
 } from '../rules/kinesis';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
 import { LambdaLatestVersion } from '../rules/lambda';
+import { LexBotAliasEncryptedConversationLogs } from '../rules/lex';
 import {
   MediaStoreCloudWatchMetricPolicy,
   MediaStoreContainerAccessLogging,
@@ -970,6 +971,15 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkMachineLearning(node: CfnResource): void {
+    this.applyRule({
+      ruleSuffixOverride: 'LEX4',
+      info: 'Lex conversation logs are enabled and not encrypted with a KMS key.',
+      explanation:
+        'You can use encryption to help protect the contents of your conversation logs. For text and audio logs, you can use AWS KMS customer managed CMKs to encrypt data in your CloudWatch Logs log group and S3 bucket.',
+      level: NagMessageLevel.ERROR,
+      rule: LexBotAliasEncryptedConversationLogs,
+      node: node,
+    });
     this.applyRule({
       ruleSuffixOverride: 'SM1',
       info: 'The SageMaker notebook instance is not provisioned inside a VPC.',
