@@ -317,9 +317,22 @@ protected ignoreRule(ignores: Array<NagPackSuppression>, ruleId: string, finding
 __Returns__:
 * <code>string</code>
 
+#### protected initializeStackReport(params) <a id="cdk-nag-nagpack-initializestackreport"></a>
+
+Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist.
+
+```ts
+protected initializeStackReport(params: IApplyRule): void
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  *No description*
+
+
+
+
 #### protected writeToStackComplianceReport(params, ruleId, compliance, explanation?) <a id="cdk-nag-nagpack-writetostackcompliancereport"></a>
 
-Write a line to the rule packs compliance report for the resource's Stack.
+Write a line to the rule pack's compliance report for the resource's Stack.
 
 ```ts
 protected writeToStackComplianceReport(params: IApplyRule, ruleId: string, compliance: NagRuleCompliance &#124; string, explanation?: string): void
