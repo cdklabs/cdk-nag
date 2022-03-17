@@ -127,12 +127,13 @@ export abstract class NagPack implements IAspect {
     const ruleId = `${this.packName}-${ruleSuffix}`;
     try {
       const ruleCompliance = params.rule(params.node);
-      if (
-        this.reports === true &&
-        ruleCompliance === NagRuleCompliance.COMPLIANT
-      ) {
-        this.writeToStackComplianceReport(params, ruleId, ruleCompliance);
-      } else if (this.isNonCompliant(ruleCompliance)) {
+      if (this.reports === true) {
+        this.initializeStackReport(params);
+        if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
+          this.writeToStackComplianceReport(params, ruleId, ruleCompliance);
+        }
+      }
+      if (this.isNonCompliant(ruleCompliance)) {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
           const suppressionReason = this.ignoreRule(
@@ -249,7 +250,7 @@ export abstract class NagPack implements IAspect {
   }
 
   /**
-   * Write a line to the rule packs compliance report for the resource's Stack
+   * Write a line to the rule pack's compliance report for the resource's Stack
    * @param params The @IApplyRule interface with rule details.
    * @param ruleId The id of the rule.
    * @param compliance The compliance status of the rule.
@@ -270,20 +271,33 @@ export abstract class NagPack implements IAspect {
       compliance,
       explanation
     );
-    let outDir = App.of(params.node)?.outdir;
+    const outDir = App.of(params.node)?.outdir;
     const stackName = params.node.stack.nested
       ? Names.uniqueId(params.node.stack)
       : params.node.stack.stackName;
     const fileName = `${this.packName}-${stackName}-NagReport.csv`;
     const filePath = join(outDir ? outDir : '', fileName);
+    appendFileSync(filePath, line);
+  }
+
+  /**
+   * Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist
+   * @param params
+   */
+  protected initializeStackReport(params: IApplyRule): void {
+    const stackName = params.node.stack.nested
+      ? Names.uniqueId(params.node.stack)
+      : params.node.stack.stackName;
+    const fileName = `${this.packName}-${stackName}-NagReport.csv`;
     if (!this.reportStacks.includes(fileName)) {
+      const outDir = App.of(params.node)?.outdir;
+      const filePath = join(outDir ? outDir : '', fileName);
       this.reportStacks.push(fileName);
       writeFileSync(
         filePath,
         'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info\n'
       );
     }
-    appendFileSync(filePath, line);
   }
 
   /**
