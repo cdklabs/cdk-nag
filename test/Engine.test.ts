@@ -915,7 +915,9 @@ describe('Report system', () => {
             explanation: 'bar.',
             level: NagMessageLevel.ERROR,
             rule: function (node2: CfnResource): NagRuleCompliance {
-              if (node2.cfnResourceType !== 'Error') {
+              if (node2.cfnResourceType === 'N/A') {
+                return NagRuleCompliance.NOT_APPLICABLE;
+              } else if (node2.cfnResourceType !== 'Error') {
                 return compliance;
               }
               throw Error('foobar');
@@ -957,6 +959,18 @@ describe('Report system', () => {
     new Bucket(stack2, 'rBucket');
     app.synth();
     expect(pack.readReportStacks.length).toEqual(2);
+  });
+  test('Reports are initialized for stacks with no relevant resources', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new TestPack();
+    Aspects.of(app).add(pack);
+    new CfnResource(stack, 'rNAResource', {
+      type: 'N/A',
+    });
+    app.synth();
+    expect(pack.readReportStacks.length).toEqual(1);
+    expect(pack.lines.length).toBe(0);
   });
   test('Nested Stack reports do not contain tokens in names', () => {
     const app = new App();
