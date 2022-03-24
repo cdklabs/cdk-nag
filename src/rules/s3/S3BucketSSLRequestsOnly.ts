@@ -8,7 +8,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * S3 Buckets require requests to use SSL
+ * S3 Buckets and bucket policies require requests to use SSL
  * @param node the CfnResource to check
  */
 
@@ -23,7 +23,10 @@ export default Object.defineProperty(
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnBucketPolicy) {
-          if (isMatchingCompliantPolicy(child, bucketLogicalId, bucketName)) {
+          if (
+            isMatchingPolicy(child, bucketLogicalId, bucketName) &&
+            isCompliantPolicy(child, bucketLogicalId, bucketName)
+          ) {
             found = true;
             break;
           }
@@ -33,6 +36,14 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
+    } else if (node instanceof CfnBucketPolicy) {
+      const bucketLogicalId = NagRules.resolveResourceFromInstrinsic(
+        node,
+        node.bucket
+      );
+      return isCompliantPolicy(node, bucketLogicalId, node.bucket)
+        ? NagRuleCompliance.COMPLIANT
+        : NagRuleCompliance.NON_COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
@@ -42,21 +53,33 @@ export default Object.defineProperty(
 );
 
 /**
+ * Helper function to check whether the Bucket Policy belongs to the given bucket
+ * @param node The CfnBucketPolicy to check.
+ * @param bucketLogicalId The Cfn Logical ID of the bucket.
+ * @param bucketName The name of the bucket.
+ * @returns Whether the CfnBucketPolicy belongs to th egiven bucket.
+ */
+function isMatchingPolicy(
+  node: CfnBucketPolicy,
+  bucketLogicalId: string,
+  bucketName: string | undefined
+): boolean {
+  const bucket = NagRules.resolveResourceFromInstrinsic(node, node.bucket);
+  return bucket === bucketLogicalId || bucket === bucketName;
+}
+
+/**
  * Helper function to check whether the Bucket Policy requires SSL on the given bucket.
  * @param node The CfnBucketPolicy to check.
  * @param bucketLogicalId The Cfn Logical ID of the bucket.
  * @param bucketName The name of the bucket.
  * @returns Whether the CfnBucketPolicy requires SSL on the given bucket.
  */
-function isMatchingCompliantPolicy(
+function isCompliantPolicy(
   node: CfnBucketPolicy,
   bucketLogicalId: string,
   bucketName: string | undefined
 ): boolean {
-  const bucket = NagRules.resolveResourceFromInstrinsic(node, node.bucket);
-  if (bucket !== bucketLogicalId && bucket !== bucketName) {
-    return false;
-  }
   const resolvedPolicyDocument = Stack.of(node).resolve(node.policyDocument);
   for (const statement of resolvedPolicyDocument.Statement) {
     const resolvedStatement = Stack.of(node).resolve(statement);
