@@ -17,6 +17,7 @@ import {
   Bucket,
   BucketAccessControl,
   BucketEncryption,
+  BucketPolicy,
   CfnBucket,
   CfnBucketPolicy,
 } from '@aws-cdk/aws-s3';
@@ -277,7 +278,7 @@ describe('Amazon Simple Storage Service (S3)', () => {
     });
   });
 
-  describe('S3BucketSSLRequestsOnly: S3 Buckets require requests to use SSL', () => {
+  describe('S3BucketSSLRequestsOnly: S3 Buckets and bucket policies require requests to use SSL', () => {
     const ruleId = 'S3BucketSSLRequestsOnly';
     test('Noncompliance 1', () => {
       new CfnBucket(stack, 'rBucket');
@@ -377,6 +378,73 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 7', () => {
+      new CfnBucketPolicy(stack, 'rPolicy', {
+        bucket: 'foo',
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['nots3:*'],
+              effect: Effect.DENY,
+              principals: [new AnyPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+              resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foo/*'],
+            }),
+          ],
+        }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 8', () => {
+      new CfnBucketPolicy(stack, 'rPolicy', {
+        bucket: 'foo',
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['s3:*'],
+              effect: Effect.DENY,
+              principals: [new AnyPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+              resources: ['arn:aws:s3:::foo', 'arn:aws:s3:::foobar/*'],
+            }),
+          ],
+        }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 9', () => {
+      const bucket = new Bucket(stack, 'rBucket', {
+        enforceSSL: true,
+      });
+      const newPolicy = new BucketPolicy(stack, 'rBucketPolicy2', {
+        bucket: bucket,
+      });
+      newPolicy.document.addStatements(
+        new PolicyStatement({
+          effect: Effect.DENY,
+          principals: [new AnyPrincipal()],
+          actions: ['s3:PutObject'],
+          resources: [bucket.arnForObjects('*')],
+          conditions: {
+            StringNotLikeIfExists: {
+              's3:x-amz-server-side-encryption-aws-kms-key-id': 'foo',
+            },
+          },
+        }),
+        new PolicyStatement({
+          effect: Effect.DENY,
+          principals: [new AnyPrincipal()],
+          actions: ['s3:PutObject'],
+          resources: [bucket.arnForObjects('*')],
+          conditions: {
+            StringEquals: {
+              's3:x-amz-server-side-encryption': 'AES256',
+            },
+          },
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const compliantBucket = new Bucket(stack, 'rBucket');
       new CfnBucketPolicy(stack, 'rPolicy', {
@@ -426,6 +494,28 @@ describe('Amazon Simple Storage Service (S3)', () => {
               principals: [new AnyPrincipal()],
               conditions: { Bool: { 'aws:SecureTransport': 'false' } },
               resources: ['arn:aws:s3:::bar/*', 'arn:aws:s3:::bar'],
+            }),
+          ],
+        }),
+      });
+      const importedBucket = Bucket.fromBucketName(
+        stack,
+        'rImportedBucket',
+        'baz'
+      );
+      new CfnBucketPolicy(stack, 'rPolicy4', {
+        bucket: importedBucket.bucketName,
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['s3:*'],
+              effect: Effect.DENY,
+              principals: [new AnyPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': 'false' } },
+              resources: [
+                importedBucket.bucketArn,
+                importedBucket.arnForObjects('*'),
+              ],
             }),
           ],
         }),

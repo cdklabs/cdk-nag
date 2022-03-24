@@ -433,7 +433,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'S10',
-      info: 'The S3 Bucket does not require requests to use SSL.',
+      info: 'The S3 Bucket or bucket policy does not require requests to use SSL.',
       explanation:
         'You can use HTTPS (TLS) to help prevent potential attackers from eavesdropping on or manipulating network traffic using person-in-the-middle or similar attacks. You should allow only encrypted connections over HTTPS (TLS) using the aws:SecureTransport condition on Amazon S3 bucket policies.',
       level: NagMessageLevel.ERROR,
