@@ -776,7 +776,7 @@ export class NIST80053R4Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The S3 Bucket does not require requests to use SSL - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).',
+      info: 'The S3 Bucket or bucket policy does not require requests to use SSL - (Control IDs: AC-17(2), SC-7, SC-8, SC-8(1), SC-13).',
       explanation:
         'To help protect data in transit, ensure that your Amazon Simple Storage Service (Amazon S3) buckets require requests to use Secure Socket Layer (SSL). Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
