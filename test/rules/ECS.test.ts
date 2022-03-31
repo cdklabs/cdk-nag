@@ -46,7 +46,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
     });
   });
 
-  describe('ECSTaskDefinitionContainerLogging: ECS Task Definitions have awslogs logging enabled at the minimum', () => {
+  describe('ECSTaskDefinitionContainerLogging: Containers in ECS Task Definitions have logging enabled', () => {
     const ruleId = 'ECSTaskDefinitionContainerLogging';
     test('Noncompliance 1', () => {
       new TaskDefinition(stack, 'rTaskDef', {

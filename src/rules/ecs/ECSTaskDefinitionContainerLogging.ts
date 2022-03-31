@@ -8,7 +8,7 @@ import { CfnResource, Stack } from '@aws-cdk/core';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * ECS Task Definitions have awslogs logging enabled at the minimum
+ * Containers in ECS Task Definitions have logging enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
