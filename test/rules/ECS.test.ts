@@ -8,7 +8,7 @@ import {
   NetworkMode,
   EcsOptimizedImage,
   Cluster,
-  ExecuteCommandLogging,
+  LogDriver,
 } from '@aws-cdk/aws-ecs';
 import { Aspects, Stack } from '@aws-cdk/core';
 import {
@@ -46,17 +46,45 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
     });
   });
 
-  describe('ECSTaskDefinitionContainerLogging: ECS Task Definitions have awslogs logging enabled at the minimum', () => {
+  describe('ECSTaskDefinitionContainerLogging: Containers in ECS Task Definitions have logging enabled', () => {
     const ruleId = 'ECSTaskDefinitionContainerLogging';
     test('Noncompliance 1', () => {
-      new Cluster(stack, 'rCluster', {});
+      new TaskDefinition(stack, 'rTaskDef', {
+        compatibility: Compatibility.EC2,
+      }).addContainer('rContainer', {
+        image: EcsOptimizedImage,
+        memoryReservationMiB: 42,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      const taskDef = new TaskDefinition(stack, 'rTaskDef', {
+        compatibility: Compatibility.EC2,
+      });
+      taskDef.addContainer('rContainer', {
+        image: EcsOptimizedImage,
+        memoryReservationMiB: 42,
+        logging: LogDriver.awsLogs({ streamPrefix: 'foo' }),
+      });
+      taskDef.addContainer('rContainer2', {
+        image: EcsOptimizedImage,
+        memoryReservationMiB: 42,
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new Cluster(stack, 'rCluster', {
-        executeCommandConfiguration: {
-          logging: ExecuteCommandLogging.DEFAULT,
-        },
+      const taskDef = new TaskDefinition(stack, 'rTaskDef', {
+        compatibility: Compatibility.EC2,
+      });
+      taskDef.addContainer('rContainer', {
+        image: EcsOptimizedImage,
+        memoryReservationMiB: 42,
+        logging: LogDriver.awsLogs({ streamPrefix: 'foo' }),
+      });
+      taskDef.addContainer('rContainer2', {
+        image: EcsOptimizedImage,
+        memoryReservationMiB: 42,
+        logging: LogDriver.awsLogs({ streamPrefix: 'bar' }),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

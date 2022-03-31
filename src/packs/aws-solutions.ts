@@ -316,9 +316,9 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'ECS7',
-      info: 'The ECS Task Definition does not have awslogs logging enabled at the minimum.',
+      info: 'One or more containers in the ECS Task Definition do not have container logging enabled.',
       explanation:
-        'Container logging allows operators to view and aggregate the logs from the container.',
+        "Container logging allows operators to view and aggregate the logs from the container. Containers should use the 'awslogs' driver at a minimum.",
       level: NagMessageLevel.ERROR,
       rule: ECSTaskDefinitionContainerLogging,
       node: node,
