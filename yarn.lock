@@ -1412,9 +1412,9 @@ camelcase@^6.2.0, camelcase@^6.3.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001317:
-  version "1.0.30001322"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001322.tgz#2e4c09d11e1e8f852767dab287069a8d0c29d623"
-  integrity sha512-neRmrmIrCGuMnxGSoh+x7zYtQFFgnSY2jaomjU56sCkTA6JINqQrxutF459JpWcWRajvoyn95sOXq4Pqrnyjew==
+  version "1.0.30001323"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001323.tgz#a451ff80dec7033016843f532efda18f02eec011"
+  integrity sha512-e4BF2RlCVELKx8+RmklSEIVub1TWrmdhvA5kEUueummz1XyySW0DVk+3x9HyhU9MuWTa2BhqLgEuEmUwASAdCA==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
@@ -2078,9 +2078,9 @@ duplexer3@^0.1.4:
   integrity sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=
 
 electron-to-chromium@^1.4.84:
-  version "1.4.102"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.102.tgz#fec312f753bcd9b89396136147efdb8bbd55cc82"
-  integrity sha512-MuWg3/gLTk6PSjC7ZrTgT8aAYZmUYd+gRtD95vN77KMBwZXiGdHHa8Y7ppMc/zwNumZtoIBLS0rzZyjEHd7sNw==
+  version "1.4.103"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.103.tgz#abfe376a4d70fa1e1b4b353b95df5d6dfd05da3a"
+  integrity sha512-c/uKWR1Z/W30Wy/sx3dkZoj4BijbXX85QKWu9jJfjho3LBAXNEGAEW3oWiGb+dotA6C6BzCTxL2/aLes7jlUeg==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4964,10 +4964,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.54.1:
-  version "0.54.1"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.54.1.tgz#c231e34b44c1bc27f694e9fc2d7572dc8efc1ccc"
-  integrity sha512-xIbfzGeuUKMtTNU5DHg5aMFpdwiBca7O53e6IYtj2oEMOoMKz74TrpegXq2Plez9pOwlJQqOUh8WiDPvzVSbtQ==
+projen@^0.54.2:
+  version "0.54.2"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.54.2.tgz#a5d95c0f45a4f1a9acf218e68960843474541d42"
+  integrity sha512-c0h2ezfMv1jc2yyTs6Z92Pl8QXtPbeQoYmC9Eu5uZJRQ4HKSxlAXbOUTH2Idm7PJGmor0h4tyjC4SqxXbEhJNg==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
