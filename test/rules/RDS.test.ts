@@ -20,6 +20,7 @@ import {
   CfnDBCluster,
   CfnDBSecurityGroup,
   CfnDBSecurityGroupIngress,
+  AuroraEngineVersion,
 } from 'aws-cdk-lib/aws-rds';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
@@ -354,7 +355,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
     });
   });
 
-  describe('RDSLoggingEnabled: RDS DB instances are configured to export all possible log types to CloudWatch', () => {
+  describe('RDSLoggingEnabled: Non-Aurora RDS DB instances and Aurora clusters are configured to export all possible log types to CloudWatch', () => {
     const ruleId = 'RDSLoggingEnabled';
     test('Noncompliance 1: expect finding for all logs for MariaDB based engines', () => {
       new DatabaseInstance(stack, 'rDbInstance', {
@@ -444,6 +445,57 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         );
       });
     });
+    test('Noncompliance 6: expect finding for all logs for all Aurora MySQL 5.6 based clusters', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-mysql',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+      });
+      const needed = ['audit', 'error', 'general', 'slowquery'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
+    });
+    test('Noncompliance 7: expect finding for all logs for all Aurora MySQL 5.7 based clusters', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-mysql',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+      });
+      const needed = ['audit', 'error', 'general', 'slowquery'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
+    });
+    test('Noncompliance 7: expect finding for all logs for all Aurora PostgreSQL based clusters', () => {
+      new CfnDBCluster(stack, 'rDbCluster', {
+        engine: 'aurora-postgresql',
+        scalingConfiguration: {
+          maxCapacity: 42,
+          minCapacity: 7,
+        },
+      });
+      const needed = ['postgresql'];
+      needed.forEach((log) => {
+        validateStack(
+          stack,
+          `${ruleId}[LogExport::${log}]`,
+          TestType.NON_COMPLIANCE
+        );
+      });
+    });
     test('Compliance', () => {
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.mariaDb({
@@ -494,6 +546,33 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           'alert',
           'oemagent',
         ],
+      });
+      new DatabaseCluster(stack, 'rDbCluster1', {
+        engine: DatabaseClusterEngine.aurora({
+          version: AuroraEngineVersion.VER_1_17_9,
+        }),
+        instanceProps: {
+          vpc: new Vpc(stack, 'rVpc6'),
+        },
+        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
+      });
+      new DatabaseCluster(stack, 'rDbCluster2', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_2_03_2,
+        }),
+        instanceProps: {
+          vpc: new Vpc(stack, 'rVpc7'),
+        },
+        cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
+      });
+      new DatabaseCluster(stack, 'rDbCluster3', {
+        engine: DatabaseClusterEngine.auroraPostgres({
+          version: AuroraPostgresEngineVersion.VER_9_6_8,
+        }),
+        instanceProps: {
+          vpc: new Vpc(stack, 'rVpc8'),
+        },
+        cloudwatchLogsExports: ['postgresql'],
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
