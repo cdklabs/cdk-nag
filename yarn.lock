@@ -1898,9 +1898,9 @@
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
 
 "@types/prettier@^2.1.5":
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.4.4.tgz#5d9b63132df54d8909fce1c3f8ca260fdd693e17"
-  integrity sha512-ReVR2rLTV1kvtlWFyuot+d1pkpG2Fw/XKE3PDAdj57rbM97ttSp9JZ2UsP+2EHTylra9cUf6JA7tGwW1INzUrA==
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.6.0.tgz#efcbd41937f9ae7434c714ab698604822d890759"
+  integrity sha512-G/AdOadiZhnJp0jXCaBQU449W2h716OW/EoXeYkCytxKL06X1WCXB4DZpp8TpZ8eyIJVS1cw4lrlkkSYU21cDw==
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
@@ -2654,9 +2654,9 @@ console-control-strings@^1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.262"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.262.tgz#197d97dee599d0895f04bb9e34aaf0090df45ec7"
-  integrity sha512-oXdrsU3eP1mPFEy2bvXPcoW9jN4QyAiOP3sCjP5sS8a6wB/K7sB2Rr6l6amnVOSL4EWjJ1LM5yQQJ7zrDGk7Ww==
+  version "3.3.263"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.263.tgz#d1c0391155d28e34534d2ab4266199f260258ba6"
+  integrity sha512-PZFnpaTjn7lHSk1+D4B6/pu1M0l+IRHt/lMIk2kkUMgsuhCSu2iFEh0uSw/PsDO4oZ1WaT9FZpvOoRJpC5jcJA==
 
 conventional-changelog-angular@^5.0.12:
   version "5.0.13"
