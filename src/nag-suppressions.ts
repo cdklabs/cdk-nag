@@ -83,6 +83,7 @@ export class NagSuppressions {
     suppressions: NagPackSuppression[],
     applyToChildren: boolean = false
   ): void {
+    var added = false;
     for (const child of stack.node.findAll()) {
       const fixedPath = path.replace(/^\//, '');
       if (
@@ -94,7 +95,11 @@ export class NagSuppressions {
           suppressions,
           applyToChildren
         );
+        added = true;
       }
+    }
+    if (!added) {
+      throw new Error('Suppression path did not match any resource');
     }
   }
 }
