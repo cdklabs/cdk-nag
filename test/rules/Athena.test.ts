@@ -60,43 +60,6 @@ describe('Amazon Athena', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 5', () => {
-      new CfnWorkGroup(stack, 'rWorkgroup', {
-        name: 'foo',
-        workGroupConfigurationUpdates: {
-          enforceWorkGroupConfiguration: false,
-          resultConfigurationUpdates: {
-            removeEncryptionConfiguration: true,
-          },
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 6', () => {
-      new CfnWorkGroup(stack, 'rWorkgroup', {
-        name: 'foo',
-        workGroupConfigurationUpdates: {
-          enforceWorkGroupConfiguration: true,
-          resultConfigurationUpdates: {
-            removeEncryptionConfiguration: true,
-          },
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 7', () => {
-      new CfnWorkGroup(stack, 'rWorkgroup', {
-        name: 'foo',
-        workGroupConfigurationUpdates: {
-          resultConfigurationUpdates: {
-            encryptionConfiguration: {
-              encryptionOption: 'SSE_S3',
-            },
-          },
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
     test('Compliance', () => {
       new CfnWorkGroup(stack, 'rWorkgroup', {
         name: 'foo',
@@ -107,30 +70,6 @@ describe('Amazon Athena', () => {
               encryptionOption: 'SSE_S3',
             },
           },
-        },
-      });
-      new CfnWorkGroup(stack, 'rWorkgroup2', {
-        name: 'foo',
-        workGroupConfigurationUpdates: {
-          enforceWorkGroupConfiguration: true,
-          resultConfigurationUpdates: {
-            encryptionConfiguration: {
-              encryptionOption: 'SSE_S3',
-            },
-          },
-        },
-      });
-      new CfnWorkGroup(stack, 'rWorkgroup3', {
-        name: 'foo',
-        workGroupConfigurationUpdates: {
-          requesterPaysEnabled: true,
-        },
-      });
-      new CfnWorkGroup(stack, 'rWorkgroup4', {
-        name: 'foo',
-        workGroupConfigurationUpdates: {
-          enforceWorkGroupConfiguration: true,
-          requesterPaysEnabled: true,
         },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
