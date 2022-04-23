@@ -17,62 +17,24 @@ export default Object.defineProperty(
       const workGroupConfiguration = Stack.of(node).resolve(
         node.workGroupConfiguration
       );
-      if (workGroupConfiguration == undefined) {
-        const workGroupConfigurationUpdates = Stack.of(node).resolve(
-          node.workGroupConfigurationUpdates
-        );
-        if (workGroupConfigurationUpdates == undefined) {
-          return NagRuleCompliance.NON_COMPLIANT;
-        }
-        const resultConfigurationUpdates = Stack.of(node).resolve(
-          workGroupConfigurationUpdates.resultConfigurationUpdates
-        );
-        if (resultConfigurationUpdates != undefined) {
-          const removeEncryptionConfiguration = NagRules.resolveIfPrimitive(
-            node,
-            resultConfigurationUpdates.removeEncryptionConfiguration
-          );
-          const encryptionConfiguration = Stack.of(node).resolve(
-            resultConfigurationUpdates.encryptionConfiguration
-          );
-          const enforceWorkGroupConfiguration = NagRules.resolveIfPrimitive(
-            node,
-            workGroupConfigurationUpdates.enforceWorkGroupConfiguration
-          );
-          if (
-            removeEncryptionConfiguration &&
-            encryptionConfiguration == undefined
-          ) {
-            return NagRuleCompliance.NON_COMPLIANT;
-          } else if (
-            encryptionConfiguration != undefined &&
-            !enforceWorkGroupConfiguration
-          ) {
-            return NagRuleCompliance.NON_COMPLIANT;
-          }
-        }
-      } else {
-        const enforceWorkGroupConfiguration = NagRules.resolveIfPrimitive(
-          node,
-          workGroupConfiguration.enforceWorkGroupConfiguration
-        );
-        if (!enforceWorkGroupConfiguration) {
-          return NagRuleCompliance.NON_COMPLIANT;
-        }
-        const resultConfiguration = Stack.of(node).resolve(
-          workGroupConfiguration.resultConfiguration
-        );
-
-        if (resultConfiguration == undefined) {
-          return NagRuleCompliance.NON_COMPLIANT;
-        }
-        const encryptionConfiguration = Stack.of(node).resolve(
-          resultConfiguration.encryptionConfiguration
-        );
-
-        if (encryptionConfiguration == undefined) {
-          return NagRuleCompliance.NON_COMPLIANT;
-        }
+      const enforceWorkGroupConfiguration = NagRules.resolveIfPrimitive(
+        node,
+        workGroupConfiguration?.enforceWorkGroupConfiguration
+      );
+      if (!enforceWorkGroupConfiguration) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+      const resultConfiguration = Stack.of(node).resolve(
+        workGroupConfiguration.resultConfiguration
+      );
+      if (resultConfiguration === undefined) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+      const encryptionConfiguration = Stack.of(node).resolve(
+        resultConfiguration.encryptionConfiguration
+      );
+      if (encryptionConfiguration === undefined) {
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else {
