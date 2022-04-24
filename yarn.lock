@@ -10,26 +10,26 @@
     "@jridgewell/trace-mapping" "^0.3.0"
 
 "@aws-cdk/assert@^2.11":
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.21.0.tgz#78643ff4717a8efb14ce9af106d8f5ca9904c2eb"
-  integrity sha512-slzHWEMuuzC3XVOYUGLW6jyuLJ6v5ukuK6rOX7IwXebhwDEv0wFRzwYj4zwe/3enpWu+UTmpAO/ChyB+1PA6zA==
+  version "2.21.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.21.1.tgz#4bdaeacae21d0a383bd3b3b63c41068ef2e2938c"
+  integrity sha512-YADI6gBoJCVcZpjMHb6UjAvXl2OsUfQXy8KCtFTOFlNDKvMLzOFsCNVQx507TW5t8OoajJT5jupkLxrxl6XtvQ==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.21.0"
+    "@aws-cdk/cloudformation-diff" "2.21.1"
 
-"@aws-cdk/cfnspec@2.21.0":
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.21.0.tgz#ec65145930d6d98a633f05e91e46c4dd42eaa883"
-  integrity sha512-YmqGlsFcNG6q99W0QmFx+00Ikz9lvil5m2ZoZ1mlm6Galdgguc97EtRmzVY8C/4Ru4DsbR67Q2pnZxmkznrtsQ==
+"@aws-cdk/cfnspec@2.21.1":
+  version "2.21.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.21.1.tgz#11de18ccc05bf7efe25ea82835cc417a07e51999"
+  integrity sha512-G1f/fu+Xk8mxrHteFXPwiPLJYprn8wN97GZv12JSR7nTAsEmGEwGo7nonPEfmJK5xGWhf1OPu0J1jK9XSIthpg==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.21.0":
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.21.0.tgz#780a8c9da723466922f9d0b5226bda659b89c4be"
-  integrity sha512-VNNsP92OTIn242p+azyHsjw9moGOxddCOaQ2dbOX+WNqLrecqnXb5qQmhI4waBf2Igxk+5iY2IN85VDfAQ569g==
+"@aws-cdk/cloudformation-diff@2.21.1":
+  version "2.21.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.21.1.tgz#543648adc4d5aac0a4ec2bae29aa6321a5231e06"
+  integrity sha512-7mm/c70eH0EsQjlZfwMho1rUD7oV6LOkCDJW2kPu/TmASOWhr4s66dbiwUxvvEbsFerJ2FhQWBV9hHbuJWjEfw==
   dependencies:
-    "@aws-cdk/cfnspec" "2.21.0"
+    "@aws-cdk/cfnspec" "2.21.1"
     "@types/node" "^10.17.60"
     chalk "^4"
     diff "^5.0.0"
@@ -4991,10 +4991,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.54.40:
-  version "0.54.40"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.54.40.tgz#e1541d4be828bfde0a2403718956d3db5c3ac3c3"
-  integrity sha512-aX4qlQXTm31u993kPOmkG6ftOUHJ2d22DZa/t56dKOCUgdQE0Q5r7vc17b2M/S+lE2ocDT8yQQxRvu/zgdVCCg==
+projen@^0.54.41:
+  version "0.54.41"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.54.41.tgz#201f6df95ad13a76c350267d2b39a82d1ae4861d"
+  integrity sha512-torOVO0ouIyD6Ge2dZys1wJOpPWAUPeOcRpxglQU960lHuaaxD8YuOR18wd9MJB+Gr6DsJOQLGFaUdi+IHVDEQ==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
