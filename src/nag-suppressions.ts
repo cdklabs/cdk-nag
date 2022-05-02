@@ -99,7 +99,9 @@ export class NagSuppressions {
       }
     }
     if (!added) {
-      throw new Error('Suppression path did not match any resource');
+      throw new Error(
+        `Suppression path "${path}" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.`
+      );
     }
   }
 }
