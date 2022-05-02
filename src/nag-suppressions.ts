@@ -83,7 +83,7 @@ export class NagSuppressions {
     suppressions: NagPackSuppression[],
     applyToChildren: boolean = false
   ): void {
-    var added = false;
+    let added = false;
     for (const child of stack.node.findAll()) {
       const fixedPath = path.replace(/^\//, '');
       if (
