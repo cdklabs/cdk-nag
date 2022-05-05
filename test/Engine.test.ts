@@ -746,7 +746,7 @@ describe('Rule suppression system', () => {
       throw new Error('Did not fail');
     } catch (err) {
       expect(err + '').toBe(
-        'Error: Suppression path did not match any resource'
+        `Error: Suppression path "/No/Such/Path" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.`
       );
     }
   });
