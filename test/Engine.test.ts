@@ -736,6 +736,20 @@ describe('Rule suppression system', () => {
       })
     );
   });
+
+  test('Test path miss', () => {
+    const stack = new Stack();
+    try {
+      NagSuppressions.addResourceSuppressionsByPath(stack, '/No/Such/Path', [
+        { id: 'NA', reason: '............' },
+      ]);
+      throw new Error('Did not fail');
+    } catch (err) {
+      expect(err + '').toBe(
+        `Error: Suppression path "/No/Such/Path" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.`
+      );
+    }
+  });
 });
 
 describe('Rule explanations', () => {
