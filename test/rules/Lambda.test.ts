@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnFunction, Runtime } from '@aws-cdk/aws-lambda';
+import { CfnFunction, Code, Function, Runtime } from '@aws-cdk/aws-lambda';
 import { Aspects, Stack } from '@aws-cdk/core';
 import {
   LambdaConcurrency,
@@ -20,14 +20,14 @@ const testPack = new TestPack([
 ]);
 let stack: Stack;
 
-function getLatestRuntime(family: string): string {
+function getLatestRuntime(family: string): Runtime {
   const familyVersions = Runtime.ALL.filter(
     (rt) => rt.toString().indexOf(family) === 0
   )
     .map((rt) => {
       let match = rt.toString().match(/([a-z]+)(\d+(\.?\d+|\.x)?)?/);
       return {
-        value: rt.toString(),
+        value: rt,
         family: match![1],
         version: parseFloat(match![2]),
       };
@@ -52,7 +52,6 @@ describe('AWS Lambda', () => {
     test('Noncompliance 1', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -60,7 +59,6 @@ describe('AWS Lambda', () => {
     test('Noncompliance 2', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         reservedConcurrentExecutions: 0,
       });
@@ -69,7 +67,6 @@ describe('AWS Lambda', () => {
     test('Compliance', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         reservedConcurrentExecutions: 42,
       });
@@ -82,7 +79,6 @@ describe('AWS Lambda', () => {
     test('Noncompliance 1', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -90,7 +86,6 @@ describe('AWS Lambda', () => {
     test('Noncompliance 2', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         deadLetterConfig: {},
       });
@@ -99,7 +94,6 @@ describe('AWS Lambda', () => {
     test('Compliance', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         deadLetterConfig: { targetArn: 'mySnsTopicArn' },
       });
@@ -112,7 +106,6 @@ describe('AWS Lambda', () => {
     test('Noncompliance 1', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -120,7 +113,6 @@ describe('AWS Lambda', () => {
     test('Noncompliance 2', () => {
       new CfnFunction(stack, 'rFunction', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         vpcConfig: {
           securityGroupIds: [],
@@ -132,7 +124,6 @@ describe('AWS Lambda', () => {
     test('Compliance', () => {
       new CfnFunction(stack, 'rFunction1', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         vpcConfig: {
           securityGroupIds: ['somesecgroup'],
@@ -140,7 +131,6 @@ describe('AWS Lambda', () => {
       });
       new CfnFunction(stack, 'rFunction2', {
         code: {},
-        runtime: 'provided',
         role: 'somerole',
         vpcConfig: {
           subnetIds: ['somesecgroup'],
@@ -184,10 +174,18 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 5 - L2 - nodejs', () => {
+      new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_12_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
 
     test('Compliance 1 - nodejs', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: getLatestRuntime('nodejs'),
+        runtime: getLatestRuntime('nodejs').toString(),
         code: {},
         role: 'somerole',
       });
@@ -195,7 +193,7 @@ describe('AWS Lambda', () => {
     });
     test('Compliance 2 - python', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: getLatestRuntime('python'),
+        runtime: getLatestRuntime('python').toString(),
         code: {},
         role: 'somerole',
       });
@@ -203,7 +201,7 @@ describe('AWS Lambda', () => {
     });
     test('Compliance 3 - dotnet', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: getLatestRuntime('dotnetcore'),
+        runtime: getLatestRuntime('dotnetcore').toString(),
         code: {},
         role: 'somerole',
       });
@@ -211,7 +209,7 @@ describe('AWS Lambda', () => {
     });
     test('Compliance 4 - java', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: getLatestRuntime('java'),
+        runtime: getLatestRuntime('java').toString(),
         code: {},
         role: 'somerole',
       });
@@ -219,7 +217,7 @@ describe('AWS Lambda', () => {
     });
     test('Compliance 5 - go', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: getLatestRuntime('go'),
+        runtime: getLatestRuntime('go').toString(),
         code: {},
         role: 'somerole',
       });
@@ -238,6 +236,14 @@ describe('AWS Lambda', () => {
         runtime: 'unknown',
         code: {},
         role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 7 - L2 - nodejs', () => {
+      new Function(stack, 'rFunction', {
+        runtime: getLatestRuntime('nodejs'),
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
