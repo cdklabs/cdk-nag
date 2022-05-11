@@ -1516,7 +1516,7 @@ export class AwsSolutionsChecks extends NagPack {
   private checkLambda(node: CfnResource): void {
     this.applyRule({
       ruleSuffixOverride: 'L1',
-      info: 'Lambda functions are configured to use the latest runtime version',
+      info: 'The Lambda function is not configured to use the latest runtime version.',
       explanation:
         'Review the available runtimes for the targeted language to ensure we are not creating a support issue or rapid technical debt scenario. Reference: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html',
       level: NagMessageLevel.ERROR,
