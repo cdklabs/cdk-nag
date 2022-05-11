@@ -103,6 +103,7 @@ import {
   KinesisDataStreamSSE,
 } from '../rules/kinesis';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
+import { LambdaLatestVersion } from '../rules/lambda';
 import {
   MediaStoreCloudWatchMetricPolicy,
   MediaStoreContainerAccessLogging,
@@ -206,6 +207,7 @@ export class AwsSolutionsChecks extends NagPack {
       this.checkApplicationIntegration(node);
       this.checkMediaServices(node);
       this.checkDeveloperTools(node);
+      this.checkLambda(node);
     }
   }
 
@@ -1502,6 +1504,23 @@ export class AwsSolutionsChecks extends NagPack {
         'SSM adds an additional layer of protection as it allows operators to control access through IAM permissions and does not require opening inbound ports.',
       level: NagMessageLevel.ERROR,
       rule: Cloud9InstanceNoIngressSystemsManager,
+      node: node,
+    });
+  }
+
+  /**
+   * Check Lambda Services
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkLambda(node: CfnResource): void {
+    this.applyRule({
+      ruleSuffixOverride: 'L1',
+      info: 'Lambda functions are configured to use the latest runtime version',
+      explanation:
+        'Review the available runtimes for the targeted language to ensure we are not creating a support issue or rapid technical debt scenario. Reference: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaLatestVersion,
       node: node,
     });
   }
