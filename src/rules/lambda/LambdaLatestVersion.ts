@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
 import { CfnFunction, Runtime } from '@aws-cdk/aws-lambda';
-import { CfnResource, Stack } from '@aws-cdk/core';
-import { NagRuleCompliance } from '../../nag-rules';
+import { CfnResource } from '@aws-cdk/core';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Lambda functions are configured to use the latest runtime version
@@ -14,10 +14,9 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFunction) {
-      const runtime = Stack.of(node).resolve(node.runtime) as string;
-      if (!runtime || runtime.indexOf('{') === 0) {
-        // could be a Fn.ref or similar
-        return NagRuleCompliance.NOT_APPLICABLE;
+      const runtime = NagRules.resolveIfPrimitive(node, node.runtime);
+      if (!runtime) {
+        return NagRuleCompliance.NON_COMPLIANT;
       }
 
       const exp = /([a-z]+)(\d+(\.?\d+|\.x)?)?/;
