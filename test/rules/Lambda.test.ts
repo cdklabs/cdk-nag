@@ -18,14 +18,12 @@ import {
   LambdaInsideVPC,
   LambdaLatestVersion,
 } from '../../src/rules/lambda';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 
-const testPack = new TestPack([
-  LambdaConcurrency,
-  LambdaDLQ,
-  LambdaInsideVPC,
-  LambdaLatestVersion,
-]);
+const testPack = new TestPack(
+  [LambdaConcurrency, LambdaDLQ, LambdaInsideVPC, LambdaLatestVersion],
+  { verbose: true }
+);
 let stack: Stack;
 
 function getLatestRuntime(family: string): Runtime {
@@ -33,7 +31,7 @@ function getLatestRuntime(family: string): Runtime {
     (rt) => rt.toString().indexOf(family) === 0
   )
     .map((rt) => {
-      let match = rt.toString().match(/([a-z]+)(\d+(\.?\d+|\.x)?)?/);
+      let match = rt.toString().match(/^([a-z]+)(\d+(\.?\d+|\.x)?)?.*$/);
       return {
         value: rt,
         family: match![1],
@@ -239,14 +237,6 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 6 - unknown', () => {
-      new CfnFunction(stack, 'rFunction', {
-        runtime: 'unknown',
-        code: {},
-        role: 'somerole',
-      });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
     test('Compliance 7 - L2 - nodejs', () => {
       new Function(stack, 'rFunction', {
         runtime: getLatestRuntime('nodejs'),
@@ -260,6 +250,22 @@ describe('AWS Lambda', () => {
         code: DockerImageCode.fromEcr(new Repository(stack, 'rRepo')),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Validation Failure 1 - regex pattern not matching', () => {
+      new CfnFunction(stack, 'rFunction', {
+        runtime: '42',
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+    });
+    test('Validation Failure 2 - No families found', () => {
+      new CfnFunction(stack, 'rFunction', {
+        runtime: 'unknown',
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
     });
   });
 });

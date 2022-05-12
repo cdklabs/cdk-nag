@@ -20,13 +20,13 @@ export default Object.defineProperty(
         return NagRuleCompliance.NOT_APPLICABLE;
       }
 
-      const exp = /([a-z]+)(\d+(\.?\d+|\.x)?)?/;
+      const exp = /^([a-z]+)(\d+(\.?\d+|\.x)?)?.*$/;
       const m = runtime.match(exp);
 
       if (!m) {
-        // shouldn't happen, but if for some reason it does, we'll ignore the check
-        // CloudFormation will likely fail when trying to create the lambda
-        return NagRuleCompliance.NOT_APPLICABLE;
+        throw Error(
+          `The Lambda runtime "${runtime}" does not match the expected regular expression, therefore the rule could not be validated.`
+        );
       }
 
       const runtimeFamily = m[1];
@@ -54,9 +54,9 @@ export default Object.defineProperty(
         });
 
       if (familyVersions.length === 0) {
-        // shouldn't happen, but if for some reason it does, we'll ignore the check
-        // CloudFormation will likely fail when trying to create the lambda
-        return NagRuleCompliance.NOT_APPLICABLE;
+        throw Error(
+          `Unable to find families for Lambda runtime "${runtime}", therefore the rule could not be validated.`
+        );
       }
 
       const latestFamilyVersion = familyVersions.pop()!.value;
