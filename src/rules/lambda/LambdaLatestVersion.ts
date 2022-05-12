@@ -8,7 +8,7 @@ import { CfnResource } from '@aws-cdk/core';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * Lambda functions are configured to use the latest runtime version
+ * Non-container Lambda functions are configured to use the latest runtime version
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
