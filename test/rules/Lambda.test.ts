@@ -2,7 +2,15 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnFunction, Code, Function, Runtime } from '@aws-cdk/aws-lambda';
+import { Repository } from '@aws-cdk/aws-ecr';
+import {
+  CfnFunction,
+  Code,
+  DockerImageCode,
+  DockerImageFunction,
+  Function,
+  Runtime,
+} from '@aws-cdk/aws-lambda';
 import { Aspects, Stack } from '@aws-cdk/core';
 import {
   LambdaConcurrency,
@@ -244,6 +252,12 @@ describe('AWS Lambda', () => {
         runtime: getLatestRuntime('nodejs'),
         code: Code.fromInline('hi'),
         handler: 'index.handler',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 8 - L2 - container', () => {
+      new DockerImageFunction(stack, 'rFunction', {
+        code: DockerImageCode.fromEcr(new Repository(stack, 'rRepo')),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

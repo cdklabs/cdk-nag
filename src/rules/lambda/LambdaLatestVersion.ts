@@ -16,7 +16,8 @@ export default Object.defineProperty(
     if (node instanceof CfnFunction) {
       const runtime = NagRules.resolveIfPrimitive(node, node.runtime);
       if (!runtime) {
-        return NagRuleCompliance.NON_COMPLIANT;
+        // Runtime is not required for container lambdas, in this case, not applicable
+        return NagRuleCompliance.NOT_APPLICABLE;
       }
 
       const exp = /([a-z]+)(\d+(\.?\d+|\.x)?)?/;
