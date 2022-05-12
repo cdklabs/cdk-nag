@@ -146,7 +146,7 @@ describe('AWS Lambda', () => {
     });
   });
 
-  describe('LambdaLatestVersion: Lambda functions use the latest runtime version', () => {
+  describe('LambdaLatestVersion: Non-container Lambda functions use the latest runtime version', () => {
     const ruleId = 'LambdaLatestVersion';
     test('Noncompliance 1 - nodejs', () => {
       new CfnFunction(stack, 'rFunction', {
