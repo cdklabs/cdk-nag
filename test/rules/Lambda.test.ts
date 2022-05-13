@@ -12,7 +12,7 @@ import {
   Function,
   Runtime,
 } from '@aws-cdk/aws-lambda';
-import { Aspects, Stack } from '@aws-cdk/core';
+import { Aspects, Fn, Stack } from '@aws-cdk/core';
 import {
   LambdaConcurrency,
   LambdaDLQ,
@@ -322,6 +322,17 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 4 - L1 with Fn::ImportValue role value', () => {
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: Fn.importValue('MyExternalRole'),
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: Fn.importValue('MyExternalRole'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
 
     test('Compliance 1 - L1 with primitive role value', () => {
       new CfnFunction(stack, 'rFunction1', {
@@ -385,7 +396,18 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 5 - single lambda', () => {
+    test('Compliance 5 - L1 with Fn::ImportValue role value', () => {
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: Fn.importValue('MyExternalRole1'),
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: Fn.importValue('MyExternalRole2'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 6 - single lambda', () => {
       new Function(stack, 'rFunction1', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
@@ -393,7 +415,7 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 6 - no lambdas', () => {
+    test('Compliance 7 - no lambdas', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
