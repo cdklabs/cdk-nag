@@ -385,5 +385,16 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
+    test('Compliance 5 - single lambda', () => {
+      new Function(stack, 'rFunction1', {
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 5 - no lambdas', () => {
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 });
