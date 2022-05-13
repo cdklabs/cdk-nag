@@ -393,7 +393,7 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 5 - no lambdas', () => {
+    test('Compliance 6 - no lambdas', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
