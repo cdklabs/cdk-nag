@@ -3,6 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { Repository } from '@aws-cdk/aws-ecr';
+import { CfnRole, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import {
   CfnFunction,
   Code,
@@ -17,11 +18,18 @@ import {
   LambdaDLQ,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaSharedRole,
 } from '../../src/rules/lambda';
 import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack(
-  [LambdaConcurrency, LambdaDLQ, LambdaInsideVPC, LambdaLatestVersion],
+  [
+    LambdaConcurrency,
+    LambdaDLQ,
+    LambdaInsideVPC,
+    LambdaLatestVersion,
+    LambdaSharedRole,
+  ],
   { verbose: true }
 );
 let stack: Stack;
@@ -266,6 +274,116 @@ describe('AWS Lambda', () => {
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+    });
+  });
+
+  describe('LambdaSharedRole: Lambda functions do not share roles', () => {
+    const ruleId = 'LambdaSharedRole';
+    test('Noncompliance 1 - L1 with primitive role value', () => {
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: 'somerole',
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2 - L1 with Ref role value', () => {
+      const role = new CfnRole(stack, 'rRole', {
+        assumeRolePolicyDocument: {},
+      });
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: role.ref,
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: role.ref,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3 - L2 function with L2 role', () => {
+      const role = new Role(stack, 'role', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      });
+      new Function(stack, 'rFunction1', {
+        role: role,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      new Function(stack, 'rFunction2', {
+        role: role,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 1 - L1 with primitive role value', () => {
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: 'somerole1',
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: 'somerole2',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2 - L1 with Ref role value', () => {
+      const role1 = new CfnRole(stack, 'rRole1', {
+        assumeRolePolicyDocument: {},
+      });
+      new CfnFunction(stack, 'rFunction1', {
+        code: {},
+        role: role1.ref,
+      });
+      const role2 = new CfnRole(stack, 'rRole2', {
+        assumeRolePolicyDocument: {},
+      });
+      new CfnFunction(stack, 'rFunction2', {
+        code: {},
+        role: role2.ref,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 3 - L2 function with L2 roles', () => {
+      const role1 = new Role(stack, 'role1', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      });
+      new Function(stack, 'rFunction1', {
+        role: role1,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      const role2 = new Role(stack, 'role2', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      });
+      new Function(stack, 'rFunction2', {
+        role: role2,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 4 - L2 with default roles', () => {
+      new Function(stack, 'rFunction1', {
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      new Function(stack, 'rFunction2', {
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        runtime: getLatestRuntime('nodejs'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
 });

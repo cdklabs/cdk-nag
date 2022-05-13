@@ -103,7 +103,7 @@ import {
   KinesisDataStreamSSE,
 } from '../rules/kinesis';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
-import { LambdaLatestVersion } from '../rules/lambda';
+import { LambdaLatestVersion, LambdaSharedRole } from '../rules/lambda';
 import {
   MediaStoreCloudWatchMetricPolicy,
   MediaStoreContainerAccessLogging,
@@ -1521,6 +1521,15 @@ export class AwsSolutionsChecks extends NagPack {
         'Use the latest available runtime for the targeted language to avoid technical debt. Runtimes specific to a language or framework version are deprecated when the version reaches end of life. This rule only applies to non-container Lambda functions.',
       level: NagMessageLevel.ERROR,
       rule: LambdaLatestVersion,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'L2',
+      info: 'The Lambda function does not use the same role as other Lambda functions.',
+      explanation:
+        'All solution Lambda functions should not share the same AWS IAM execution role in order to promote the Principle of Least Privilege (POLP) by providing each individual function the minimal amount of access required to perform its tasks.',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaSharedRole,
       node: node,
     });
   }
