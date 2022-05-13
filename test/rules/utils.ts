@@ -11,34 +11,52 @@ import { NagMessageLevel, NagPack, NagPackProps } from '../../src/nag-pack';
 export enum TestType {
   NON_COMPLIANCE,
   COMPLIANCE,
+  VALIDATION_FAILURE,
 }
 export function validateStack(stack: Stack, ruleId: String, type: TestType) {
   expect(ruleId).not.toEqual('');
   const messages = SynthUtils.synthesize(stack).messages;
-  if (type === TestType.COMPLIANCE) {
+  switch (type) {
+    case TestType.COMPLIANCE:
+      expect(messages).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringMatching(`.*${ruleId}(\\[.*\\])?:`),
+          }),
+        })
+      );
+      noValidationFailure();
+      break;
+    case TestType.NON_COMPLIANCE:
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(`${ruleId}:`),
+          }),
+        })
+      );
+      noValidationFailure();
+      break;
+    case TestType.VALIDATION_FAILURE:
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringMatching(`.*CdkNagValidationFailure.*${ruleId}`),
+          }),
+        })
+      );
+      break;
+  }
+
+  function noValidationFailure() {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringMatching(`.*${ruleId}(\\[.*\\])?:`),
-        }),
-      })
-    );
-  } else {
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(`${ruleId}:`),
+          data: expect.stringMatching(`.*CdkNagValidationFailure.*${ruleId}`),
         }),
       })
     );
   }
-  expect(messages).not.toContainEqual(
-    expect.objectContaining({
-      entry: expect.objectContaining({
-        data: expect.stringMatching(`.*CdkNagValidationFailure.*${ruleId}`),
-      }),
-    })
-  );
 }
 
 export class TestPack extends NagPack {
