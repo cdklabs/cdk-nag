@@ -2,7 +2,12 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnBackupVault } from '@aws-cdk/aws-backup';
+import {
+  BackupVault,
+  BackupVaultEvents,
+  CfnBackupVault,
+} from '@aws-cdk/aws-backup';
+import { Topic } from '@aws-cdk/aws-sns';
 import { Aspects, Stack } from '@aws-cdk/core';
 import BackupVaultNotifications from '../../src/rules/backup/BackupVaultNotifications';
 import { TestPack, TestType, validateStack } from './utils';
@@ -54,13 +59,54 @@ describe('AWS Backup', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance 1', () => {
+    test('Noncompliance 4 - L2 - missing topic', () => {
+      new BackupVault(stack, 'rVault', {
+        notificationEvents: [
+          BackupVaultEvents.BACKUP_JOB_FAILED,
+          BackupVaultEvents.BACKUP_JOB_EXPIRED,
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5 - L2 - missing events', () => {
+      new BackupVault(stack, 'rVault', {
+        notificationTopic: new Topic(stack, 'rTopic'),
+        notificationEvents: [],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 6 - L2 - missing failed event', () => {
+      new BackupVault(stack, 'rVault', {
+        notificationTopic: new Topic(stack, 'rTopic'),
+        notificationEvents: [BackupVaultEvents.BACKUP_JOB_EXPIRED],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 7 - L2 - missing expired event', () => {
+      new BackupVault(stack, 'rVault', {
+        notificationTopic: new Topic(stack, 'rTopic'),
+        notificationEvents: [BackupVaultEvents.BACKUP_JOB_FAILED],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 1 - L1', () => {
       new CfnBackupVault(stack, 'rVault', {
         backupVaultName: 'test-vault',
         notifications: {
           snsTopicArn: 'arn:sns:topic',
           backupVaultEvents: ['BACKUP_JOB_FAILED', 'BACKUP_JOB_EXPIRED'],
         },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2 - L2', () => {
+      new BackupVault(stack, 'rVault', {
+        notificationTopic: new Topic(stack, 'rTopic'),
+        notificationEvents: [
+          BackupVaultEvents.BACKUP_JOB_FAILED,
+          BackupVaultEvents.BACKUP_JOB_EXPIRED,
+        ],
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
