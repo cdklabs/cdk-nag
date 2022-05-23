@@ -18,6 +18,7 @@ import {
   AutoScalingGroupHealthCheck,
   AutoScalingGroupScalingNotifications,
 } from '../rules/autoscaling';
+import { BackupVaultNotifications } from '../rules/backup';
 import { Cloud9InstanceNoIngressSystemsManager } from '../rules/cloud9';
 import {
   CloudFrontDistributionAccessLogging,
@@ -208,6 +209,7 @@ export class AwsSolutionsChecks extends NagPack {
       this.checkMediaServices(node);
       this.checkDeveloperTools(node);
       this.checkLambda(node);
+      this.checkBackup(node);
     }
   }
 
@@ -1521,6 +1523,23 @@ export class AwsSolutionsChecks extends NagPack {
         'Use the latest available runtime for the targeted language to avoid technical debt. Runtimes specific to a language or framework version are deprecated when the version reaches end of life. This rule only applies to non-container Lambda functions.',
       level: NagMessageLevel.ERROR,
       rule: LambdaLatestVersion,
+      node: node,
+    });
+  }
+
+  /**
+   * Check AWS Backup Services
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkBackup(node: CfnResource): void {
+    this.applyRule({
+      ruleSuffixOverride: 'B1',
+      info: 'AWS Backup vaults should have notifications configured for backup failures and expirations.',
+      explanation:
+        'AWS Backup vaults should be configured to send notifications for BACKUP_JOB_FAILED and BACKUP_JOB_EXPIRED events.',
+      level: NagMessageLevel.ERROR,
+      rule: BackupVaultNotifications,
       node: node,
     });
   }
