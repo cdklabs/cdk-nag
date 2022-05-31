@@ -233,7 +233,7 @@ describe('Amazon CodeBuild', () => {
     });
   });
 
-  describe('CodeBuildProjectManagedImages: Codebuild projects use images provided by the CodeBuild service or have a cdk_nag suppression rule explaining the need for a custom image', () => {
+  describe('CodeBuildProjectManagedImages: Codebuild projects use images provided by the CodeBuild service or have a cdk-nag suppression rule explaining the need for a custom image', () => {
     const ruleId = 'CodeBuildProjectManagedImages';
     test('Noncompliance ', () => {
       new Project(stack, 'rBuildProject', {

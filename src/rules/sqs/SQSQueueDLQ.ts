@@ -8,7 +8,7 @@ import { CfnQueue } from 'aws-cdk-lib/aws-sqs';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * SQS queues have a dead-letter queue enabled or have a cdk_nag rule suppression indicating they are a dead-letter queue.
+ * SQS queues have a dead-letter queue enabled or have a cdk-nag rule suppression indicating they are a dead-letter queue.
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

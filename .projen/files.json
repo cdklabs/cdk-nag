@@ -7,7 +7,7 @@
     ".github/workflows/build.yml",
     ".github/workflows/pull-request-lint.yml",
     ".github/workflows/release.yml",
-    ".github/workflows/upgrade-v2-main.yml",
+    ".github/workflows/upgrade-main.yml",
     ".gitignore",
     ".mergify.yml",
     ".projen/deps.json",

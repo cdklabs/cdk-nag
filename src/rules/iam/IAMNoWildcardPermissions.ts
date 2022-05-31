@@ -30,7 +30,7 @@ interface IAMPolicyStatement {
 }
 
 /**
- * IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission
+ * IAM entities with wildcard permissions have a cdk-nag rule suppression with evidence for those permission
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

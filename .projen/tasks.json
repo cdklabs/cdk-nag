@@ -210,9 +210,9 @@
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
-    "release:v2-main": {
-      "name": "release:v2-main",
-      "description": "Prepare a release from \"v2-main\" branch",
+    "release": {
+      "name": "release",
+      "description": "Prepare a release from \"main\" branch",
       "env": {
         "RELEASE": "true",
         "MAJOR": "2"

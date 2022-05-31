@@ -173,7 +173,7 @@ describe('AWS Identity and Access Management Service (AWS IAM)', () => {
     });
   });
 
-  describe('IAMNoWildcardPermissions: IAM entities with wildcard permissions have a cdk_nag rule suppression with evidence for those permission', () => {
+  describe('IAMNoWildcardPermissions: IAM entities with wildcard permissions have a cdk-nag rule suppression with evidence for those permission', () => {
     const ruleId = 'IAMNoWildcardPermissions';
     test('Noncompliance 1', () => {
       new Role(stack, 'rRole', {

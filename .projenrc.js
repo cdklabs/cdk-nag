@@ -7,7 +7,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
   cdkVersion: '2.11.0',
-  defaultReleaseBranch: 'v2-main',
+  defaultReleaseBranch: 'main',
   majorVersion: 2,
   npmDistTag: 'latest',
   name: 'cdk-nag',

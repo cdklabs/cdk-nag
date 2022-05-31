@@ -1233,7 +1233,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'IAM5',
-      info: 'The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.',
+      info: 'The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.',
       explanation:
         'Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators. ' +
         "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Action::<action>' for policy actions and 'Resource::<resource>' for resources. Example: appliesTo: ['Action::s3:*'].",
@@ -1279,7 +1279,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'COG7',
-      info: 'The Cognito identity pool allows for unauthenticated logins and does not have a cdk_nag rule suppression with a reason.',
+      info: 'The Cognito identity pool allows for unauthenticated logins and does not have a cdk-nag rule suppression with a reason.',
       explanation:
         'In many cases applications do not warrant unauthenticated guest access applications. Metadata explaining the use case allows for transparency to operators.',
       level: NagMessageLevel.ERROR,
@@ -1385,7 +1385,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'SQS3',
-      info: 'The SQS queue does not have a dead-letter queue (DLQ) enabled or have a cdk_nag rule suppression indicating it is a DLQ.',
+      info: 'The SQS queue does not have a dead-letter queue (DLQ) enabled or have a cdk-nag rule suppression indicating it is a DLQ.',
       explanation:
         'Using a DLQ helps maintain the queue flow and avoid losing data by detecting and mitigating failures and service disruptions on time.',
       level: NagMessageLevel.ERROR,
@@ -1491,7 +1491,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'CB5',
-      info: 'The Codebuild project does not use images provided by the CodeBuild service or have a cdk_nag suppression rule explaining the need for a custom image.',
+      info: 'The Codebuild project does not use images provided by the CodeBuild service or have a cdk-nag suppression rule explaining the need for a custom image.',
       explanation:
         'Explaining differences/edits to Docker images helps operators better understand system dependencies.',
       level: NagMessageLevel.WARN,

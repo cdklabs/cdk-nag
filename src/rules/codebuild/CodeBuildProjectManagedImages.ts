@@ -8,7 +8,7 @@ import { CfnProject } from 'aws-cdk-lib/aws-codebuild';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * Codebuild projects use images provided by the CodeBuild service or have a cdk_nag suppression rule explaining the need for a custom image
+ * Codebuild projects use images provided by the CodeBuild service or have a cdk-nag suppression rule explaining the need for a custom image
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

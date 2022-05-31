@@ -33,7 +33,7 @@ beforeEach(() => {
 });
 
 describe('Amazon Simple Queue Service (SQS)', () => {
-  describe('SQSQueueDLQ: SQS queues have a dead-letter queue enabled or have a cdk_nag rule suppression indicating they are a dead-letter queue', () => {
+  describe('SQSQueueDLQ: SQS queues have a dead-letter queue enabled or have a cdk-nag rule suppression indicating they are a dead-letter queue', () => {
     const ruleId = 'SQSQueueDLQ';
     test('Noncompliance 1', () => {
       new Queue(stack, 'rQueue');

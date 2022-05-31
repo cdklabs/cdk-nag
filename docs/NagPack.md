@@ -16,11 +16,8 @@ A `NagPack` is a named collection of [rules](./RuleCreation.md) that can be used
 Below is the minimal set-up for creating your own `NagPack`. At it's core a `NagPack` is an extension of [CDK Aspects](https://docs.aws.amazon.com/cdk/v2/guide/aspects.html#aspects_example) and inherits all the properties of Aspects.
 
 ```typescript
-// CDK v2
 import { CfnResource } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-// CDK v1
-// import { CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagPack, NagPackProps } from 'cdk-nag';
 
 export class ExampleChecks extends NagPack {
@@ -102,10 +99,7 @@ export class ExampleChecks extends NagPack {
 You can apply as many `NagPacks` to a CDK Stack or Application via Aspects
 
 ```typescript
-// CDK v2
 import { App, Aspects } from 'aws-cdk-lib';
-// CDK v1
-//import { App, Aspects } from '@aws-cdk/core';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import { ExampleChecks } from './ExampleClass';

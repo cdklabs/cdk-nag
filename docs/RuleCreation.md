@@ -18,10 +18,7 @@ A rule returns a `NagRuleResult` which is either a `NagRuleCompliance` status or
 - `NagRuleFindings` A a string array with a list of all findings.
 
 ```typescript
-// CDK v2
 import { CfnResource } from 'aws-cdk-lib';
-// CDK v1
-// import { CfnResource } from '@aws-cdk/core';
 import { NagRuleCompliance, NagRuleResult, NagRules } from 'cdk-nag';
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
 
@@ -69,10 +66,7 @@ Error at /StackName/Resource] NagPackName-RuleName: Information.
 You can use the [Object.defineProperty()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) method to influence the name of the rule. Without this
 
 ```typescript
-// CDK v2
 import { CfnResource } from 'aws-cdk-lib';
-// CDK v1
-// import { CfnResource } from '@aws-cdk/core';
 import { NagRuleCompliance, NagRuleResult, NagRules } from 'cdk-nag';
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
 
@@ -98,11 +92,8 @@ Object.defineProperty(myRule, 'name', { value: 'MyDefaultName' });
 You may optionally override the rule name when applying the rule in a [NagPack](./NagPack.md) by using a `ruleSuffixOverride`. An overridden name takes priority over the defined function name.
 
 ```typescript
-// CDK v2
 import { CfnResource } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-// CDK v1
-// import { CfnResource, IConstruct } from '@aws-cdk/core';
 import { NagMessageLevel, NagPack, NagPackProps } from 'cdk-nag';
 import { myRule } from './MyRule';
 

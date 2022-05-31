@@ -5,18 +5,14 @@ SPDX-License-Identifier: Apache-2.0
 
 # cdk-nag
 
-| Language   | cdk-nag                                                                                                                         | monocdk-nag                                                                                                                             |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Python     | [![PyPI version](https://img.shields.io/pypi/v/cdk-nag)](https://pypi.org/project/cdk-nag/)                                     | [![PyPI version](https://img.shields.io/pypi/v/monocdk-nag)](https://pypi.org/project/monocdk-nag/)                                     |
-| TypeScript | [![npm version](https://img.shields.io/npm/v/cdk-nag)](https://www.npmjs.com/package/cdk-nag)                                   | [![npm version](https://img.shields.io/npm/v/monocdk-nag/latest-1?label=npm)](https://www.npmjs.com/package/monocdk-nag)                |
-| Java       | [![Maven version](https://img.shields.io/maven-central/v/io.github.cdklabs/cdknag)](https://search.maven.org/search?q=a:cdknag) | [![Maven version](https://img.shields.io/maven-central/v/io.github.cdklabs/monocdknag)](https://search.maven.org/search?q=a:monocdknag) |
-| .NET       | [![NuGet version](https://img.shields.io/nuget/v/Cdklabs.CdkNag)](https://www.nuget.org/packages/Cdklabs.CdkNag)                | [![NuGet version](https://img.shields.io/nuget/v/Cdklabs.MonocdkNag)](https://www.nuget.org/packages/Cdklabs.MonocdkNag)                |
+[![PyPI version](https://img.shields.io/pypi/v/cdk-nag)](https://pypi.org/project/cdk-nag/)
+[![npm version](https://img.shields.io/npm/v/cdk-nag)](https://www.npmjs.com/package/cdk-nag)
+[![Maven version](https://img.shields.io/maven-central/v/io.github.cdklabs/cdknag)](https://search.maven.org/search?q=a:cdknag)
+[![NuGet version](https://img.shields.io/nuget/v/Cdklabs.CdkNag)](https://www.nuget.org/packages/Cdklabs.CdkNag)
 
-- If your project uses cdk version **1.x.x** use `cdk-nag` **^1.0.0**
-- If your project uses cdk version **2.x.x** use `cdk-nag` **^2.0.0**
-- If your project uses monocdk use `monocdk-nag` **^1.0.0**
+Check CDK applications or [CloudFormation templates](#using-on-cloudformation-templates) for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag).
 
-Check CDK applications or [CloudFormation templates](#using-on-cloudformation-templates) for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag)
+Check out [this blog post](https://aws.amazon.com/blogs/devops/manage-application-security-and-compliance-with-the-aws-cloud-development-kit-and-cdk-nag/) for a guided overview!
 
 ![](cdk_nag.gif)
 
@@ -37,48 +33,12 @@ Read the [NagPack developer docs](./docs/NagPack.md) if you are interested in cr
 For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-nagpackprops)
 
 <details>
-<summary>cdk</summary>
+<summary>Including in an application</summary>
 
 ```typescript
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
-
-const app = new App();
-new CdkTestStack(app, 'CdkNagDemo');
-// Simple rule informational messages
-Aspects.of(app).add(new AwsSolutionsChecks());
-// Additional explanations on the purpose of triggered rules
-// Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
-```
-
-</details>
-
-<details>
-<summary>cdk v2</summary>
-
-```typescript
-import { App, Aspects } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks } from 'cdk-nag';
-
-const app = new App();
-new CdkTestStack(app, 'CdkNagDemo');
-// Simple rule informational messages
-Aspects.of(app).add(new AwsSolutionsChecks());
-// Additional explanations on the purpose of triggered rules
-// Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
-```
-
-</details>
-
-<details>
-<summary>monocdk</summary>
-
-```typescript
-import { App, Aspects } from 'monocdk';
-import { CdkTestStack } from '../lib/my-stack';
-import { AwsSolutionsChecks } from 'monocdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
@@ -212,10 +172,10 @@ export class CdkTestStack extends Stack {
 Certain rules support granular suppressions of `findings`. If you received the following errors on synth/deploy
 
 ```bash
-[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
-[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
-[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
-[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
+[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
+[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
 ```
 
 By applying the following suppressions
@@ -294,14 +254,14 @@ export class CdkTestStack extends Stack {
 You would see the following error on synth/deploy
 
 ```bash
-[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk_nag rule suppression with evidence for those permission.
+[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
 ```
 
 </details>
 
 ## Rules and Property Overrides
 
-In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by the cdk_nag. In this case you should remediate the issue and suppress the issue like in the following example.
+In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by cdk-nag. In this case you should remediate the issue and suppress the issue like in the following example.
 
 <details>
   <summary>Example) Property Overrides</summary>
