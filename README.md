@@ -259,6 +259,20 @@ You would see the following error on synth/deploy
 
 </details>
 
+## A Note on the Suppression of `aws-cdk-lib/pipelines` Violations
+
+If you instantiate a `aws-cdk-lib/pipelines.CodePipeline` object and accept all defaults, you will be met with a decent number of policy violations that you will need to either remediate or suppress.
+
+The `aws-cdk-lib/pipelines.CodePipeline` construct and its child constructs are unique in that they are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the cdk lifecycle.  
+
+In order to suppress constructs in this tree, be sure to call `.buildPipeline()` on your `CodePipeline` object prior to applying suppressions, otherwise you will see an error such as:
+
+```
+Error: Suppression path "/this/construct/path" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.
+```
+
+See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more information.
+
 ## Rules and Property Overrides
 
 In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by cdk-nag. In this case you should remediate the issue and suppress the issue like in the following example.
