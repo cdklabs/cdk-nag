@@ -3,10 +3,10 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnBot, CfnBotAlias } from 'aws-cdk-lib/aws-lex';
 import { CfnResource, Stack } from 'aws-cdk-lib';
-import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import { CfnBot, CfnBotAlias } from 'aws-cdk-lib/aws-lex';
 import { CfnLogGroup } from 'aws-cdk-lib/aws-logs';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Lex Bot conversation logs are encrypted with KMS keys
