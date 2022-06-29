@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { NagPack, NagMessageLevel, NagPackProps } from '../nag-pack';
+import { NagMessageLevel, NagPack, NagPackProps } from '../nag-pack';
 import {
   APIGWAccessLogging,
   APIGWAssociatedWithWAF,
@@ -149,8 +149,8 @@ import {
   RDSStorageEncrypted,
 } from '../rules/rds';
 import {
-  RedshiftClusterAuditLogging,
   RedshiftBackupEnabled,
+  RedshiftClusterAuditLogging,
   RedshiftClusterEncryptionAtRest,
   RedshiftClusterInVPC,
   RedshiftClusterNonDefaultPort,
@@ -501,7 +501,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'RDS10',
       info: 'The RDS instance or Aurora DB cluster does not have deletion protection enabled.',
       explanation:
-        'The deletion protection feature helps protect the database from being accidentally deleted.',
+        'Enabling Deletion Protection at the cluster level for Amazon Aurora databases or instance level for non Aurora instances helps protect from accidental deletion.',
       level: NagMessageLevel.ERROR,
       rule: RDSInstanceDeletionProtectionEnabled,
       node: node,
@@ -530,15 +530,6 @@ export class AwsSolutionsChecks extends NagPack {
         'Backtrack helps order to rewind cluster tables to a specific time, without using backups.',
       level: NagMessageLevel.ERROR,
       rule: AuroraMySQLBacktrack,
-      node: node,
-    });
-    this.applyRule({
-      ruleSuffixOverride: 'RDS15',
-      info: 'The RDS DB instance or Aurora DB cluster does not have deletion protection enabled.',
-      explanation:
-        'Enabling Deletion Protection at the cluster level for Amazon Aurora databases or instance level for non Aurora instances helps protect from accidental deletion.',
-      level: NagMessageLevel.ERROR,
-      rule: RDSInstanceDeletionProtectionEnabled,
       node: node,
     });
     this.applyRule({

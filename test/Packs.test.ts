@@ -8,11 +8,11 @@ import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   AwsSolutionsChecks,
   HIPAASecurityChecks,
+  IApplyRule,
+  NagMessageLevel,
   NIST80053R4Checks,
   NIST80053R5Checks,
   PCIDSS321Checks,
-  IApplyRule,
-  NagMessageLevel,
 } from '../src';
 
 describe('Check NagPack Details', () => {
@@ -146,7 +146,6 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-RDS11',
         'AwsSolutions-RDS13',
         'AwsSolutions-RDS14',
-        'AwsSolutions-RDS15',
         'AwsSolutions-RDS16',
         'AwsSolutions-RS1',
         'AwsSolutions-RS2',
