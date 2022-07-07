@@ -259,7 +259,7 @@ You would see the following error on synth/deploy
 
 </details>
 
-## A Note on the Suppression of `aws-cdk-lib/pipelines` Violations
+## Suppressing `aws-cdk-lib/pipelines` Violations
 
 If you instantiate a `aws-cdk-lib/pipelines.CodePipeline` object and accept all defaults, you will be met with a decent number of policy violations that you will need to either remediate or suppress.
 
