@@ -262,7 +262,7 @@ You would see the following error on synth/deploy
 ## Suppressing `aws-cdk-lib/pipelines` Violations
 
 
-The `aws-cdk-lib/pipelines.CodePipeline` construct and its child constructs are unique in that they are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the cdk lifecycle.  
+The [aws-cdk-lib/pipelines.CodePipeline](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines.CodePipeline.html) construct and its child constructs are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the [cdk lifecycle](https://docs.aws.amazon.com/cdk/v2/guide/apps.html#lifecycle). Because of this behavior, you may experience problems such as rule violations not appearing or the inability to suppress violations on these constructs.
 
 In order to suppress constructs in this tree, be sure to call `.buildPipeline()` on your `CodePipeline` object prior to applying suppressions, otherwise you will see an error such as:
 
