@@ -261,7 +261,6 @@ You would see the following error on synth/deploy
 
 ## Suppressing `aws-cdk-lib/pipelines` Violations
 
-If you instantiate a `aws-cdk-lib/pipelines.CodePipeline` object and accept all defaults, you will be met with a decent number of policy violations that you will need to either remediate or suppress.
 
 The `aws-cdk-lib/pipelines.CodePipeline` construct and its child constructs are unique in that they are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the cdk lifecycle.  
 
