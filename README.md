@@ -259,6 +259,73 @@ You would see the following error on synth/deploy
 
 </details>
 
+## Suppressing `aws-cdk-lib/pipelines` Violations
+
+
+The [aws-cdk-lib/pipelines.CodePipeline](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines.CodePipeline.html) construct and its child constructs are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the [cdk lifecycle](https://docs.aws.amazon.com/cdk/v2/guide/apps.html#lifecycle). Because of this behavior, you may experience problems such as rule violations not appearing or the inability to suppress violations on these constructs.
+
+You can remediate these rule violation and suppression problems by forcing the pipeline construct creation forward by calling `.buildPipeline()` on your `CodePipeline` object. Otherwise you may see errors such as:
+
+```
+Error: Suppression path "/this/construct/path" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.
+```
+
+See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more information.
+
+<details>
+  <summary>Example) Supressing Violations in Pipelines</summary>
+  
+  `example-app.ts`
+  
+  ```ts
+  import { App, Aspects } from 'aws-cdk-lib';
+import { AwsSolutionsChecks } from 'cdk-nag';
+import { ExamplePipeline } from '../lib/example-pipeline';
+
+const app = new App();
+new ExamplePipeline(app, 'example-cdk-pipeline');
+Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
+app.synth();
+  ```
+  
+  `example-pipeline.ts`
+  
+  ```ts
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Repository } from 'aws-cdk-lib/aws-codecommit';
+import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
+import { NagSuppressions } from 'cdk-nag';
+import { Construct } from 'constructs';
+
+export class ExamplePipeline extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+
+    const exampleSynth = new ShellStep('ExampleSynth', {
+      commands: ['yarn build --frozen-lockfile'],
+      input: CodePipelineSource.codeCommit(new Repository(this, 'ExampleRepo', { repositoryName: 'ExampleRepo' }), 'main'),
+    });
+
+    const ExamplePipeline = new CodePipeline(this, 'ExamplePipeline', {
+      synth: exampleSynth,
+    });
+
+    // Force the pipeline construct creation forward before applying suppressions.
+    // @See https://github.com/aws/aws-cdk/issues/18440
+    ExamplePipeline.buildPipeline();
+
+    // The path suppression will error if you comment out "ExamplePipeline.buildPipeline();""
+    NagSuppressions.addResourceSuppressionsByPath(this, '/example-cdk-pipeline/ExamplePipeline/Pipeline/ArtifactsBucket/Resource', [
+      {
+        id: 'AwsSolutions-S1',
+        reason: 'Because I said so',
+      },
+    ]);
+  }
+}
+  ```
+</details>
+
 ## Rules and Property Overrides
 
 In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by cdk-nag. In this case you should remediate the issue and suppress the issue like in the following example.
