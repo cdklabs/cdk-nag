@@ -30,6 +30,7 @@ export * as iam from './iam';
 export * as kinesis from './kinesis';
 export * as kms from './kms';
 export * as lambda from './lambda';
+export * as lex from './lex';
 export * as mediastore from './mediastore';
 export * as msk from './msk';
 export * as neptune from './neptune';
