@@ -291,7 +291,7 @@ app.synth();
   `example-pipeline.ts`
   
   ```ts
-  import { Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
 import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
 import { NagSuppressions } from 'cdk-nag';
