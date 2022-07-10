@@ -11,26 +11,26 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/assert@^2.18":
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.31.0.tgz#163a93b2d846d94de6369e05ef7f95933f92d6e8"
-  integrity sha512-0cXMsE0mhzjuKdyLakDIFXE4VyFfS4Paa9dblHkoC6Ebe7pOpvwetfRRWyiAhf4Jj9XS0OR7P6gh6hUbxCbYUg==
+  version "2.31.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.31.1.tgz#aff7fe0fb5ddd0661ea3d2038807993cb1ccf80c"
+  integrity sha512-O0VV25scMPvAtK98murgcao+xupzdUSwUdiGmd55hfprFI2SEQHEossU5bzHKcSqVBT5a5E+kyXlJzRnCcarqg==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.31.0"
+    "@aws-cdk/cloudformation-diff" "2.31.1"
 
-"@aws-cdk/cfnspec@2.31.0":
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.31.0.tgz#ddfeb09f590a5500a71f194fcdcfe3bf7010fc37"
-  integrity sha512-AihkVbdkNaGWSE1GktwFy0N7nIzC3kUT+l7w2vb+j7N0HodFOzFiwp0rI3Jo/MkT0vuWWXjT6+85y6Rq75uGXA==
+"@aws-cdk/cfnspec@2.31.1":
+  version "2.31.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.31.1.tgz#4bc55e2c8dac04af062bb7d2887277e647913af8"
+  integrity sha512-IthSU6M1czSBoYBrfJ0h90wwAO2ojDWc+VFy3In+wMk5fELAu2BA27tE56EyMkTlKP6zJO4D637EWcspHdg/7g==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.31.0":
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.31.0.tgz#a91599d115e2f3553c6ee869b94964fdee9a34dc"
-  integrity sha512-j8UBvOgMixJRLstbis0vLoPqiNAN69rzqNPJZmvlUl/CH3f0kpdUfj6ZrpWDwvzLeG2iiVB+OF7v6nG9Sw+GSg==
+"@aws-cdk/cloudformation-diff@2.31.1":
+  version "2.31.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.31.1.tgz#c4df72432a123d65ae6f1503862b94544b4746c2"
+  integrity sha512-VcwSFpQ0VA6wN6HZna0jhd0QQFzm+Kza5ne7rZ+Jru2MnMPyCvy6ZKw2XL/CVU9qH3ryX+PqgH/tcdw5wp3QAw==
   dependencies:
-    "@aws-cdk/cfnspec" "2.31.0"
+    "@aws-cdk/cfnspec" "2.31.1"
     "@types/node" "^10.17.60"
     chalk "^4"
     diff "^5.1.0"
