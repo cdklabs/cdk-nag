@@ -9,15 +9,12 @@ SPDX-License-Identifier: Apache-2.0
 [![npm version](https://img.shields.io/npm/v/cdk-nag)](https://www.npmjs.com/package/cdk-nag)
 [![Maven version](https://img.shields.io/maven-central/v/io.github.cdklabs/cdknag)](https://search.maven.org/search?q=a:cdknag)
 [![NuGet version](https://img.shields.io/nuget/v/Cdklabs.CdkNag)](https://www.nuget.org/packages/Cdklabs.CdkNag)
-[![Go version](https://img.shields.io/github/go-mod/go-version/cdklabs/cdk-nag-go?color=blue&filename=cdknag%2Fgo.mod)](https://github.com/cdklabs/cdk-nag-go)
-
-[![View on Construct Hub](https://constructs.dev/badge?package=cdk-nag)](https://constructs.dev/packages/cdk-nag)
 
 Check CDK applications or [CloudFormation templates](#using-on-cloudformation-templates) for best practices using a combination of available rule packs. Inspired by [cfn_nag](https://github.com/stelligent/cfn_nag).
 
 Check out [this blog post](https://aws.amazon.com/blogs/devops/manage-application-security-and-compliance-with-the-aws-cloud-development-kit-and-cdk-nag/) for a guided overview!
 
-![demo](cdk_nag.gif)
+![](cdk_nag.gif)
 
 ## Available Packs
 
@@ -264,6 +261,7 @@ You would see the following error on synth/deploy
 
 ## Suppressing `aws-cdk-lib/pipelines` Violations
 
+
 The [aws-cdk-lib/pipelines.CodePipeline](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines.CodePipeline.html) construct and its child constructs are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the [cdk lifecycle](https://docs.aws.amazon.com/cdk/v2/guide/apps.html#lifecycle). Because of this behavior, you may experience problems such as rule violations not appearing or the inability to suppress violations on these constructs.
 
 You can remediate these rule violation and suppression problems by forcing the pipeline construct creation forward by calling `.buildPipeline()` on your `CodePipeline` object. Otherwise you may see errors such as:
@@ -288,12 +286,11 @@ const app = new App();
 new ExamplePipeline(app, 'example-cdk-pipeline');
 Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
 app.synth();
-
-````
-
-`example-pipeline.ts`
-
-```ts
+  ```
+  
+  `example-pipeline.ts`
+  
+  ```ts
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
 import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
@@ -301,33 +298,32 @@ import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
 export class ExamplePipeline extends Stack {
-constructor(scope: Construct, id: string, props?: StackProps) {
-  super(scope, id, props);
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
 
-  const exampleSynth = new ShellStep('ExampleSynth', {
-    commands: ['yarn build --frozen-lockfile'],
-    input: CodePipelineSource.codeCommit(new Repository(this, 'ExampleRepo', { repositoryName: 'ExampleRepo' }), 'main'),
-  });
+    const exampleSynth = new ShellStep('ExampleSynth', {
+      commands: ['yarn build --frozen-lockfile'],
+      input: CodePipelineSource.codeCommit(new Repository(this, 'ExampleRepo', { repositoryName: 'ExampleRepo' }), 'main'),
+    });
 
-  const ExamplePipeline = new CodePipeline(this, 'ExamplePipeline', {
-    synth: exampleSynth,
-  });
+    const ExamplePipeline = new CodePipeline(this, 'ExamplePipeline', {
+      synth: exampleSynth,
+    });
 
-  // Force the pipeline construct creation forward before applying suppressions.
-  // @See https://github.com/aws/aws-cdk/issues/18440
-  ExamplePipeline.buildPipeline();
+    // Force the pipeline construct creation forward before applying suppressions.
+    // @See https://github.com/aws/aws-cdk/issues/18440
+    ExamplePipeline.buildPipeline();
 
-  // The path suppression will error if you comment out "ExamplePipeline.buildPipeline();""
-  NagSuppressions.addResourceSuppressionsByPath(this, '/example-cdk-pipeline/ExamplePipeline/Pipeline/ArtifactsBucket/Resource', [
-    {
-      id: 'AwsSolutions-S1',
-      reason: 'Because I said so',
-    },
-  ]);
+    // The path suppression will error if you comment out "ExamplePipeline.buildPipeline();""
+    NagSuppressions.addResourceSuppressionsByPath(this, '/example-cdk-pipeline/ExamplePipeline/Pipeline/ArtifactsBucket/Resource', [
+      {
+        id: 'AwsSolutions-S1',
+        reason: 'Because I said so',
+      },
+    ]);
+  }
 }
-}
-````
-
+  ```
 </details>
 
 ## Rules and Property Overrides
