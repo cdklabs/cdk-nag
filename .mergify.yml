@@ -10,6 +10,7 @@ queue_rules:
       - status-success=package-java
       - status-success=package-python
       - status-success=package-dotnet
+      - status-success=package-go
 pull_request_rules:
   - name: Automatic merge on approval and successful build
     actions:
@@ -29,3 +30,4 @@ pull_request_rules:
       - status-success=package-java
       - status-success=package-python
       - status-success=package-dotnet
+      - status-success=package-go
