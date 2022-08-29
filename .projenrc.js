@@ -29,6 +29,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     mavenArtifactId: 'cdknag',
     mavenEndpoint: 'https://s01.oss.sonatype.org',
   },
+  publishToGo: {
+    moduleName: 'github.com/cdklabs/cdk-nag-go',
+    gitUserName: 'cdklabs-automation',
+    gitUserEmail: 'cdklabs-automation@amazon.com',
+  },
   projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
