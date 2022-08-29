@@ -31,7 +31,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   publishToGo: {
     moduleName: 'github.com/cdklabs/cdk-nag-go',
-    githubUseSsh: true,
   },
   projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveOptions: {

@@ -222,15 +222,9 @@ jobs:
         run: cd .repo && npx projen package:go
       - name: Collect go Artifact
         run: mv .repo/dist dist
-      - name: Setup GitHub deploy key
-        run: ssh-agent -a ${SSH_AUTH_SOCK} && ssh-add - <<< "${GITHUB_DEPLOY_KEY}"
-        env:
-          GITHUB_DEPLOY_KEY: ${{ secrets.GO_GITHUB_DEPLOY_KEY }}
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       - name: Release
         run: npx -p publib@latest publib-golang
         env:
           GIT_USER_NAME: github-actions
           GIT_USER_EMAIL: github-actions@github.com
-          GITHUB_USE_SSH: "true"
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
