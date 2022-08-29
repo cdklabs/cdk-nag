@@ -225,6 +225,6 @@ jobs:
       - name: Release
         run: npx -p publib@latest publib-golang
         env:
-          GIT_USER_NAME: github-actions
-          GIT_USER_EMAIL: github-actions@github.com
+          GIT_USER_NAME: cdklabs-automation
+          GIT_USER_EMAIL: cdklabs-automation@amazon.com
           GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
