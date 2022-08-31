@@ -419,7 +419,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'S3',
-      info: 'The S3 Bucket does not default encryption enabled.',
+      info: 'The S3 Bucket does not have default encryption enabled.',
       explanation:
         'The bucket should minimally have SSE enabled to help protect data-at-rest.',
       level: NagMessageLevel.ERROR,
