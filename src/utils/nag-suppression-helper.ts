@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { Buffer } from 'buffer';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import {
   NagPackSuppression,
@@ -14,25 +15,37 @@ interface NagCfnMetadata {
 
 interface NagCfnSuppression extends Omit<NagPackSuppression, 'appliesTo'> {
   applies_to?: NagPackSuppressionAppliesTo[];
+  is_reason_encoded?: boolean;
 }
 
 export class NagSuppressionHelper {
   static toCfnFormat(suppression: NagPackSuppression): NagCfnSuppression {
-    const { appliesTo, ...result } = suppression;
+    const { appliesTo, reason, ...result } = suppression;
 
     if (appliesTo) {
       (result as NagCfnSuppression).applies_to = appliesTo;
     }
-    return result;
+    if (
+      [...reason].some((c) =>
+        c.codePointAt(0) === undefined ? false : c.codePointAt(0)! > 255
+      )
+    ) {
+      (result as NagCfnSuppression).is_reason_encoded = true;
+      return { reason: Buffer.from(reason).toString('base64'), ...result };
+    }
+    return { reason, ...result };
   }
 
   static toApiFormat(suppression: NagCfnSuppression): NagPackSuppression {
-    const { applies_to, ...result } = suppression;
+    const { applies_to, reason, is_reason_encoded, ...result } = suppression;
 
     if (applies_to) {
       (result as any).appliesTo = applies_to;
     }
-    return result;
+    if (is_reason_encoded) {
+      return { reason: Buffer.from(reason, 'base64').toString(), ...result };
+    }
+    return { reason, ...result };
   }
 
   static addRulesToMetadata(

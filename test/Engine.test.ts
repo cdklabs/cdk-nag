@@ -696,6 +696,25 @@ describe('Rule suppression system', () => {
     const metadata = test.getMetadata('cdk_nag')?.rules_to_suppress;
     expect(metadata).toContainEqual(expect.objectContaining(suppression));
   });
+  test('Reason containing multibyte characters is base64 encoded', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test = new CfnRoute(stack, 'CfnRoute', { routeTableId: 'foo' });
+    const suppression = {
+      id: 'AwsSolutions-EC23',
+      reason: 'あいうえおかきくけこ',
+    };
+    const suppressionInMetadata = {
+      id: 'AwsSolutions-EC23',
+      reason: '44GC44GE44GG44GI44GK44GL44GN44GP44GR44GT',
+      is_reason_encoded: true,
+    };
+    NagSuppressions.addResourceSuppressions(test, [suppression]);
+    const metadata = test.getMetadata('cdk_nag')?.rules_to_suppress;
+    expect(metadata).toContainEqual(
+      expect.objectContaining(suppressionInMetadata)
+    );
+  });
   test('suppressed rule logging enabled', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks({ logIgnores: true }));
@@ -1028,6 +1047,25 @@ describe('Report system', () => {
     const expectedOuput = [
       '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."\n',
       '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error","foo."\n',
+    ];
+    expect(pack.lines.sort()).toEqual(expectedOuput.sort());
+  });
+  test('Suppression values are written properly when multibyte characters are used in reason', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new TestPack();
+    Aspects.of(app).add(pack);
+    const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
+    NagSuppressions.addResourceSuppressions(resource, [
+      {
+        id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
+        reason: 'あいうえおかきくけこ',
+      },
+    ]);
+    app.synth();
+    const expectedOuput = [
+      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","あいうえおかきくけこ","Error","foo."\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
