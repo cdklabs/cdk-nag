@@ -1170,7 +1170,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'OS5',
-      info: 'The OpenSearch Service domain does not allow for unsigned requests or anonymous access.',
+      info: 'The OpenSearch Service domain allows for unsigned requests or anonymous access.',
       explanation:
         'Restricting public access helps prevent unauthorized access and prevents any unsigned requests to be made to the resources.',
       level: NagMessageLevel.ERROR,
