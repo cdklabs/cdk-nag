@@ -260,9 +260,9 @@ export class NIST80053R4Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control ID: SA-3(a)).',
+      info: 'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAuth - (Control ID: SA-3(a)).',
       explanation:
-        'OAUTH is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.',
+        'OAuth is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.',
       level: NagMessageLevel.ERROR,
       rule: CodeBuildProjectSourceRepoUrl,
       node: node,
@@ -623,7 +623,7 @@ export class NIST80053R4Checks extends NagPack {
    */
   private checkRDS(node: CfnResource): void {
     this.applyRule({
-      info: 'The RDS DB instance does not enhanced monitoring enabled - (Control ID: CA-7(a)(b)).',
+      info: 'The RDS DB instance does not have enhanced monitoring enabled - (Control ID: CA-7(a)(b)).',
       explanation:
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.',
       level: NagMessageLevel.ERROR,

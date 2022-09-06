@@ -223,7 +223,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'EB1',
       info: 'The Elastic Beanstalk environment is not configured to use a specific VPC.',
       explanation:
-        'Use a non-default in order to seperate your environment from default resources.',
+        'Use a non-default VPC in order to seperate your environment from default resources.',
       level: NagMessageLevel.ERROR,
       rule: ElasticBeanstalkVPCSpecified,
       node: node,
@@ -419,7 +419,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'S3',
-      info: 'The S3 Bucket does not default encryption enabled.',
+      info: 'The S3 Bucket does not have default encryption enabled.',
       explanation:
         'The bucket should minimally have SSE enabled to help protect data-at-rest.',
       level: NagMessageLevel.ERROR,
@@ -616,7 +616,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'N2',
-      info: 'The Neptune DB instance does have Auto Minor Version Upgrade enabled.',
+      info: 'The Neptune DB instance does not have Auto Minor Version Upgrade enabled.',
       explanation:
         'The Neptune service regularly releases engine updates. Enabling Auto Minor Version Upgrade will allow the service to automatically apply these upgrades to DB Instances.',
       level: NagMessageLevel.ERROR,
@@ -867,7 +867,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'CFR6',
-      info: 'The CloudFront distribution does not use an origin access identity an S3 origin.',
+      info: 'The CloudFront distribution does not use an origin access identity with an S3 origin.',
       explanation:
         'Origin access identities help with security by restricting any direct access to objects through S3 URLs.',
       level: NagMessageLevel.ERROR,
@@ -1062,7 +1062,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'GL3',
-      info: 'The Glue job does not have use a security configuration with job bookmark encryption enabled.',
+      info: 'The Glue job does not use a security configuration with job bookmark encryption enabled.',
       explanation:
         'Job bookmark encryption encrypts bookmark data before it is sent to Amazon S3 for storage.',
       level: NagMessageLevel.WARN,
@@ -1080,7 +1080,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'KDF1',
-      info: 'The Kinesis Data Firehose delivery stream does have server-side encryption enabled.',
+      info: 'The Kinesis Data Firehose delivery stream does not have server-side encryption enabled.',
       explanation:
         'This allows the system to meet strict regulatory requirements and enhance the security of system data.',
       level: NagMessageLevel.ERROR,
@@ -1170,7 +1170,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'OS5',
-      info: 'The OpenSearch Service domain does not allow for unsigned requests or anonymous access.',
+      info: 'The OpenSearch Service domain allows for unsigned requests or anonymous access.',
       explanation:
         'Restricting public access helps prevent unauthorized access and prevents any unsigned requests to be made to the resources.',
       level: NagMessageLevel.ERROR,
@@ -1291,7 +1291,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'KMS5',
       info: 'The KMS Symmetric key does not have automatic key rotation enabled.',
       explanation:
-        'KMS key rotation allow a system to set an yearly rotation schedule for a KMS key so when a AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
+        'KMS key rotation allows a system to set an yearly rotation schedule for a KMS key so when an AWS KMS key is required to encrypt new data, the KMS service can automatically use the latest version of the HSA backing key to perform the encryption.',
       level: NagMessageLevel.ERROR,
       rule: KMSBackingKeyRotationEnabled,
       node: node,
@@ -1315,7 +1315,7 @@ export class AwsSolutionsChecks extends NagPack {
   private checkServerless(node: CfnResource): void {
     this.applyRule({
       ruleSuffixOverride: 'ASC3',
-      info: 'The GraphQL API does not have request leveling logging enabled.',
+      info: 'The GraphQL API does not have request level logging enabled.',
       explanation:
         'It is important to use CloudWatch Logs to log metrics such as who has accessed the GraphQL API, how the caller accessed the API, and invalid requests.',
       level: NagMessageLevel.ERROR,

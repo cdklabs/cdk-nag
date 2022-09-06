@@ -276,9 +276,9 @@ export class PCIDSS321Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAUTH - (Control ID: 8.2.1).',
+      info: 'The CodeBuild project which utilizes either a GitHub or BitBucket source repository does not utilize OAuth - (Control ID: 8.2.1).',
       explanation:
-        'OAUTH is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.',
+        'OAuth is the most secure method of authenticating your CodeBuild application. Use OAuth instead of personal access tokens or a user name and password to grant authorization for accessing GitHub or Bitbucket repositories.',
       level: NagMessageLevel.ERROR,
       rule: CodeBuildProjectSourceRepoUrl,
       node: node,
