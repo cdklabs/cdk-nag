@@ -693,7 +693,7 @@ export class NIST80053R5Checks extends NagPack {
    */
   private checkRDS(node: CfnResource): void {
     this.applyRule({
-      info: 'The RDS DB Instance does not enhanced monitoring enabled - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-36(1)(a), SI-2a).',
+      info: 'The RDS DB Instance does not have enhanced monitoring enabled - (Control IDs: AU-12(3), AU-14a, AU-14b, CA-2(2), CA-7, CA-7b, PM-14a.1, PM-14b, PM-31, SC-36(1)(a), SI-2a).',
       explanation:
         'Enable enhanced monitoring to help monitor Amazon RDS availability. This provides detailed visibility into the health of your Amazon RDS database instances.',
       level: NagMessageLevel.ERROR,
