@@ -520,6 +520,7 @@ Name | Type | Description
 **info** | <code>string</code> | Why the rule was triggered.
 **level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
 **node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | Ignores listed in cdk-nag metadata.
+**metadata**? | <code>string</code> | Custom metadata to include in reports.<br/>__*Optional*__
 **ruleSuffixOverride**? | <code>string</code> | Override for the suffix of the Rule ID for this rule.<br/>__*Optional*__
 
 ### Methods

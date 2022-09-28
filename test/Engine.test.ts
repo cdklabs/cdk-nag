@@ -980,6 +980,17 @@ describe('Report system', () => {
     }
   }
 
+  class MetadataTestPack extends TestPack {
+    constructor(props?: NagPackProps) {
+      super(props);
+      this.packName = 'MetadataTest';
+    }
+
+    protected applyRule(params: IApplyRule) {
+      super.applyRule({ ...params, metadata: 'Test' });
+    }
+  }
+
   test('Reports are generated for all stacks by default', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
@@ -1026,8 +1037,8 @@ describe('Report system', () => {
     new CfnResource(stack, 'rResource', { type: 'foo' });
     app.synth();
     const expectedOuput = [
-      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."\n',
-      '"Test-Non-Compliant","Stack1/rResource","Non-Compliant","N/A","Error","foo."\n',
+      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo.","N/A"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Non-Compliant","N/A","Error","foo.","N/A"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -1045,8 +1056,8 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."\n',
-      '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error","foo."\n',
+      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo.","N/A"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error","foo.","N/A"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -1064,8 +1075,8 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."\n',
-      '"Test-Non-Compliant","Stack1/rResource","Suppressed","あいうえおかきくけこ","Error","foo."\n',
+      '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo.","N/A"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","あいうえおかきくけこ","Error","foo.","N/A"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -1083,9 +1094,9 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      '"Test-Non-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo."\n',
-      '"Test-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo."\n',
-      '"Test-N/A","Stack1/rResource","UNKNOWN","N/A","Error","foo."\n',
+      '"Test-Non-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo.","N/A"\n',
+      '"Test-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo.","N/A"\n',
+      '"Test-N/A","Stack1/rResource","UNKNOWN","N/A","Error","foo.","N/A"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });
@@ -1100,9 +1111,22 @@ describe('Report system', () => {
     ]);
     app.synth();
     const expectedOuput = [
-      '"Test-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo."\n',
-      '"Test-N/A","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo."\n',
-      '"Test-Non-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo."\n',
+      '"Test-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo.","N/A"\n',
+      '"Test-N/A","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo.","N/A"\n',
+      '"Test-Non-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo.","N/A"\n',
+    ];
+    expect(pack.lines.sort()).toEqual(expectedOuput.sort());
+  });
+  test('Metadata emitted properly', () => {
+    const app = new App();
+    const stack = new Stack(app, 'Stack1');
+    const pack = new MetadataTestPack();
+    Aspects.of(app).add(pack);
+    new CfnResource(stack, 'rResource', { type: 'foo' });
+    app.synth();
+    const expectedOuput = [
+      '"MetadataTest-Compliant","Stack1/rResource","Compliant","N/A","Error","foo.","Test"\n',
+      '"MetadataTest-Non-Compliant","Stack1/rResource","Non-Compliant","N/A","Error","foo.","Test"\n',
     ];
     expect(pack.lines.sort()).toEqual(expectedOuput.sort());
   });

@@ -42,6 +42,10 @@ export interface IApplyRule {
    */
   ruleSuffixOverride?: string;
   /**
+   * Custom metadata to include in reports.
+   */
+  metadata?: string;
+  /**
    * Why the rule was triggered.
    */
   info: string;
@@ -289,7 +293,7 @@ export abstract class NagPack implements IAspect {
       this.reportStacks.push(fileName);
       writeFileSync(
         filePath,
-        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info\n'
+        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info,Metadata\n'
       );
     }
   }
@@ -327,6 +331,7 @@ export abstract class NagPack implements IAspect {
     }
     line.push(params.level);
     line.push(params.info);
+    line.push(params.metadata ?? 'N/A');
     return line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n';
   }
 
