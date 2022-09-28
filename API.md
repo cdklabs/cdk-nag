@@ -286,18 +286,19 @@ protected createComplianceReportLine(params: IApplyRule, ruleId: string, complia
 __Returns__:
 * <code>string</code>
 
-#### protected createMessage(ruleId, findingId, info, explanation) <a id="cdk-nag-nagpack-createmessage"></a>
+#### protected createMessage(ruleId, findingId, info, explanation, metadata?) <a id="cdk-nag-nagpack-createmessage"></a>
 
 The message to output to the console when a rule is triggered.
 
 ```ts
-protected createMessage(ruleId: string, findingId: string, info: string, explanation: string): string
+protected createMessage(ruleId: string, findingId: string, info: string, explanation: string, metadata?: string): string
 ```
 
 * **ruleId** (<code>string</code>)  The id of the rule.
 * **findingId** (<code>string</code>)  The id of the finding.
 * **info** (<code>string</code>)  Why the rule was triggered.
 * **explanation** (<code>string</code>)  Why the rule exists.
+* **metadata** (<code>string</code>)  custom metadata for the rule.
 
 __Returns__:
 * <code>string</code>

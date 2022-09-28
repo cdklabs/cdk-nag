@@ -155,7 +155,8 @@ export abstract class NagPack implements IAspect {
                 SUPPRESSION_ID,
                 findingId,
                 `${ruleId} was triggered but suppressed.`,
-                `Provided reason: "${suppressionReason}"`
+                `Provided reason: "${suppressionReason}"`,
+                params.metadata
               );
               Annotations.of(params.node).addInfo(message);
             }
@@ -164,7 +165,8 @@ export abstract class NagPack implements IAspect {
               ruleId,
               findingId,
               params.info,
-              params.explanation
+              params.explanation,
+              params.metadata
             );
             if (params.level == NagMessageLevel.ERROR) {
               Annotations.of(params.node).addError(message);
@@ -185,7 +187,8 @@ export abstract class NagPack implements IAspect {
             SUPPRESSION_ID,
             '',
             `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
-            reason
+            reason,
+            params.metadata
           );
           Annotations.of(params.node).addInfo(message);
         }
@@ -195,7 +198,8 @@ export abstract class NagPack implements IAspect {
           VALIDATION_FAILURE_ID,
           '',
           information,
-          (error as Error).message
+          (error as Error).message,
+          params.metadata
         );
         Annotations.of(params.node).addWarning(message);
       }
@@ -233,18 +237,22 @@ export abstract class NagPack implements IAspect {
    * @param findingId The id of the finding.
    * @param info Why the rule was triggered.
    * @param explanation Why the rule exists.
+   * @param metadata custom metadata for the rule.
    * @returns The formatted message string.
    */
   protected createMessage(
     ruleId: string,
     findingId: string,
     info: string,
-    explanation: string
+    explanation: string,
+    metadata: string = ''
   ): string {
     let message = findingId
       ? `${ruleId}[${findingId}]: ${info}`
       : `${ruleId}: ${info}`;
-    return this.verbose ? `${message} ${explanation}\n` : `${message}\n`;
+    return this.verbose
+      ? `${message} ${explanation} ${metadata}\n`
+      : `${message}\n`;
   }
 
   /**
