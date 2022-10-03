@@ -27,7 +27,6 @@
     "pre-compile": "npx projen pre-compile",
     "release": "npx projen release",
     "test": "npx projen test",
-    "test:update": "npx projen test:update",
     "test:watch": "npx projen test:watch",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
@@ -62,7 +61,7 @@
     "json-schema": "^0.4.0",
     "npm-check-updates": "^15",
     "prettier": "^2.7.1",
-    "projen": "^0.62.25",
+    "projen": "^0.63.3",
     "standard-version": "^9",
     "ts-jest": "^27",
     "typescript": "^4.8.4"
