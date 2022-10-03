@@ -31,6 +31,10 @@ jobs:
       - name: Check for new commits
         id: git_remote
         run: echo ::set-output name=latest_commit::"$(git ls-remote origin -h ${{ github.ref }} | cut -f1)"
+      - name: Backup artifact permissions
+        if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
+        run: cd dist && getfacl -R . > permissions-backup.acl
+        continue-on-error: true
       - name: Upload artifact
         if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
         uses: actions/upload-artifact@v2.1.1
@@ -55,16 +59,19 @@ jobs:
         with:
           name: build-artifact
           path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
       - name: Prepare Repository
         run: mv dist .repo
       - name: Collect GitHub Metadata
         run: mv .repo/dist dist
       - name: Release
-        run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
+        run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
   release_npm:
     name: Publish to npm
     needs: release
@@ -81,6 +88,9 @@ jobs:
         with:
           name: build-artifact
           path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -90,11 +100,11 @@ jobs:
       - name: Collect js Artifact
         run: mv .repo/dist dist
       - name: Release
-        run: npx -p publib@latest publib-npm
         env:
           NPM_DIST_TAG: latest
           NPM_REGISTRY: registry.npmjs.org
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx -p publib@latest publib-npm
   release_maven:
     name: Publish to Maven Central
     needs: release
@@ -115,6 +125,9 @@ jobs:
         with:
           name: build-artifact
           path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -124,7 +137,6 @@ jobs:
       - name: Collect java Artifact
         run: mv .repo/dist dist
       - name: Release
-        run: npx -p publib@latest publib-maven
         env:
           MAVEN_ENDPOINT: https://s01.oss.sonatype.org
           MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
@@ -132,6 +144,7 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_STAGING_PROFILE_ID: ${{ secrets.MAVEN_STAGING_PROFILE_ID }}
+        run: npx -p publib@latest publib-maven
   release_pypi:
     name: Publish to PyPI
     needs: release
@@ -151,6 +164,9 @@ jobs:
         with:
           name: build-artifact
           path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -160,10 +176,10 @@ jobs:
       - name: Collect python Artifact
         run: mv .repo/dist dist
       - name: Release
-        run: npx -p publib@latest publib-pypi
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+        run: npx -p publib@latest publib-pypi
   release_nuget:
     name: Publish to NuGet Gallery
     needs: release
@@ -183,6 +199,9 @@ jobs:
         with:
           name: build-artifact
           path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -192,9 +211,9 @@ jobs:
       - name: Collect dotnet Artifact
         run: mv .repo/dist dist
       - name: Release
-        run: npx -p publib@latest publib-nuget
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: npx -p publib@latest publib-nuget
   release_golang:
     name: Publish to GitHub Go Module Repository
     needs: release
@@ -214,6 +233,9 @@ jobs:
         with:
           name: build-artifact
           path: dist
+      - name: Restore build artifact permissions
+        run: cd dist && setfacl --restore=permissions-backup.acl
+        continue-on-error: true
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -223,8 +245,8 @@ jobs:
       - name: Collect go Artifact
         run: mv .repo/dist dist
       - name: Release
-        run: npx -p publib@latest publib-golang
         env:
           GIT_USER_NAME: cdklabs-automation
           GIT_USER_EMAIL: cdklabs-automation@amazon.com
           GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
+        run: npx -p publib@latest publib-golang
