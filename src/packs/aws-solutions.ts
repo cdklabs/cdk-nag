@@ -851,7 +851,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'CFR4',
       info: 'The CloudFront distribution allows for SSLv3 or TLSv1 for HTTPS viewer connections.',
       explanation:
-        "Vulnerabilities have been and continue to be discovered in the deprecated SSL and TLS protocols. Help protect viewer connections by specifying a viewer certificate that enforces a minimum of TLSv1.1 or TLSv1.2 in the security policy. Distributions that use that use the default CloudFront viewer certificate or use 'vip' for the 'SslSupportMethod' are non-compliant with this rule, as the minimum security policy is set to TLSv1 regardless of the specified 'MinimumProtocolVersion'.",
+        "Vulnerabilities have been and continue to be discovered in the deprecated SSL and TLS protocols. Help protect viewer connections by specifying a viewer certificate that enforces a minimum of TLSv1.1 or TLSv1.2 in the security policy. Distributions that use the default CloudFront viewer certificate or use 'vip' for the 'SslSupportMethod' are non-compliant with this rule, as the minimum security policy is set to TLSv1 regardless of the specified 'MinimumProtocolVersion'.",
       level: NagMessageLevel.ERROR,
       rule: CloudFrontDistributionHttpsViewerNoOutdatedSSL,
       node: node,
