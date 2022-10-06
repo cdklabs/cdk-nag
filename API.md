@@ -257,6 +257,24 @@ visit(node: IConstruct): void
 
 
 
+#### protected annotate(type, message, resource) <a id="cdk-nag-nagpack-annotate"></a>
+
+Annotate resource with validation message according to level of rule or for informational purposes.
+
+This method is separated out to enable packs to override/extend the default annotation functionality,
+to support non-blocking workflows.
+
+```ts
+protected annotate(type: string, message: string, resource: CfnResource): void
+```
+
+* **type** (<code>string</code>)  The annotation type.
+* **message** (<code>string</code>)  The message.
+* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource to annotate.
+
+
+
+
 #### protected applyRule(params) <a id="cdk-nag-nagpack-applyrule"></a>
 
 Create a rule to be used in the NagPack.
@@ -326,6 +344,67 @@ protected initializeStackReport(params: IApplyRule): void
 ```
 
 * **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  *No description*
+
+
+
+
+#### protected reportCompliant(ruleId, params) <a id="cdk-nag-nagpack-reportcompliant"></a>
+
+Report compliant resource.
+
+```ts
+protected reportCompliant(ruleId: string, params: IApplyRule): void
+```
+
+* **ruleId** (<code>string</code>)  The id of the rule (specific to the pack) in which the resource is compliant.
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The rule parameters that were applied during validation.
+
+
+
+
+#### protected reportNonCompliant(params, ruleId, findingId) <a id="cdk-nag-nagpack-reportnoncompliant"></a>
+
+Report non-compliant resource.
+
+```ts
+protected reportNonCompliant(params: IApplyRule, ruleId: string, findingId: string): void
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The rule parameters that were applied during validation.
+* **ruleId** (<code>string</code>)  The id of the rule (specific to the pack) in which the resource is non-compliant.
+* **findingId** (<code>string</code>)  The specific finding id that was validated against.
+
+
+
+
+#### protected reportSuppression(params, ruleId, findingId, suppressionReason) <a id="cdk-nag-nagpack-reportsuppression"></a>
+
+Report non-compliance resource that was suppressed.
+
+```ts
+protected reportSuppression(params: IApplyRule, ruleId: string, findingId: string, suppressionReason: string): void
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The rule parameters that were applied during validation.
+* **ruleId** (<code>string</code>)  The id of the rule (specific to the pack) in which the resource is non-compliant.
+* **findingId** (<code>string</code>)  The specific finding id that was validated against.
+* **suppressionReason** (<code>string</code>)  The reason the rule was suppressed.
+
+
+
+
+#### protected reportValidationFailure(params, ruleId, errorMessage, suppressionReason?) <a id="cdk-nag-nagpack-reportvalidationfailure"></a>
+
+Report validation failure.
+
+```ts
+protected reportValidationFailure(params: IApplyRule, ruleId: string, errorMessage: string, suppressionReason?: string): void
+```
+
+* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The rule parameters that were applied during validation.
+* **ruleId** (<code>string</code>)  The id of the rule that failed validation.
+* **errorMessage** (<code>string</code>)  The error that ocurred during validation.
+* **suppressionReason** (<code>string</code>)  The reason the rule was suppressed.
 
 
 

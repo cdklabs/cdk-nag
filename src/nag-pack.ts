@@ -121,13 +121,14 @@ export abstract class NagPack implements IAspect {
     const ruleId = `${this.packName}-${ruleSuffix}`;
     try {
       const ruleCompliance = params.rule(params.node);
+
       if (this.reports === true) {
         this.initializeStackReport(params);
-        if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
-          this.writeToStackComplianceReport(params, ruleId, ruleCompliance);
-        }
       }
-      if (this.isNonCompliant(ruleCompliance)) {
+
+      if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
+        this.reportCompliant(ruleId, params);
+      } else if (this.isNonCompliant(ruleCompliance)) {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
           const suppressionReason = this.ignoreRule(
@@ -136,64 +137,183 @@ export abstract class NagPack implements IAspect {
             findingId
           );
 
-          if (this.reports === true) {
-            this.writeToStackComplianceReport(
+          if (suppressionReason) {
+            this.reportSuppression(
               params,
               ruleId,
-              NagRuleCompliance.NON_COMPLIANT,
+              findingId,
               suppressionReason
             );
-          }
-
-          if (suppressionReason) {
-            if (this.logIgnores === true) {
-              const message = this.createMessage(
-                SUPPRESSION_ID,
-                findingId,
-                `${ruleId} was triggered but suppressed.`,
-                `Provided reason: "${suppressionReason}"`
-              );
-              Annotations.of(params.node).addInfo(message);
-            }
           } else {
-            const message = this.createMessage(
-              ruleId,
-              findingId,
-              params.info,
-              params.explanation
-            );
-            if (params.level == NagMessageLevel.ERROR) {
-              Annotations.of(params.node).addError(message);
-            } else if (params.level == NagMessageLevel.WARN) {
-              Annotations.of(params.node).addWarning(message);
-            }
+            this.reportNonCompliant(params, ruleId, findingId);
           }
         }
       }
     } catch (error) {
-      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID, '');
-      if (this.reports === true) {
-        this.writeToStackComplianceReport(params, ruleId, 'UNKNOWN', reason);
-      }
-      if (reason) {
-        if (this.logIgnores === true) {
-          const message = this.createMessage(
-            SUPPRESSION_ID,
-            '',
-            `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
-            reason
-          );
-          Annotations.of(params.node).addInfo(message);
-        }
-      } else {
-        const information = `'${ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
+      const suppressionReason = this.ignoreRule(
+        allIgnores,
+        VALIDATION_FAILURE_ID,
+        ''
+      );
+
+      this.reportValidationFailure(
+        params,
+        ruleId,
+        (error as Error).message,
+        suppressionReason
+      );
+    }
+  }
+
+  /**
+   * Report compliant resource.
+   * @param ruleId The id of the rule (specific to the pack) in which the resource is compliant
+   * @param params The rule parameters that were applied during validation
+   */
+  protected reportCompliant(ruleId: string, params: IApplyRule): void {
+    if (this.reports === true) {
+      this.writeToStackComplianceReport(
+        params,
+        ruleId,
+        NagRuleCompliance.COMPLIANT
+      );
+    }
+  }
+
+  /**
+   * Report non-compliant resource.
+   * @param ruleId The id of the rule (specific to the pack) in which the resource is non-compliant
+   * @param findingId The specific finding id that was validated against
+   * @param params The rule parameters that were applied during validation
+   */
+  protected reportNonCompliant(
+    params: IApplyRule,
+    ruleId: string,
+    findingId: string
+  ): void {
+    if (this.reports === true) {
+      this.writeToStackComplianceReport(
+        params,
+        ruleId,
+        NagRuleCompliance.NON_COMPLIANT
+      );
+    }
+
+    const message = this.createMessage(
+      ruleId,
+      findingId,
+      params.info,
+      params.explanation
+    );
+
+    this.annotate(params.level, message, params.node);
+  }
+
+  /**
+   * Report non-compliance resource that was suppressed
+   * @param ruleId The id of the rule (specific to the pack) in which the resource is non-compliant
+   * @param findingId The specific finding id that was validated against
+   * @param suppressionReason The reason the rule was suppressed
+   * @param params The rule parameters that were applied during validation
+   */
+  protected reportSuppression(
+    params: IApplyRule,
+    ruleId: string,
+    findingId: string,
+    suppressionReason: string
+  ): void {
+    if (this.reports === true) {
+      this.writeToStackComplianceReport(
+        params,
+        ruleId,
+        NagRuleCompliance.NON_COMPLIANT,
+        suppressionReason
+      );
+    }
+
+    if (this.logIgnores === true) {
+      const message = this.createMessage(
+        SUPPRESSION_ID,
+        findingId,
+        `${ruleId} was triggered but suppressed.`,
+        `Provided reason: "${suppressionReason}"`
+      );
+      this.annotate('Info', message, params.node);
+    }
+  }
+
+  /**
+   * Report validation failure
+   * @param ruleId The id of the rule that failed validation
+   * @param errorMessage The error that ocurred during validation
+   * @param params The rule parameters that were applied during validation
+   * @param suppressionReason The reason the rule was suppressed
+   */
+  protected reportValidationFailure(
+    params: IApplyRule,
+    ruleId: string,
+    errorMessage: string,
+    suppressionReason?: string
+  ): void {
+    if (this.reports === true) {
+      this.writeToStackComplianceReport(
+        params,
+        ruleId,
+        'UNKNOWN',
+        suppressionReason
+      );
+    }
+
+    if (suppressionReason) {
+      if (this.logIgnores === true) {
         const message = this.createMessage(
-          VALIDATION_FAILURE_ID,
+          SUPPRESSION_ID,
           '',
-          information,
-          (error as Error).message
+          `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
+          suppressionReason
         );
-        Annotations.of(params.node).addWarning(message);
+        this.annotate('Info', message, params.node);
+      }
+    } else {
+      const information = `'${ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
+      const message = this.createMessage(
+        VALIDATION_FAILURE_ID,
+        '',
+        information,
+        errorMessage
+      );
+      this.annotate('Warning', message, params.node);
+    }
+  }
+
+  /**
+   * Annotate resource with validation message according to level of rule or for informational purposes.
+   *
+   * This method is separated out to enable packs to override/extend the default annotation functionality,
+   * to support non-blocking workflows.
+   *
+   * @param type The annotation type.
+   * @param message The message
+   * @param resource The resource to annotate.
+   * @returns
+   */
+  protected annotate(
+    type: 'Info' | 'Warning' | 'Error',
+    message: string,
+    resource: CfnResource
+  ): void {
+    switch (type) {
+      case 'Info': {
+        Annotations.of(resource).addInfo(message);
+        return;
+      }
+      case 'Warning': {
+        Annotations.of(resource).addWarning(message);
+        return;
+      }
+      case 'Error': {
+        Annotations.of(resource).addError(message);
+        return;
       }
     }
   }
