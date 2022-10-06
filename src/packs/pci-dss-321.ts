@@ -484,7 +484,7 @@ export class PCIDSS321Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The IAM policy grants admin access - (Control IDs: 2.2, 7.1.2, 7.1.3, 7.2.1, 7.2.2).',
+      info: 'The IAM policy grants admin access, meaning the policy allows a principal to perform all actions on all resources - (Control IDs: 2.2, 7.1.2, 7.1.3, 7.2.1, 7.2.2).',
       explanation:
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
       level: NagMessageLevel.ERROR,
@@ -492,7 +492,7 @@ export class PCIDSS321Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The IAM policy grants full access - (Control IDs: 7.1.2, 7.1.3, 7.2.1, 7.2.2).',
+      info: 'The IAM policy grants full access, meaning the policy allows a principal to perform all actions on individual resources - (Control IDs: 7.1.2, 7.1.3, 7.2.1, 7.2.2).',
       explanation:
         'Ensure IAM Actions are restricted to only those actions that are needed. Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.',
       level: NagMessageLevel.ERROR,

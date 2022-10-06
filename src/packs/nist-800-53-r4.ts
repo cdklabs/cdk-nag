@@ -527,7 +527,7 @@ export class NIST80053R4Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The IAM policy grants admin access - (Control IDs: AC-2(1), AC-2(j), AC-3, AC-6).',
+      info: 'The IAM policy grants admin access, meaning the policy allows a principal to perform all actions on all resources - (Control IDs: AC-2(1), AC-2(j), AC-3, AC-6).',
       explanation:
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, restricting policies from containing "Effect": "Allow" with "Action": "*" over "Resource": "*". Allowing users to have more privileges than needed to complete a task may violate the principle of least privilege and separation of duties.',
       level: NagMessageLevel.ERROR,
