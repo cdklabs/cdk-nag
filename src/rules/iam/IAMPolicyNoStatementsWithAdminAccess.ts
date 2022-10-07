@@ -14,7 +14,7 @@ import {
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * IAM policies do not grant admin access
+ * IAM policies do not grant admin access, meaning the policy allows a principal to perform all actions on all resources
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
