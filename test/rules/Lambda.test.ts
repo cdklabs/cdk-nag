@@ -12,19 +12,25 @@ import {
   Function,
   Runtime,
   CfnUrl,
-  FunctionUrlAuthType
+  FunctionUrlAuthType,
 } from 'aws-cdk-lib/aws-lambda';
 import {
   LambdaConcurrency,
   LambdaDLQ,
   LambdaInsideVPC,
   LambdaLatestVersion,
-  LambdaFunctionUrlAuth
+  LambdaFunctionUrlAuth,
 } from '../../src/rules/lambda';
 import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack(
-  [LambdaConcurrency, LambdaDLQ, LambdaInsideVPC, LambdaLatestVersion, LambdaFunctionUrlAuth],
+  [
+    LambdaConcurrency,
+    LambdaDLQ,
+    LambdaInsideVPC,
+    LambdaLatestVersion,
+    LambdaFunctionUrlAuth,
+  ],
   { verbose: true }
 );
 let stack: Stack;
@@ -278,17 +284,15 @@ describe('AWS Lambda', () => {
       new CfnUrl(stack, 'rUrl', {
         authType: FunctionUrlAuthType.NONE,
         targetFunctionArn: 'somearn',
-    });
-    validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
       new CfnUrl(stack, 'rUrl', {
         authType: FunctionUrlAuthType.AWS_IAM,
         targetFunctionArn: 'somearn',
-    });
-    validateStack(stack, ruleId, TestType.COMPLIANCE);
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
-
-
 });
