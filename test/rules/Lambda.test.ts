@@ -11,17 +11,20 @@ import {
   DockerImageFunction,
   Function,
   Runtime,
+  CfnUrl,
+  FunctionUrlAuthType
 } from 'aws-cdk-lib/aws-lambda';
 import {
   LambdaConcurrency,
   LambdaDLQ,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaFunctionUrlAuth
 } from '../../src/rules/lambda';
 import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack(
-  [LambdaConcurrency, LambdaDLQ, LambdaInsideVPC, LambdaLatestVersion],
+  [LambdaConcurrency, LambdaDLQ, LambdaInsideVPC, LambdaLatestVersion, LambdaFunctionUrlAuth],
   { verbose: true }
 );
 let stack: Stack;
@@ -268,4 +271,24 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
     });
   });
+
+  describe('LambdaFunctionUrlAuth: Lambda function URLs have authentication', () => {
+    const ruleId = 'LambdaFunctionUrlAuth';
+    test('Noncompliance 1', () => {
+      new CfnUrl(stack, 'rUrl', {
+        authType: FunctionUrlAuthType.NONE,
+        targetFunctionArn: 'somearn',
+    });
+    validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new CfnUrl(stack, 'rUrl', {
+        authType: FunctionUrlAuthType.AWS_IAM,
+        targetFunctionArn: 'somearn',
+    });
+    validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+
 });
