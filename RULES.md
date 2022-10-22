@@ -702,7 +702,7 @@ A collection of community rules that are not currently included in any of the pr
 
 | Rule ID            | Cause                                                                                                                                                  | Explanation                                                                                                                                                                                                                                                                                                                               |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LambdaFunctionUrlAuth | The Lambda Function URL is open to the public as no authentication is implemented | AWS Lambda Function URLs allow you to invoke your function via a HTTPS end-point, setting the authentication to NONE allows anyone on the internet to invoke your function. | 
+| LambdaFunctionUrlAuth | The Lambda Function URL allows for public, unauthenticated access.  | AWS Lambda Function URLs allow you to invoke your function via a HTTPS end-point, setting the authentication to NONE allows anyone on the internet to invoke your function. | 
 
 ## Footnotes
 
