@@ -27,10 +27,10 @@ jobs:
         id: self_mutation
         run: |-
           git add .
-          git diff --staged --patch --exit-code > .repo.patch || echo "::set-output name=self_mutation_happened::true"
+          git diff --staged --patch --exit-code > .repo.patch || echo "self_mutation_happened=true" >> $GITHUB_OUTPUT
       - name: Upload patch
         if: steps.self_mutation.outputs.self_mutation_happened
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: .repo.patch
           path: .repo.patch
@@ -44,7 +44,7 @@ jobs:
         run: cd dist && getfacl -R . > permissions-backup.acl
         continue-on-error: true
       - name: Upload artifact
-        uses: actions/upload-artifact@v2.1.1
+        uses: actions/upload-artifact@v3
         with:
           name: build-artifact
           path: dist
