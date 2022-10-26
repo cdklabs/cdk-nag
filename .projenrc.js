@@ -36,7 +36,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation'],
+    allowedUsernames: ['cdklabs-automation', 'dontirun'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
