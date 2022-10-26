@@ -6,7 +6,7 @@ const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '2.21.0',
+  cdkVersion: '2.45.0',
   defaultReleaseBranch: 'main',
   majorVersion: 2,
   npmDistTag: 'latest',
@@ -36,7 +36,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation'],
+    allowedUsernames: ['cdklabs-automation', 'dontirun'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
