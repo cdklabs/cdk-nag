@@ -4,14 +4,14 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
-  Distribution,
   CfnDistribution,
-  GeoRestriction,
   CfnStreamingDistribution,
+  Distribution,
+  GeoRestriction,
   OriginProtocolPolicy,
   OriginSslPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { S3Origin, HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { HttpOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
@@ -23,7 +23,7 @@ import {
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
 } from '../../src/rules/cloudfront';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack([
   CloudFrontDistributionAccessLogging,
@@ -118,6 +118,10 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 2', () => {
       new CfnDistribution(stack, 'rDistribution', {
         distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           restrictions: { geoRestriction: { restrictionType: 'none' } },
           enabled: false,
         },
@@ -141,6 +145,10 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1: No viewer certificate specified', () => {
       new CfnDistribution(stack, 'rDistribution', {
         distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           enabled: true,
         },
       });
@@ -150,6 +158,10 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 2: using the default CloudFront Viewer Certificate', () => {
       new CfnDistribution(stack, 'rDistribution', {
         distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           enabled: true,
           viewerCertificate: {
             cloudFrontDefaultCertificate: true,
@@ -164,6 +176,10 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 3: using an outdated protocol ', () => {
       new CfnDistribution(stack, 'rDistribution', {
         distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           enabled: true,
           viewerCertificate: {
             acmCertificateArn:
@@ -179,6 +195,10 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 3: using a virtual IP for ssl support ', () => {
       new CfnDistribution(stack, 'rDistribution', {
         distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           enabled: true,
           viewerCertificate: {
             acmCertificateArn:
@@ -203,6 +223,10 @@ describe('Amazon CloudFront', () => {
       });
       new CfnDistribution(stack, 'rDistribution2', {
         distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           enabled: true,
           viewerCertificate: {
             acmCertificateArn:
@@ -266,6 +290,10 @@ describe('Amazon CloudFront', () => {
       new CfnDistribution(stack, 'rDistribution', {
         distributionConfig: {
           comment: 'foo',
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
           enabled: true,
           origins: [
             {
