@@ -15,8 +15,9 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnQueue) {
       const kmsMasterKeyId = Stack.of(node).resolve(node.kmsMasterKeyId);
-      if (kmsMasterKeyId == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
+        const sqsManagedSseEnabled = aws_cdk_lib_1.Stack.of(node).resolve(node.sqsManagedSseEnabled);
+        if (kmsMasterKeyId == undefined && sqsManagedSseEnabled == undefined) {
+          return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else {
