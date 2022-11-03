@@ -15,7 +15,10 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnQueue) {
       const kmsMasterKeyId = Stack.of(node).resolve(node.kmsMasterKeyId);
-      if (kmsMasterKeyId == undefined) {
+      const sqsManagedSseEnabled = Stack.of(node).resolve(
+        node.sqsManagedSseEnabled
+      );
+      if (kmsMasterKeyId === undefined && sqsManagedSseEnabled === undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;

@@ -10,7 +10,7 @@ import {
   StarPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
-import { CfnQueuePolicy, Queue } from 'aws-cdk-lib/aws-sqs';
+import { CfnQueuePolicy, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { NagSuppressions } from '../../src';
 import {
@@ -61,9 +61,15 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       new Queue(stack, 'rQueue');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Compliance 1', () => {
       new Queue(stack, 'rQueue', {
         encryptionMasterKey: new Key(stack, 'rQueueKey'),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
+      new Queue(stack, 'rQueue', {
+        encryption: QueueEncryption.SQS_MANAGED,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
