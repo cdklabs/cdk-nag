@@ -66,7 +66,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
         encryptionMasterKey: new Key(stack, 'rQueueKey'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });    
+    });
     test('Compliance 2', () => {
       new Queue(stack, 'rQueue', {
         encryption: QueueEncryption.SQS_MANAGED,

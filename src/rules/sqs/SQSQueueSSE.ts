@@ -2,9 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnQueue } from 'aws-cdk-lib/aws-sqs';
+import { parse } from 'path';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
@@ -15,8 +15,10 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnQueue) {
       const kmsMasterKeyId = Stack.of(node).resolve(node.kmsMasterKeyId);
-      const sqsManagedSseEnabled = Stack.of(node).resolve(node.sqsManagedSseEnabled);
-      if (kmsMasterKeyId == undefined && sqsManagedSseEnabled == undefined) {
+      const sqsManagedSseEnabled = Stack.of(node).resolve(
+        node.sqsManagedSseEnabled
+      );
+      if (kmsMasterKeyId === undefined && sqsManagedSseEnabled === undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
