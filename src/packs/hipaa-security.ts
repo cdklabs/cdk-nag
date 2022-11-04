@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnResource } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { NagPack, NagMessageLevel, NagPackProps } from '../nag-pack';
+import { NagMessageLevel, NagPack, NagPackProps } from '../nag-pack';
 import {
   APIGWCacheEnabledAndEncrypted,
   APIGWExecutionLoggingEnabled,
@@ -72,7 +72,12 @@ import {
   IAMUserGroupMembership,
   IAMUserNoPolicies,
 } from '../rules/iam';
-import { LambdaConcurrency, LambdaDLQ, LambdaInsideVPC } from '../rules/lambda';
+import {
+  LambdaConcurrency,
+  LambdaDLQ,
+  LambdaFunctionPublicAccessProhibited,
+  LambdaInsideVPC,
+} from '../rules/lambda';
 import {
   OpenSearchEncryptedAtRest,
   OpenSearchErrorLogsToCloudWatch,
@@ -85,9 +90,9 @@ import {
   RDSInBackupPlan,
   RDSInstanceBackupEnabled,
   RDSInstanceDeletionProtectionEnabled,
-  RDSMultiAZSupport,
   RDSInstancePublicAccess,
   RDSLoggingEnabled,
+  RDSMultiAZSupport,
   RDSStorageEncrypted,
 } from '../rules/rds';
 import {
@@ -683,6 +688,14 @@ export class HIPAASecurityChecks extends NagPack {
         'Notify the appropriate personnel through Amazon Simple Queue Service (Amazon SQS) or Amazon Simple Notification Service (Amazon SNS) when a function has failed.',
       level: NagMessageLevel.ERROR,
       rule: LambdaDLQ,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The Lambda function permission grants public access - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1), 164.312(e)(1)).',
+      explanation:
+        'Public access allows anyone on the internet to perform unauthenticated actions on your function and can potentially lead to degraded availability.',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaFunctionPublicAccessProhibited,
       node: node,
     });
     this.applyRule({

@@ -58,7 +58,10 @@ import {
   IAMUserNoPolicies,
 } from '../rules/iam';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
-import { LambdaInsideVPC } from '../rules/lambda';
+import {
+  LambdaFunctionPublicAccessProhibited,
+  LambdaInsideVPC,
+} from '../rules/lambda';
 import {
   OpenSearchEncryptedAtRest,
   OpenSearchErrorLogsToCloudWatch,
@@ -539,6 +542,14 @@ export class PCIDSS321Checks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkLambda(node: CfnResource) {
+    this.applyRule({
+      info: 'The Lambda function permission grants public access - (Control IDs: 1.2, 1.2.1, 1.3, 1.3.1, 1.3.2, 1.3.4, 2.2.2).',
+      explanation:
+        'Public access allows anyone on the internet to perform unauthenticated actions on your function and can potentially lead to degraded availability.',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaFunctionPublicAccessProhibited,
+      node: node,
+    });
     this.applyRule({
       info: 'The Lambda function is not VPC enabled - (Control IDs: 1.2, 1.2.1, 1.3, 1.3.1, 1.3.2, 1.3.4, 2.2.2).',
       explanation:
