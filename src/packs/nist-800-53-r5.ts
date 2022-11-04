@@ -66,7 +66,12 @@ import {
   IAMUserNoPolicies,
 } from '../rules/iam';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
-import { LambdaConcurrency, LambdaDLQ, LambdaInsideVPC } from '../rules/lambda';
+import {
+  LambdaConcurrency,
+  LambdaDLQ,
+  LambdaFunctionPublicAccessProhibited,
+  LambdaInsideVPC,
+} from '../rules/lambda';
 import {
   OpenSearchEncryptedAtRest,
   OpenSearchErrorLogsToCloudWatch,
@@ -84,12 +89,12 @@ import {
   RDSStorageEncrypted,
 } from '../rules/rds';
 import {
-  RedshiftRequireTlsSSL,
   RedshiftBackupEnabled,
   RedshiftClusterConfiguration,
   RedshiftClusterMaintenanceSettings,
   RedshiftClusterPublicAccess,
   RedshiftEnhancedVPCRoutingEnabled,
+  RedshiftRequireTlsSSL,
 } from '../rules/redshift';
 import {
   S3BucketLevelPublicAccessProhibited,
@@ -113,8 +118,8 @@ import {
 } from '../rules/secretsmanager';
 import { SNSEncryptedKMS } from '../rules/sns';
 import {
-  VPCFlowLogsEnabled,
   VPCDefaultSecurityGroupClosed,
+  VPCFlowLogsEnabled,
   VPCNoUnrestrictedRouteToIGW,
   VPCSubnetAutoAssignPublicIpDisabled,
 } from '../rules/vpc';
@@ -634,6 +639,14 @@ export class NIST80053R5Checks extends NagPack {
         'Notify the appropriate personnel through Amazon Simple Queue Service (Amazon SQS) or Amazon Simple Notification Service (Amazon SNS) when a function has failed.',
       level: NagMessageLevel.ERROR,
       rule: LambdaDLQ,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The Lambda function permission grants public access - (Control IDs: AC-2(6), AC-3, AC-3(7), AC-4(21), AC-6, AC-17b, AC-17(1), AC-17(1), AC-17(4)(a), AC-17(9), AC-17(10), MP-2, SC-7a, SC-7b, SC-7c, SC-7(2), SC-7(3), SC-7(7), SC-7(9)(a), SC-7(11), SC-7(12), SC-7(16), SC-7(20), SC-7(21), SC-7(24)(b), SC-7(25), SC-7(26), SC-7(27), SC-7(28), SC-25).',
+      explanation:
+        'Public access allows anyone on the internet to perform unauthenticated actions on your function and can potentially lead to degraded availability.',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaFunctionPublicAccessProhibited,
       node: node,
     });
     this.applyRule({

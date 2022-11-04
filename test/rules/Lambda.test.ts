@@ -6,20 +6,22 @@ import { Aspects, Stack } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
   CfnFunction,
+  CfnPermission,
+  CfnUrl,
   Code,
   DockerImageCode,
   DockerImageFunction,
   Function,
-  Runtime,
-  CfnUrl,
   FunctionUrlAuthType,
+  Runtime,
 } from 'aws-cdk-lib/aws-lambda';
 import {
   LambdaConcurrency,
   LambdaDLQ,
+  LambdaFunctionPublicAccessProhibited,
+  LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
-  LambdaFunctionUrlAuth,
 } from '../../src/rules/lambda';
 import { TestPack, TestType, validateStack } from './utils';
 
@@ -27,9 +29,10 @@ const testPack = new TestPack(
   [
     LambdaConcurrency,
     LambdaDLQ,
+    LambdaFunctionPublicAccessProhibited,
+    LambdaFunctionUrlAuth,
     LambdaInsideVPC,
     LambdaLatestVersion,
-    LambdaFunctionUrlAuth,
   ],
   { verbose: true }
 );
@@ -111,6 +114,63 @@ describe('AWS Lambda', () => {
         code: {},
         role: 'somerole',
         deadLetterConfig: { targetArn: 'mySnsTopicArn' },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('LambdaFunctionPublicAccessProhibited: Lambda function permissions do not grant public access', () => {
+    const ruleId = 'LambdaFunctionPublicAccessProhibited';
+    test('Noncompliance 1', () => {
+      new CfnPermission(stack, 'Permission', {
+        principal: '*',
+        action: 'lambda:bar',
+        functionName: 'foo',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new CfnPermission(stack, 'OrgPermission', {
+        principal: '*',
+        principalOrgId: 'o-thebestorg',
+        action: 'lambda:InvokeFunction',
+        functionName: 'foo',
+      });
+      new CfnPermission(stack, 'ArnPermission', {
+        principal: '*',
+        sourceArn: 'arn:aws:s3:::the-best-bucket',
+        action: 'lambda:InvokeFunction',
+        functionName: 'foo',
+      });
+      new CfnPermission(stack, 'AccountPermission', {
+        principal: '*',
+        sourceAccount: '123456789012',
+        action: 'lambda:InvokeFunction',
+        functionName: 'foo',
+      });
+      new CfnPermission(stack, 'NoStarPermission', {
+        principal: 'arn:aws:iam::111122223333:root',
+        sourceAccount: '123456789012',
+        action: 'lambda:InvokeFunction',
+        functionName: 'foo',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('LambdaFunctionUrlAuth: Lambda function URLs have authentication', () => {
+    const ruleId = 'LambdaFunctionUrlAuth';
+    test('Noncompliance 1', () => {
+      new CfnUrl(stack, 'rUrl', {
+        authType: FunctionUrlAuthType.NONE,
+        targetFunctionArn: 'somearn',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new CfnUrl(stack, 'rUrl', {
+        authType: FunctionUrlAuthType.AWS_IAM,
+        targetFunctionArn: 'somearn',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -275,24 +335,6 @@ describe('AWS Lambda', () => {
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
-    });
-  });
-
-  describe('LambdaFunctionUrlAuth: Lambda function URLs have authentication', () => {
-    const ruleId = 'LambdaFunctionUrlAuth';
-    test('Noncompliance 1', () => {
-      new CfnUrl(stack, 'rUrl', {
-        authType: FunctionUrlAuthType.NONE,
-        targetFunctionArn: 'somearn',
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new CfnUrl(stack, 'rUrl', {
-        authType: FunctionUrlAuthType.AWS_IAM,
-        targetFunctionArn: 'somearn',
-      });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
 });

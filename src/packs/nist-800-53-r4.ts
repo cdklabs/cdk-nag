@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { CfnResource } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { NagPack, NagMessageLevel, NagPackProps } from '../nag-pack';
+import { NagMessageLevel, NagPack, NagPackProps } from '../nag-pack';
 import {
   APIGWCacheEnabledAndEncrypted,
   APIGWExecutionLoggingEnabled,
@@ -34,8 +34,8 @@ import {
 import {
   EC2EBSInBackupPlan,
   EC2InstanceDetailedMonitoringEnabled,
-  EC2InstancesInVPC,
   EC2InstanceNoPublicIp,
+  EC2InstancesInVPC,
   EC2RestrictedCommonPorts,
   EC2RestrictedSSH,
 } from '../rules/ec2';
@@ -60,7 +60,10 @@ import {
   IAMUserNoPolicies,
 } from '../rules/iam';
 import { KMSBackingKeyRotationEnabled } from '../rules/kms';
-import { LambdaInsideVPC } from '../rules/lambda';
+import {
+  LambdaFunctionPublicAccessProhibited,
+  LambdaInsideVPC,
+} from '../rules/lambda';
 import {
   OpenSearchEncryptedAtRest,
   OpenSearchInVPCOnly,
@@ -580,6 +583,14 @@ export class NIST80053R4Checks extends NagPack {
         'Because of their logical isolation, domains that reside within an Amazon VPC have an extra layer of security when compared to domains that use public endpoints.',
       level: NagMessageLevel.ERROR,
       rule: LambdaInsideVPC,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The Lambda function permission grants public access - (Control IDs: AC-3, AC-4, AC-6, AC-21(b), SC-7, SC-7(3)).',
+      explanation:
+        'Public access allows anyone on the internet to perform unauthenticated actions on your function and can potentially lead to degraded availability.',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaFunctionPublicAccessProhibited,
       node: node,
     });
   }
