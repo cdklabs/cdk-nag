@@ -67,4 +67,7 @@ project.eslint.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
+eslint = project.tasks
+  .tryFind('eslint')
+  .prependExec('npx prettier --write RULES.md');
 project.synth();
