@@ -306,6 +306,89 @@ describe('Rule suppression system', () => {
       })
     );
   });
+  test('Test multi resource suppression', () => {
+    const stack = new Stack();
+    const vpc = new Vpc(stack, 'rVpc');
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test1 = new SecurityGroup(stack, 'rSg1', { vpc });
+    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const testCfn1 = test1.node.defaultChild as CfnSecurityGroup;
+    testCfn1.cfnOptions.metadata = {
+      'aws:cdk:path1': 'Default/test/SecurityGroup/Resource',
+    };
+    const test2 = new SecurityGroup(stack, 'rSg2', { vpc });
+    test2.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const testCfn2 = test2.node.defaultChild as CfnSecurityGroup;
+    testCfn2.cfnOptions.metadata = {
+      'aws:cdk:path2': 'Default/test/SecurityGroup/Resource',
+    };
+    NagSuppressions.addResourceSuppressions(
+      [test1, test2],
+      [{ id: 'AwsSolutions-EC23', reason: 'lorem ipsum' }]
+    );
+    const synthed = SynthUtils.synthesize(stack);
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          'aws:cdk:path1': stringLike('*Resource*'),
+          cdk_nag: {
+            rules_to_suppress: [
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
+            ],
+          },
+        },
+      },
+      1
+    );
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          'aws:cdk:path2': stringLike('*Resource*'),
+          cdk_nag: {
+            rules_to_suppress: [
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
+            ],
+          },
+        },
+      },
+      1
+    );
+  });
+  test('Multi resource suppression does not duplicate', () => {
+    const stack = new Stack();
+    const vpc = new Vpc(stack, 'rVPC');
+    const suppressions = [
+      {
+        id: 'foo',
+        reason: 'Never gonna give you up.',
+      },
+    ];
+    NagSuppressions.addResourceSuppressions([vpc, vpc], suppressions, true);
+    SynthUtils.synthesize(stack);
+    for (const child of vpc.node.findAll()) {
+      if (child instanceof CfnResource) {
+        expect(child.getMetadata('cdk_nag')?.rules_to_suppress).toEqual(
+          suppressions
+        );
+      }
+    }
+  });
+  test('Resource array cannot be empty', () => {
+    expect(() =>
+      NagSuppressions.addResourceSuppressions(
+        [],
+        [{ id: 'AwsSolutions-EC23', reason: 'lorem ipsum' }]
+      )
+    ).toThrowError();
+  });
   test('Test suppressions with addResourceSuppressions function on a CfnResource based Construct', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
@@ -378,7 +461,7 @@ describe('Rule suppression system', () => {
       1
     );
   });
-  test('Test supressions with addResourceSuppressionByPath function on a CfnResource based Construct', () => {
+  test('Test supressions with addResourceSuppressionsByPath function on a CfnResource based Construct', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     const test = new SecurityGroup(stack, 'rSg', {
@@ -410,6 +493,84 @@ describe('Rule suppression system', () => {
         }),
       })
     );
+  });
+  test('Test supressions with addResourceSuppressionsByPath on multiple resources', () => {
+    const stack = new Stack();
+    const vpc = new Vpc(stack, 'rVpc');
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const test1 = new SecurityGroup(stack, 'rSg1', {
+      vpc,
+    });
+    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const testCfn1 = test1.node.defaultChild as CfnSecurityGroup;
+    testCfn1.cfnOptions.metadata = {
+      'aws:cdk:path1': 'Default/test/SecurityGroup/Resource',
+    };
+    const test2 = new SecurityGroup(stack, 'rSg2', {
+      vpc,
+    });
+    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const testCfn2 = test2.node.defaultChild as CfnSecurityGroup;
+    testCfn2.cfnOptions.metadata = {
+      'aws:cdk:path2': 'Default/test/SecurityGroup/Resource',
+    };
+    NagSuppressions.addResourceSuppressionsByPath(
+      stack,
+      [test1.node.path, test2.node.path],
+      [{ id: 'AwsSolutions-EC23', reason: 'lorem ipsum' }]
+    );
+    const synthed = SynthUtils.synthesize(stack);
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          'aws:cdk:path1': stringLike('*Resource*'),
+          cdk_nag: {
+            rules_to_suppress: [
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
+            ],
+          },
+        },
+      },
+      1
+    );
+  });
+  test('addResourceSuppressionsByPath on multiple resources does not duplicate', () => {
+    const stack = new Stack();
+    const vpc = new Vpc(stack, 'rVpc');
+    const suppressions = [
+      {
+        id: 'foo',
+        reason: 'Never gonna give you up.',
+      },
+    ];
+    NagSuppressions.addResourceSuppressionsByPath(
+      stack,
+      [vpc.node.path, vpc.node.path],
+      suppressions,
+      true
+    );
+    SynthUtils.synthesize(stack);
+    for (const child of vpc.node.findAll()) {
+      if (child instanceof CfnResource) {
+        expect(child.getMetadata('cdk_nag')?.rules_to_suppress).toEqual(
+          suppressions
+        );
+      }
+    }
+  });
+  test('Path array of addResourceSuppressionsByPath cannot be empty', () => {
+    const stack = new Stack();
+    expect(() =>
+      NagSuppressions.addResourceSuppressionsByPath(
+        stack,
+        [],
+        [{ id: 'AwsSolutions-EC23', reason: 'lorem ipsum' }]
+      )
+    ).toThrowError();
   });
   test('addStackSuppressions function does not override previous suppressions on a Stack', () => {
     const stack = new Stack();
