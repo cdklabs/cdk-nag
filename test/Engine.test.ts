@@ -537,6 +537,23 @@ describe('Rule suppression system', () => {
       },
       1
     );
+    expect(synthed).toHaveResourceLike(
+      'AWS::EC2::SecurityGroup',
+      {
+        Metadata: {
+          'aws:cdk:path2': stringLike('*Resource*'),
+          cdk_nag: {
+            rules_to_suppress: [
+              {
+                id: 'AwsSolutions-EC23',
+                reason: 'lorem ipsum',
+              },
+            ],
+          },
+        },
+      },
+      1
+    );
   });
   test('addResourceSuppressionsByPath on multiple resources does not duplicate', () => {
     const stack = new Stack();
