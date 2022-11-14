@@ -94,13 +94,10 @@ import { NagSuppressions } from 'cdk-nag';
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
-    const test1 = new SecurityGroup(this, 'test', {
-      vpc: new Vpc(this, 'vpc'),
-    });
+    const vpc = new Vpc(this, 'vpc');
+    const test1 = new SecurityGroup(this, 'test', { vpc });
     test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const test2 = new SecurityGroup(this, 'test', {
-      vpc: new Vpc(this, 'vpc'),
-    });
+    const test2 = new SecurityGroup(this, 'test', { vpc });
     test2.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
     NagSuppressions.addResourceSuppressions(
       [test1, test2],
