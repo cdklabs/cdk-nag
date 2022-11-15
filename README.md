@@ -83,7 +83,7 @@ export class CdkTestStack extends Stack {
 </details>
 
 <details>
-  <summary>Example 2) Multiple resources</summary>
+  <summary>Example 2) On Multiple Constructs</summary>
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
