@@ -423,10 +423,10 @@ new NagSuppressions()
 Add cdk-nag suppressions to a CfnResource and optionally its children.
 
 ```ts
-static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
+static addResourceSuppressions(construct: IConstruct &#124; Array<IConstruct>, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
-* **construct** (<code>[IConstruct](#constructs-iconstruct)</code>)  The IConstruct to apply the suppression to.
+* **construct** (<code>[IConstruct](#constructs-iconstruct) &#124; Array<[IConstruct](#constructs-iconstruct)></code>)  The IConstruct(s) to apply the suppression to.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
 * **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
 
@@ -438,11 +438,11 @@ static addResourceSuppressions(construct: IConstruct, suppressions: Array<NagPac
 Add cdk-nag suppressions to a CfnResource and optionally its children via its path.
 
 ```ts
-static addResourceSuppressionsByPath(stack: Stack, path: string, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
+static addResourceSuppressionsByPath(stack: Stack, path: string &#124; Array<string>, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
 ```
 
 * **stack** (<code>[Stack](#aws-cdk-lib-stack)</code>)  The Stack the construct belongs to.
-* **path** (<code>string</code>)  The path to the construct in the provided stack.
+* **path** (<code>string &#124; Array<string></code>)  The path(s) to the construct in the provided stack.
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
 * **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
 
