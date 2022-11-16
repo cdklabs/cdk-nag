@@ -58,7 +58,9 @@ describe('Amazon Simple Queue Service (SQS)', () => {
   describe('SQSQueueSSE: SQS queues have server-side encryption enabled', () => {
     const ruleId = 'SQSQueueSSE';
     test('Noncompliance 1', () => {
-      new Queue(stack, 'rQueue');
+      new Queue(stack, 'rQueue', {
+        encryption: QueueEncryption.UNENCRYPTED,
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance 1', () => {
@@ -71,6 +73,10 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       new Queue(stack, 'rQueue', {
         encryption: QueueEncryption.SQS_MANAGED,
       });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 3', () => {
+      new Queue(stack, 'rQueue');
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
