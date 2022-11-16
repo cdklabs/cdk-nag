@@ -18,7 +18,7 @@ export default Object.defineProperty(
       const sqsManagedSseEnabled = Stack.of(node).resolve(
         node.sqsManagedSseEnabled
       );
-      if (kmsMasterKeyId === undefined && sqsManagedSseEnabled === undefined) {
+      if (kmsMasterKeyId === undefined && sqsManagedSseEnabled === false) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
