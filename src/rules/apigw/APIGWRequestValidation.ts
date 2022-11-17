@@ -40,7 +40,7 @@ export default Object.defineProperty(
 );
 
 /**
- * Helper function to check whether a given Request Validator is associated with the given Rest API
+ * Check whether a given Request Validator has basic validation enabled and is associated with the given Rest API
  * @param node the CfnRequestValidator to check
  * @param apiLogicalId the Cfn Logical ID of the REST API
  * returns whether the CfnRequestValidator is associated with the given Rest API
@@ -53,8 +53,9 @@ function isMatchingRequestValidator(
     node,
     node.restApiId
   );
-  if (resourceLogicalId === apiLogicalId) {
-    return true;
-  }
-  return false;
+  return (
+    resourceLogicalId === apiLogicalId &&
+    Stack.of(node).resolve(node.validateRequestBody) === true &&
+    Stack.of(node).resolve(node.validateRequestParameters) === true
+  );
 }

@@ -3,15 +3,15 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import {
+  AuthorizationType,
+  CfnClientCertificate,
+  CfnRequestValidator,
+  CfnRestApi,
   CfnStage,
   MethodLoggingLevel,
   RestApi,
-  CfnClientCertificate,
-  AuthorizationType,
-  CfnRequestValidator,
-  CfnRestApi,
 } from 'aws-cdk-lib/aws-apigateway';
-import { CfnStage as CfnV2Stage, CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
+import { CfnRoute, CfnStage as CfnV2Stage } from 'aws-cdk-lib/aws-apigatewayv2';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import {
@@ -256,24 +256,31 @@ describe('Amazon API Gateway', () => {
   describe('APIGWRequestValidation: Rest APIs have request validation enabled', () => {
     const ruleId = 'APIGWRequestValidation';
     test('Noncompliance 1', () => {
-      new RestApi(stack, 'rRestApi').root.addMethod('ANY');
+      new RestApi(stack, 'RestApi').root.addMethod('ANY');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new RestApi(stack, 'rRestApi').root.addMethod('ANY');
-      new CfnRequestValidator(stack, 'rRequestVAlidator', {
+      new RestApi(stack, 'RestApi').root.addMethod('ANY');
+      new CfnRequestValidator(stack, 'RequestVAlidator', {
         restApiId: 'foo',
+        validateRequestBody: true,
+        validateRequestParameters: false,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      const compliantRestApi = new RestApi(stack, 'rRestApi');
-      compliantRestApi.addRequestValidator('rRequestValidator', {});
+      const compliantRestApi = new RestApi(stack, 'RestApi');
+      compliantRestApi.addRequestValidator('RequestValidator', {
+        validateRequestBody: true,
+        validateRequestParameters: true,
+      });
       compliantRestApi.root.addMethod('ANY');
-      const compliantRestApi2 = new RestApi(stack, 'rRestApi2');
+      const compliantRestApi2 = new RestApi(stack, 'RestApi2');
       compliantRestApi2.root.addMethod('ANY');
-      new CfnRequestValidator(stack, 'rRequestValidator2', {
+      new CfnRequestValidator(stack, 'RequestValidator2', {
         restApiId: compliantRestApi2.restApiId,
+        validateRequestBody: true,
+        validateRequestParameters: true,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

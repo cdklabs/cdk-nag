@@ -32,6 +32,7 @@ jspm_packages/
 .yarn-integrity
 .cache
 .vscode
+**/.DS_Store
 !/.projenrc.js
 /test-reports/
 junit.xml
