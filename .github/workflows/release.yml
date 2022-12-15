@@ -102,151 +102,151 @@ jobs:
       - name: Release
         env:
           NPM_DIST_TAG: latest
-          NPM_REGISTRY: registry.npmjs.org
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_REGISTRY: https://npm.pkg.github.com
+          NPM_TOKEN: ${{ secrets.SA_WRITE_PAT }}
         run: npx -p publib@latest publib-npm
-  release_maven:
-    name: Publish to Maven Central
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    if: needs.release.outputs.latest_commit == github.sha
-    steps:
-      - uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 11.x
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14.x
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: dist
-      - name: Restore build artifact permissions
-        run: cd dist && setfacl --restore=permissions-backup.acl
-        continue-on-error: true
-      - name: Prepare Repository
-        run: mv dist .repo
-      - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
-      - name: Create java artifact
-        run: cd .repo && npx projen package:java
-      - name: Collect java Artifact
-        run: mv .repo/dist dist
-      - name: Release
-        env:
-          MAVEN_ENDPOINT: https://s01.oss.sonatype.org
-          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          MAVEN_GPG_PRIVATE_KEY_PASSPHRASE: ${{ secrets.MAVEN_GPG_PRIVATE_KEY_PASSPHRASE }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_STAGING_PROFILE_ID: ${{ secrets.MAVEN_STAGING_PROFILE_ID }}
-        run: npx -p publib@latest publib-maven
-  release_pypi:
-    name: Publish to PyPI
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    if: needs.release.outputs.latest_commit == github.sha
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14.x
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: dist
-      - name: Restore build artifact permissions
-        run: cd dist && setfacl --restore=permissions-backup.acl
-        continue-on-error: true
-      - name: Prepare Repository
-        run: mv dist .repo
-      - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
-      - name: Create python artifact
-        run: cd .repo && npx projen package:python
-      - name: Collect python Artifact
-        run: mv .repo/dist dist
-      - name: Release
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-        run: npx -p publib@latest publib-pypi
-  release_nuget:
-    name: Publish to NuGet Gallery
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    if: needs.release.outputs.latest_commit == github.sha
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14.x
-      - uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 3.x
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: dist
-      - name: Restore build artifact permissions
-        run: cd dist && setfacl --restore=permissions-backup.acl
-        continue-on-error: true
-      - name: Prepare Repository
-        run: mv dist .repo
-      - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
-      - name: Create dotnet artifact
-        run: cd .repo && npx projen package:dotnet
-      - name: Collect dotnet Artifact
-        run: mv .repo/dist dist
-      - name: Release
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: npx -p publib@latest publib-nuget
-  release_golang:
-    name: Publish to GitHub Go Module Repository
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    if: needs.release.outputs.latest_commit == github.sha
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14.x
-      - uses: actions/setup-go@v3
-        with:
-          go-version: ^1.16.0
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-          path: dist
-      - name: Restore build artifact permissions
-        run: cd dist && setfacl --restore=permissions-backup.acl
-        continue-on-error: true
-      - name: Prepare Repository
-        run: mv dist .repo
-      - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
-      - name: Create go artifact
-        run: cd .repo && npx projen package:go
-      - name: Collect go Artifact
-        run: mv .repo/dist dist
-      - name: Release
-        env:
-          GIT_USER_NAME: cdklabs-automation
-          GIT_USER_EMAIL: cdklabs-automation@amazon.com
-          GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
-        run: npx -p publib@latest publib-golang
+  # release_maven:
+  #   name: Publish to Maven Central
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   if: needs.release.outputs.latest_commit == github.sha
+  #   steps:
+  #     - uses: actions/setup-java@v3
+  #       with:
+  #         distribution: temurin
+  #         java-version: 11.x
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 14.x
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: build-artifact
+  #         path: dist
+  #     - name: Restore build artifact permissions
+  #       run: cd dist && setfacl --restore=permissions-backup.acl
+  #       continue-on-error: true
+  #     - name: Prepare Repository
+  #       run: mv dist .repo
+  #     - name: Install Dependencies
+  #       run: cd .repo && yarn install --check-files --frozen-lockfile
+  #     - name: Create java artifact
+  #       run: cd .repo && npx projen package:java
+  #     - name: Collect java Artifact
+  #       run: mv .repo/dist dist
+  #     - name: Release
+  #       env:
+  #         MAVEN_ENDPOINT: https://s01.oss.sonatype.org
+  #         MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+  #         MAVEN_GPG_PRIVATE_KEY_PASSPHRASE: ${{ secrets.MAVEN_GPG_PRIVATE_KEY_PASSPHRASE }}
+  #         MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+  #         MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+  #         MAVEN_STAGING_PROFILE_ID: ${{ secrets.MAVEN_STAGING_PROFILE_ID }}
+  #       run: npx -p publib@latest publib-maven
+  # release_pypi:
+  #   name: Publish to PyPI
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   if: needs.release.outputs.latest_commit == github.sha
+  #   steps:
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 14.x
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.x
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: build-artifact
+  #         path: dist
+  #     - name: Restore build artifact permissions
+  #       run: cd dist && setfacl --restore=permissions-backup.acl
+  #       continue-on-error: true
+  #     - name: Prepare Repository
+  #       run: mv dist .repo
+  #     - name: Install Dependencies
+  #       run: cd .repo && yarn install --check-files --frozen-lockfile
+  #     - name: Create python artifact
+  #       run: cd .repo && npx projen package:python
+  #     - name: Collect python Artifact
+  #       run: mv .repo/dist dist
+  #     - name: Release
+  #       env:
+  #         TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+  #         TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+  #       run: npx -p publib@latest publib-pypi
+  # release_nuget:
+  #   name: Publish to NuGet Gallery
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   if: needs.release.outputs.latest_commit == github.sha
+  #   steps:
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 14.x
+  #     - uses: actions/setup-dotnet@v3
+  #       with:
+  #         dotnet-version: 3.x
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: build-artifact
+  #         path: dist
+  #     - name: Restore build artifact permissions
+  #       run: cd dist && setfacl --restore=permissions-backup.acl
+  #       continue-on-error: true
+  #     - name: Prepare Repository
+  #       run: mv dist .repo
+  #     - name: Install Dependencies
+  #       run: cd .repo && yarn install --check-files --frozen-lockfile
+  #     - name: Create dotnet artifact
+  #       run: cd .repo && npx projen package:dotnet
+  #     - name: Collect dotnet Artifact
+  #       run: mv .repo/dist dist
+  #     - name: Release
+  #       env:
+  #         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+  #       run: npx -p publib@latest publib-nuget
+  # release_golang:
+  #   name: Publish to GitHub Go Module Repository
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   if: needs.release.outputs.latest_commit == github.sha
+  #   steps:
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 14.x
+  #     - uses: actions/setup-go@v3
+  #       with:
+  #         go-version: ^1.16.0
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: build-artifact
+  #         path: dist
+  #     - name: Restore build artifact permissions
+  #       run: cd dist && setfacl --restore=permissions-backup.acl
+  #       continue-on-error: true
+  #     - name: Prepare Repository
+  #       run: mv dist .repo
+  #     - name: Install Dependencies
+  #       run: cd .repo && yarn install --check-files --frozen-lockfile
+  #     - name: Create go artifact
+  #       run: cd .repo && npx projen package:go
+  #     - name: Collect go Artifact
+  #       run: mv .repo/dist dist
+  #     - name: Release
+  #       env:
+  #         GIT_USER_NAME: cdklabs-automation
+  #         GIT_USER_EMAIL: cdklabs-automation@amazon.com
+  #         GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
+  #       run: npx -p publib@latest publib-golang
