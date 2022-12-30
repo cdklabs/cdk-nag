@@ -11,26 +11,26 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/assert@^2.18":
-  version "2.57.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.57.0.tgz#e47bafffa06342880ee0ec0c9723a162e41ee956"
-  integrity sha512-xbQZ/XOVDZUGA3hS6A6YmqBY/+09oCEpbrxlIr0XLHYpUVG5HiSCkuDGojUO7g8Pk/DPpUt1Mwq2URQTaizVsg==
+  version "2.58.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.58.0.tgz#5610dd4c7bc9a908341afc9ac1182dd6278481e4"
+  integrity sha512-KgcTJzOjIn8IVit9VX18miM0UEORHe6i2tY97TzuCLuHpXl5DnTrFRMpP5gvQibnqBjjx9PlUBervQUfTU9yag==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.57.0"
+    "@aws-cdk/cloudformation-diff" "2.58.0"
 
-"@aws-cdk/cfnspec@2.57.0":
-  version "2.57.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.57.0.tgz#ea156ea19fdad59d70bd2b1efd6dc65b496aaade"
-  integrity sha512-rMaJubD42mTmWD31C5L6JvurA9r4Ag7Hb/rt6A6PKqrdOcqu0TapSWmQ4w0b5IyUxL4s++5oMs4yRjA+Lmt8nA==
+"@aws-cdk/cfnspec@2.58.0":
+  version "2.58.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.58.0.tgz#5d81cc54b747b5abd5cd6870fcf155f81f97cfda"
+  integrity sha512-SqWyu5fVbLLYWeSJFLgOc5IrxWSZQFz4maaaVsf2SDReVeDRAVOHz2iszCcogJPp7MeBi0NkIvzHHRni2yWdYw==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.57.0":
-  version "2.57.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.57.0.tgz#a83bf463e528883bba8efbb45f8b85beb7fae500"
-  integrity sha512-Mw5aJBBaKWqqzDL+nUGaxd7VQa0Ydn2l0Xdh+DKKjZLctWm2V0bKAIzLUHxdMpkFydEXTRbbNykvoDkeuGdA8w==
+"@aws-cdk/cloudformation-diff@2.58.0":
+  version "2.58.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.58.0.tgz#c9f1c8044038a1446d9437d8f5fccf01420cc8c9"
+  integrity sha512-fa2rajZzq4AS/Mj55YFYtsf/wK9iGPKacFDFNRIPKPceXr75xusQAS6k151DHYaLMqKasGR8CfE1L77NwvzfRA==
   dependencies:
-    "@aws-cdk/cfnspec" "2.57.0"
+    "@aws-cdk/cfnspec" "2.58.0"
     "@types/node" "^14.18.34"
     chalk "^4"
     diff "^5.1.0"
@@ -4021,7 +4021,7 @@ json-stringify-safe@^5.0.1:
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==
 
-json5@2.x, json5@^2.2.1:
+json5@2.x, json5@^2.2.1, json5@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.2.tgz#64471c5bdcc564c18f7c1d4df2e2297f2457c5ab"
   integrity sha512-46Tk9JiOL2z7ytNQWFLpj99RZkVgeHf87yGQKsIkaPz1qSH9UczKH1rO7K3wgRselo0tYMUNfecYpm/p1vC7tQ==
@@ -5041,10 +5041,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.65.74:
-  version "0.65.74"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.74.tgz#de092cb4350518a4af100bd917ab08bc9620e4c0"
-  integrity sha512-704J8NxYoy9gcUoJxYupogi9xGP9nG7XjfUj6q7D5pszwq7godRmWUH5CjJ9NoxPkDebt8cS02zfY5DIPx/s6Q==
+projen@^0.65.75:
+  version "0.65.75"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.75.tgz#d6c6fec593baa2b5d263b14b79be23416f4f0320"
+  integrity sha512-LqHoYytMMBk1mIPQanmHcgktvudm6zBsUkHfz+Q7HFazEkfmVwF7QcY03SGGg3+SkV2I2PIx0csS4lqDxmRpsA==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -5139,13 +5139,13 @@ quick-lru@^5.1.1:
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
 
 rc-config-loader@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/rc-config-loader/-/rc-config-loader-4.1.1.tgz#64a00fdcae976e20062e13b156e361d24186fe23"
-  integrity sha512-S10o85x/szboh7FOxUyU+KuED+gr9V7SEnUBOzSn+vd1K8J2MtkP1RCPWg8Sw5kkuZKr7976bFzacCM6QtAApQ==
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/rc-config-loader/-/rc-config-loader-4.1.2.tgz#e57fc874bde9b1e48d8a8564f2f824f91eafd920"
+  integrity sha512-qKTnVWFl9OQYKATPzdfaZIbTxcHziQl92zYSxYC6umhOqyAsoj8H8Gq/+aFjAso68sBdjTz3A7omqeAkkF1MWg==
   dependencies:
     debug "^4.3.4"
     js-yaml "^4.1.0"
-    json5 "^2.2.1"
+    json5 "^2.2.2"
     require-from-string "^2.0.2"
 
 rc@1.2.8:
