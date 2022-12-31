@@ -11,26 +11,26 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/assert@^2.18":
-  version "2.58.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.58.0.tgz#5610dd4c7bc9a908341afc9ac1182dd6278481e4"
-  integrity sha512-KgcTJzOjIn8IVit9VX18miM0UEORHe6i2tY97TzuCLuHpXl5DnTrFRMpP5gvQibnqBjjx9PlUBervQUfTU9yag==
+  version "2.58.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.58.1.tgz#5292c7eb8967e2401425959401a837463ad23652"
+  integrity sha512-oMUGtn9hrGEiE6tpqEty71wIpRhLS+7pdxY1L7ZsdUTxNnh+IReltVhncy5eOI9gqBTekZeGqPDep5qSl47Ehw==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.58.0"
+    "@aws-cdk/cloudformation-diff" "2.58.1"
 
-"@aws-cdk/cfnspec@2.58.0":
-  version "2.58.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.58.0.tgz#5d81cc54b747b5abd5cd6870fcf155f81f97cfda"
-  integrity sha512-SqWyu5fVbLLYWeSJFLgOc5IrxWSZQFz4maaaVsf2SDReVeDRAVOHz2iszCcogJPp7MeBi0NkIvzHHRni2yWdYw==
+"@aws-cdk/cfnspec@2.58.1":
+  version "2.58.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.58.1.tgz#9d8a727310bc82513539c3587168765a55a71677"
+  integrity sha512-8I3YS/xe12sGzxrUiju+8lMmKn5ZHfcCDMPQGRwfx9Cu9mJrmCXQRvg8NgDTjHCKgKoU6DLyRfcn+kei8tKVLw==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.58.0":
-  version "2.58.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.58.0.tgz#c9f1c8044038a1446d9437d8f5fccf01420cc8c9"
-  integrity sha512-fa2rajZzq4AS/Mj55YFYtsf/wK9iGPKacFDFNRIPKPceXr75xusQAS6k151DHYaLMqKasGR8CfE1L77NwvzfRA==
+"@aws-cdk/cloudformation-diff@2.58.1":
+  version "2.58.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.58.1.tgz#041c4a0024054ea9d332ab29b731219e6a399194"
+  integrity sha512-ophJVXBFd3d4axypMlrogTw5fb1U5b/OgrNj7dOj56qwqh7x5lGhW5+mh1OdtMB4gT16CnhxyTCdiAqCljv4Gw==
   dependencies:
-    "@aws-cdk/cfnspec" "2.58.0"
+    "@aws-cdk/cfnspec" "2.58.1"
     "@types/node" "^14.18.34"
     chalk "^4"
     diff "^5.1.0"
@@ -4027,9 +4027,9 @@ json5@2.x, json5@^2.2.1, json5@^2.2.2:
   integrity sha512-46Tk9JiOL2z7ytNQWFLpj99RZkVgeHf87yGQKsIkaPz1qSH9UczKH1rO7K3wgRselo0tYMUNfecYpm/p1vC7tQ==
 
 json5@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.1.tgz#779fb0018604fa854eacbf6252180d83543e3dbe"
-  integrity sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.2.tgz#63d98d60f21b313b77c4d6da18bfa69d80e1d593"
+  integrity sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==
   dependencies:
     minimist "^1.2.0"
 
@@ -5041,10 +5041,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.65.75:
-  version "0.65.75"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.75.tgz#d6c6fec593baa2b5d263b14b79be23416f4f0320"
-  integrity sha512-LqHoYytMMBk1mIPQanmHcgktvudm6zBsUkHfz+Q7HFazEkfmVwF7QcY03SGGg3+SkV2I2PIx0csS4lqDxmRpsA==
+projen@^0.65.76:
+  version "0.65.76"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.76.tgz#571aa01a799e3ed44f2d099146b47fe035c81971"
+  integrity sha512-rjT3U/atGtOvuuRqJdi6IntmVtfTY9SXnyNpqGTcEc6LpNlvadHPWttnEdFzG9f614nn/WnZbHULUb3qfbKWFw==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -6406,9 +6406,9 @@ yaml@2.0.0:
   integrity sha512-JbfdlHKGP2Ik9IHylzWlGd4pPK++EU46/IxMykphS2ZKw7a7h+dHNmcXObLgpRDriBY+rpWslldikckX8oruWQ==
 
 yaml@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.2.0.tgz#882c762992888b4144bffdec5745df340627fdd3"
-  integrity sha512-auf7Gi6QwO7HW//GA9seGvTXVGWl1CM/ADWh1+RxtXr6XOxnT65ovDl9fTi4e0monEyJxCHqDpF6QnFDXmJE4g==
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.2.1.tgz#3014bf0482dcd15147aa8e56109ce8632cd60ce4"
+  integrity sha512-e0WHiYql7+9wr4cWMx3TVQrNwejKaEe7/rHNmQmqRjazfOP5W8PB6Jpebb5o6fIapbz9o9+2ipcaTM2ZwDI6lw==
 
 yargs-parser@20.x, yargs-parser@^20.2.2, yargs-parser@^20.2.3:
   version "20.2.9"
