@@ -2510,9 +2510,9 @@ fast-memoize@^2.5.2:
   integrity sha512-Ue0LwpDYErFbmNnZSF0UH6eImUwDmogUO1jyE+JbN2gsQz/jICm1Ve7t9QT0rNSsfJt+Hs4/S3GnsDVjL4HVrw==
 
 fastq@^1.6.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.14.0.tgz#107f69d7295b11e0fccc264e1fc6389f623731ce"
-  integrity sha512-eR2D+V9/ExcbF9ls441yIuN6TI2ED1Y2ZcA5BmMtJsOkWOFRJQ0Jt0g1UwqXJJVAb+V+umH5Dfr8oh4EVP7VVg==
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.15.0.tgz#d04d07c6a2a68fe4599fea8d2e103a937fae6b3a"
+  integrity sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==
   dependencies:
     reusify "^1.0.4"
 
@@ -5041,10 +5041,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.65.77:
-  version "0.65.77"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.77.tgz#0f61537a023d82f84ce769c6a703e52702bdf664"
-  integrity sha512-ZyZ4XqM5LliRIKpccgkmEUps53Oiqp/c90LlhfhrE3etr7csJ7DovpqVWhsS0l2EWkz2V3O5rrAb5Q86h0t1sw==
+projen@^0.65.78:
+  version "0.65.78"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.78.tgz#68b879bfc00284f9e38855ff8da8f3ac4c0bf5a0"
+  integrity sha512-/vTVGMWT5kNdgAhPVy3Ye4+xIDXfl9wvwm+oTKtRPFQc17OC4JWdXVBw+PtmmlZ4o/a6Ho+JQ1e62BzLOGziuQ==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
