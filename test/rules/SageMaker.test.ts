@@ -8,13 +8,13 @@ import {
   CfnNotebookInstance,
 } from 'aws-cdk-lib/aws-sagemaker';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   SageMakerEndpointConfigurationKMSKeyConfigured,
   SageMakerNotebookInVPC,
   SageMakerNotebookInstanceKMSKeyConfigured,
   SageMakerNotebookNoDirectInternetAccess,
 } from '../../src/rules/sagemaker';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   SageMakerEndpointConfigurationKMSKeyConfigured,

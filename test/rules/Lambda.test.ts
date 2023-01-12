@@ -15,6 +15,7 @@ import {
   FunctionUrlAuthType,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   LambdaConcurrency,
   LambdaDLQ,
@@ -23,7 +24,6 @@ import {
   LambdaInsideVPC,
   LambdaLatestVersion,
 } from '../../src/rules/lambda';
-import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack(
   [

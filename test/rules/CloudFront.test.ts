@@ -15,6 +15,7 @@ import { HttpOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   CloudFrontDistributionAccessLogging,
   CloudFrontDistributionGeoRestrictions,
@@ -23,7 +24,6 @@ import {
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
 } from '../../src/rules/cloudfront';
-import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack([
   CloudFrontDistributionAccessLogging,

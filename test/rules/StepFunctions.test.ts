@@ -10,11 +10,11 @@ import {
   LogLevel,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
   StepFunctionStateMachineXray,
 } from '../../src/rules/stepfunctions';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   StepFunctionStateMachineAllLogsToCloudWatch,

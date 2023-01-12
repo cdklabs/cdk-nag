@@ -8,11 +8,11 @@ import {
   CfnSecurityConfiguration,
 } from 'aws-cdk-lib/aws-glue';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   GlueEncryptedCloudWatchLogs,
   GlueJobBookmarkEncrypted,
 } from '../../src/rules/glue';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   GlueEncryptedCloudWatchLogs,

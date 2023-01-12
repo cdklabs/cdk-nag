@@ -14,6 +14,7 @@ import {
 import { CfnRoute, CfnStage as CfnV2Stage } from 'aws-cdk-lib/aws-apigatewayv2';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   APIGWAccessLogging,
   APIGWAssociatedWithWAF,
@@ -24,7 +25,6 @@ import {
   APIGWSSLEnabled,
   APIGWXrayEnabled,
 } from '../../src/rules/apigw';
-import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack([
   APIGWAccessLogging,

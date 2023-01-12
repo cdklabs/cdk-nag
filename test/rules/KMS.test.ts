@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Key, KeySpec } from 'aws-cdk-lib/aws-kms';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { KMSBackingKeyRotationEnabled } from '../../src/rules/kms';
 import { validateStack, TestType, TestPack } from './utils';
+import { KMSBackingKeyRotationEnabled } from '../../src/rules/kms';
 
 const testPack = new TestPack([KMSBackingKeyRotationEnabled]);
 let stack: Stack;

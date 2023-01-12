@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDatabase } from 'aws-cdk-lib/aws-timestream';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TimestreamDatabaseCustomerManagedKey } from '../../src/rules/timestream';
 import { validateStack, TestType, TestPack } from './utils';
+import { TimestreamDatabaseCustomerManagedKey } from '../../src/rules/timestream';
 
 const testPack = new TestPack([TimestreamDatabaseCustomerManagedKey]);
 let stack: Stack;

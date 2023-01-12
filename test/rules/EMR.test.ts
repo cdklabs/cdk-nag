@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster, CfnSecurityConfiguration } from 'aws-cdk-lib/aws-emr';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   EMRAuthEC2KeyPairOrKerberos,
   EMREncryptionInTransit,
@@ -11,7 +12,6 @@ import {
   EMRLocalDiskEncryption,
   EMRS3AccessLogging,
 } from '../../src/rules/emr';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   EMRAuthEC2KeyPairOrKerberos,

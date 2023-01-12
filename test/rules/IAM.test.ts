@@ -17,6 +17,7 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   IAMGroupHasUsers,
   IAMNoInlinePolicy,
@@ -27,7 +28,6 @@ import {
   IAMUserGroupMembership,
   IAMUserNoPolicies,
 } from '../../src/rules/iam';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   IAMGroupHasUsers,

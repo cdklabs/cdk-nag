@@ -15,6 +15,7 @@ import {
   NetworkAcl,
 } from 'aws-cdk-lib/aws-ec2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { TestPack, validateStack, TestType } from './utils';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,
@@ -22,7 +23,6 @@ import {
   VPCNoUnrestrictedRouteToIGW,
   VPCSubnetAutoAssignPublicIpDisabled,
 } from '../../src/rules/vpc';
-import { TestPack, validateStack, TestType } from './utils';
 
 const testPack = new TestPack([
   VPCDefaultSecurityGroupClosed,

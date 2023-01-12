@@ -10,8 +10,8 @@ import {
   AccountRootPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { ECROpenAccess } from '../../src/rules/ecr';
 import { validateStack, TestType, TestPack } from './utils';
+import { ECROpenAccess } from '../../src/rules/ecr';
 
 const testPack = new TestPack([ECROpenAccess]);
 let stack: Stack;

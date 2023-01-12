@@ -12,11 +12,11 @@ import {
   CfnSecretTargetAttachment,
 } from 'aws-cdk-lib/aws-secretsmanager';
 import { Aspects, Stack, Duration } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   SecretsManagerRotationEnabled,
   SecretsManagerUsingKMSKey,
 } from '../../src/rules/secretsmanager';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   SecretsManagerRotationEnabled,

@@ -23,6 +23,7 @@ import {
   AuroraEngineVersion,
 } from 'aws-cdk-lib/aws-rds';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   AuroraMySQLBacktrack,
   AuroraMySQLLogging,
@@ -39,7 +40,6 @@ import {
   RDSRestrictedInbound,
   RDSStorageEncrypted,
 } from '../../src/rules/rds';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   AuroraMySQLBacktrack,

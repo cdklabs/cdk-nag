@@ -10,6 +10,7 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { Aspects, Duration, SecretValue, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   DocumentDBClusterBackupRetentionPeriod,
   DocumentDBClusterEncryptionAtRest,
@@ -17,7 +18,6 @@ import {
   DocumentDBClusterNonDefaultPort,
   DocumentDBCredentialsInSecretsManager,
 } from '../../src/rules/documentdb';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   DocumentDBClusterBackupRetentionPeriod,

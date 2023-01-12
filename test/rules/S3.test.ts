@@ -22,6 +22,7 @@ import {
   CfnBucketPolicy,
 } from 'aws-cdk-lib/aws-s3';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   S3BucketDefaultLockEnabled,
   S3BucketLevelPublicAccessProhibited,
@@ -35,7 +36,6 @@ import {
   S3DefaultEncryptionKMS,
   S3WebBucketOAIAccess,
 } from '../../src/rules/s3';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   S3BucketDefaultLockEnabled,

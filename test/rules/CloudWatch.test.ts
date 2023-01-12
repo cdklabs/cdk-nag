@@ -10,12 +10,12 @@ import {
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnLogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   CloudWatchAlarmAction,
   CloudWatchLogGroupEncrypted,
   CloudWatchLogGroupRetentionPeriod,
 } from '../../src/rules/cloudwatch';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   CloudWatchAlarmAction,

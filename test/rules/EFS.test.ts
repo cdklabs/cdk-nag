@@ -6,8 +6,8 @@ import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { FileSystem } from 'aws-cdk-lib/aws-efs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { EFSEncrypted, EFSInBackupPlan } from '../../src/rules/efs';
 import { validateStack, TestType, TestPack } from './utils';
+import { EFSEncrypted, EFSInBackupPlan } from '../../src/rules/efs';
 
 const testPack = new TestPack([EFSEncrypted, EFSInBackupPlan]);
 let stack: Stack;

@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Aspects, Stack } from 'aws-cdk-lib';
 import { CfnEventBusPolicy } from 'aws-cdk-lib/aws-events';
-import { EventBusOpenAccess } from '../../src/rules/eventbridge';
 import { validateStack, TestType, TestPack } from './utils';
+import { EventBusOpenAccess } from '../../src/rules/eventbridge';
 
 const testPack = new TestPack([EventBusOpenAccess]);
 let stack: Stack;

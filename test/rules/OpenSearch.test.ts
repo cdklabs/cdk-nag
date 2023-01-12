@@ -21,6 +21,7 @@ import {
   EngineVersion,
 } from 'aws-cdk-lib/aws-opensearchservice';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   OpenSearchAllowlistedIPs,
   OpenSearchDedicatedMasterNode,
@@ -32,7 +33,6 @@ import {
   OpenSearchSlowLogsToCloudWatch,
   OpenSearchZoneAwareness,
 } from '../../src/rules/opensearch';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   OpenSearchAllowlistedIPs,

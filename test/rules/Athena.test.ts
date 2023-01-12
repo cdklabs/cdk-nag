@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { AthenaWorkgroupEncryptedQueryResults } from '../../src/rules/athena';
 import { TestPack, TestType, validateStack } from './utils';
+import { AthenaWorkgroupEncryptedQueryResults } from '../../src/rules/athena';
 
 const testPack = new TestPack([AthenaWorkgroupEncryptedQueryResults]);
 let stack: Stack;

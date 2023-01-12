@@ -21,6 +21,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Aspects, Stack, Size } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   EC2EBSInBackupPlan,
   EC2EBSOptimizedInstance,
@@ -35,7 +36,6 @@ import {
   EC2RestrictedSSH,
   EC2SecurityGroupDescription,
 } from '../../src/rules/ec2';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   EC2EBSInBackupPlan,

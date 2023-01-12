@@ -4,12 +4,12 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster } from 'aws-cdk-lib/aws-msk';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   MSKBrokerLogging,
   MSKBrokerToBrokerTLS,
   MSKClientToBrokerTLS,
 } from '../../src/rules/msk';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   MSKBrokerLogging,

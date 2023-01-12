@@ -12,8 +12,8 @@ import {
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnTopicPolicy, Topic } from 'aws-cdk-lib/aws-sns';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { SNSEncryptedKMS, SNSTopicSSLPublishOnly } from '../../src/rules/sns';
 import { validateStack, TestType, TestPack } from './utils';
+import { SNSEncryptedKMS, SNSTopicSSLPublishOnly } from '../../src/rules/sns';
 
 const testPack = new TestPack([SNSEncryptedKMS, SNSTopicSSLPublishOnly]);
 let stack: Stack;
