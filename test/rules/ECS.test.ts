@@ -11,13 +11,13 @@ import {
   LogDriver,
 } from 'aws-cdk-lib/aws-ecs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,
   ECSTaskDefinitionNoEnvironmentVariables,
   ECSTaskDefinitionUserForHostMode,
 } from '../../src/rules/ecs';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   ECSClusterCloudWatchContainerInsights,

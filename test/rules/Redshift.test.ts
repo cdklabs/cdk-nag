@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster, CfnClusterParameterGroup } from 'aws-cdk-lib/aws-redshift';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   RedshiftBackupEnabled,
   RedshiftClusterAuditLogging,
@@ -19,7 +20,6 @@ import {
   RedshiftEnhancedVPCRoutingEnabled,
   RedshiftRequireTlsSSL,
 } from '../../src/rules/redshift';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   RedshiftBackupEnabled,

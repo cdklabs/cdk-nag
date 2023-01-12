@@ -11,13 +11,13 @@ import { CfnCluster } from 'aws-cdk-lib/aws-dax';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   DAXEncrypted,
   DynamoDBAutoScalingEnabled,
   DynamoDBInBackupPlan,
   DynamoDBPITREnabled,
 } from '../../src/rules/dynamodb';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   DAXEncrypted,

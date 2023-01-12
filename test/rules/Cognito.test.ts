@@ -10,6 +10,7 @@ import {
   CfnIdentityPool,
 } from 'aws-cdk-lib/aws-cognito';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   CognitoUserPoolAPIGWAuthorizer,
   CognitoUserPoolAdvancedSecurityModeEnforced,
@@ -17,7 +18,6 @@ import {
   CognitoUserPoolNoUnauthenticatedLogins,
   CognitoUserPoolStrongPasswordPolicy,
 } from '../../src/rules/cognito';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   CognitoUserPoolAPIGWAuthorizer,

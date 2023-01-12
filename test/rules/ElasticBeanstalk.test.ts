@@ -4,13 +4,13 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnEnvironment } from 'aws-cdk-lib/aws-elasticbeanstalk';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   ElasticBeanstalkEC2InstanceLogsToS3,
   ElasticBeanstalkEnhancedHealthReportingEnabled,
   ElasticBeanstalkManagedUpdatesEnabled,
   ElasticBeanstalkVPCSpecified,
 } from '../../src/rules/elasticbeanstalk';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   ElasticBeanstalkEC2InstanceLogsToS3,

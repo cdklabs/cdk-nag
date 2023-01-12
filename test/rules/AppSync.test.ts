@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnGraphQLApi } from 'aws-cdk-lib/aws-appsync';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { AppSyncGraphQLRequestLogging } from '../../src/rules/appsync';
 import { validateStack, TestType, TestPack } from './utils';
+import { AppSyncGraphQLRequestLogging } from '../../src/rules/appsync';
 
 const testPack = new TestPack([AppSyncGraphQLRequestLogging]);
 let stack: Stack;

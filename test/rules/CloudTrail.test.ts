@@ -6,12 +6,12 @@ import { Trail } from 'aws-cdk-lib/aws-cloudtrail';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   CloudTrailCloudWatchLogsEnabled,
   CloudTrailEncryptionEnabled,
   CloudTrailLogFileValidationEnabled,
 } from '../../src/rules/cloudtrail';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   CloudTrailCloudWatchLogsEnabled,

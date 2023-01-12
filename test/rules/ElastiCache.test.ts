@@ -7,6 +7,7 @@ import {
   CfnReplicationGroup,
 } from 'aws-cdk-lib/aws-elasticache';
 import { Aspects, SecretValue, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   ElastiCacheClusterInVPC,
   ElastiCacheClusterNonDefaultPort,
@@ -15,7 +16,6 @@ import {
   ElastiCacheRedisClusterMultiAZ,
   ElastiCacheRedisClusterRedisAuth,
 } from '../../src/rules/elasticache';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   ElastiCacheClusterInVPC,

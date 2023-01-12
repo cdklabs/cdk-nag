@@ -19,6 +19,7 @@ import {
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   ALBHttpDropInvalidHeaderEnabled,
   ALBHttpToHttpsRedirection,
@@ -32,7 +33,6 @@ import {
   ELBTlsHttpsListenersOnly,
   ELBv2ACMCertificateRequired,
 } from '../../src/rules/elb';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   ALBHttpDropInvalidHeaderEnabled,

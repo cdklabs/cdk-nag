@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDataSource } from 'aws-cdk-lib/aws-quicksight';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { QuicksightSSLConnections } from '../../src/rules/quicksight';
 import { validateStack, TestType, TestPack } from './utils';
+import { QuicksightSSLConnections } from '../../src/rules/quicksight';
 
 const testPack = new TestPack([QuicksightSSLConnections]);
 let stack: Stack;

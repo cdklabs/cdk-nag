@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnWebACL, CfnLoggingConfiguration } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { WAFv2LoggingEnabled } from '../../src/rules/waf';
 import { TestPack, TestType, validateStack } from './utils';
+import { WAFv2LoggingEnabled } from '../../src/rules/waf';
 
 const testPack = new TestPack([WAFv2LoggingEnabled]);
 let stack: Stack;

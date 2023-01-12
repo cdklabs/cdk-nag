@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnContainer } from 'aws-cdk-lib/aws-mediastore';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   MediaStoreCloudWatchMetricPolicy,
   MediaStoreContainerAccessLogging,
@@ -12,7 +13,6 @@ import {
   MediaStoreContainerLifecyclePolicy,
   MediaStoreContainerSSLRequestsOnly,
 } from '../../src/rules/mediastore';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack(
   [

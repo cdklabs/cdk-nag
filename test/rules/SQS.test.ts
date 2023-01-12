@@ -12,13 +12,13 @@ import {
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnQueuePolicy, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import { NagSuppressions } from '../../src';
 import {
   SQSQueueDLQ,
   SQSQueueSSE,
   SQSQueueSSLRequestsOnly,
 } from '../../src/rules/sqs';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   SQSQueueDLQ,

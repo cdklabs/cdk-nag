@@ -8,13 +8,13 @@ import { CfnApplicationV2 } from 'aws-cdk-lib/aws-kinesisanalytics';
 import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
   KinesisDataFirehoseSSE,
   KinesisDataStreamDefaultKeyWhenSSE,
   KinesisDataStreamSSE,
 } from '../../src/rules/kinesis';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   KinesisDataAnalyticsFlinkCheckpointing,

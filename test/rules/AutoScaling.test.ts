@@ -18,6 +18,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack } from './utils';
 import {
   AutoScalingGroupHealthCheck,
   AutoScalingGroupCooldownPeriod,
@@ -25,7 +26,6 @@ import {
   AutoScalingGroupScalingNotifications,
   AutoScalingLaunchConfigPublicIpDisabled,
 } from '../../src/rules/autoscaling';
-import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   AutoScalingGroupHealthCheck,
