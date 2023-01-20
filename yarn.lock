@@ -11,26 +11,26 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/assert@^2.18":
-  version "2.60.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.60.0.tgz#16805f75e44c07906f7a32ce36061be881152ddc"
-  integrity sha512-FDGXX/VOPxWIF9V7VLQFJk74LbHXu6gSTfBS04iHBZw0UmDy7he+oA6VRht6HpkucuxetXdwVp1lxNkTWs9aLA==
+  version "2.61.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.61.0.tgz#100e64444ce68eff411518cb3d826b0cf22513d1"
+  integrity sha512-elKivWlvQ23mzzlRBSRixFJTE32pK/d9WVlMCyJeTeSzsxY7afSVvOAjXem+gsfOzOA++F01sgksKj05hUc94A==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.60.0"
+    "@aws-cdk/cloudformation-diff" "2.61.0"
 
-"@aws-cdk/cfnspec@2.60.0":
-  version "2.60.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.60.0.tgz#708c247ce56779725143dd0609e87c4b8ff78636"
-  integrity sha512-1o4npUPWJlW97T1PHRy12TDoQU05FW9XVz+bj9izKZ2TQd8iaUs96csYo2sHswKtOj+X3UsnpLKKrsBmtW1TfA==
+"@aws-cdk/cfnspec@2.61.0":
+  version "2.61.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.61.0.tgz#e9077b1e682662c3f6ecec89b92b739bb8fc9182"
+  integrity sha512-O4mxG1GGD2qd32/Mq9mrJuk+8HrKH3YgPj3Lj9AjZVVtGISiCHRXwKp2BnTybkEGA9h00TpZ7BaohPUU1xNxkQ==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.60.0":
-  version "2.60.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.60.0.tgz#a7f3ac1bd7a1f42a019f450cfb8d343e27c59971"
-  integrity sha512-qI1jIs2q+hAJq+GudMEYEDAuj3n839QOLLySWa6xpc/V+CfVbzajiPzkNT+SEQyPihPC0XDcnqXZdH2u2/ISCQ==
+"@aws-cdk/cloudformation-diff@2.61.0":
+  version "2.61.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.61.0.tgz#dfa73dc019e50c303bb3626bd730c26dea7102b1"
+  integrity sha512-jZGu+l1i3JV+5t9Me6kgZqzBbHaJ+sMQ1sxsxYbJ41AR4+tLWa/KaBeZH++oPseiyTJE7fURrjcw3X+LkIrJdg==
   dependencies:
-    "@aws-cdk/cfnspec" "2.60.0"
+    "@aws-cdk/cfnspec" "2.61.0"
     "@types/node" "^14.18.36"
     chalk "^4"
     diff "^5.1.0"
@@ -1504,9 +1504,9 @@ camelcase@^7.0.0:
   integrity sha512-xlx1yCK2Oc1APsPXDL2LdlNP6+uu8OCDdhOBSVT279M/S+y75O30C2VuD8T2ogdePBBl7PfPF4504tnLgX3zfw==
 
 caniuse-lite@^1.0.30001400:
-  version "1.0.30001445"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001445.tgz#cf2d4eb93f2bcdf0310de9dd6d18be271bc0b447"
-  integrity sha512-8sdQIdMztYmzfTMO6KfLny878Ln9c2M0fc7EH60IjlP4Dc4PiCy7K2Vl3ITmWgOyPgVQKa5x+UP/KqFsxj4mBg==
+  version "1.0.30001446"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001446.tgz#6d4ba828ab19f49f9bcd14a8430d30feebf1e0c5"
+  integrity sha512-fEoga4PrImGcwUUGEol/PoFCSBnSkA9drgdkxXkJLsUBOnJ8rs3zDv6ApqYXGQFOyMPsjh79naWhF4DAxbF8rw==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
@@ -5109,10 +5109,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.67.5:
-  version "0.67.5"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.67.5.tgz#f956f2568aef5efecccf33f7d8dbe46e683571a2"
-  integrity sha512-kjZO21gq+lxYTzjlyQR9ssa6xJpyYRQim/4BSpWjVZrf5D46uJfKtszsuER7OKUs+D/koshBkjwDCx+79uCmyA==
+projen@^0.67.6:
+  version "0.67.6"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.67.6.tgz#4a415b9fbf4cc99fd13b5e3fae005adeeacc7583"
+  integrity sha512-xY8SGIjlEoFvP4cppo3cj2npCJRG4L/OnbRQcZ1xO8XhVxYhlDRcvq/NOhaQyfMIyDVoJFbyejwDLA5cPQV7Hw==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -5170,9 +5170,9 @@ psl@^1.1.33:
   integrity sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==
 
 punycode@^2.1.0, punycode@^2.1.1:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.2.0.tgz#2092cc57cd2582c38e4e7e8bb869dc8d3148bc74"
-  integrity sha512-LN6QV1IJ9ZhxWTNdktaPClrNfp8xdSAYS0Zk2ddX7XsXZAxckMHPCBcHRo0cTcEIgYPRiGEkmji3Idkh2yFtYw==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.3.0.tgz#f67fa67c94da8f4d0cfff981aee4118064199b8f"
+  integrity sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==
 
 pupa@^3.1.0:
   version "3.1.0"
