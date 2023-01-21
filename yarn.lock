@@ -11,26 +11,26 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/assert@^2.18":
-  version "2.61.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.61.0.tgz#100e64444ce68eff411518cb3d826b0cf22513d1"
-  integrity sha512-elKivWlvQ23mzzlRBSRixFJTE32pK/d9WVlMCyJeTeSzsxY7afSVvOAjXem+gsfOzOA++F01sgksKj05hUc94A==
+  version "2.61.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.61.1.tgz#723ca390d113e9c7728fa21162a8b988e79f498b"
+  integrity sha512-6lfRXAUarvy2hywcYb5cgR+ycjhaXSeSJJgTkPAVFgwassQtsPGh0ItFX6T1tuLeUY+yJyi1ema6B4vB5ZQo2g==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.61.0"
+    "@aws-cdk/cloudformation-diff" "2.61.1"
 
-"@aws-cdk/cfnspec@2.61.0":
-  version "2.61.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.61.0.tgz#e9077b1e682662c3f6ecec89b92b739bb8fc9182"
-  integrity sha512-O4mxG1GGD2qd32/Mq9mrJuk+8HrKH3YgPj3Lj9AjZVVtGISiCHRXwKp2BnTybkEGA9h00TpZ7BaohPUU1xNxkQ==
+"@aws-cdk/cfnspec@2.61.1":
+  version "2.61.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.61.1.tgz#539891f9f55615d1522f895e01a89f9a1144cf99"
+  integrity sha512-JGFxJgMcJRSr5zqPlVemZ9T08Q3oq0izdVzU+kDeL2okLXHveNM79+OSPsPg3RVtL49lbR5vvpofk4GDDKvfcg==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.61.0":
-  version "2.61.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.61.0.tgz#dfa73dc019e50c303bb3626bd730c26dea7102b1"
-  integrity sha512-jZGu+l1i3JV+5t9Me6kgZqzBbHaJ+sMQ1sxsxYbJ41AR4+tLWa/KaBeZH++oPseiyTJE7fURrjcw3X+LkIrJdg==
+"@aws-cdk/cloudformation-diff@2.61.1":
+  version "2.61.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.61.1.tgz#4285b741af7921e495b38c537157b04e61e1e681"
+  integrity sha512-50fdsjMtIpjhrmo0M2J10FIYgnc65hRkHFUdiAH9oC+1iXspFo0RynRI8DJPt//OH7d7w7Mb4nIrEx65PAxb4A==
   dependencies:
-    "@aws-cdk/cfnspec" "2.61.0"
+    "@aws-cdk/cfnspec" "2.61.1"
     "@types/node" "^14.18.36"
     chalk "^4"
     diff "^5.1.0"
@@ -2744,9 +2744,9 @@ get-caller-file@^2.0.5:
   integrity sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
 
 get-intrinsic@^1.0.2, get-intrinsic@^1.1.1, get-intrinsic@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.1.3.tgz#063c84329ad93e83893c7f4f243ef63ffa351385"
-  integrity sha512-QJVz1Tj7MS099PevUG5jvnt9tSkXN8K14dxQlikJuPt4uD9hHAHjLyLBiLR5zELelBdD9QNRAXZzsJx0WaDL9A==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.2.0.tgz#7ad1dc0535f3a2904bba075772763e5051f6d05f"
+  integrity sha512-L049y6nFOuom5wGyRc3/gdTLO94dySVKRACj1RmJZBQXlbTMhtNIgkWkUHq+jYmZvKf14EW1EoJnnjbmoHij0Q==
   dependencies:
     function-bind "^1.1.1"
     has "^1.0.3"
@@ -3883,9 +3883,9 @@ jju@^1.1.0:
   integrity sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==
 
 js-sdsl@^4.1.4:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/js-sdsl/-/js-sdsl-4.2.0.tgz#278e98b7bea589b8baaf048c20aeb19eb7ad09d0"
-  integrity sha512-dyBIzQBDkCqCu+0upx25Y2jGdbTGxE9fshMsCdK0ViOongpV+n5tXRcZY9v7CaVQ79AGS9KA1KHtojxiM7aXSQ==
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/js-sdsl/-/js-sdsl-4.3.0.tgz#aeefe32a451f7af88425b11fdb5f58c90ae1d711"
+  integrity sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ==
 
 js-tokens@^4.0.0:
   version "4.0.0"
@@ -5109,10 +5109,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.67.6:
-  version "0.67.6"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.67.6.tgz#4a415b9fbf4cc99fd13b5e3fae005adeeacc7583"
-  integrity sha512-xY8SGIjlEoFvP4cppo3cj2npCJRG4L/OnbRQcZ1xO8XhVxYhlDRcvq/NOhaQyfMIyDVoJFbyejwDLA5cPQV7Hw==
+projen@^0.67.8:
+  version "0.67.8"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.67.8.tgz#0523ede4ff1abf1e0bcf5791a01c681d8a04592c"
+  integrity sha512-/8NENMiUjGq2i3JKThFIlyUY4eKfPX5XK5aEn/HpPomCexie9jwGQfxMGkoIxJv+UOob6314xngGsLrac606Vg==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
