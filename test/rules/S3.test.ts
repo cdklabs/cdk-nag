@@ -22,7 +22,6 @@ import {
   CfnBucketPolicy,
 } from 'aws-cdk-lib/aws-s3';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
 import {
   S3BucketDefaultLockEnabled,
   S3BucketLevelPublicAccessProhibited,
@@ -30,12 +29,12 @@ import {
   S3BucketPublicReadProhibited,
   S3BucketPublicWriteProhibited,
   S3BucketReplicationEnabled,
-  S3BucketServerSideEncryptionEnabled,
   S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
   S3WebBucketOAIAccess,
 } from '../../src/rules/s3';
+import { validateStack, TestType, TestPack } from './utils';
 
 const testPack = new TestPack([
   S3BucketDefaultLockEnabled,
@@ -44,7 +43,6 @@ const testPack = new TestPack([
   S3BucketPublicReadProhibited,
   S3BucketPublicWriteProhibited,
   S3BucketReplicationEnabled,
-  S3BucketServerSideEncryptionEnabled,
   S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
@@ -259,20 +257,6 @@ describe('Amazon Simple Storage Service (S3)', () => {
           }).roleArn,
           rules: [{ destination: { bucket: 'foo' }, status: 'Enabled' }],
         },
-      });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-  });
-
-  describe('S3BucketServerSideEncryptionEnabled: S3 Buckets have default server-side encryption enabled', () => {
-    const ruleId = 'S3BucketServerSideEncryptionEnabled';
-    test('Noncompliance 1', () => {
-      new Bucket(stack, 'rBucket');
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new Bucket(stack, 'rBucket', {
-        encryption: BucketEncryption.S3_MANAGED,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

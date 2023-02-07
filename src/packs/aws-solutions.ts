@@ -163,7 +163,6 @@ import {
 import {
   S3BucketLevelPublicAccessProhibited,
   S3BucketLoggingEnabled,
-  S3BucketServerSideEncryptionEnabled,
   S3BucketSSLRequestsOnly,
   S3WebBucketOAIAccess,
 } from '../rules/s3';
@@ -415,15 +414,6 @@ export class AwsSolutionsChecks extends NagPack {
         'The bucket should have public access restricted and blocked to prevent unauthorized access.',
       level: NagMessageLevel.ERROR,
       rule: S3BucketLevelPublicAccessProhibited,
-      node: node,
-    });
-    this.applyRule({
-      ruleSuffixOverride: 'S3',
-      info: 'The S3 Bucket does not have default encryption enabled.',
-      explanation:
-        'The bucket should minimally have SSE enabled to help protect data-at-rest.',
-      level: NagMessageLevel.ERROR,
-      rule: S3BucketServerSideEncryptionEnabled,
       node: node,
     });
     this.applyRule({
