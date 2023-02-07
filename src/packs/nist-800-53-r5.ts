@@ -102,7 +102,6 @@ import {
   S3BucketPublicReadProhibited,
   S3BucketPublicWriteProhibited,
   S3BucketReplicationEnabled,
-  S3BucketServerSideEncryptionEnabled,
   S3BucketSSLRequestsOnly,
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
@@ -872,14 +871,6 @@ export class NIST80053R5Checks extends NagPack {
         'Amazon Simple Storage Service (Amazon S3) Cross-Region Replication (CRR) supports maintaining adequate capacity and availability. CRR enables automatic, asynchronous copying of objects across Amazon S3 buckets to help ensure that data availability is maintained.',
       level: NagMessageLevel.ERROR,
       rule: S3BucketReplicationEnabled,
-      node: node,
-    });
-    this.applyRule({
-      info: 'The S3 Bucket does not have default server-side encryption enabled - (Control IDs: AU-9(3), CM-6a, CM-9b, CP-9d, CP-9(8), PM-11b, SC-8(3), SC-8(4), SC-13a, SC-16(1), SC-28(1), SI-19(4)).',
-      explanation:
-        'Because sensitive data can exist at rest in Amazon S3 buckets, enable encryption to help protect that data.',
-      level: NagMessageLevel.ERROR,
-      rule: S3BucketServerSideEncryptionEnabled,
       node: node,
     });
     this.applyRule({
