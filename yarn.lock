@@ -11,27 +11,26 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/assert@^2.18":
-  version "2.64.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.64.0.tgz#43c95fe4fe9e281026c757a86319ab47c5a039fc"
-  integrity sha512-pQ8PY84rvL04ZDRkFELVmFVXEVnzeji9qze7Agks5ut9q2uymUKKVMsTycwg7trJQbcJmSDxcxnTTrE2IuLIaQ==
+  version "2.65.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/assert/-/assert-2.65.0.tgz#83fed4392e0e59c582f65f6a7ff6430177e4c140"
+  integrity sha512-JVCzBnOUE7j92GGmsgAcZ+cuYudylkhu+u2YnFUnpoXvODVHjD40bQ8RaLHN8jS80lEKC/YozZsKViRa1bW9Cg==
   dependencies:
-    "@aws-cdk/cloudformation-diff" "2.64.0"
+    "@aws-cdk/cloudformation-diff" "2.65.0"
 
-"@aws-cdk/cfnspec@2.64.0":
-  version "2.64.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.64.0.tgz#a7e425e73feddef83cb44fe5c7c08265f6e19f86"
-  integrity sha512-YEjPMbf2a/3AT5QLECOfplmUzAuKfIRydykusbsUePS5Z+supCUoIxzT0oljTbL9yVYP02qJ6qBfKIMY9BRAYg==
+"@aws-cdk/cfnspec@2.65.0":
+  version "2.65.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.65.0.tgz#8df474e97d2c2c57089b82ce56e49de7ba1773fb"
+  integrity sha512-mJ9qOgQJLx29LGeAq9GA+tel+MlzHpCPGlCfBieSMofk+3RwwuhPl9BsAcOe7Dye3snTRYlv8XwIDU3of7Cejg==
   dependencies:
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cloudformation-diff@2.64.0":
-  version "2.64.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.64.0.tgz#5f61b05a60267cee9f3de7c318dc87f33137689c"
-  integrity sha512-WmJvAHHgHNKEX7fcowtlM1ONmJQOfhh4T1ZVMDxhbqwRf/IePAw4UJcHFS7c18YDAdzYcamXqBInXUhei8A1oA==
+"@aws-cdk/cloudformation-diff@2.65.0":
+  version "2.65.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloudformation-diff/-/cloudformation-diff-2.65.0.tgz#01f8030d2e90d071f1e8f3537adb1f98abe1ddc0"
+  integrity sha512-G0Qu2lPU6ADUdZcYxdhKMXgoQRRypvsFG66Nedu7Oc3u/wcYxnq0F8S7WdpWb46vylqy7Y4FFHemtXoFgyx02w==
   dependencies:
-    "@aws-cdk/cfnspec" "2.64.0"
-    "@types/node" "^14.18.36"
+    "@aws-cdk/cfnspec" "2.65.0"
     chalk "^4"
     diff "^5.1.0"
     fast-deep-equal "^3.1.3"
@@ -875,7 +874,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.13.0.tgz#0400d1e6ce87e9d3032c19eb6c58205b0d3f7850"
   integrity sha512-gC3TazRzGoOnoKAhUx+Q0t8S9Tzs74z7m0ipwGpSqQrleP14hKxP4/JUeEQcD3W1/aIpnWl8pHowI7WokuZpXg==
 
-"@types/node@^14", "@types/node@^14.18.36":
+"@types/node@^14":
   version "14.18.36"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.36.tgz#c414052cb9d43fab67d679d5f3c641be911f5835"
   integrity sha512-FXKWbsJ6a1hIrRxv+FoukuHnGTgEzKYGi7kilfMae96AL9UNkPFNWJEEYWzdRI9ooIkbr4AKldyuSTLql06vLQ==
@@ -2143,9 +2142,9 @@ eastasianwidth@^0.2.0:
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.295"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.295.tgz#911d5df67542bf7554336142eb302c5ec90bba66"
-  integrity sha512-lEO94zqf1bDA3aepxwnWoHUjA8sZ+2owgcSZjYQy0+uOSEclJX0VieZC+r+wLpSxUHRd6gG32znTWmr+5iGzFw==
+  version "1.4.297"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.297.tgz#366c27785049e4a31fbbc8babba31e6967d9e25f"
+  integrity sha512-dTXLXBdzfDYnZYq+bLer21HrFsEkzlR2OSIOsR+qroDmhmQU3i4T4KdY0Lcp83ZId3HnWTpPAEfhaJtVxmS/dQ==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -5110,10 +5109,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.67.53:
-  version "0.67.53"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.67.53.tgz#f6e442c3925220b5cde6eb319a307746dd3bb3e9"
-  integrity sha512-whfuXhmqztSikq4IYOqVYpZfIYG3y2x1HdIeCbY8y5BlMQV1zquMqiwNj1am32bzdkR15+SDiPs/B3TtZJbPAw==
+projen@^0.67.56:
+  version "0.67.56"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.67.56.tgz#11f7c97cef17048f73b9b7b8a5fc6ffeb8aa16c5"
+  integrity sha512-DOX9cIqjfgItf0iA4SXNFv63b/+5KMM1hSK+IKnT63bfeuAXYGPZFGJ1LYd3Sn2ma65fz4CyH9ngqmk94uDM/w==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -5735,9 +5734,9 @@ standard-version@^9:
     yargs "^16.0.0"
 
 streamroller@^3.1.3:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/streamroller/-/streamroller-3.1.4.tgz#844a18e795d39c1089a8216e66a1cf1151271df0"
-  integrity sha512-Ha1Ccw2/N5C/IF8Do6zgNe8F3jQo8MPBnMBGvX0QjNv/I97BcNRzK6/mzOpZHHK7DjMLTI3c7Xw7Y1KvdChkvw==
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/streamroller/-/streamroller-3.1.5.tgz#1263182329a45def1ffaef58d31b15d13d2ee7ff"
+  integrity sha512-KFxaM7XT+irxvdqSP1LGLgNWbYN7ay5owZ3r/8t77p+EtSUAfUgtl7be3xtqtOmGUl9K9YPO2ca8133RlTjvKw==
   dependencies:
     date-format "^4.0.14"
     debug "^4.3.4"
