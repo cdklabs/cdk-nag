@@ -2,18 +2,19 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   CfnDomain as LegacyCfnDomain,
   Domain as LegacyDomain,
   ElasticsearchVersion,
 } from 'aws-cdk-lib/aws-elasticsearch';
 import {
-  PolicyDocument,
-  PolicyStatement,
-  Effect,
-  Role,
   AccountRootPrincipal,
   AnyPrincipal,
+  Effect,
+  PolicyDocument,
+  PolicyStatement,
+  Role,
 } from 'aws-cdk-lib/aws-iam';
 import {
   CfnDomain,
@@ -21,15 +22,15 @@ import {
   EngineVersion,
 } from 'aws-cdk-lib/aws-opensearchservice';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   OpenSearchAllowlistedIPs,
   OpenSearchDedicatedMasterNode,
   OpenSearchEncryptedAtRest,
   OpenSearchErrorLogsToCloudWatch,
   OpenSearchInVPCOnly,
-  OpenSearchNoUnsignedOrAnonymousAccess,
   OpenSearchNodeToNodeEncryption,
+  OpenSearchNoUnsignedOrAnonymousAccess,
   OpenSearchSlowLogsToCloudWatch,
   OpenSearchZoneAwareness,
 } from '../../src/rules/opensearch';
@@ -56,14 +57,14 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchAllowlistedIPs: OpenSearch Service domains only grant access via allowlisted IP addresses', () => {
     const ruleId = 'OpenSearchAllowlistedIPs';
     test('Noncompliance 1', () => {
-      new LegacyCfnDomain(stack, 'rDomain', {
+      new LegacyCfnDomain(stack, 'Domain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
             new PolicyStatement({
               effect: Effect.ALLOW,
               principals: [
-                new Role(stack, 'rRole', {
+                new Role(stack, 'Role', {
                   assumedBy: new AccountRootPrincipal(),
                 }),
               ],
@@ -75,6 +76,23 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
+      new LegacyDomain(stack, 'Domain', {
+        version: ElasticsearchVersion.V7_10,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            resources: ['*'],
+          }),
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
       new CfnDomain(stack, 'rDomain', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
@@ -82,7 +100,7 @@ describe('Amazon OpenSearch Service', () => {
             new PolicyStatement({
               effect: Effect.ALLOW,
               principals: [
-                new Role(stack, 'rRole', {
+                new Role(stack, 'Role', {
                   assumedBy: new AccountRootPrincipal(),
                 }),
               ],
@@ -93,15 +111,32 @@ describe('Amazon OpenSearch Service', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 4', () => {
+      new Domain(stack, 'Domain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            resources: ['*'],
+          }),
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'rDomain', {
+      new LegacyCfnDomain(stack, 'Domain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
             new PolicyStatement({
               effect: Effect.ALLOW,
               principals: [
-                new Role(stack, 'rRole', {
+                new Role(stack, 'Role', {
                   assumedBy: new AccountRootPrincipal(),
                 }),
               ],
@@ -115,14 +150,14 @@ describe('Amazon OpenSearch Service', () => {
           ],
         }).toJSON(),
       });
-      new CfnDomain(stack, 'rDomain2', {
+      new CfnDomain(stack, 'Domain2', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
           statements: [
             new PolicyStatement({
               effect: Effect.ALLOW,
               principals: [
-                new Role(stack, 'rRole2', {
+                new Role(stack, 'Role2', {
                   assumedBy: new AccountRootPrincipal(),
                 }),
               ],
@@ -135,6 +170,44 @@ describe('Amazon OpenSearch Service', () => {
             }),
           ],
         }).toJSON(),
+      });
+      new LegacyDomain(stack, 'Domain3', {
+        version: ElasticsearchVersion.V7_10,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role3', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            resources: ['*'],
+            conditions: {
+              IpAddress: {
+                'aws:sourceIp': ['42.42.42.42'],
+              },
+            },
+          }),
+        ],
+      });
+      new Domain(stack, 'Domain4', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role4', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            resources: ['*'],
+            conditions: {
+              IpAddress: {
+                'aws:sourceIp': [new Vpc(stack, 'vpc').vpcCidrBlock],
+              },
+            },
+          }),
+        ],
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -293,21 +366,47 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchNoUnsignedOrAnonymousAccess: OpenSearch Service domains do not allow for unsigned requests or anonymous access', () => {
     const ruleId = 'OpenSearchNoUnsignedOrAnonymousAccess';
     test('Noncompliance 1', () => {
-      new LegacyDomain(stack, 'rDomain', {
+      new LegacyDomain(stack, 'Domain', {
         version: ElasticsearchVersion.V7_10,
         accessPolicies: [],
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new Domain(stack, 'rDomain', {
+      new LegacyDomain(stack, 'Domain', {
+        version: ElasticsearchVersion.V7_10,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [new AnyPrincipal()],
+            resources: ['*'],
+          }),
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
         accessPolicies: [],
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 3', () => {
-      new LegacyCfnDomain(stack, 'rDomain', {
+    test('Noncompliance 4', () => {
+      new Domain(stack, 'Domain', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [new AnyPrincipal()],
+            resources: ['*'],
+          }),
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5', () => {
+      new LegacyCfnDomain(stack, 'Domain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -321,8 +420,8 @@ describe('Amazon OpenSearch Service', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 4', () => {
-      new CfnDomain(stack, 'rDomain', {
+    test('Noncompliance 6', () => {
+      new CfnDomain(stack, 'Domain', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -337,14 +436,14 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'rDomain', {
+      new LegacyCfnDomain(stack, 'Domain', {
         elasticsearchVersion: ElasticsearchVersion.V7_10.version,
         accessPolicies: new PolicyDocument({
           statements: [
             new PolicyStatement({
               effect: Effect.ALLOW,
               principals: [
-                new Role(stack, 'rRole', {
+                new Role(stack, 'Role', {
                   assumedBy: new AccountRootPrincipal(),
                 }),
               ],
@@ -358,7 +457,7 @@ describe('Amazon OpenSearch Service', () => {
           ],
         }).toJSON(),
       });
-      new CfnDomain(stack, 'rDomain2', {
+      new CfnDomain(stack, 'Domain2', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
           statements: [
@@ -379,6 +478,46 @@ describe('Amazon OpenSearch Service', () => {
           ],
         }).toJSON(),
       });
+      new Domain(stack, 'Domain3', {
+        version: EngineVersion.ELASTICSEARCH_7_10,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role3', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            actions: ['es:ESHttpPost', 'es:ESHttpPut', 'es:ESHttpGet'],
+            resources: ['*'],
+            conditions: {
+              IpAddress: {
+                'aws:sourceIp': [new Vpc(stack, 'vpc').vpcCidrBlock],
+              },
+            },
+          }),
+        ],
+      });
+      new LegacyDomain(stack, 'Domain4', {
+        version: ElasticsearchVersion.V7_10,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role4', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            resources: ['*'],
+            conditions: {
+              IpAddress: {
+                'aws:sourceIp': ['42.42.42.42'],
+              },
+            },
+          }),
+        ],
+      });
+
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
