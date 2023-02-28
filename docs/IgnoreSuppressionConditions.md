@@ -30,7 +30,7 @@ class ArunCondition implements INagSuppressionIgnore {
 }
 ```
 
-You could also create the same condition without a class and by just implementing the interface.
+You could also create the same condition without a class and by just implementing the interface
 
 ```ts
 ({
@@ -90,7 +90,7 @@ export class ExampleChecks extends NagPack {
 }
 ```
 
-A user would see the following output when attempting to synthesize an application using a non-compliant suppression on a S3 Bucket.
+A user would see the following output when attempting to synthesize an application using a non-compliant suppression on a S3 Bucket
 
 ```bash
 [Info at /Test/bucket/Resource] The suppression for Example-S3BucketSSLRequestsOnly was ignored for the following reason(s).
@@ -100,12 +100,12 @@ A user would see the following output when attempting to synthesize an applicati
 
 ## Creating Complex Conditions
 
-`cdk-nag` exposes both a `SuppressionIgnoreAnd` class and a `SuppressionIgnoreOr` to help developers create more complicated conditions.
+`cdk-nag` exposes both a `SuppressionIgnoreAnd` class and a `SuppressionIgnoreOr` to help developers create more complicated conditions
 
 - `SuppressionIgnoreAnd`: Ignores the suppression if **ALL** of the given INagSuppressionIgnore return a non-empty message (logical and)
 - `SuppressionIgnoreOr`: Ignores the suppression if **ANY** of the given INagSuppressionIgnore return a non-empty message (logical or)
 
-Here is an example `SuppressionIgnoreAnd` that only allows suppressions when the reason contains the word `Arun` and the current year is before `2023`.
+Here is an example `SuppressionIgnoreAnd` that ignores a suppression if both a 'ticket' CloudFormation metadata entry does not exist on the resource and the current year is after 2022.
 
 ```ts
 import { SuppressionIgnoreAnd } from 'cdk-nag';
@@ -113,12 +113,14 @@ import { SuppressionIgnoreAnd } from 'cdk-nag';
 new SuppressionIgnoreAnd(
   {
     createMessage(
-      _resource: CfnResource,
-      reason: string,
+      resource: CfnResource,
+      _reason: string,
       _ruleId: string,
       _findingId: string
     ) {
-      return !reason.includes('Arun') ? 'Only Arun can suppress errors!' : '';
+      return !resource.getMetadata('ticket')
+        ? 'Must provide a ticket for an exception!'
+        : '';
     },
   },
   {
@@ -128,7 +130,7 @@ new SuppressionIgnoreAnd(
       _ruleId: string,
       _findingId: string
     ) {
-      return Date.now() > Date.parse('01 Jan 2023 00:00:00 UTC')
+      return Date.now() > Date.parse('31 Dec 2022 23:59 UTC')
         ? 'Suppressions are only allowed before the year 2023'
         : '';
     },
@@ -140,7 +142,7 @@ A user would see the following output when attempting to synthesize an applicati
 
 ```bash
 [Info at /Test/bucket/Resource] The suppression for Example-S3BucketSSLRequestsOnly was ignored for the following reason(s).
-        Only Arun can suppress errors!
+        Must provide a ticket for an exception!
         Suppressions are only allowed before the year 2023
 [Error at /Test/bucket/Resource] Example-S3BucketSSLRequestsOnly: My brief info.
 ```
