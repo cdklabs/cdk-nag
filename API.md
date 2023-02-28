@@ -563,10 +563,10 @@ __Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
 
 
 ```ts
-new SuppressionIgnoreAnd(...andSuppressionIgnores: INagSuppressionIgnore[])
+new SuppressionIgnoreAnd(...SuppressionIgnoreAnds: INagSuppressionIgnore[])
 ```
 
-* **andSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+* **SuppressionIgnoreAnds** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
 
 
 ### Methods

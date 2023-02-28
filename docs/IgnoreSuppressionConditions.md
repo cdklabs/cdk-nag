@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # Conditionally Ignoring Suppressions
 
-As a [NagPack](./NagPack.md) author, you can optionally create a condition that prevent certain rules from being suppressed. You can create conditions for any variety of reasons. Examples include a condition that always ignores a suppression, a condition that ignores a suppression based on the date, a condition that ignores a suppression based on the reason.
+As a [NagPack](./NagPack.md) author, you can optionally create a condition that prevents certain rules from being suppressed. You can create conditions for any variety of reasons. Examples include a condition that always ignores a suppression, a condition that ignores a suppression based on the date, a condition that ignores a suppression based on the reason.
 
 ## Creating and Applying a Condition
 
@@ -30,7 +30,7 @@ class ArunCondition implements INagSuppressionIgnore {
 }
 ```
 
-You could also create the same condition without a class and by just implementing the interface
+You could also create the same condition without a class and by just implementing the interface.
 
 ```ts
 ({
@@ -90,7 +90,7 @@ export class ExampleChecks extends NagPack {
 }
 ```
 
-A user would see the following output when attempting to synthesize an application using a non-compliant suppression on a S3 Bucket
+A user would see the following output when attempting to synthesize an application using a non-compliant suppression on a S3 Bucket.
 
 ```bash
 [Info at /Test/bucket/Resource] The suppression for Example-S3BucketSSLRequestsOnly was ignored for the following reason(s).
@@ -100,12 +100,12 @@ A user would see the following output when attempting to synthesize an applicati
 
 ## Creating Complex Conditions
 
-`cdk-nag` exposes both a `SuppressionIgnoreAnd` class and a `SuppressionIgnoreOr` to help developers create more complicated conditions
+`cdk-nag` exposes both a `SuppressionIgnoreAnd` class and a `SuppressionIgnoreOr` to help developers create more complicated conditions.
 
 - `SuppressionIgnoreAnd`: Ignores the suppression if **ALL** of the given INagSuppressionIgnore return a non-empty message (logical and)
 - `SuppressionIgnoreOr`: Ignores the suppression if **ANY** of the given INagSuppressionIgnore return a non-empty message (logical or)
 
-Here is an example `SuppressionIgnoreAnd` that only allows suppressions when the reason contains the word `Arun` and the current year is before `2023`
+Here is an example `SuppressionIgnoreAnd` that only allows suppressions when the reason contains the word `Arun` and the current year is before `2023`.
 
 ```ts
 import { SuppressionIgnoreAnd } from 'cdk-nag';

@@ -29,13 +29,13 @@ export interface INagSuppressionIgnore {
 export class SuppressionIgnoreAnd implements INagSuppressionIgnore {
   private andSuppressionIgnores: INagSuppressionIgnore[];
 
-  constructor(...andSuppressionIgnores: INagSuppressionIgnore[]) {
-    if (andSuppressionIgnores.length === 0) {
+  constructor(...SuppressionIgnoreAnds: INagSuppressionIgnore[]) {
+    if (SuppressionIgnoreAnds.length === 0) {
       throw new Error(
-        'andSuppressionIgnores needs at least one NagSuppressionIgnore'
+        'SuppressionIgnoreAnd needs at least one INagSuppressionIgnore'
       );
     }
-    this.andSuppressionIgnores = andSuppressionIgnores;
+    this.andSuppressionIgnores = SuppressionIgnoreAnds;
   }
 
   createMessage(
@@ -60,15 +60,15 @@ export class SuppressionIgnoreAnd implements INagSuppressionIgnore {
  * Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message
  */
 export class SuppressionIgnoreOr implements INagSuppressionIgnore {
-  private orSuppressionIgnores: INagSuppressionIgnore[];
+  private SuppressionIgnoreOrs: INagSuppressionIgnore[];
 
   constructor(...orSuppressionIgnores: INagSuppressionIgnore[]) {
     if (orSuppressionIgnores.length === 0) {
       throw new Error(
-        'orSuppressionIgnores needs at least one NagSuppressionIgnore'
+        'SuppressionIgnoreOr needs at least one INagSuppressionIgnore'
       );
     }
-    this.orSuppressionIgnores = orSuppressionIgnores;
+    this.SuppressionIgnoreOrs = orSuppressionIgnores;
   }
 
   createMessage(
@@ -78,7 +78,7 @@ export class SuppressionIgnoreOr implements INagSuppressionIgnore {
     findingId: string
   ): string {
     let messages = [];
-    for (const i of this.orSuppressionIgnores) {
+    for (const i of this.SuppressionIgnoreOrs) {
       const m = i.createMessage(resource, reason, ruleId, findingId);
       if (m) {
         messages.push(m);
