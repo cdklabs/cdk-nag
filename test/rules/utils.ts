@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { NagRuleResult } from '../../src';
+import { INagSuppressionIgnore, NagRuleResult } from '../../src';
 import { NagMessageLevel, NagPack, NagPackProps } from '../../src/nag-pack';
 
 export enum TestType {
@@ -61,22 +61,30 @@ export function validateStack(stack: Stack, ruleId: String, type: TestType) {
 
 export class TestPack extends NagPack {
   readonly rules: ((node: CfnResource) => NagRuleResult)[];
+  readonly ignoreSuppressionCondition?: INagSuppressionIgnore;
+  readonly ruleSuffixOverride?: string;
   constructor(
     rules: ((node: CfnResource) => NagRuleResult)[],
+    ignoreSuppressionCondition?: INagSuppressionIgnore,
+    ruleSuffixOverride?: string,
     props?: NagPackProps
   ) {
     super(props);
     this.packName = 'Test';
     this.rules = rules;
+    this.ignoreSuppressionCondition = ignoreSuppressionCondition;
+    this.ruleSuffixOverride = ruleSuffixOverride;
   }
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
       this.rules.forEach((rule) => {
         this.applyRule({
+          ruleSuffixOverride: this.ruleSuffixOverride,
           info: 'foo.',
           explanation: 'bar.',
           level: NagMessageLevel.ERROR,
           rule: rule,
+          ignoreSuppressionCondition: this.ignoreSuppressionCondition,
           node: node,
         });
       });

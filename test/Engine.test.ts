@@ -2,16 +2,16 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils, stringLike } from '@aws-cdk/assert';
+import { stringLike, SynthUtils } from '@aws-cdk/assert';
 import '@aws-cdk/assert/jest';
 import {
+  App,
   Aspects,
   CfnParameter,
   CfnResource,
+  Names,
   NestedStack,
   Stack,
-  App,
-  Names,
   Token,
 } from 'aws-cdk-lib';
 import {
@@ -23,17 +23,22 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement, User } from 'aws-cdk-lib/aws-iam';
-import { CfnBucket, Bucket } from 'aws-cdk-lib/aws-s3';
+import { Bucket, CfnBucket } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
+import { TestPack } from './rules/utils';
 import {
-  NagSuppressions,
   AwsSolutionsChecks,
+  IApplyRule,
+  INagSuppressionIgnore,
   NagMessageLevel,
   NagPack,
   NagPackProps,
   NagRuleCompliance,
-  IApplyRule,
   NagRules,
+  NagSuppressions,
+  SuppressionIgnoreAlways,
+  SuppressionIgnoreAnd,
+  SuppressionIgnoreOr,
 } from '../src';
 
 describe('Rule suppression system', () => {
@@ -461,7 +466,7 @@ describe('Rule suppression system', () => {
       1
     );
   });
-  test('Test supressions with addResourceSuppressionsByPath function on a CfnResource based Construct', () => {
+  test('Test suppressions with addResourceSuppressionsByPath function on a CfnResource based Construct', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     const test = new SecurityGroup(stack, 'rSg', {
@@ -494,7 +499,7 @@ describe('Rule suppression system', () => {
       })
     );
   });
-  test('Test supressions with addResourceSuppressionsByPath on multiple resources', () => {
+  test('Test suppressions with addResourceSuppressionsByPath on multiple resources', () => {
     const stack = new Stack();
     const vpc = new Vpc(stack, 'rVpc');
     Aspects.of(stack).add(new AwsSolutionsChecks());
@@ -827,7 +832,7 @@ describe('Rule suppression system', () => {
       1
     );
   });
-  test('combined supressions with addResourceSuppressions and addStackSuppressions', () => {
+  test('combined suppressions with addResourceSuppressions and addStackSuppressions', () => {
     const stack = new Stack();
     Aspects.of(stack).add(new AwsSolutionsChecks());
     NagSuppressions.addStackSuppressions(stack, [
@@ -933,7 +938,6 @@ describe('Rule suppression system', () => {
       })
     );
   });
-
   test('Test path miss', () => {
     const stack = new Stack();
     try {
@@ -946,6 +950,288 @@ describe('Rule suppression system', () => {
         `Error: Suppression path "/No/Such/Path" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.`
       );
     }
+  });
+});
+
+describe('Rule Suppression Conditions', () => {
+  const IGNORE = new SuppressionIgnoreAlways('YES_IGNORED');
+  const NOT_IGNORE = new (class NeverIgnore implements INagSuppressionIgnore {
+    triggerMessage = 'NOT_IGNORED';
+    shouldIgnore(): boolean {
+      return false;
+    }
+  })();
+  test('Not ignored no suppression', () => {
+    const testPack = new TestPack(
+      [
+        function (_node: CfnResource): NagRuleCompliance {
+          return NagRuleCompliance.NON_COMPLIANT;
+        },
+      ],
+      NOT_IGNORE,
+      'Condition'
+    );
+    const stack = new Stack();
+    Aspects.of(stack).add(testPack);
+    new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('Test-Condition'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NOT_IGNORED'),
+        }),
+      })
+    );
+  });
+  test('Not ignored with suppression', () => {
+    const testPack = new TestPack(
+      [
+        function (_node: CfnResource): NagRuleCompliance {
+          return NagRuleCompliance.NON_COMPLIANT;
+        },
+      ],
+      NOT_IGNORE,
+      'Condition'
+    );
+    const stack = new Stack();
+    new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+    Aspects.of(stack).add(testPack);
+    NagSuppressions.addStackSuppressions(stack, [
+      {
+        id: 'Test-Condition',
+        reason: 'Everything is fine.',
+      },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('Test-Condition'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('NOT_IGNORED'),
+        }),
+      })
+    );
+  });
+  test('Ignored no suppression', () => {
+    const testPack = new TestPack(
+      [
+        function (_node: CfnResource): NagRuleCompliance {
+          return NagRuleCompliance.NON_COMPLIANT;
+        },
+      ],
+      IGNORE,
+      'Condition'
+    );
+    const stack = new Stack();
+    new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+    Aspects.of(stack).add(testPack);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('Test-Condition'),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('YES_IGNORED'),
+        }),
+      })
+    );
+  });
+  test('Ignored with suppression', () => {
+    const testPack = new TestPack(
+      [
+        function (_node: CfnResource): NagRuleCompliance {
+          return NagRuleCompliance.NON_COMPLIANT;
+        },
+      ],
+      IGNORE,
+      'Condition'
+    );
+    const stack = new Stack();
+    new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+    Aspects.of(stack).add(testPack);
+    NagSuppressions.addStackSuppressions(stack, [
+      {
+        id: 'Test-Condition',
+        reason: 'Everything is fine.',
+      },
+    ]);
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('Test-Condition'),
+        }),
+      })
+    );
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining('YES_IGNORED'),
+        }),
+      })
+    );
+  });
+  describe('IgnoreAnd', () => {
+    test('Should Ignore Suppression', () => {
+      const testPack = new TestPack(
+        [
+          function (_node: CfnResource): NagRuleCompliance {
+            return NagRuleCompliance.NON_COMPLIANT;
+          },
+        ],
+        new SuppressionIgnoreAnd(IGNORE, IGNORE),
+        'Condition'
+      );
+      const stack = new Stack();
+      new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+      Aspects.of(stack).add(testPack);
+      NagSuppressions.addStackSuppressions(stack, [
+        {
+          id: 'Test-Condition',
+          reason: 'Everything is fine.',
+        },
+      ]);
+      const messages = SynthUtils.synthesize(stack).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('Test-Condition'),
+          }),
+        })
+      );
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('\nAND\n'),
+          }),
+        })
+      );
+    });
+    test('Should Not Ignore Suppression', () => {
+      const testPack = new TestPack(
+        [
+          function (_node: CfnResource): NagRuleCompliance {
+            return NagRuleCompliance.NON_COMPLIANT;
+          },
+        ],
+        new SuppressionIgnoreAnd(IGNORE, NOT_IGNORE),
+        'Condition'
+      );
+      const stack = new Stack();
+      new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+      Aspects.of(stack).add(testPack);
+      NagSuppressions.addStackSuppressions(stack, [
+        {
+          id: 'Test-Condition',
+          reason: 'Everything is fine.',
+        },
+      ]);
+      const messages = SynthUtils.synthesize(stack).messages;
+      expect(messages).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('Test-Condition'),
+          }),
+        })
+      );
+      expect(messages).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('\nAND\n'),
+          }),
+        })
+      );
+    });
+  });
+  describe('IgnoreOr', () => {
+    test('Should Ignore Suppression', () => {
+      const testPack = new TestPack(
+        [
+          function (_node: CfnResource): NagRuleCompliance {
+            return NagRuleCompliance.NON_COMPLIANT;
+          },
+        ],
+        new SuppressionIgnoreOr(IGNORE, NOT_IGNORE),
+        'Condition'
+      );
+      const stack = new Stack();
+      new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+      Aspects.of(stack).add(testPack);
+      NagSuppressions.addStackSuppressions(stack, [
+        {
+          id: 'Test-Condition',
+          reason: 'Everything is fine.',
+        },
+      ]);
+      const messages = SynthUtils.synthesize(stack).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('Test-Condition'),
+          }),
+        })
+      );
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('\nOR\n'),
+          }),
+        })
+      );
+    });
+    test('Should Not Ignore Suppression', () => {
+      const testPack = new TestPack(
+        [
+          function (_node: CfnResource): NagRuleCompliance {
+            return NagRuleCompliance.NON_COMPLIANT;
+          },
+        ],
+        new SuppressionIgnoreOr(NOT_IGNORE, NOT_IGNORE),
+        'Condition'
+      );
+      const stack = new Stack();
+      new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
+      Aspects.of(stack).add(testPack);
+      NagSuppressions.addStackSuppressions(stack, [
+        {
+          id: 'Test-Condition',
+          reason: 'Everything is fine.',
+        },
+      ]);
+      const messages = SynthUtils.synthesize(stack).messages;
+      expect(messages).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('Test-Condition'),
+          }),
+        })
+      );
+      expect(messages).not.toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining('\nOR\n'),
+          }),
+        })
+      );
+    });
   });
 });
 
@@ -1106,7 +1392,7 @@ describe('Rule exception handling', () => {
 });
 
 describe('Report system', () => {
-  class TestPack extends NagPack {
+  class ReportPack extends NagPack {
     lines = new Array<string>();
     constructor(props?: NagPackProps) {
       super(props);
@@ -1162,7 +1448,7 @@ describe('Report system', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
     const stack2 = new Stack(app, 'Stack2');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
@@ -1174,7 +1460,7 @@ describe('Report system', () => {
   test('Reports are initialized for stacks with no relevant resources', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     new CfnResource(stack, 'rNAResource', {
       type: 'N/A',
@@ -1187,7 +1473,7 @@ describe('Report system', () => {
     const app = new App();
     const parent = new Stack(app, 'Parent');
     const nested = new NestedStack(parent, 'Child', {});
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     new Bucket(parent, 'rBucket');
     new Bucket(nested, 'rBucket');
@@ -1199,7 +1485,7 @@ describe('Report system', () => {
   test('Compliant and Non-Compliant values are written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     new CfnResource(stack, 'rResource', { type: 'foo' });
     app.synth();
@@ -1212,7 +1498,7 @@ describe('Report system', () => {
   test('Suppression values are written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
     NagSuppressions.addResourceSuppressions(resource, [
@@ -1231,7 +1517,7 @@ describe('Report system', () => {
   test('Suppression values are written properly when multibyte characters are used in reason', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
     NagSuppressions.addResourceSuppressions(resource, [
@@ -1250,7 +1536,7 @@ describe('Report system', () => {
   test('Error values are written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
     NagSuppressions.addResourceSuppressions(resource, [
@@ -1270,7 +1556,7 @@ describe('Report system', () => {
   test('Suppressed error values are escaped and written properly', () => {
     const app = new App();
     const stack = new Stack(app, 'Stack1');
-    const pack = new TestPack();
+    const pack = new ReportPack();
     Aspects.of(app).add(pack);
     const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
     NagSuppressions.addResourceSuppressions(resource, [

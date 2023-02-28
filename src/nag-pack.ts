@@ -4,10 +4,11 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { appendFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { IAspect, Annotations, CfnResource, App, Names } from 'aws-cdk-lib';
+import { Annotations, App, CfnResource, IAspect, Names } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
+import { INagSuppressionIgnore } from './ignore-suppression-conditions';
 import { NagPackSuppression } from './models/nag-suppression';
-import { NagRuleCompliance, NagRuleResult, NagRuleFindings } from './nag-rules';
+import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
@@ -54,7 +55,11 @@ export interface IApplyRule {
    */
   level: NagMessageLevel;
   /**
-   * Ignores listed in cdk-nag metadata.
+   * A condition in which a suppression should be ignored.
+   */
+  ignoreSuppressionCondition?: INagSuppressionIgnore;
+  /**
+   * The CfnResource to check
    */
   node: CfnResource;
   /**
@@ -114,7 +119,7 @@ export abstract class NagPack implements IAspect {
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
       );
     }
-    const allIgnores = NagSuppressionHelper.getSuppressions(params.node);
+    const allSuppressions = NagSuppressionHelper.getSuppressions(params.node);
     const ruleSuffix = params.ruleSuffixOverride
       ? params.ruleSuffixOverride
       : params.rule.name;
@@ -131,9 +136,11 @@ export abstract class NagPack implements IAspect {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
           const suppressionReason = this.ignoreRule(
-            allIgnores,
+            allSuppressions,
             ruleId,
-            findingId
+            findingId,
+            params.node,
+            params.ignoreSuppressionCondition
           );
 
           if (this.reports === true) {
@@ -171,7 +178,13 @@ export abstract class NagPack implements IAspect {
         }
       }
     } catch (error) {
-      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID, '');
+      const reason = this.ignoreRule(
+        allSuppressions,
+        VALIDATION_FAILURE_ID,
+        '',
+        params.node,
+        params.ignoreSuppressionCondition
+      );
       if (this.reports === true) {
         this.writeToStackComplianceReport(params, ruleId, 'UNKNOWN', reason);
       }
@@ -200,23 +213,39 @@ export abstract class NagPack implements IAspect {
 
   /**
    * Check whether a specific rule should be ignored.
-   * @param ignores The ignores listed in cdk-nag metadata.
+   * @param suppressions The suppressions listed in the cdk-nag metadata.
    * @param ruleId The id of the rule to ignore.
+   * @param resource The resource being evaluated.
    * @param findingId The id of the finding that is being checked.
    * @returns The reason the rule was ignored, or an empty string.
    */
   protected ignoreRule(
-    ignores: NagPackSuppression[],
+    suppressions: NagPackSuppression[],
     ruleId: string,
-    findingId: string
+    findingId: string,
+    resource: CfnResource,
+    ignoreSuppressionCondition?: INagSuppressionIgnore
   ): string {
-    for (let ignore of ignores) {
-      if (NagSuppressionHelper.doesApply(ignore, ruleId, findingId)) {
-        if (!ignore.appliesTo) {
-          // the rule is not granular so it always applies
-          return ignore.reason;
+    for (let suppression of suppressions) {
+      if (NagSuppressionHelper.doesApply(suppression, ruleId, findingId)) {
+        if (
+          ignoreSuppressionCondition?.shouldIgnore(
+            resource,
+            suppression.reason,
+            ruleId,
+            findingId
+          )
+        ) {
+          Annotations.of(resource).addInfo(
+            ignoreSuppressionCondition.triggerMessage
+          );
         } else {
-          return `[${findingId}] ${ignore.reason}`;
+          if (!suppression.appliesTo) {
+            // the rule is not granular so it always applies
+            return suppression.reason;
+          } else {
+            return `[${findingId}] ${suppression.reason}`;
+          }
         }
       }
     }

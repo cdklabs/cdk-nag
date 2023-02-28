@@ -12,6 +12,9 @@ Name|Description
 [NagRules](#cdk-nag-nagrules)|Helper class with methods for rule creation.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
+[SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways)|Always ignore the suppression.
+[SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore Suppression if it matches all of the given NagSuppression Ignores.
+[SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore Suppression if it matches at least one of the given NagSuppression Ignores.
 
 
 **Structs**
@@ -28,6 +31,7 @@ Name|Description
 Name|Description
 ----|-----------
 [IApplyRule](#cdk-nag-iapplyrule)|Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
+[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)|Interface for creating NagSuppression Ignores.
 
 
 **Enums**
@@ -302,17 +306,19 @@ protected createMessage(ruleId: string, findingId: string, info: string, explana
 __Returns__:
 * <code>string</code>
 
-#### protected ignoreRule(ignores, ruleId, findingId) <a id="cdk-nag-nagpack-ignorerule"></a>
+#### protected ignoreRule(suppressions, ruleId, findingId, resource, ignoreSuppressionCondition?) <a id="cdk-nag-nagpack-ignorerule"></a>
 
 Check whether a specific rule should be ignored.
 
 ```ts
-protected ignoreRule(ignores: Array<NagPackSuppression>, ruleId: string, findingId: string): string
+protected ignoreRule(suppressions: Array<NagPackSuppression>, ruleId: string, findingId: string, resource: CfnResource, ignoreSuppressionCondition?: INagSuppressionIgnore): string
 ```
 
-* **ignores** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The ignores listed in cdk-nag metadata.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The suppressions listed in the cdk-nag metadata.
 * **ruleId** (<code>string</code>)  The id of the rule to ignore.
 * **findingId** (<code>string</code>)  The id of the finding that is being checked.
+* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource being evaluated.
+* **ignoreSuppressionCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
 
 __Returns__:
 * <code>string</code>
@@ -506,6 +512,147 @@ visit(node: IConstruct): void
 
 
 
+## class SuppressionIgnoreAlways  <a id="cdk-nag-suppressionignorealways"></a>
+
+Always ignore the suppression.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreAlways(triggerMessage: string)
+```
+
+* **triggerMessage** (<code>string</code>)  *No description*
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
+
+### Methods
+
+
+#### shouldIgnore(_resource, _reason, _ruleId, _findingId) <a id="cdk-nag-suppressionignorealways-shouldignore"></a>
+
+Whether or not a suppression should be ignored.
+
+```ts
+shouldIgnore(_resource: CfnResource, _reason: string, _ruleId: string, _findingId: string): boolean
+```
+
+* **_resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
+* **_reason** (<code>string</code>)  *No description*
+* **_ruleId** (<code>string</code>)  *No description*
+* **_findingId** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>boolean</code>
+
+
+
+## class SuppressionIgnoreAnd  <a id="cdk-nag-suppressionignoreand"></a>
+
+Ignore Suppression if it matches all of the given NagSuppression Ignores.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreAnd(...andSuppressionIgnores: INagSuppressionIgnore[])
+```
+
+* **andSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
+
+### Methods
+
+
+#### shouldIgnore(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreand-shouldignore"></a>
+
+Whether or not a suppression should be ignored.
+
+```ts
+shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: string): boolean
+```
+
+* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
+* **reason** (<code>string</code>)  *No description*
+* **ruleId** (<code>string</code>)  *No description*
+* **findingId** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>boolean</code>
+
+
+
+## class SuppressionIgnoreOr  <a id="cdk-nag-suppressionignoreor"></a>
+
+Ignore Suppression if it matches at least one of the given NagSuppression Ignores.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreOr(...orSuppressionIgnores: INagSuppressionIgnore[])
+```
+
+* **orSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
+
+### Methods
+
+
+#### shouldIgnore(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreor-shouldignore"></a>
+
+Whether or not a suppression should be ignored.
+
+```ts
+shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: string): boolean
+```
+
+* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
+* **reason** (<code>string</code>)  *No description*
+* **ruleId** (<code>string</code>)  *No description*
+* **findingId** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>boolean</code>
+
+
+
 ## interface IApplyRule  <a id="cdk-nag-iapplyrule"></a>
 
 
@@ -519,7 +666,8 @@ Name | Type | Description
 **explanation** | <code>string</code> | Why the rule exists.
 **info** | <code>string</code> | Why the rule was triggered.
 **level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
-**node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | Ignores listed in cdk-nag metadata.
+**node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | The CfnResource to check.
+**ignoreSuppressionCondition**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | A condition in which a suppression should be ignored.<br/>__*Optional*__
 **ruleSuffixOverride**? | <code>string</code> | Override for the suffix of the Rule ID for this rule.<br/>__*Optional*__
 
 ### Methods
@@ -537,6 +685,40 @@ rule(node: CfnResource): NagRuleCompliance &#124; Array<string>
 
 __Returns__:
 * <code>[NagRuleCompliance](#cdk-nag-nagrulecompliance) &#124; Array<string></code>
+
+
+
+## interface INagSuppressionIgnore  <a id="cdk-nag-inagsuppressionignore"></a>
+
+__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
+
+Interface for creating NagSuppression Ignores.
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
+
+### Methods
+
+
+#### shouldIgnore(resource, reason, ruleId, findingId) <a id="cdk-nag-inagsuppressionignore-shouldignore"></a>
+
+Whether or not a suppression should be ignored.
+
+```ts
+shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: string): boolean
+```
+
+* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource the suppression is applied to.
+* **reason** (<code>string</code>)  The reason given for the suppression.
+* **ruleId** (<code>string</code>)  The id of the rule to ignore.
+* **findingId** (<code>string</code>)  The id of the finding that is being checked.
+
+__Returns__:
+* <code>boolean</code>
 
 
 

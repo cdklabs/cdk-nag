@@ -94,6 +94,49 @@ export class ExampleChecks extends NagPack {
 }
 ```
 
+### Ignoring Suppressions
+
+You can optionally add a prebuilt or custom condition that prevents a rule from being suppressed. Below is an example of a condition that always prevents suppressions.
+The documentation on [rules](./IgnoreSuppressionConditions.md) walks through the process of creating your own conditions.
+
+```typescript
+import { CfnResource } from 'aws-cdk-lib';
+import { IConstruct } from 'constructs';
+import {
+  NagMessageLevel,
+  NagPack,
+  NagPackProps,
+  NagRuleCompliance,
+  NagRuleResult,
+  NagRules,
+  SuppressionIgnoreAlways,
+  rules,
+} from 'cdk-nag';
+
+const ALWAYS_IGNORE = new SuppressionIgnoreAlways(
+  'Here is a reason for ignoring the suppression.'
+);
+
+export class ExampleChecks extends NagPack {
+  constructor(props?: NagPackProps) {
+    super(props);
+    this.packName = 'Example';
+  }
+  public visit(node: IConstruct): void {
+    if (node instanceof CfnResource) {
+      this.applyRule({
+        info: 'My brief info.',
+        explanation: 'My detailed explanation.',
+        level: NagMessageLevel.ERROR,
+        rule: rules.s3.S3BucketSSLRequestsOnly,
+        ignoreSuppressionCondition: ALWAYS_IGNORE,
+        node: node,
+      });
+    }
+  }
+}
+```
+
 ## Using a NagPack
 
 You can apply as many `NagPacks` to a CDK Stack or Application via Aspects
