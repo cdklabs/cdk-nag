@@ -13,8 +13,8 @@ Name|Description
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways)|Always ignore the suppression.
-[SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore Suppression if it matches all of the given NagSuppression Ignores.
-[SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore Suppression if it matches at least one of the given NagSuppression Ignores.
+[SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
+[SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
 
 
 **Structs**
@@ -553,7 +553,7 @@ __Returns__:
 
 ## class SuppressionIgnoreAnd  <a id="cdk-nag-suppressionignoreand"></a>
 
-Ignore Suppression if it matches all of the given NagSuppression Ignores.
+Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
 
 __Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
 
@@ -592,7 +592,7 @@ __Returns__:
 
 ## class SuppressionIgnoreOr  <a id="cdk-nag-suppressionignoreor"></a>
 
-Ignore Suppression if it matches at least one of the given NagSuppression Ignores.
+Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
 
 __Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
 
