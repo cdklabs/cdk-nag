@@ -530,23 +530,15 @@ new SuppressionIgnoreAlways(triggerMessage: string)
 * **triggerMessage** (<code>string</code>)  *No description*
 
 
-
-### Properties
-
-
-Name | Type | Description 
------|------|-------------
-**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
-
 ### Methods
 
 
-#### shouldIgnore(_resource, _reason, _ruleId, _findingId) <a id="cdk-nag-suppressionignorealways-shouldignore"></a>
+#### createMessage(_resource, _reason, _ruleId, _findingId) <a id="cdk-nag-suppressionignorealways-createmessage"></a>
 
-Whether or not a suppression should be ignored.
+Create a message to ignore a suppression or an empty string to allow a suppression.
 
 ```ts
-shouldIgnore(_resource: CfnResource, _reason: string, _ruleId: string, _findingId: string): boolean
+createMessage(_resource: CfnResource, _reason: string, _ruleId: string, _findingId: string): string
 ```
 
 * **_resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
@@ -555,7 +547,7 @@ shouldIgnore(_resource: CfnResource, _reason: string, _ruleId: string, _findingI
 * **_findingId** (<code>string</code>)  *No description*
 
 __Returns__:
-* <code>boolean</code>
+* <code>string</code>
 
 
 
@@ -577,23 +569,15 @@ new SuppressionIgnoreAnd(...andSuppressionIgnores: INagSuppressionIgnore[])
 * **andSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
 
 
-
-### Properties
-
-
-Name | Type | Description 
------|------|-------------
-**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
-
 ### Methods
 
 
-#### shouldIgnore(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreand-shouldignore"></a>
+#### createMessage(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreand-createmessage"></a>
 
-Whether or not a suppression should be ignored.
+Create a message to ignore a suppression or an empty string to allow a suppression.
 
 ```ts
-shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: string): boolean
+createMessage(resource: CfnResource, reason: string, ruleId: string, findingId: string): string
 ```
 
 * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
@@ -602,7 +586,7 @@ shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: s
 * **findingId** (<code>string</code>)  *No description*
 
 __Returns__:
-* <code>boolean</code>
+* <code>string</code>
 
 
 
@@ -624,23 +608,15 @@ new SuppressionIgnoreOr(...orSuppressionIgnores: INagSuppressionIgnore[])
 * **orSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
 
 
-
-### Properties
-
-
-Name | Type | Description 
------|------|-------------
-**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
-
 ### Methods
 
 
-#### shouldIgnore(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreor-shouldignore"></a>
+#### createMessage(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreor-createmessage"></a>
 
-Whether or not a suppression should be ignored.
+Create a message to ignore a suppression or an empty string to allow a suppression.
 
 ```ts
-shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: string): boolean
+createMessage(resource: CfnResource, reason: string, ruleId: string, findingId: string): string
 ```
 
 * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
@@ -649,7 +625,7 @@ shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: s
 * **findingId** (<code>string</code>)  *No description*
 
 __Returns__:
-* <code>boolean</code>
+* <code>string</code>
 
 
 
@@ -693,23 +669,15 @@ __Returns__:
 __Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
 
 Interface for creating NagSuppression Ignores.
-
-### Properties
-
-
-Name | Type | Description 
------|------|-------------
-**triggerMessage** | <code>string</code> | The informational message when a suppression is ignored.
-
 ### Methods
 
 
-#### shouldIgnore(resource, reason, ruleId, findingId) <a id="cdk-nag-inagsuppressionignore-shouldignore"></a>
+#### createMessage(resource, reason, ruleId, findingId) <a id="cdk-nag-inagsuppressionignore-createmessage"></a>
 
-Whether or not a suppression should be ignored.
+Create a message to ignore a suppression or an empty string to allow a suppression.
 
 ```ts
-shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: string): boolean
+createMessage(resource: CfnResource, reason: string, ruleId: string, findingId: string): string
 ```
 
 * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource the suppression is applied to.
@@ -718,7 +686,7 @@ shouldIgnore(resource: CfnResource, reason: string, ruleId: string, findingId: s
 * **findingId** (<code>string</code>)  The id of the finding that is being checked.
 
 __Returns__:
-* <code>boolean</code>
+* <code>string</code>
 
 
 

@@ -954,11 +954,10 @@ describe('Rule suppression system', () => {
 });
 
 describe('Rule Suppression Conditions', () => {
-  const IGNORE = new SuppressionIgnoreAlways('YES_IGNORED');
+  const IGNORE = new SuppressionIgnoreAlways('IGNORED.');
   const NOT_IGNORE = new (class NeverIgnore implements INagSuppressionIgnore {
-    triggerMessage = 'NOT_IGNORED';
-    shouldIgnore(): boolean {
-      return false;
+    createMessage(): string {
+      return '';
     }
   })();
   test('Not ignored no suppression', () => {
@@ -985,7 +984,9 @@ describe('Rule Suppression Conditions', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NOT_IGNORED'),
+          data: expect.stringContaining(
+            'was ignored for the following reason(s)'
+          ),
         }),
       })
     );
@@ -1020,7 +1021,9 @@ describe('Rule Suppression Conditions', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('NOT_IGNORED'),
+          data: expect.stringContaining(
+            'was ignored for the following reason(s)'
+          ),
         }),
       })
     );
@@ -1049,7 +1052,9 @@ describe('Rule Suppression Conditions', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('YES_IGNORED'),
+          data: expect.stringContaining(
+            'was ignored for the following reason(s)'
+          ),
         }),
       })
     );
@@ -1084,7 +1089,9 @@ describe('Rule Suppression Conditions', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('YES_IGNORED'),
+          data: expect.stringContaining(
+            'was ignored for the following reason(s)'
+          ),
         }),
       })
     );
@@ -1120,7 +1127,7 @@ describe('Rule Suppression Conditions', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('\nAND\n'),
+            data: expect.stringContaining('IGNORED.\n\tIGNORED.'),
           }),
         })
       );
@@ -1155,7 +1162,7 @@ describe('Rule Suppression Conditions', () => {
       expect(messages).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('\nAND\n'),
+            data: expect.stringContaining('IGNORED.'),
           }),
         })
       );
@@ -1192,7 +1199,7 @@ describe('Rule Suppression Conditions', () => {
       expect(messages).toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('\nOR\n'),
+            data: expect.stringContaining('IGNORED.'),
           }),
         })
       );
@@ -1227,7 +1234,9 @@ describe('Rule Suppression Conditions', () => {
       expect(messages).not.toContainEqual(
         expect.objectContaining({
           entry: expect.objectContaining({
-            data: expect.stringContaining('\nOR\n'),
+            data: expect.stringContaining(
+              'was ignored for the following reason(s)'
+            ),
           }),
         })
       );

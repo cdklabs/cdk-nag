@@ -2,7 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-
 import { CfnResource } from 'aws-cdk-lib';
 
 /**
@@ -10,30 +9,24 @@ import { CfnResource } from 'aws-cdk-lib';
  */
 export interface INagSuppressionIgnore {
   /**
-   * The informational message when a suppression is ignored
-   */
-  readonly triggerMessage: string;
-
-  /**
-   * Whether or not a suppression should be ignored
+   * Create a message to ignore a suppression or an empty string to allow a suppression.
    * @param resource The resource the suppression is applied to.
    * @param reason The reason given for the suppression.
    * @param ruleId The id of the rule to ignore.
    * @param findingId The id of the finding that is being checked.
    */
-  shouldIgnore(
+  createMessage(
     resource: CfnResource,
     reason: string,
     ruleId: string,
     findingId: string
-  ): boolean;
+  ): string;
 }
 
 /**
- * Ignore Suppression if it matches all of the given NagSuppression Ignores
+ * Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message
  */
 export class SuppressionIgnoreAnd implements INagSuppressionIgnore {
-  readonly triggerMessage: string;
   private andSuppressionIgnores: INagSuppressionIgnore[];
 
   constructor(...andSuppressionIgnores: INagSuppressionIgnore[]) {
@@ -43,31 +36,30 @@ export class SuppressionIgnoreAnd implements INagSuppressionIgnore {
       );
     }
     this.andSuppressionIgnores = andSuppressionIgnores;
-    this.triggerMessage = this.andSuppressionIgnores
-      .map((i) => i.triggerMessage)
-      .join('\nAND\n');
   }
 
-  shouldIgnore(
+  createMessage(
     resource: CfnResource,
     reason: string,
     ruleId: string,
     findingId: string
-  ): boolean {
+  ): string {
+    let messages = [];
     for (const i of this.andSuppressionIgnores) {
-      if (!i.shouldIgnore(resource, reason, ruleId, findingId)) {
-        return false;
+      const m = i.createMessage(resource, reason, ruleId, findingId);
+      messages.push(m);
+      if (!m) {
+        return '';
       }
     }
-    return true;
+    return messages.join('\n\t');
   }
 }
 
 /**
- * Ignore Suppression if it matches at least one of the given NagSuppression Ignores
+ * Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message
  */
 export class SuppressionIgnoreOr implements INagSuppressionIgnore {
-  readonly triggerMessage: string;
   private orSuppressionIgnores: INagSuppressionIgnore[];
 
   constructor(...orSuppressionIgnores: INagSuppressionIgnore[]) {
@@ -77,23 +69,22 @@ export class SuppressionIgnoreOr implements INagSuppressionIgnore {
       );
     }
     this.orSuppressionIgnores = orSuppressionIgnores;
-    this.triggerMessage = this.orSuppressionIgnores
-      .map((i) => i.triggerMessage)
-      .join('\nOR\n');
   }
 
-  shouldIgnore(
+  createMessage(
     resource: CfnResource,
     reason: string,
     ruleId: string,
     findingId: string
-  ): boolean {
+  ): string {
+    let messages = [];
     for (const i of this.orSuppressionIgnores) {
-      if (i.shouldIgnore(resource, reason, ruleId, findingId)) {
-        return true;
+      const m = i.createMessage(resource, reason, ruleId, findingId);
+      if (m) {
+        messages.push(m);
       }
     }
-    return false;
+    return messages ? messages.join('\n\t') : '';
   }
 }
 
@@ -101,19 +92,21 @@ export class SuppressionIgnoreOr implements INagSuppressionIgnore {
  * Always ignore the suppression
  */
 export class SuppressionIgnoreAlways implements INagSuppressionIgnore {
-  readonly triggerMessage: string;
+  private triggerMessage: string;
   constructor(triggerMessage: string) {
     if (triggerMessage.length === 0) {
-      throw new Error('provide a triggerMessage for the AlwaysIgnore');
+      throw new Error(
+        'provide a triggerMessage for the SuppressionIgnoreAlways'
+      );
     }
     this.triggerMessage = triggerMessage;
   }
-  shouldIgnore(
+  createMessage(
     _resource: CfnResource,
     _reason: string,
     _ruleId: string,
     _findingId: string
-  ): boolean {
-    return true;
+  ): string {
+    return this.triggerMessage;
   }
 }

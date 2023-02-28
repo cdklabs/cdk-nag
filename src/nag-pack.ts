@@ -228,16 +228,16 @@ export abstract class NagPack implements IAspect {
   ): string {
     for (let suppression of suppressions) {
       if (NagSuppressionHelper.doesApply(suppression, ruleId, findingId)) {
-        if (
-          ignoreSuppressionCondition?.shouldIgnore(
-            resource,
-            suppression.reason,
-            ruleId,
-            findingId
-          )
-        ) {
+        const ignoreMessage = ignoreSuppressionCondition?.createMessage(
+          resource,
+          suppression.reason,
+          ruleId,
+          findingId
+        );
+        if (ignoreMessage) {
+          let id = findingId ? `${ruleId}[${findingId}]` : `${ruleId}`;
           Annotations.of(resource).addInfo(
-            ignoreSuppressionCondition.triggerMessage
+            `The suppression for ${id} was ignored for the following reason(s).\n\t${ignoreMessage}`
           );
         } else {
           if (!suppression.appliesTo) {
