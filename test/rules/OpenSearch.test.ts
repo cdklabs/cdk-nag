@@ -49,7 +49,8 @@ const testPack = new TestPack([
 let stack: Stack;
 
 beforeEach(() => {
-  stack = new Stack();
+  const topStack = new Stack(undefined, 'Resource');
+  stack = new Stack(topStack, 'Resource');
   Aspects.of(stack).add(testPack);
 });
 
@@ -204,6 +205,25 @@ describe('Amazon OpenSearch Service', () => {
             conditions: {
               IpAddress: {
                 'aws:sourceIp': [new Vpc(stack, 'vpc').vpcCidrBlock],
+              },
+            },
+          }),
+        ],
+      });
+      new Domain(stack, 'Resource', {
+        version: EngineVersion.OPENSEARCH_1_0,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role6', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            resources: ['*'],
+            conditions: {
+              IpAddress: {
+                'aws:sourceIp': ['42.42.42.42'],
               },
             },
           }),
@@ -517,7 +537,26 @@ describe('Amazon OpenSearch Service', () => {
           }),
         ],
       });
-
+      new Domain(stack, 'Resource', {
+        version: EngineVersion.ELASTICSEARCH_7_10,
+        accessPolicies: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [
+              new Role(stack, 'Role5', {
+                assumedBy: new AccountRootPrincipal(),
+              }),
+            ],
+            actions: ['es:ESHttpPost', 'es:ESHttpPut', 'es:ESHttpGet'],
+            resources: ['*'],
+            conditions: {
+              IpAddress: {
+                'aws:sourceIp': ['42.42.42.42'],
+              },
+            },
+          }),
+        ],
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
