@@ -38,7 +38,7 @@ export default Object.defineProperty(
     }
     function getPolicyFromCR(): any {
       const crPath =
-        node.node.path.split('/Resource')[0] +
+        node.node.path.split('/Resource').slice(0, -1).join('/Resource') +
         (node instanceof CfnDomain ? '/AccessPolicy' : '/ESAccessPolicy') +
         '/Resource/Default';
       const cr = Stack.of(node)
