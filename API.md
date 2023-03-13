@@ -25,7 +25,7 @@ Name|Description
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule pack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
 [RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
-[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)|Create a message to ignore a suppression or an empty string to allow a suppression.
+[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)|Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
 
 
 **Interfaces**
@@ -787,7 +787,7 @@ Name | Type | Description
 ## struct SuppressionIgnoreInput  <a id="cdk-nag-suppressionignoreinput"></a>
 
 
-Create a message to ignore a suppression or an empty string to allow a suppression.
+Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
 
 
 
