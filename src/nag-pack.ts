@@ -70,7 +70,7 @@ export interface IApplyRule {
 }
 
 /**
- * The level of the message that the rule applies.
+ * The severity level of the rule.
  */
 export enum NagMessageLevel {
   WARN = 'Warning',
@@ -140,6 +140,7 @@ export abstract class NagPack implements IAspect {
             ruleId,
             findingId,
             params.node,
+            params.level,
             params.ignoreSuppressionCondition
           );
 
@@ -183,6 +184,7 @@ export abstract class NagPack implements IAspect {
         VALIDATION_FAILURE_ID,
         '',
         params.node,
+        params.level,
         params.ignoreSuppressionCondition
       );
       if (this.reports === true) {
@@ -224,16 +226,18 @@ export abstract class NagPack implements IAspect {
     ruleId: string,
     findingId: string,
     resource: CfnResource,
+    level: NagMessageLevel,
     ignoreSuppressionCondition?: INagSuppressionIgnore
   ): string {
     for (let suppression of suppressions) {
       if (NagSuppressionHelper.doesApply(suppression, ruleId, findingId)) {
-        const ignoreMessage = ignoreSuppressionCondition?.createMessage(
+        const ignoreMessage = ignoreSuppressionCondition?.createMessage({
           resource,
-          suppression.reason,
+          reason: suppression.reason,
           ruleId,
-          findingId
-        );
+          findingId,
+          ruleLevel: level,
+        });
         if (ignoreMessage) {
           let id = findingId ? `${ruleId}[${findingId}]` : `${ruleId}`;
           Annotations.of(resource).addInfo(

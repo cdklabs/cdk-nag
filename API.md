@@ -14,6 +14,7 @@ Name|Description
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways)|Always ignore the suppression.
 [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
+[SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors)|Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
 [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
 
 
@@ -24,6 +25,7 @@ Name|Description
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule pack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
 [RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
+[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)|Create a message to ignore a suppression or an empty string to allow a suppression.
 
 
 **Interfaces**
@@ -38,7 +40,7 @@ Name|Description
 
 Name|Description
 ----|-----------
-[NagMessageLevel](#cdk-nag-nagmessagelevel)|The level of the message that the rule applies.
+[NagMessageLevel](#cdk-nag-nagmessagelevel)|The severity level of the rule.
 [NagRuleCompliance](#cdk-nag-nagrulecompliance)|The compliance level of a resource in relation to a rule.
 
 
@@ -306,18 +308,19 @@ protected createMessage(ruleId: string, findingId: string, info: string, explana
 __Returns__:
 * <code>string</code>
 
-#### protected ignoreRule(suppressions, ruleId, findingId, resource, ignoreSuppressionCondition?) <a id="cdk-nag-nagpack-ignorerule"></a>
+#### protected ignoreRule(suppressions, ruleId, findingId, resource, level, ignoreSuppressionCondition?) <a id="cdk-nag-nagpack-ignorerule"></a>
 
 Check whether a specific rule should be ignored.
 
 ```ts
-protected ignoreRule(suppressions: Array<NagPackSuppression>, ruleId: string, findingId: string, resource: CfnResource, ignoreSuppressionCondition?: INagSuppressionIgnore): string
+protected ignoreRule(suppressions: Array<NagPackSuppression>, ruleId: string, findingId: string, resource: CfnResource, level: NagMessageLevel, ignoreSuppressionCondition?: INagSuppressionIgnore): string
 ```
 
 * **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The suppressions listed in the cdk-nag metadata.
 * **ruleId** (<code>string</code>)  The id of the rule to ignore.
 * **findingId** (<code>string</code>)  The id of the finding that is being checked.
 * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource being evaluated.
+* **level** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description*
 * **ignoreSuppressionCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
 
 __Returns__:
@@ -533,18 +536,20 @@ new SuppressionIgnoreAlways(triggerMessage: string)
 ### Methods
 
 
-#### createMessage(_resource, _reason, _ruleId, _findingId) <a id="cdk-nag-suppressionignorealways-createmessage"></a>
+#### createMessage(_input) <a id="cdk-nag-suppressionignorealways-createmessage"></a>
 
-Create a message to ignore a suppression or an empty string to allow a suppression.
+
 
 ```ts
-createMessage(_resource: CfnResource, _reason: string, _ruleId: string, _findingId: string): string
+createMessage(_input: SuppressionIgnoreInput): string
 ```
 
-* **_resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
-* **_reason** (<code>string</code>)  *No description*
-* **_ruleId** (<code>string</code>)  *No description*
-* **_findingId** (<code>string</code>)  *No description*
+* **_input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
 
 __Returns__:
 * <code>string</code>
@@ -572,18 +577,60 @@ new SuppressionIgnoreAnd(...SuppressionIgnoreAnds: INagSuppressionIgnore[])
 ### Methods
 
 
-#### createMessage(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreand-createmessage"></a>
+#### createMessage(input) <a id="cdk-nag-suppressionignoreand-createmessage"></a>
 
-Create a message to ignore a suppression or an empty string to allow a suppression.
+
 
 ```ts
-createMessage(resource: CfnResource, reason: string, ruleId: string, findingId: string): string
+createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
-* **reason** (<code>string</code>)  *No description*
-* **ruleId** (<code>string</code>)  *No description*
-* **findingId** (<code>string</code>)  *No description*
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
+## class SuppressionIgnoreErrors  <a id="cdk-nag-suppressionignoreerrors"></a>
+
+Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreErrors()
+```
+
+
+
+### Methods
+
+
+#### createMessage(input) <a id="cdk-nag-suppressionignoreerrors-createmessage"></a>
+
+
+
+```ts
+createMessage(input: SuppressionIgnoreInput): string
+```
+
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
 
 __Returns__:
 * <code>string</code>
@@ -611,18 +658,20 @@ new SuppressionIgnoreOr(...orSuppressionIgnores: INagSuppressionIgnore[])
 ### Methods
 
 
-#### createMessage(resource, reason, ruleId, findingId) <a id="cdk-nag-suppressionignoreor-createmessage"></a>
+#### createMessage(input) <a id="cdk-nag-suppressionignoreor-createmessage"></a>
 
-Create a message to ignore a suppression or an empty string to allow a suppression.
+
 
 ```ts
-createMessage(resource: CfnResource, reason: string, ruleId: string, findingId: string): string
+createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description*
-* **reason** (<code>string</code>)  *No description*
-* **ruleId** (<code>string</code>)  *No description*
-* **findingId** (<code>string</code>)  *No description*
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
 
 __Returns__:
 * <code>string</code>
@@ -666,24 +715,26 @@ __Returns__:
 
 ## interface INagSuppressionIgnore  <a id="cdk-nag-inagsuppressionignore"></a>
 
-__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
+__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
 
 Interface for creating NagSuppression Ignores.
 ### Methods
 
 
-#### createMessage(resource, reason, ruleId, findingId) <a id="cdk-nag-inagsuppressionignore-createmessage"></a>
+#### createMessage(input) <a id="cdk-nag-inagsuppressionignore-createmessage"></a>
 
-Create a message to ignore a suppression or an empty string to allow a suppression.
+
 
 ```ts
-createMessage(resource: CfnResource, reason: string, ruleId: string, findingId: string): string
+createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource the suppression is applied to.
-* **reason** (<code>string</code>)  The reason given for the suppression.
-* **ruleId** (<code>string</code>)  The id of the rule to ignore.
-* **findingId** (<code>string</code>)  The id of the finding that is being checked.
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
 
 __Returns__:
 * <code>string</code>
@@ -733,9 +784,26 @@ Name | Type | Description
 
 
 
+## struct SuppressionIgnoreInput  <a id="cdk-nag-suppressionignoreinput"></a>
+
+
+Create a message to ignore a suppression or an empty string to allow a suppression.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**findingId** | <code>string</code> | <span></span>
+**reason** | <code>string</code> | <span></span>
+**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
+**ruleId** | <code>string</code> | <span></span>
+**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+
+
+
 ## enum NagMessageLevel  <a id="cdk-nag-nagmessagelevel"></a>
 
-The level of the message that the rule applies.
+The severity level of the rule.
 
 Name | Description
 -----|-----

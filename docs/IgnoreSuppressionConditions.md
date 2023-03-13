@@ -14,15 +14,10 @@ Conditions implement the `INagSuppressionIgnore` interface. They return a messag
 Here is an example of a re-usable condition class that ignores a suppression if the suppression reason doesn't contain the word `Arun`
 
 ```ts
-import { INagSuppressionIgnore } from 'cdk-nag';
+import { INagSuppressionIgnore, SuppressionIgnoreInput } from 'cdk-nag';
 class ArunCondition implements INagSuppressionIgnore {
-  createMessage(
-    _resource: CfnResource,
-    reason: string,
-    _ruleId: string,
-    _findingId: string
-  ) {
-    if (!reason.includes('Arun')) {
+  createMessage(input: SuppressionIgnoreInput) {
+    if (!input.reason.includes('Arun')) {
       return 'Only Arun can suppress errors!';
     }
     return '';
@@ -34,13 +29,10 @@ You could also create the same condition without a class and by just implementin
 
 ```ts
 ({
-  createMessage(
-    _resource: CfnResource,
-    reason: string,
-    _ruleId: string,
-    _findingId: string
-  ) {
-    return !reason.includes('Arun') ? 'Only Arun can suppress errors!' : '';
+  createMessage(input: SuppressionIgnoreInput) {
+    return !input.reason.includes('Arun')
+      ? 'Only Arun can suppress errors!'
+      : '';
   },
 });
 ```
@@ -55,6 +47,7 @@ import {
   NagPack,
   NagPackProps,
   NagSuppressions,
+  SuppressionIgnoreInput,
   rules,
 } from 'cdk-nag';
 import { IConstruct } from 'constructs';
@@ -72,13 +65,8 @@ export class ExampleChecks extends NagPack {
         level: NagMessageLevel.ERROR,
         rule: rules.s3.S3BucketSSLRequestsOnly,
         ignoreSuppressionCondition: {
-          createMessage(
-            _resource: CfnResource,
-            reason: string,
-            _ruleId: string,
-            _findingId: string
-          ) {
-            return !reason.includes('Arun')
+          createMessage(input: SuppressionIgnoreInput) {
+            return !input.reason.includes('Arun')
               ? 'Only Arun can suppress errors!'
               : '';
           },
@@ -108,28 +96,18 @@ A user would see the following output when attempting to synthesize an applicati
 Here is an example `SuppressionIgnoreAnd` that ignores a suppression if both a 'ticket' CloudFormation metadata entry does not exist on the resource and the current year is after 2022.
 
 ```ts
-import { SuppressionIgnoreAnd } from 'cdk-nag';
+import { SuppressionIgnoreAnd, SuppressionIgnoreInput } from 'cdk-nag';
 
 new SuppressionIgnoreAnd(
   {
-    createMessage(
-      resource: CfnResource,
-      _reason: string,
-      _ruleId: string,
-      _findingId: string
-    ) {
-      return !resource.getMetadata('ticket')
+    createMessage(input: SuppressionIgnoreInput) {
+      return !input.resource.getMetadata('ticket')
         ? 'Must provide a ticket for an exception!'
         : '';
     },
   },
   {
-    createMessage(
-      _resource: CfnResource,
-      _reason: string,
-      _ruleId: string,
-      _findingId: string
-    ) {
+    createMessage(_input: SuppressionIgnoreInput) {
       return Date.now() > Date.parse('31 Dec 2022 23:59 UTC')
         ? 'Suppressions are only allowed before the year 2023'
         : '';

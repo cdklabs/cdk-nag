@@ -63,10 +63,12 @@ export class TestPack extends NagPack {
   readonly rules: ((node: CfnResource) => NagRuleResult)[];
   readonly ignoreSuppressionCondition?: INagSuppressionIgnore;
   readonly ruleSuffixOverride?: string;
+  readonly level?: NagMessageLevel;
   constructor(
     rules: ((node: CfnResource) => NagRuleResult)[],
     ignoreSuppressionCondition?: INagSuppressionIgnore,
     ruleSuffixOverride?: string,
+    level?: NagMessageLevel,
     props?: NagPackProps
   ) {
     super(props);
@@ -74,6 +76,7 @@ export class TestPack extends NagPack {
     this.rules = rules;
     this.ignoreSuppressionCondition = ignoreSuppressionCondition;
     this.ruleSuffixOverride = ruleSuffixOverride;
+    this.level = level;
   }
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
@@ -82,7 +85,7 @@ export class TestPack extends NagPack {
           ruleSuffixOverride: this.ruleSuffixOverride,
           info: 'foo.',
           explanation: 'bar.',
-          level: NagMessageLevel.ERROR,
+          level: this.level ?? NagMessageLevel.ERROR,
           rule: rule,
           ignoreSuppressionCondition: this.ignoreSuppressionCondition,
           node: node,

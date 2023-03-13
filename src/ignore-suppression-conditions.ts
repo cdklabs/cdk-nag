@@ -3,24 +3,29 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource } from 'aws-cdk-lib';
+import { NagMessageLevel } from './nag-pack';
+
+/**
+ * Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore
+ * @param resource The resource the suppression is applied to.
+ * @param reason The reason given for the suppression.
+ * @param ruleId The id of the rule to ignore.
+ * @param findingId The id of the finding that is being checked.
+ * @param ruleLevel The severity level of the rule.
+ */
+export interface SuppressionIgnoreInput {
+  readonly resource: CfnResource;
+  readonly reason: string;
+  readonly ruleId: string;
+  readonly findingId: string;
+  readonly ruleLevel: NagMessageLevel;
+}
 
 /**
  * Interface for creating NagSuppression Ignores
  */
 export interface INagSuppressionIgnore {
-  /**
-   * Create a message to ignore a suppression or an empty string to allow a suppression.
-   * @param resource The resource the suppression is applied to.
-   * @param reason The reason given for the suppression.
-   * @param ruleId The id of the rule to ignore.
-   * @param findingId The id of the finding that is being checked.
-   */
-  createMessage(
-    resource: CfnResource,
-    reason: string,
-    ruleId: string,
-    findingId: string
-  ): string;
+  createMessage(input: SuppressionIgnoreInput): string;
 }
 
 /**
@@ -38,15 +43,10 @@ export class SuppressionIgnoreAnd implements INagSuppressionIgnore {
     this.andSuppressionIgnores = SuppressionIgnoreAnds;
   }
 
-  createMessage(
-    resource: CfnResource,
-    reason: string,
-    ruleId: string,
-    findingId: string
-  ): string {
+  createMessage(input: SuppressionIgnoreInput): string {
     let messages = [];
     for (const i of this.andSuppressionIgnores) {
-      const m = i.createMessage(resource, reason, ruleId, findingId);
+      const m = i.createMessage(input);
       messages.push(m);
       if (!m) {
         return '';
@@ -71,15 +71,10 @@ export class SuppressionIgnoreOr implements INagSuppressionIgnore {
     this.SuppressionIgnoreOrs = orSuppressionIgnores;
   }
 
-  createMessage(
-    resource: CfnResource,
-    reason: string,
-    ruleId: string,
-    findingId: string
-  ): string {
+  createMessage(input: SuppressionIgnoreInput): string {
     let messages = [];
     for (const i of this.SuppressionIgnoreOrs) {
-      const m = i.createMessage(resource, reason, ruleId, findingId);
+      const m = i.createMessage(input);
       if (m) {
         messages.push(m);
       }
@@ -101,12 +96,18 @@ export class SuppressionIgnoreAlways implements INagSuppressionIgnore {
     }
     this.triggerMessage = triggerMessage;
   }
-  createMessage(
-    _resource: CfnResource,
-    _reason: string,
-    _ruleId: string,
-    _findingId: string
-  ): string {
+  createMessage(_input: SuppressionIgnoreInput): string {
     return this.triggerMessage;
+  }
+}
+
+/**
+ * Ignore Suppressions for Rules with a NagMessageLevel.ERROR
+ */
+export class SuppressionIgnoreErrors implements INagSuppressionIgnore {
+  createMessage(input: SuppressionIgnoreInput): string {
+    return input.ruleLevel == NagMessageLevel.ERROR
+      ? `${input.ruleId} is categorized as an ERROR and may not be suppressed`
+      : '';
   }
 }
