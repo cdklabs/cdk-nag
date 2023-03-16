@@ -61,7 +61,6 @@ export function validateStack(stack: Stack, ruleId: String, type: TestType) {
 
 export class TestPack extends NagPack {
   readonly rules: ((node: CfnResource) => NagRuleResult)[];
-  readonly ignoreSuppressionCondition?: INagSuppressionIgnore;
   readonly ruleSuffixOverride?: string;
   readonly level?: NagMessageLevel;
   constructor(
@@ -74,7 +73,7 @@ export class TestPack extends NagPack {
     super(props);
     this.packName = 'Test';
     this.rules = rules;
-    this.ignoreSuppressionCondition = ignoreSuppressionCondition;
+    this.packGlobalSuppressionIgnore = ignoreSuppressionCondition;
     this.ruleSuffixOverride = ruleSuffixOverride;
     this.level = level;
   }
@@ -87,7 +86,6 @@ export class TestPack extends NagPack {
           explanation: 'bar.',
           level: this.level ?? NagMessageLevel.ERROR,
           rule: rule,
-          ignoreSuppressionCondition: this.ignoreSuppressionCondition,
           node: node,
         });
       });
