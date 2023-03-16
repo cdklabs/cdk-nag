@@ -102,6 +102,15 @@ export class SuppressionIgnoreAlways implements INagSuppressionIgnore {
 }
 
 /**
+ * Don't ignore the suppression
+ */
+export class SuppressionIgnoreNever implements INagSuppressionIgnore {
+  createMessage(_input: SuppressionIgnoreInput): string {
+    return '';
+  }
+}
+
+/**
  * Ignore Suppressions for Rules with a NagMessageLevel.ERROR
  */
 export class SuppressionIgnoreErrors implements INagSuppressionIgnore {

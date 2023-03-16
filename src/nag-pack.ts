@@ -6,7 +6,11 @@ import { appendFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Annotations, App, CfnResource, IAspect, Names } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { INagSuppressionIgnore } from './ignore-suppression-conditions';
+import {
+  INagSuppressionIgnore,
+  SuppressionIgnoreNever,
+  SuppressionIgnoreOr,
+} from './ignore-suppression-conditions';
 import { NagPackSuppression } from './models/nag-suppression';
 import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
@@ -32,6 +36,11 @@ export interface NagPackProps {
    * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).
    */
   readonly reports?: boolean;
+
+  /**
+   * Conditionally prevent rules from being suppressed (default: no user provided condition).
+   */
+  readonly suppressionIgnoreCondition?: INagSuppressionIgnore;
 }
 
 /**
@@ -86,6 +95,8 @@ export abstract class NagPack implements IAspect {
   protected reports: boolean;
   protected reportStacks = new Array<string>();
   protected packName = '';
+  protected userGlobalSuppressionIgnore?: INagSuppressionIgnore;
+  protected packGlobalSuppressionIgnore?: INagSuppressionIgnore;
 
   constructor(props?: NagPackProps) {
     this.verbose =
@@ -96,6 +107,7 @@ export abstract class NagPack implements IAspect {
         : props.logIgnores;
     this.reports =
       props == undefined || props.reports == undefined ? true : props.reports;
+    this.userGlobalSuppressionIgnore = props?.suppressionIgnoreCondition;
   }
 
   public get readPackName(): string {
@@ -231,7 +243,11 @@ export abstract class NagPack implements IAspect {
   ): string {
     for (let suppression of suppressions) {
       if (NagSuppressionHelper.doesApply(suppression, ruleId, findingId)) {
-        const ignoreMessage = ignoreSuppressionCondition?.createMessage({
+        const ignoreMessage = new SuppressionIgnoreOr(
+          this.userGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
+          this.packGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
+          ignoreSuppressionCondition ?? new SuppressionIgnoreNever()
+        ).createMessage({
           resource,
           reason: suppression.reason,
           ruleId,

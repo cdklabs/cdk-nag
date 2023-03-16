@@ -30,6 +30,7 @@ import {
   NagRuleCompliance,
   NagRules,
   NagSuppressions,
+  SuppressionIgnoreErrors,
 } from '../src';
 
 describe('Rule suppression system', () => {
@@ -55,7 +56,11 @@ describe('Rule suppression system', () => {
   });
   test('Fine grained permission cannot be added via rule id [resource]', () => {
     const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks());
+    Aspects.of(stack).add(
+      new AwsSolutionsChecks({
+        suppressionIgnoreCondition: new SuppressionIgnoreErrors(),
+      })
+    );
     const user = new User(stack, 'rUser');
     expect(() =>
       NagSuppressions.addResourceSuppressions(

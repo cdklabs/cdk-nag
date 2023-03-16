@@ -15,6 +15,7 @@ Name|Description
 [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways)|Always ignore the suppression.
 [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
 [SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors)|Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
+[SuppressionIgnoreNever](#cdk-nag-suppressionignorenever)|Don't ignore the suppression.
 [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
 
 
@@ -64,6 +65,7 @@ new AwsSolutionsChecks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -106,6 +108,7 @@ new HIPAASecurityChecks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -148,6 +151,7 @@ new NIST80053R4Checks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -190,6 +194,7 @@ new NIST80053R5Checks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -230,6 +235,7 @@ new NagPack(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -246,6 +252,8 @@ Name | Type | Description
 **reportStacks** | <code>Array<string></code> | <span></span>
 **reports** | <code>boolean</code> | <span></span>
 **verbose** | <code>boolean</code> | <span></span>
+**packGlobalSuppressionIgnore**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | __*Optional*__
+**userGlobalSuppressionIgnore**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | __*Optional*__
 
 ### Methods
 
@@ -494,6 +502,7 @@ new PCIDSS321Checks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -637,6 +646,46 @@ __Returns__:
 
 
 
+## class SuppressionIgnoreNever  <a id="cdk-nag-suppressionignorenever"></a>
+
+Don't ignore the suppression.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreNever()
+```
+
+
+
+### Methods
+
+
+#### createMessage(_input) <a id="cdk-nag-suppressionignorenever-createmessage"></a>
+
+
+
+```ts
+createMessage(_input: SuppressionIgnoreInput): string
+```
+
+* **_input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
 ## class SuppressionIgnoreOr  <a id="cdk-nag-suppressionignoreor"></a>
 
 Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
@@ -715,7 +764,7 @@ __Returns__:
 
 ## interface INagSuppressionIgnore  <a id="cdk-nag-inagsuppressionignore"></a>
 
-__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
+__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors), [SuppressionIgnoreNever](#cdk-nag-suppressionignorenever), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
 
 Interface for creating NagSuppression Ignores.
 ### Methods
@@ -752,6 +801,7 @@ Name | Type | Description
 -----|------|-------------
 **logIgnores**? | <code>boolean</code> | Whether or not to log triggered rules that have been suppressed as informational messages (default: false).<br/>__*Optional*__
 **reports**? | <code>boolean</code> | Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).<br/>__*Optional*__
+**suppressionIgnoreCondition**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | Conditionally prevent rules from being suppressed (default: no user provided condition).<br/>__*Optional*__
 **verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).<br/>__*Optional*__
 
 

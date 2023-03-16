@@ -5,9 +5,9 @@ SPDX-License-Identifier: Apache-2.0
 
 # Conditionally Ignoring Suppressions
 
-As a [NagPack](./NagPack.md) author, you can optionally create a condition that prevents certain rules from being suppressed. You can create conditions for any variety of reasons. Examples include a condition that always ignores a suppression, a condition that ignores a suppression based on the date, a condition that ignores a suppression based on the reason.
+As a [NagPack](./NagPack.md) author or user, you can optionally create a condition that prevents certain rules from being suppressed. You can create conditions for any variety of reasons. Examples include a condition that always ignores a suppression, a condition that ignores a suppression based on the date, a condition that ignores a suppression based on the reason.
 
-## Creating and Applying a Condition
+## Creating A Condition
 
 Conditions implement the `INagSuppressionIgnore` interface. They return a message string when the `createMessage()` method is called. If the method returns a non-empty string the suppression is ignored. Conversely if the method returns an empty string the suppression is allowed.
 
@@ -18,7 +18,7 @@ import { INagSuppressionIgnore, SuppressionIgnoreInput } from 'cdk-nag';
 class ArunCondition implements INagSuppressionIgnore {
   createMessage(input: SuppressionIgnoreInput) {
     if (!input.reason.includes('Arun')) {
-      return 'Only Arun can suppress errors!';
+      return 'The reason must contain the word Arun!';
     }
     return '';
   }
@@ -31,16 +31,20 @@ You could also create the same condition without a class and by just implementin
 ({
   createMessage(input: SuppressionIgnoreInput) {
     return !input.reason.includes('Arun')
-      ? 'Only Arun can suppress errors!'
+      ? 'The reason must contain the word Arun!'
       : '';
   },
 });
 ```
 
-Here is an example of applying the `Arun` condition to the prebuilt `S3BucketSSLRequestsOnly` S3 Rule.
+### Applying Conditions
+
+There are 3 ways of applying conditions to rules. Users can have 1 way, they can supply an additional global condition that gets applied to all rules. `NagPack` authors have 2 ways, they can individually apply conditions to rules and/or apply a global condition to all rules. All present conditions are evaluated together using a `SuppressionIgnoreOr`(review [this section](#creating-complex-conditions) for more details on complex conditions).
+
+Here is an example of a `NagPack` author applying both a global condition and an individual condition to the prebuilt `S3BucketSSLRequestsOnly` S3 Rule.
 
 ```ts
-import { App, Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnResource } from 'aws-cdk-lib';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import {
   NagMessageLevel,
@@ -56,6 +60,13 @@ export class ExampleChecks extends NagPack {
   constructor(props?: NagPackProps) {
     super(props);
     this.packName = 'Example';
+    this.packGlobalSuppressionIgnore = {
+      createMessage(input: SuppressionIgnoreInput) {
+        return !input.reason.includes('Arun')
+          ? 'The reason must contain the word Arun!'
+          : '';
+      },
+    };
   }
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
@@ -66,8 +77,8 @@ export class ExampleChecks extends NagPack {
         rule: rules.s3.S3BucketSSLRequestsOnly,
         ignoreSuppressionCondition: {
           createMessage(input: SuppressionIgnoreInput) {
-            return !input.reason.includes('Arun')
-              ? 'Only Arun can suppress errors!'
+            return !input.reason.includes('Donti')
+              ? 'The reason must contain the word Donti!'
               : '';
           },
         },
@@ -82,7 +93,8 @@ A user would see the following output when attempting to synthesize an applicati
 
 ```bash
 [Info at /Test/bucket/Resource] The suppression for Example-S3BucketSSLRequestsOnly was ignored for the following reason(s).
-        Only Arun can suppress errors!
+        The reason must contain the word Arun!
+        The reason must contain the word Donti!
 [Error at /Test/bucket/Resource] Example-S3BucketSSLRequestsOnly: My brief info.
 ```
 

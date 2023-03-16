@@ -401,6 +401,30 @@ export class CdkTestStack extends Stack {
 
 </details>
 
+## Conditionally Ignoring Suppressions
+
+You can optionally create a condition that prevents certain rules from being suppressed. You can create conditions for any variety of reasons. Examples include a condition that always ignores a suppression, a condition that ignores a suppression based on the date, a condition that ignores a suppression based on the reason. You can read [the developer docs](./docs/IgnoreSuppressionConditions.md) for more information on creating your own conditions.
+
+<details>
+  <summary>Example) Using the pre-built `SuppressionIgnoreErrors` class to ignore suppressions on any `Error` level rules.</summary>
+
+```ts
+import { App, Aspects } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks, SuppressionIgnoreErrors } from 'cdk-nag';
+
+const app = new App();
+new CdkTestStack(app, 'CdkNagDemo');
+// Ignore Suppressions on any errors
+Aspects.of(app).add(
+  new AwsSolutionsChecks({
+    suppressionIgnoreCondition: new SuppressionIgnoreErrors(),
+  })
+);
+```
+
+</details>
+
 ## Using on CloudFormation templates
 
 You can use cdk-nag on existing CloudFormation templates by using the [cloudformation-include](https://docs.aws.amazon.com/cdk/latest/guide/use_cfn_template.html#use_cfn_template_install) module.
