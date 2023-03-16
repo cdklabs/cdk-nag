@@ -126,9 +126,6 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "npx prettier --write RULES.md"
-        },
-        {
           "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js"
         }
       ]
