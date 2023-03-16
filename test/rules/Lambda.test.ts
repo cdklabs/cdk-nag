@@ -25,17 +25,14 @@ import {
   LambdaLatestVersion,
 } from '../../src/rules/lambda';
 
-const testPack = new TestPack(
-  [
-    LambdaConcurrency,
-    LambdaDLQ,
-    LambdaFunctionPublicAccessProhibited,
-    LambdaFunctionUrlAuth,
-    LambdaInsideVPC,
-    LambdaLatestVersion,
-  ],
-  { verbose: true }
-);
+const testPack = new TestPack([
+  LambdaConcurrency,
+  LambdaDLQ,
+  LambdaFunctionPublicAccessProhibited,
+  LambdaFunctionUrlAuth,
+  LambdaInsideVPC,
+  LambdaLatestVersion,
+]);
 let stack: Stack;
 
 function getLatestRuntime(family: string): Runtime {

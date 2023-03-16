@@ -10,7 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-codebuild';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   CodeBuildProjectEnvVarAwsCred,
   CodeBuildProjectKMSEncryptedArtifacts,
@@ -19,16 +19,13 @@ import {
   CodeBuildProjectSourceRepoUrl,
 } from '../../src/rules/codebuild';
 
-const testPack = new TestPack(
-  [
-    CodeBuildProjectEnvVarAwsCred,
-    CodeBuildProjectKMSEncryptedArtifacts,
-    CodeBuildProjectManagedImages,
-    CodeBuildProjectPrivilegedModeDisabled,
-    CodeBuildProjectSourceRepoUrl,
-  ],
-  { verbose: true }
-);
+const testPack = new TestPack([
+  CodeBuildProjectEnvVarAwsCred,
+  CodeBuildProjectKMSEncryptedArtifacts,
+  CodeBuildProjectManagedImages,
+  CodeBuildProjectPrivilegedModeDisabled,
+  CodeBuildProjectSourceRepoUrl,
+]);
 let stack: Stack;
 
 beforeEach(() => {

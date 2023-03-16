@@ -12,6 +12,11 @@ Name|Description
 [NagRules](#cdk-nag-nagrules)|Helper class with methods for rule creation.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
+[SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways)|Always ignore the suppression.
+[SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
+[SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors)|Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
+[SuppressionIgnoreNever](#cdk-nag-suppressionignorenever)|Don't ignore the suppression.
+[SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
 
 
 **Structs**
@@ -21,6 +26,7 @@ Name|Description
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a Nag rule pack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
 [RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
+[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)|Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
 
 
 **Interfaces**
@@ -28,13 +34,14 @@ Name|Description
 Name|Description
 ----|-----------
 [IApplyRule](#cdk-nag-iapplyrule)|Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
+[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)|Interface for creating NagSuppression Ignores.
 
 
 **Enums**
 
 Name|Description
 ----|-----------
-[NagMessageLevel](#cdk-nag-nagmessagelevel)|The level of the message that the rule applies.
+[NagMessageLevel](#cdk-nag-nagmessagelevel)|The severity level of the rule.
 [NagRuleCompliance](#cdk-nag-nagrulecompliance)|The compliance level of a resource in relation to a rule.
 
 
@@ -58,6 +65,7 @@ new AwsSolutionsChecks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -100,6 +108,7 @@ new HIPAASecurityChecks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -142,6 +151,7 @@ new NIST80053R4Checks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -184,6 +194,7 @@ new NIST80053R5Checks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -224,6 +235,7 @@ new NagPack(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -240,6 +252,8 @@ Name | Type | Description
 **reportStacks** | <code>Array<string></code> | <span></span>
 **reports** | <code>boolean</code> | <span></span>
 **verbose** | <code>boolean</code> | <span></span>
+**packGlobalSuppressionIgnore**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | __*Optional*__
+**userGlobalSuppressionIgnore**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | __*Optional*__
 
 ### Methods
 
@@ -302,17 +316,20 @@ protected createMessage(ruleId: string, findingId: string, info: string, explana
 __Returns__:
 * <code>string</code>
 
-#### protected ignoreRule(ignores, ruleId, findingId) <a id="cdk-nag-nagpack-ignorerule"></a>
+#### protected ignoreRule(suppressions, ruleId, findingId, resource, level, ignoreSuppressionCondition?) <a id="cdk-nag-nagpack-ignorerule"></a>
 
 Check whether a specific rule should be ignored.
 
 ```ts
-protected ignoreRule(ignores: Array<NagPackSuppression>, ruleId: string, findingId: string): string
+protected ignoreRule(suppressions: Array<NagPackSuppression>, ruleId: string, findingId: string, resource: CfnResource, level: NagMessageLevel, ignoreSuppressionCondition?: INagSuppressionIgnore): string
 ```
 
-* **ignores** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The ignores listed in cdk-nag metadata.
+* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The suppressions listed in the cdk-nag metadata.
 * **ruleId** (<code>string</code>)  The id of the rule to ignore.
 * **findingId** (<code>string</code>)  The id of the finding that is being checked.
+* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource being evaluated.
+* **level** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description*
+* **ignoreSuppressionCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
 
 __Returns__:
 * <code>string</code>
@@ -485,6 +502,7 @@ new PCIDSS321Checks(props?: NagPackProps)
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
   * **logIgnores** (<code>boolean</code>)  Whether or not to log triggered rules that have been suppressed as informational messages (default: false). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
   * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
 
 
@@ -506,6 +524,209 @@ visit(node: IConstruct): void
 
 
 
+## class SuppressionIgnoreAlways  <a id="cdk-nag-suppressionignorealways"></a>
+
+Always ignore the suppression.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreAlways(triggerMessage: string)
+```
+
+* **triggerMessage** (<code>string</code>)  *No description*
+
+
+### Methods
+
+
+#### createMessage(_input) <a id="cdk-nag-suppressionignorealways-createmessage"></a>
+
+
+
+```ts
+createMessage(_input: SuppressionIgnoreInput): string
+```
+
+* **_input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
+## class SuppressionIgnoreAnd  <a id="cdk-nag-suppressionignoreand"></a>
+
+Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreAnd(...SuppressionIgnoreAnds: INagSuppressionIgnore[])
+```
+
+* **SuppressionIgnoreAnds** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+
+
+### Methods
+
+
+#### createMessage(input) <a id="cdk-nag-suppressionignoreand-createmessage"></a>
+
+
+
+```ts
+createMessage(input: SuppressionIgnoreInput): string
+```
+
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
+## class SuppressionIgnoreErrors  <a id="cdk-nag-suppressionignoreerrors"></a>
+
+Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreErrors()
+```
+
+
+
+### Methods
+
+
+#### createMessage(input) <a id="cdk-nag-suppressionignoreerrors-createmessage"></a>
+
+
+
+```ts
+createMessage(input: SuppressionIgnoreInput): string
+```
+
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
+## class SuppressionIgnoreNever  <a id="cdk-nag-suppressionignorenever"></a>
+
+Don't ignore the suppression.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreNever()
+```
+
+
+
+### Methods
+
+
+#### createMessage(_input) <a id="cdk-nag-suppressionignorenever-createmessage"></a>
+
+
+
+```ts
+createMessage(_input: SuppressionIgnoreInput): string
+```
+
+* **_input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
+## class SuppressionIgnoreOr  <a id="cdk-nag-suppressionignoreor"></a>
+
+Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
+
+__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+
+### Initializer
+
+
+
+
+```ts
+new SuppressionIgnoreOr(...orSuppressionIgnores: INagSuppressionIgnore[])
+```
+
+* **orSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+
+
+### Methods
+
+
+#### createMessage(input) <a id="cdk-nag-suppressionignoreor-createmessage"></a>
+
+
+
+```ts
+createMessage(input: SuppressionIgnoreInput): string
+```
+
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
 ## interface IApplyRule  <a id="cdk-nag-iapplyrule"></a>
 
 
@@ -519,7 +740,8 @@ Name | Type | Description
 **explanation** | <code>string</code> | Why the rule exists.
 **info** | <code>string</code> | Why the rule was triggered.
 **level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
-**node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | Ignores listed in cdk-nag metadata.
+**node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | The CfnResource to check.
+**ignoreSuppressionCondition**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | A condition in which a suppression should be ignored.<br/>__*Optional*__
 **ruleSuffixOverride**? | <code>string</code> | Override for the suffix of the Rule ID for this rule.<br/>__*Optional*__
 
 ### Methods
@@ -540,6 +762,34 @@ __Returns__:
 
 
 
+## interface INagSuppressionIgnore  <a id="cdk-nag-inagsuppressionignore"></a>
+
+__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors), [SuppressionIgnoreNever](#cdk-nag-suppressionignorenever), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
+
+Interface for creating NagSuppression Ignores.
+### Methods
+
+
+#### createMessage(input) <a id="cdk-nag-inagsuppressionignore-createmessage"></a>
+
+
+
+```ts
+createMessage(input: SuppressionIgnoreInput): string
+```
+
+* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
+  * **findingId** (<code>string</code>)  *No description* 
+  * **reason** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+
+__Returns__:
+* <code>string</code>
+
+
+
 ## struct NagPackProps  <a id="cdk-nag-nagpackprops"></a>
 
 
@@ -551,6 +801,7 @@ Name | Type | Description
 -----|------|-------------
 **logIgnores**? | <code>boolean</code> | Whether or not to log triggered rules that have been suppressed as informational messages (default: false).<br/>__*Optional*__
 **reports**? | <code>boolean</code> | Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).<br/>__*Optional*__
+**suppressionIgnoreCondition**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | Conditionally prevent rules from being suppressed (default: no user provided condition).<br/>__*Optional*__
 **verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).<br/>__*Optional*__
 
 
@@ -583,9 +834,26 @@ Name | Type | Description
 
 
 
+## struct SuppressionIgnoreInput  <a id="cdk-nag-suppressionignoreinput"></a>
+
+
+Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**findingId** | <code>string</code> | <span></span>
+**reason** | <code>string</code> | <span></span>
+**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
+**ruleId** | <code>string</code> | <span></span>
+**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+
+
+
 ## enum NagMessageLevel  <a id="cdk-nag-nagmessagelevel"></a>
 
-The level of the message that the rule applies.
+The severity level of the rule.
 
 Name | Description
 -----|-----

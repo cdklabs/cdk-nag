@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnContainer } from 'aws-cdk-lib/aws-mediastore';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   MediaStoreCloudWatchMetricPolicy,
   MediaStoreContainerAccessLogging,
@@ -14,17 +14,14 @@ import {
   MediaStoreContainerSSLRequestsOnly,
 } from '../../src/rules/mediastore';
 
-const testPack = new TestPack(
-  [
-    MediaStoreCloudWatchMetricPolicy,
-    MediaStoreContainerAccessLogging,
-    MediaStoreContainerCORSPolicy,
-    MediaStoreContainerHasContainerPolicy,
-    MediaStoreContainerLifecyclePolicy,
-    MediaStoreContainerSSLRequestsOnly,
-  ],
-  { verbose: true }
-);
+const testPack = new TestPack([
+  MediaStoreCloudWatchMetricPolicy,
+  MediaStoreContainerAccessLogging,
+  MediaStoreContainerCORSPolicy,
+  MediaStoreContainerHasContainerPolicy,
+  MediaStoreContainerLifecyclePolicy,
+  MediaStoreContainerSSLRequestsOnly,
+]);
 let stack: Stack;
 
 beforeEach(() => {

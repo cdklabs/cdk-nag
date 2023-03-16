@@ -4,10 +4,15 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { appendFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { IAspect, Annotations, CfnResource, App, Names } from 'aws-cdk-lib';
+import { Annotations, App, CfnResource, IAspect, Names } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
+import {
+  INagSuppressionIgnore,
+  SuppressionIgnoreNever,
+  SuppressionIgnoreOr,
+} from './ignore-suppression-conditions';
 import { NagPackSuppression } from './models/nag-suppression';
-import { NagRuleCompliance, NagRuleResult, NagRuleFindings } from './nag-rules';
+import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
 const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
@@ -31,6 +36,11 @@ export interface NagPackProps {
    * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).
    */
   readonly reports?: boolean;
+
+  /**
+   * Conditionally prevent rules from being suppressed (default: no user provided condition).
+   */
+  readonly suppressionIgnoreCondition?: INagSuppressionIgnore;
 }
 
 /**
@@ -54,7 +64,11 @@ export interface IApplyRule {
    */
   level: NagMessageLevel;
   /**
-   * Ignores listed in cdk-nag metadata.
+   * A condition in which a suppression should be ignored.
+   */
+  ignoreSuppressionCondition?: INagSuppressionIgnore;
+  /**
+   * The CfnResource to check
    */
   node: CfnResource;
   /**
@@ -65,7 +79,7 @@ export interface IApplyRule {
 }
 
 /**
- * The level of the message that the rule applies.
+ * The severity level of the rule.
  */
 export enum NagMessageLevel {
   WARN = 'Warning',
@@ -81,6 +95,8 @@ export abstract class NagPack implements IAspect {
   protected reports: boolean;
   protected reportStacks = new Array<string>();
   protected packName = '';
+  protected userGlobalSuppressionIgnore?: INagSuppressionIgnore;
+  protected packGlobalSuppressionIgnore?: INagSuppressionIgnore;
 
   constructor(props?: NagPackProps) {
     this.verbose =
@@ -91,6 +107,7 @@ export abstract class NagPack implements IAspect {
         : props.logIgnores;
     this.reports =
       props == undefined || props.reports == undefined ? true : props.reports;
+    this.userGlobalSuppressionIgnore = props?.suppressionIgnoreCondition;
   }
 
   public get readPackName(): string {
@@ -114,7 +131,7 @@ export abstract class NagPack implements IAspect {
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
       );
     }
-    const allIgnores = NagSuppressionHelper.getSuppressions(params.node);
+    const allSuppressions = NagSuppressionHelper.getSuppressions(params.node);
     const ruleSuffix = params.ruleSuffixOverride
       ? params.ruleSuffixOverride
       : params.rule.name;
@@ -131,9 +148,12 @@ export abstract class NagPack implements IAspect {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
           const suppressionReason = this.ignoreRule(
-            allIgnores,
+            allSuppressions,
             ruleId,
-            findingId
+            findingId,
+            params.node,
+            params.level,
+            params.ignoreSuppressionCondition
           );
 
           if (this.reports === true) {
@@ -171,7 +191,14 @@ export abstract class NagPack implements IAspect {
         }
       }
     } catch (error) {
-      const reason = this.ignoreRule(allIgnores, VALIDATION_FAILURE_ID, '');
+      const reason = this.ignoreRule(
+        allSuppressions,
+        VALIDATION_FAILURE_ID,
+        '',
+        params.node,
+        params.level,
+        params.ignoreSuppressionCondition
+      );
       if (this.reports === true) {
         this.writeToStackComplianceReport(params, ruleId, 'UNKNOWN', reason);
       }
@@ -200,23 +227,45 @@ export abstract class NagPack implements IAspect {
 
   /**
    * Check whether a specific rule should be ignored.
-   * @param ignores The ignores listed in cdk-nag metadata.
+   * @param suppressions The suppressions listed in the cdk-nag metadata.
    * @param ruleId The id of the rule to ignore.
+   * @param resource The resource being evaluated.
    * @param findingId The id of the finding that is being checked.
    * @returns The reason the rule was ignored, or an empty string.
    */
   protected ignoreRule(
-    ignores: NagPackSuppression[],
+    suppressions: NagPackSuppression[],
     ruleId: string,
-    findingId: string
+    findingId: string,
+    resource: CfnResource,
+    level: NagMessageLevel,
+    ignoreSuppressionCondition?: INagSuppressionIgnore
   ): string {
-    for (let ignore of ignores) {
-      if (NagSuppressionHelper.doesApply(ignore, ruleId, findingId)) {
-        if (!ignore.appliesTo) {
-          // the rule is not granular so it always applies
-          return ignore.reason;
+    for (let suppression of suppressions) {
+      if (NagSuppressionHelper.doesApply(suppression, ruleId, findingId)) {
+        const ignoreMessage = new SuppressionIgnoreOr(
+          this.userGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
+          this.packGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
+          ignoreSuppressionCondition ?? new SuppressionIgnoreNever()
+        ).createMessage({
+          resource,
+          reason: suppression.reason,
+          ruleId,
+          findingId,
+          ruleLevel: level,
+        });
+        if (ignoreMessage) {
+          let id = findingId ? `${ruleId}[${findingId}]` : `${ruleId}`;
+          Annotations.of(resource).addInfo(
+            `The suppression for ${id} was ignored for the following reason(s).\n\t${ignoreMessage}`
+          );
         } else {
-          return `[${findingId}] ${ignore.reason}`;
+          if (!suppression.appliesTo) {
+            // the rule is not granular so it always applies
+            return suppression.reason;
+          } else {
+            return `[${findingId}] ${suppression.reason}`;
+          }
         }
       }
     }
