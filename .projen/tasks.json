@@ -126,10 +126,25 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "npx prettier --write RULES.md"
-        },
-        {
           "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools .projenrc.js"
+        }
+      ]
+    },
+    "install": {
+      "name": "install",
+      "description": "Install project dependencies and update lockfile (non-frozen)",
+      "steps": [
+        {
+          "exec": "yarn install --check-files"
+        }
+      ]
+    },
+    "install:ci": {
+      "name": "install:ci",
+      "description": "Install project dependencies using frozen lockfile",
+      "steps": [
+        {
+          "exec": "yarn install --check-files --frozen-lockfile"
         }
       ]
     },
