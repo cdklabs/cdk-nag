@@ -425,6 +425,32 @@ Aspects.of(app).add(
 
 </details>
 
+## Customizing Logging
+
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationsLogger` and the `CsvReportLogger` enabled by default.
+
+See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
+
+<details>
+  <summary>Example) Adding the example console NagLogger from the NagLogger docs</summary>
+
+```ts
+import { App, Aspects } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { ExtremelyHelpfulConsoleLogger } from './docs/NagLogger';
+import { AwsSolutionsChecks, SuppressionIgnoreErrors } from 'cdk-nag';
+
+const app = new App();
+new CdkTestStack(app, 'CdkNagDemo');
+Aspects.of(app).add(
+  new AwsSolutionsChecks({
+    additionalNagLoggers: [new ExtremelyHelpfulConsoleLogger()],
+  })
+);
+```
+
+</details>
+
 ## Using on CloudFormation templates
 
 You can use cdk-nag on existing CloudFormation templates by using the [cloudformation-include](https://docs.aws.amazon.com/cdk/latest/guide/use_cfn_template.html#use_cfn_template_install) module.

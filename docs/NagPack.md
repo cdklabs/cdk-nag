@@ -137,6 +137,10 @@ export class ExampleChecks extends NagPack {
 }
 ```
 
+### Custom Logging
+
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. Read the [NagLogger](./NagLogger.md) documentation for more details
+
 ## Using a NagPack
 
 You can apply as many `NagPacks` to a CDK Stack or Application via Aspects
