@@ -2,6 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { readFileSync, rmSync } from 'fs';
+import { join } from 'path';
 import {
   App,
   Aspects,
@@ -13,8 +15,6 @@ import {
 import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
-import { readFileSync, rmSync } from 'fs';
-import { join } from 'path';
 import {
   NagMessageLevel,
   NagPack,
