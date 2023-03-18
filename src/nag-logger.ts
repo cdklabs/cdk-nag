@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { appendFileSync, writeFileSync } from 'fs';
+import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import { NagMessageLevel, VALIDATION_FAILURE_ID } from './nag-pack';
@@ -189,7 +189,7 @@ export class AnnotationsLogger implements INagLogger {
 /**
  * A NagLogger that creates CSV compliance reports
  */
-export class CsvReportLogger implements INagLogger {
+export class CsvNagReportLogger implements INagLogger {
   readonly reportStacks = new Array<string>();
 
   onCompliance(input: NagLoggerComplianceInput): void {
@@ -261,7 +261,7 @@ export class CsvReportLogger implements INagLogger {
       line.push(input.ruleId);
       line.push(input.resource.node.path);
       if (compliance === NagRulePostValidationStates.SUPPRESSED) {
-        line.push('Suppressed');
+        line.push(NagRulePostValidationStates.SUPPRESSED);
         if (
           (input as NagLoggerSuppressionInput).suppressionReason !== undefined
         ) {
@@ -280,6 +280,113 @@ export class CsvReportLogger implements INagLogger {
       return (
         line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n'
       );
+    }
+  }
+}
+
+export interface NagReportSchema {
+  readonly lines: NagReportLine[];
+}
+
+export interface NagReportLine {
+  readonly ruleId: string;
+  readonly resourceId: string;
+  readonly compliance: string;
+  readonly exceptionReason: string;
+  readonly ruleLevel: string;
+  readonly ruleInfo: string;
+}
+
+/**
+ * A NagLogger that creates JSON compliance reports
+ */
+export class JsonNagReportLogger implements INagLogger {
+  readonly reportStacks = new Array<string>();
+
+  onCompliance(input: NagLoggerComplianceInput): void {
+    this.initializeStackReport(input);
+    this.writeToStackComplianceReport(input, NagRuleCompliance.COMPLIANT);
+  }
+  onNonCompliance(input: NagLoggerNonComplianceInput): void {
+    this.initializeStackReport(input);
+    this.writeToStackComplianceReport(input, NagRuleCompliance.NON_COMPLIANT);
+  }
+  onSuppression(input: NagLoggerSuppressionInput): void {
+    this.initializeStackReport(input);
+    this.writeToStackComplianceReport(
+      input,
+      NagRulePostValidationStates.SUPPRESSED
+    );
+  }
+  onError(input: NagLoggerErrorInput): void {
+    this.initializeStackReport(input);
+    this.writeToStackComplianceReport(
+      input,
+      NagRulePostValidationStates.UNKNOWN
+    );
+  }
+  onSuppressedError(input: NagLoggerSuppressedErrorInput): void {
+    this.initializeStackReport(input);
+    this.writeToStackComplianceReport(
+      input,
+      NagRulePostValidationStates.SUPPRESSED
+    );
+  }
+  onNotApplicable(input: NagLoggerNotApplicableInput): void {
+    this.initializeStackReport(input);
+  }
+
+  /**
+   * Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist
+   * @param input
+   */
+  protected initializeStackReport(input: NagLoggerInputBase): void {
+    const stackName = input.resource.stack.nested
+      ? Names.uniqueId(input.resource.stack)
+      : input.resource.stack.stackName;
+    const fileName = `${input.nagPackName}-${stackName}-NagReport.json`;
+    if (!this.reportStacks.includes(fileName)) {
+      const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
+      this.reportStacks.push(fileName);
+      writeFileSync(filePath, JSON.stringify({ lines: [] } as NagReportSchema));
+    }
+  }
+
+  protected writeToStackComplianceReport(
+    input: NagLoggerInputBase,
+    compliance: NagLoggerCompliance
+  ): void {
+    const stackName = input.resource.stack.nested
+      ? Names.uniqueId(input.resource.stack)
+      : input.resource.stack.stackName;
+    const fileName = `${input.nagPackName}-${stackName}-NagReport.json`;
+    const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
+    const report = JSON.parse(
+      readFileSync(filePath, 'utf8')
+    ) as NagReportSchema;
+    report.lines.push(createComplianceReportLine());
+    writeFileSync(filePath, JSON.stringify(report));
+    function createComplianceReportLine(): NagReportLine {
+      let exceptionReason = 'N/A';
+      if (compliance === NagRulePostValidationStates.SUPPRESSED) {
+        if (
+          (input as NagLoggerSuppressionInput).suppressionReason !== undefined
+        ) {
+          exceptionReason = (input as NagLoggerSuppressionInput)
+            .suppressionReason;
+        } else {
+          exceptionReason = (input as NagLoggerSuppressedErrorInput)
+            .errorSuppressionReason;
+        }
+      }
+      return {
+        ruleId: input.ruleId,
+        resourceId: input.resource.node.path,
+        compliance,
+        exceptionReason,
+        ruleLevel: input.ruleLevel,
+        ruleInfo: input.ruleInfo,
+      };
     }
   }
 }

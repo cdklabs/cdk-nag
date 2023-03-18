@@ -6,8 +6,9 @@ Name|Description
 ----|-----------
 [AnnotationsLogger](#cdk-nag-annotationslogger)|A NagLogger that outputs to the CDK Annotations system.
 [AwsSolutionsChecks](#cdk-nag-awssolutionschecks)|Check Best practices based on AWS Solutions Security Matrix.
-[CsvReportLogger](#cdk-nag-csvreportlogger)|A NagLogger that creates CSV compliance reports.
+[CsvNagReportLogger](#cdk-nag-csvnagreportlogger)|A NagLogger that creates CSV compliance reports.
 [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
+[JsonNagReportLogger](#cdk-nag-jsonnagreportlogger)|A NagLogger that creates JSON compliance reports.
 [NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
 [NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule packs.
@@ -34,6 +35,8 @@ Name|Description
 [NagLoggerSuppressionInput](#cdk-nag-nagloggersuppressioninput)|Input for onSuppression method of an INagLogger.
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a NagPack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
+[NagReportLine](#cdk-nag-nagreportline)|*No description*
+[NagReportSchema](#cdk-nag-nagreportschema)|*No description*
 [RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
 [SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)|Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
 
@@ -274,7 +277,7 @@ visit(node: IConstruct): void
 
 
 
-## class CsvReportLogger  <a id="cdk-nag-csvreportlogger"></a>
+## class CsvNagReportLogger  <a id="cdk-nag-csvnagreportlogger"></a>
 
 A NagLogger that creates CSV compliance reports.
 
@@ -286,7 +289,7 @@ __Implements__: [INagLogger](#cdk-nag-inaglogger)
 
 
 ```ts
-new CsvReportLogger()
+new CsvNagReportLogger()
 ```
 
 
@@ -302,7 +305,7 @@ Name | Type | Description
 ### Methods
 
 
-#### onCompliance(input) <a id="cdk-nag-csvreportlogger-oncompliance"></a>
+#### onCompliance(input) <a id="cdk-nag-csvnagreportlogger-oncompliance"></a>
 
 Called when a CfnResource passes the compliance check for a given rule.
 
@@ -322,7 +325,7 @@ onCompliance(input: NagLoggerComplianceInput): void
 
 
 
-#### onError(input) <a id="cdk-nag-csvreportlogger-onerror"></a>
+#### onError(input) <a id="cdk-nag-csvnagreportlogger-onerror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance.
 
@@ -343,7 +346,7 @@ onError(input: NagLoggerErrorInput): void
 
 
 
-#### onNonCompliance(input) <a id="cdk-nag-csvreportlogger-onnoncompliance"></a>
+#### onNonCompliance(input) <a id="cdk-nag-csvnagreportlogger-onnoncompliance"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
 
@@ -364,7 +367,7 @@ onNonCompliance(input: NagLoggerNonComplianceInput): void
 
 
 
-#### onNotApplicable(input) <a id="cdk-nag-csvreportlogger-onnotapplicable"></a>
+#### onNotApplicable(input) <a id="cdk-nag-csvnagreportlogger-onnotapplicable"></a>
 
 Called when a rule does not apply to the given CfnResource.
 
@@ -384,7 +387,7 @@ onNotApplicable(input: NagLoggerNotApplicableInput): void
 
 
 
-#### onSuppressedError(input) <a id="cdk-nag-csvreportlogger-onsuppressederror"></a>
+#### onSuppressedError(input) <a id="cdk-nag-csvnagreportlogger-onsuppressederror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
 
@@ -407,7 +410,7 @@ onSuppressedError(input: NagLoggerSuppressedErrorInput): void
 
 
 
-#### onSuppression(input) <a id="cdk-nag-csvreportlogger-onsuppression"></a>
+#### onSuppression(input) <a id="cdk-nag-csvnagreportlogger-onsuppression"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user.
 
@@ -430,7 +433,7 @@ onSuppression(input: NagLoggerSuppressionInput): void
 
 
 
-#### protected initializeStackReport(input) <a id="cdk-nag-csvreportlogger-initializestackreport"></a>
+#### protected initializeStackReport(input) <a id="cdk-nag-csvnagreportlogger-initializestackreport"></a>
 
 Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist.
 
@@ -450,7 +453,7 @@ protected initializeStackReport(input: NagLoggerInputBase): void
 
 
 
-#### protected writeToStackComplianceReport(input, compliance) <a id="cdk-nag-csvreportlogger-writetostackcompliancereport"></a>
+#### protected writeToStackComplianceReport(input, compliance) <a id="cdk-nag-csvnagreportlogger-writetostackcompliancereport"></a>
 
 
 
@@ -504,6 +507,198 @@ visit(node: IConstruct): void
 ```
 
 * **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+
+
+
+
+
+
+## class JsonNagReportLogger  <a id="cdk-nag-jsonnagreportlogger"></a>
+
+A NagLogger that creates JSON compliance reports.
+
+__Implements__: [INagLogger](#cdk-nag-inaglogger)
+
+### Initializer
+
+
+
+
+```ts
+new JsonNagReportLogger()
+```
+
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**reportStacks** | <code>Array<string></code> | <span></span>
+
+### Methods
+
+
+#### onCompliance(input) <a id="cdk-nag-jsonnagreportlogger-oncompliance"></a>
+
+Called when a CfnResource passes the compliance check for a given rule.
+
+```ts
+onCompliance(input: NagLoggerComplianceInput): void
+```
+
+* **input** (<code>[NagLoggerComplianceInput](#cdk-nag-nagloggercomplianceinput)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+
+
+
+
+#### onError(input) <a id="cdk-nag-jsonnagreportlogger-onerror"></a>
+
+Called when a rule throws an error during while validating a CfnResource for compliance.
+
+```ts
+onError(input: NagLoggerErrorInput): void
+```
+
+* **input** (<code>[NagLoggerErrorInput](#cdk-nag-nagloggererrorinput)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+  * **errorMessage** (<code>string</code>)  *No description* 
+
+
+
+
+#### onNonCompliance(input) <a id="cdk-nag-jsonnagreportlogger-onnoncompliance"></a>
+
+Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
+
+```ts
+onNonCompliance(input: NagLoggerNonComplianceInput): void
+```
+
+* **input** (<code>[NagLoggerNonComplianceInput](#cdk-nag-nagloggernoncomplianceinput)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+  * **findingId** (<code>string</code>)  *No description* 
+
+
+
+
+#### onNotApplicable(input) <a id="cdk-nag-jsonnagreportlogger-onnotapplicable"></a>
+
+Called when a rule does not apply to the given CfnResource.
+
+```ts
+onNotApplicable(input: NagLoggerNotApplicableInput): void
+```
+
+* **input** (<code>[NagLoggerNotApplicableInput](#cdk-nag-nagloggernotapplicableinput)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+
+
+
+
+#### onSuppressedError(input) <a id="cdk-nag-jsonnagreportlogger-onsuppressederror"></a>
+
+Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
+
+```ts
+onSuppressedError(input: NagLoggerSuppressedErrorInput): void
+```
+
+* **input** (<code>[NagLoggerSuppressedErrorInput](#cdk-nag-nagloggersuppressederrorinput)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+  * **errorMessage** (<code>string</code>)  *No description* 
+  * **errorSuppressionReason** (<code>string</code>)  *No description* 
+  * **shouldLogIgnored** (<code>boolean</code>)  *No description* 
+
+
+
+
+#### onSuppression(input) <a id="cdk-nag-jsonnagreportlogger-onsuppression"></a>
+
+Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user.
+
+```ts
+onSuppression(input: NagLoggerSuppressionInput): void
+```
+
+* **input** (<code>[NagLoggerSuppressionInput](#cdk-nag-nagloggersuppressioninput)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+  * **findingId** (<code>string</code>)  *No description* 
+  * **shouldLogIgnored** (<code>boolean</code>)  *No description* 
+  * **suppressionReason** (<code>string</code>)  *No description* 
+
+
+
+
+#### protected initializeStackReport(input) <a id="cdk-nag-jsonnagreportlogger-initializestackreport"></a>
+
+Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist.
+
+```ts
+protected initializeStackReport(input: NagLoggerInputBase): void
+```
+
+* **input** (<code>[NagLoggerInputBase](#cdk-nag-nagloggerinputbase)</code>)  *No description*
+  * **nagPackName** (<code>string</code>)  *No description* 
+  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
+  * **ruleExplanation** (<code>string</code>)  *No description* 
+  * **ruleId** (<code>string</code>)  *No description* 
+  * **ruleInfo** (<code>string</code>)  *No description* 
+  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **verbose** (<code>boolean</code>)  *No description* 
+
+
+
+
+#### protected writeToStackComplianceReport(input, compliance) <a id="cdk-nag-jsonnagreportlogger-writetostackcompliancereport"></a>
+
+
+
+```ts
+protected writeToStackComplianceReport(input: NagLoggerInputBase, compliance: NagRulePostValidationStates &#124; NagRuleCompliance): void
+```
+
+* **input** (<code>[NagLoggerInputBase](#cdk-nag-nagloggerinputbase)</code>)  *No description*
+* **compliance** (<code>[NagRulePostValidationStates](#cdk-nag-nagrulepostvalidationstates) &#124; [NagRuleCompliance](#cdk-nag-nagrulecompliance)</code>)  *No description*
 
 
 
@@ -1085,7 +1280,7 @@ __Returns__:
 
 ## interface INagLogger  <a id="cdk-nag-inaglogger"></a>
 
-__Implemented by__: [AnnotationsLogger](#cdk-nag-annotationslogger), [CsvReportLogger](#cdk-nag-csvreportlogger)
+__Implemented by__: [AnnotationsLogger](#cdk-nag-annotationslogger), [CsvNagReportLogger](#cdk-nag-csvnagreportlogger), [JsonNagReportLogger](#cdk-nag-jsonnagreportlogger)
 
 Interface for creating NagSuppression Ignores.
 ### Methods
@@ -1419,6 +1614,37 @@ Name | Type | Description
 **id** | <code>string</code> | The id of the rule to ignore.
 **reason** | <code>string</code> | The reason to ignore the rule (minimum 10 characters).
 **appliesTo**? | <code>Array<string &#124; [RegexAppliesTo](#cdk-nag-regexappliesto)></code> | Rule specific granular suppressions.<br/>__*Optional*__
+
+
+
+## struct NagReportLine  <a id="cdk-nag-nagreportline"></a>
+
+
+
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**compliance** | <code>string</code> | <span></span>
+**exceptionReason** | <code>string</code> | <span></span>
+**resourceId** | <code>string</code> | <span></span>
+**ruleId** | <code>string</code> | <span></span>
+**ruleInfo** | <code>string</code> | <span></span>
+**ruleLevel** | <code>string</code> | <span></span>
+
+
+
+## struct NagReportSchema  <a id="cdk-nag-nagreportschema"></a>
+
+
+
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**lines** | <code>Array<[NagReportLine](#cdk-nag-nagreportline)></code> | <span></span>
 
 
 

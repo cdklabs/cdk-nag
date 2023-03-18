@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # NagLogger
 
-`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationsLogger` and the `CsvReportLogger` enabled by default.
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationsLogger` and the `CsvNagReportLogger` enabled by default.
 
 ## Creating A NagLogger
 

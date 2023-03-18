@@ -427,24 +427,23 @@ Aspects.of(app).add(
 
 ## Customizing Logging
 
-`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationsLogger` and the `CsvReportLogger` enabled by default.
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationsLogger` and the `CsvNagReportLogger` enabled by default.
 
 See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
 
 <details>
-  <summary>Example) Adding the example console NagLogger from the NagLogger docs</summary>
+  <summary>Example) Adding the JsonReportLogger</summary>
 
 ```ts
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
-import { ExtremelyHelpfulConsoleLogger } from './docs/NagLogger';
-import { AwsSolutionsChecks, SuppressionIgnoreErrors } from 'cdk-nag';
+import { AwsSolutionsChecks, JsonReportLogger } from 'cdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
 Aspects.of(app).add(
   new AwsSolutionsChecks({
-    additionalNagLoggers: [new ExtremelyHelpfulConsoleLogger()],
+    additionalNagLoggers: [new JsonReportLogger()],
   })
 );
 ```
