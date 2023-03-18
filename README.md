@@ -432,18 +432,18 @@ Aspects.of(app).add(
 See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
 
 <details>
-  <summary>Example) Adding the JsonReportLogger</summary>
+  <summary>Example) Adding the JsonNagReportLogger</summary>
 
 ```ts
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks, JsonReportLogger } from 'cdk-nag';
+import { AwsSolutionsChecks, JsonNagReportLogger } from 'cdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
 Aspects.of(app).add(
   new AwsSolutionsChecks({
-    additionalNagLoggers: [new JsonReportLogger()],
+    additionalNagLoggers: [new JsonNagReportLogger()],
   })
 );
 ```
