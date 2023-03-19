@@ -64,15 +64,17 @@ describe('NagReportLogger', () => {
   }
   let app: App;
   let pack: NagPack;
-  let reportTarget: NagReportLogger;
+  let reportLogger: NagReportLogger;
 
   beforeEach(() => {
     app = new App();
-    reportTarget = new NagReportLogger({
+    reportLogger = new NagReportLogger({
       formats: [NagReportFormat.CSV, NagReportFormat.JSON],
     });
     pack = new ReportPack({
-      additionalNagLoggers: [reportTarget],
+      // Add reports as an additional logger for testing
+      reports: false,
+      additionalLoggers: [reportLogger],
     });
     Aspects.of(app).add(pack);
   });
@@ -89,13 +91,12 @@ describe('NagReportLogger', () => {
       });
       new Bucket(stack2, 'rBucket');
       app.synth();
-      console.log(reportTarget.reportStacks.get(NagReportFormat.CSV));
-      expect(
-        reportTarget.reportStacks.get(NagReportFormat.CSV)?.length
-      ).toEqual(2);
-      expect(
-        reportTarget.reportStacks.get(NagReportFormat.JSON)?.length
-      ).toEqual(2);
+      expect(reportLogger.getFormatStacks(NagReportFormat.CSV).length).toEqual(
+        2
+      );
+      expect(reportLogger.getFormatStacks(NagReportFormat.JSON).length).toEqual(
+        2
+      );
     });
     test('Nested Stack reports do not contain tokens in names', () => {
       const parent = new Stack(app, 'Parent');
@@ -103,10 +104,10 @@ describe('NagReportLogger', () => {
       new Bucket(parent, 'rBucket');
       new Bucket(nested, 'rBucket');
       app.synth();
-      reportTarget.reportStacks.get(NagReportFormat.CSV)?.forEach((r) => {
+      reportLogger.getFormatStacks(NagReportFormat.CSV)?.forEach((r) => {
         expect(Token.isUnresolved(r)).toBeFalsy();
       });
-      reportTarget.reportStacks.get(NagReportFormat.JSON)?.forEach((r) => {
+      reportLogger.getFormatStacks(NagReportFormat.JSON)?.forEach((r) => {
         expect(Token.isUnresolved(r)).toBeFalsy();
       });
     });
@@ -129,13 +130,12 @@ describe('NagReportLogger', () => {
         type: 'N/A',
       });
       app.synth();
+      expect(reportLogger.getFormatStacks(NagReportFormat.CSV).length).toEqual(
+        1
+      );
       expect(
-        reportTarget.reportStacks.get(NagReportFormat.CSV)?.length
-      ).toEqual(1);
-      expect(
-        getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.CSV)?.[0] ?? ''
-        ).length
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.CSV)[0])
+          .length
       ).toBe(0);
     });
     test('Compliant and Non-Compliant values are written properly', () => {
@@ -148,7 +148,7 @@ describe('NagReportLogger', () => {
       ];
       expect(
         getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.CSV)?.[0] ?? ''
+          reportLogger.getFormatStacks(NagReportFormat.CSV)[0]
         ).sort()
       ).toEqual(expectedOutput.sort());
     });
@@ -168,7 +168,7 @@ describe('NagReportLogger', () => {
       ];
       expect(
         getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.CSV)?.[0] ?? ''
+          reportLogger.getFormatStacks(NagReportFormat.CSV)?.[0] ?? ''
         ).sort()
       ).toEqual(expectedOutput.sort());
     });
@@ -188,7 +188,7 @@ describe('NagReportLogger', () => {
       ];
       expect(
         getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.CSV)?.[0] ?? ''
+          reportLogger.getFormatStacks(NagReportFormat.CSV)[0]
         ).sort()
       ).toEqual(expectedOutput.sort());
     });
@@ -209,7 +209,7 @@ describe('NagReportLogger', () => {
       ];
       expect(
         getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.CSV)?.[0] ?? ''
+          reportLogger.getFormatStacks(NagReportFormat.CSV)[0]
         ).sort()
       ).toEqual(expectedOutput.sort());
     });
@@ -227,7 +227,7 @@ describe('NagReportLogger', () => {
       ];
       expect(
         getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.CSV)?.[0] ?? ''
+          reportLogger.getFormatStacks(NagReportFormat.CSV)[0]
         ).sort()
       ).toEqual(expectedOutput.sort());
     });
@@ -246,13 +246,12 @@ describe('NagReportLogger', () => {
         type: 'N/A',
       });
       app.synth();
+      expect(reportLogger.getFormatStacks(NagReportFormat.JSON).length).toEqual(
+        1
+      );
       expect(
-        reportTarget.reportStacks.get(NagReportFormat.JSON)?.length
-      ).toEqual(1);
-      expect(
-        getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.JSON)?.[0] ?? ''
-        ).length
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
+          .length
       ).toBe(0);
     });
     test('Compliant and Non-Compliant values are written properly', () => {
@@ -278,9 +277,7 @@ describe('NagReportLogger', () => {
         },
       ];
       expect(
-        getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.JSON)?.[0] ?? ''
-        )
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
       ).toEqual(expect.arrayContaining(expectedOutput));
     });
     test('Suppression values are written properly', () => {
@@ -312,9 +309,7 @@ describe('NagReportLogger', () => {
         },
       ];
       expect(
-        getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.JSON)?.[0] ?? ''
-        )
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
       ).toEqual(expect.arrayContaining(expectedOutput));
     });
     test('Suppression values are written properly when multibyte characters are used in reason', () => {
@@ -346,9 +341,7 @@ describe('NagReportLogger', () => {
         },
       ];
       expect(
-        getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.JSON)?.[0] ?? ''
-        )
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
       ).toEqual(expect.arrayContaining(expectedOutput));
     });
     test('Error values are written properly', () => {
@@ -388,9 +381,7 @@ describe('NagReportLogger', () => {
         },
       ];
       expect(
-        getReportLines(
-          reportTarget.reportStacks.get(NagReportFormat.JSON)?.[0] ?? ''
-        )
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
       ).toEqual(expect.arrayContaining(expectedOutput));
     });
   });

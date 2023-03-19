@@ -13,9 +13,9 @@ import { NagPackSuppression } from './models/nag-suppression';
 import {
   AnnotationLogger,
   NagReportLogger,
-  INagLogger,
-  NagLoggerInputBase,
+  BaseData,
   NagReportFormat,
+  INagLogger,
 } from './nag-logger';
 import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
@@ -52,9 +52,9 @@ export interface NagPackProps {
   readonly suppressionIgnoreCondition?: INagSuppressionIgnore;
 
   /**
-   * Additional NagLoggers for logging rule validation outputs.
+   * Additional s for logging rule validation outputs.
    */
-  readonly additionalNagLoggers?: INagLogger[];
+  readonly additionalLoggers?: INagLogger[];
 }
 
 /**
@@ -104,14 +104,14 @@ export enum NagMessageLevel {
  * Base class for all rule packs.
  */
 export abstract class NagPack implements IAspect {
-  protected loggingTargets = new Array<INagLogger>();
+  protected loggers = new Array<INagLogger>();
   protected packName = '';
   protected userGlobalSuppressionIgnore?: INagSuppressionIgnore;
   protected packGlobalSuppressionIgnore?: INagSuppressionIgnore;
 
   constructor(props?: NagPackProps) {
     this.userGlobalSuppressionIgnore = props?.suppressionIgnoreCondition;
-    this.loggingTargets.push(
+    this.loggers.push(
       new AnnotationLogger({
         verbose: props?.verbose,
         logIgnores: props?.logIgnores,
@@ -121,10 +121,10 @@ export abstract class NagPack implements IAspect {
       const formats = props?.reportFormats
         ? props.reportFormats
         : [NagReportFormat.CSV];
-      this.loggingTargets.push(new NagReportLogger({ formats }));
+      this.loggers.push(new NagReportLogger({ formats }));
     }
-    if (props?.additionalNagLoggers) {
-      this.loggingTargets.push(...props.additionalNagLoggers);
+    if (props?.additionalLoggers) {
+      this.loggers.push(...props.additionalLoggers);
     }
   }
 
@@ -152,7 +152,7 @@ export abstract class NagPack implements IAspect {
       ? params.ruleSuffixOverride
       : params.rule.name;
     const ruleId = `${this.packName}-${ruleSuffix}`;
-    const base: NagLoggerInputBase = {
+    const base: BaseData = {
       nagPackName: this.packName,
       resource: params.node,
       ruleId: ruleId,
@@ -163,7 +163,7 @@ export abstract class NagPack implements IAspect {
     try {
       const ruleCompliance = params.rule(params.node);
       if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
-        this.loggingTargets.forEach((t) => t.onCompliance(base));
+        this.loggers.forEach((t) => t.onCompliance(base));
       } else if (this.isNonCompliant(ruleCompliance)) {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
@@ -176,15 +176,15 @@ export abstract class NagPack implements IAspect {
             params.ignoreSuppressionCondition
           );
           if (suppressionReason) {
-            this.loggingTargets.forEach((t) =>
-              t.onSuppression({
+            this.loggers.forEach((t) =>
+              t.onSuppressed({
                 ...base,
                 suppressionReason,
                 findingId,
               })
             );
           } else {
-            this.loggingTargets.forEach((t) =>
+            this.loggers.forEach((t) =>
               t.onNonCompliance({
                 ...base,
                 findingId,
@@ -193,7 +193,7 @@ export abstract class NagPack implements IAspect {
           }
         }
       } else if (ruleCompliance === NagRuleCompliance.NOT_APPLICABLE) {
-        this.loggingTargets.forEach((t) =>
+        this.loggers.forEach((t) =>
           t.onNotApplicable({
             ...base,
           })
@@ -209,7 +209,7 @@ export abstract class NagPack implements IAspect {
         params.ignoreSuppressionCondition
       );
       if (reason) {
-        this.loggingTargets.forEach((t) =>
+        this.loggers.forEach((t) =>
           t.onSuppressedError({
             ...base,
             errorMessage: (error as Error).message,
@@ -217,7 +217,7 @@ export abstract class NagPack implements IAspect {
           })
         );
       } else {
-        this.loggingTargets.forEach((t) =>
+        this.loggers.forEach((t) =>
           t.onError({
             ...base,
             errorMessage: (error as Error).message,

@@ -5,52 +5,52 @@ SPDX-License-Identifier: Apache-2.0
 
 # NagLogger
 
-`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationsLogger` and the `CsvNagReportLogger` enabled by default.
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built`NagPacks`come with the`AnnotationsLogger`and the`CsvNagReportLogger` enabled by default.
 
-## Creating A NagLogger
+## Creating A
 
-NagLoggers implement the `INagLogger` interface. Corresponding `INagLogger` method of a loggers is called after a `CfnResource` is evaluated against a `NagRule`. Each of these methods are passed information that relate to the validation state.
+s implement the `INagLogger` interface. Corresponding `INagLogger` method of a loggers is called after a `CfnResource` is evaluated against a `NagRule`. Each of these methods are passed information that relate to the validation state.
 
-1.  The `onCompliance` method is called when a CfnResource passes the compliance check for a given rule.
-2.  The `onNonCompliance` method is called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
-3.  The `onSuppression` method is called when a CfnResource does not pass the compliance check for a given rule **and** the rule violation is suppressed by the user.
-4.  The `onError` method is called when a rule throws an error during while validating a CfnResource for compliance.
-5.  The `onSuppressedError` method is called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
-6.  The `onNotApplicable` method is called when a rule does not apply to the given CfnResource.
+1. The `onCompliance` method is called when a CfnResource passes the compliance check for a given rule.
+2. The `onNonCompliance` method is called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
+3. The `onSuppressed` method is called when a CfnResource does not pass the compliance check for a given rule **and** the rule violation is suppressed by the user.
+4. The `onError` method is called when a rule throws an error during while validating a CfnResource for compliance.
+5. The `onSuppressedError` method is called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
+6. The `onNotApplicable` method is called when a rule does not apply to the given CfnResource.
 
 Here is an example of a basic console logger that outputs a small amount of the provided information
 
 ```ts
-import { INagLogger } from 'cdk-nag';
-export class ExtremelyHelpfulConsoleLogger implements INagLogger {
-  onCompliance(input: NagLoggerComplianceInput): void {
+import { NagLogger } from 'cdk-nag';
+export class ExtremelyHelpfulConsoleLogger implements nagLogger.INagLogger {
+  onCompliance(data: ComplianceData): void {
     console.log(
-      `Yay! ${input.resource.logicalId} is compliant to ${input.ruleId}`
+      `Yay! ${data.resource.logicalId} is compliant to ${data.ruleId}`
     );
   }
-  onNonCompliance(input: NagLoggerNonComplianceInput): void {
+  onNonCompliance(data: nagLogger.NonComplianceData): void {
     console.log(
-      `Boo! ${input.resource.logicalId} is non-compliant to ${input.ruleId}`
+      `Boo! ${data.resource.logicalId} is non-compliant to ${data.ruleId}`
     );
   }
-  onSuppression(input: NagLoggerSuppressionInput): void {
+  onSuppressed(data: nagLogger.SuppressedData): void {
     console.log(
-      `Hmmmm... ${input.ruleId} has been suppressed on ${input.resource.logicalId} with the following reason ${input.suppressionReason}`
+      `Hmmmm... ${data.ruleId} has been suppressed on ${data.resource.logicalId} with the following reason ${data.suppressionReason}`
     );
   }
-  onError(input: NagLoggerErrorInput): void {
+  onError(data: nagLogger.ErrorData): void {
     console.log(
-      `WHAT?!?! ${input.ruleId} encountered an error during validation!`
+      `WHAT?!?! ${data.ruleId} encountered an error during validation!`
     );
   }
-  onSuppressedError(input: NagLoggerSuppressedErrorInput): void {
+  onSuppressedError(data: nagLogger.SuppressedErrorData): void {
     console.log(
-      `PHEW! ${input.ruleId} encountered an error during validation, but was suppressed with the following reason ${input.errorSuppressionReason}.`
+      `PHEW! ${data.ruleId} encountered an error during validation, but was suppressed with the following reason ${data.errorSuppressionReason}.`
     );
   }
-  onNotApplicable(input: NagLoggerNotApplicableInput): void {
+  onNotApplicable(data: nagLogger.NotApplicableData): void {
     console.log(
-      `Meh. ${input.ruleId} and ${input.resource.logicalId} aren't related at all, but I still want to say something.`
+      `Meh. ${data.ruleId} and ${data.resource.logicalId} aren't related at all, but INagLogger still want to say something.`
     );
   }
 }
@@ -79,7 +79,7 @@ export class ExampleChecks extends NagPack {
   constructor(props?: NagPackProps) {
     super(props);
     this.packName = 'Example';
-    this.loggingTargets.push(new ExtremelyHelpfulConsoleLogger());
+    this.loggers.push(new ExtremelyHelpfulConsoleLogger());
   }
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
