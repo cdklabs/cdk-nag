@@ -351,16 +351,16 @@ export class NagReportLogger implements INagLogger {
             exceptionReason = (data as SuppressedErrorData)
               .errorSuppressionReason;
           }
-          report.lines.push({
-            ruleId: data.ruleId,
-            resourceId: data.resource.node.path,
-            compliance,
-            exceptionReason,
-            ruleLevel: data.ruleLevel,
-            ruleInfo: data.ruleInfo,
-          });
-          writeFileSync(filePath, JSON.stringify(report));
         }
+        report.lines.push({
+          ruleId: data.ruleId,
+          resourceId: data.resource.node.path,
+          compliance,
+          exceptionReason,
+          ruleLevel: data.ruleLevel,
+          ruleInfo: data.ruleInfo,
+        });
+        writeFileSync(filePath, JSON.stringify(report));
       } else {
         throw new Error(
           `Unrecognized ouput format ${format} for the NagReportLogger`
