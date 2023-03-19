@@ -359,7 +359,6 @@ export class NagReportLogger implements INagLogger {
             ruleLevel: data.ruleLevel,
             ruleInfo: data.ruleInfo,
           });
-          console.log(report);
           writeFileSync(filePath, JSON.stringify(report));
         }
       } else {
