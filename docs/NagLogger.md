@@ -71,7 +71,7 @@ import {
   NagPackProps,
   NagRuleCompliance,
   NagRuleResult,
-  NagRules,,
+  NagRules,
   rules,
 } from 'cdk-nag';
 
@@ -79,7 +79,7 @@ export class ExampleChecks extends NagPack {
   constructor(props?: NagPackProps) {
     super(props);
     this.packName = 'Example';
-    this.loggingTargets.push(new ExtremelyHelpfulConsoleLogger())
+    this.loggingTargets.push(new ExtremelyHelpfulConsoleLogger());
   }
   public visit(node: IConstruct): void {
     if (node instanceof CfnResource) {
@@ -94,5 +94,4 @@ export class ExampleChecks extends NagPack {
     }
   }
 }
-
 ```

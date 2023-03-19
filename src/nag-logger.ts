@@ -16,7 +16,6 @@ import { NagRuleCompliance } from './nag-rules';
  * @param ruleInfo The id of the rule to ignore.
  * @param ruleExplanation Why the rule exists.
  * @param ruleLevel The severity level of the rule.
- * @param verbose Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages.
  */
 export interface NagLoggerInputBase {
   readonly nagPackName: string;
@@ -25,7 +24,6 @@ export interface NagLoggerInputBase {
   readonly ruleInfo: string;
   readonly ruleExplanation: string;
   readonly ruleLevel: NagMessageLevel;
-  readonly verbose: boolean;
 }
 
 /**
@@ -42,11 +40,9 @@ export interface NagLoggerNonComplianceInput extends NagLoggerInputBase {
 /**
  * Input for onSuppression method of an INagLogger
  * @param suppressionReason The reason given for the suppression.
- * @param shouldLogIgnored Whether or not the NagPack user has indicated that they want to log suppression details
  */
 export interface NagLoggerSuppressionInput extends NagLoggerNonComplianceInput {
   readonly suppressionReason: string;
-  readonly shouldLogIgnored: boolean;
 }
 /**
  * Input for onError method of an INagLogger
@@ -62,7 +58,6 @@ export interface NagLoggerErrorInput extends NagLoggerInputBase {
  */
 export interface NagLoggerSuppressedErrorInput extends NagLoggerErrorInput {
   readonly errorSuppressionReason: string;
-  readonly shouldLogIgnored: boolean;
 }
 
 /**
@@ -112,10 +107,30 @@ export interface INagLogger {
 }
 
 /**
+ * Props for the AnnotationLogger
+ */
+export interface AnnotationLoggerProps {
+  /**
+   * Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages.
+   */
+  readonly verbose?: boolean;
+
+  /**
+   * Whether or not to log suppressed rule violations as informational messages (default: false).
+   */
+  readonly logIgnores?: boolean;
+}
+/**
  * A NagLogger that outputs to the CDK Annotations system
  */
-export class AnnotationsLogger implements INagLogger {
+export class AnnotationLogger implements INagLogger {
   suppressionId = 'CdkNagSuppression';
+  readonly verbose: boolean;
+  readonly logIgnores: boolean;
+  constructor(props?: AnnotationLoggerProps) {
+    this.verbose = props?.verbose ?? false;
+    this.logIgnores = props?.logIgnores ?? false;
+  }
   onCompliance(_input: NagLoggerComplianceInput): void {
     return;
   }
@@ -125,7 +140,7 @@ export class AnnotationsLogger implements INagLogger {
       input.findingId,
       input.ruleInfo,
       input.ruleExplanation,
-      input.verbose
+      this.verbose
     );
     if (input.ruleLevel == NagMessageLevel.ERROR) {
       Annotations.of(input.resource).addError(message);
@@ -134,13 +149,13 @@ export class AnnotationsLogger implements INagLogger {
     }
   }
   onSuppression(input: NagLoggerSuppressionInput): void {
-    if (input.shouldLogIgnored) {
+    if (this.logIgnores) {
       const message = this.createMessage(
         this.suppressionId,
         input.findingId,
         `${input.ruleId} was triggered but suppressed.`,
         `Provided reason: "${input.suppressionReason}"`,
-        input.verbose
+        this.verbose
       );
       Annotations.of(input.resource).addInfo(message);
     }
@@ -152,18 +167,18 @@ export class AnnotationsLogger implements INagLogger {
       '',
       information,
       input.errorMessage,
-      input.verbose
+      this.verbose
     );
     Annotations.of(input.resource).addWarning(message);
   }
   onSuppressedError(input: NagLoggerSuppressedErrorInput): void {
-    if (input.shouldLogIgnored === true) {
+    if (this.logIgnores === true) {
       const message = this.createMessage(
         this.suppressionId,
         '',
         `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
         input.errorSuppressionReason,
-        input.verbose
+        this.verbose
       );
       Annotations.of(input.resource).addInfo(message);
     }
@@ -186,104 +201,6 @@ export class AnnotationsLogger implements INagLogger {
   }
 }
 
-/**
- * A NagLogger that creates CSV compliance reports
- */
-export class CsvNagReportLogger implements INagLogger {
-  readonly reportStacks = new Array<string>();
-
-  onCompliance(input: NagLoggerComplianceInput): void {
-    this.initializeStackReport(input);
-    this.writeToStackComplianceReport(input, NagRuleCompliance.COMPLIANT);
-  }
-  onNonCompliance(input: NagLoggerNonComplianceInput): void {
-    this.initializeStackReport(input);
-    this.writeToStackComplianceReport(input, NagRuleCompliance.NON_COMPLIANT);
-  }
-  onSuppression(input: NagLoggerSuppressionInput): void {
-    this.initializeStackReport(input);
-    this.writeToStackComplianceReport(
-      input,
-      NagRulePostValidationStates.SUPPRESSED
-    );
-  }
-  onError(input: NagLoggerErrorInput): void {
-    this.initializeStackReport(input);
-    this.writeToStackComplianceReport(
-      input,
-      NagRulePostValidationStates.UNKNOWN
-    );
-  }
-  onSuppressedError(input: NagLoggerSuppressedErrorInput): void {
-    this.initializeStackReport(input);
-    this.writeToStackComplianceReport(
-      input,
-      NagRulePostValidationStates.SUPPRESSED
-    );
-  }
-  onNotApplicable(input: NagLoggerNotApplicableInput): void {
-    this.initializeStackReport(input);
-  }
-
-  /**
-   * Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist
-   * @param input
-   */
-  protected initializeStackReport(input: NagLoggerInputBase): void {
-    const stackName = input.resource.stack.nested
-      ? Names.uniqueId(input.resource.stack)
-      : input.resource.stack.stackName;
-    const fileName = `${input.nagPackName}-${stackName}-NagReport.csv`;
-    if (!this.reportStacks.includes(fileName)) {
-      const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
-      this.reportStacks.push(fileName);
-      writeFileSync(
-        filePath,
-        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info\n'
-      );
-    }
-  }
-
-  protected writeToStackComplianceReport(
-    input: NagLoggerInputBase,
-    compliance: NagLoggerCompliance
-  ): void {
-    const stackName = input.resource.stack.nested
-      ? Names.uniqueId(input.resource.stack)
-      : input.resource.stack.stackName;
-    const fileName = `${input.nagPackName}-${stackName}-NagReport.csv`;
-    const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
-    appendFileSync(filePath, createComplianceReportLine());
-
-    function createComplianceReportLine(): string {
-      //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level | Rule Info
-      const line = Array<string>();
-      line.push(input.ruleId);
-      line.push(input.resource.node.path);
-      if (compliance === NagRulePostValidationStates.SUPPRESSED) {
-        line.push(NagRulePostValidationStates.SUPPRESSED);
-        if (
-          (input as NagLoggerSuppressionInput).suppressionReason !== undefined
-        ) {
-          line.push((input as NagLoggerSuppressionInput).suppressionReason);
-        } else {
-          line.push(
-            (input as NagLoggerSuppressedErrorInput).errorSuppressionReason
-          );
-        }
-      } else {
-        line.push(compliance);
-        line.push('N/A');
-      }
-      line.push(input.ruleLevel);
-      line.push(input.ruleInfo);
-      return (
-        line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n'
-      );
-    }
-  }
-}
-
 export interface NagReportSchema {
   readonly lines: NagReportLine[];
 }
@@ -298,10 +215,32 @@ export interface NagReportLine {
 }
 
 /**
- * A NagLogger that creates JSON compliance reports
+ * Possible output formats of the NagReport
  */
-export class JsonNagReportLogger implements INagLogger {
-  readonly reportStacks = new Array<string>();
+export enum NagReportFormat {
+  CSV = 'csv',
+  JSON = 'json',
+}
+
+/**
+ * Props for the NagReportLogger
+ */
+export interface NagReportLoggerProps {
+  formats: NagReportFormat[];
+}
+
+/**
+ * A NagLogger that creates compliance reports
+ */
+export class NagReportLogger implements INagLogger {
+  readonly reportStacks = new Map<NagReportFormat, Array<string>>();
+  readonly formats: NagReportFormat[];
+  constructor(props: NagReportLoggerProps) {
+    if (props.formats.length === 0) {
+      throw new Error('Must provide at least 1 NagReportFormat.');
+    }
+    this.formats = props.formats;
+  }
 
   onCompliance(input: NagLoggerComplianceInput): void {
     this.initializeStackReport(input);
@@ -341,14 +280,28 @@ export class JsonNagReportLogger implements INagLogger {
    * @param input
    */
   protected initializeStackReport(input: NagLoggerInputBase): void {
-    const stackName = input.resource.stack.nested
-      ? Names.uniqueId(input.resource.stack)
-      : input.resource.stack.stackName;
-    const fileName = `${input.nagPackName}-${stackName}-NagReport.json`;
-    if (!this.reportStacks.includes(fileName)) {
-      const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
-      this.reportStacks.push(fileName);
-      writeFileSync(filePath, JSON.stringify({ lines: [] } as NagReportSchema));
+    for (const format of this.formats) {
+      const stackName = input.resource.stack.nested
+        ? Names.uniqueId(input.resource.stack)
+        : input.resource.stack.stackName;
+      const fileName = `${input.nagPackName}-${stackName}-NagReport.${format}`;
+      const stacks = this.reportStacks.get(format) ?? [];
+      if (!stacks.includes(fileName)) {
+        const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
+        this.reportStacks.set(format, [...stacks, fileName]);
+        let body = '';
+        if (format === NagReportFormat.CSV) {
+          body =
+            'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info\n';
+        } else if (format === NagReportFormat.JSON) {
+          body = JSON.stringify({ lines: [] } as NagReportSchema);
+        } else {
+          throw new Error(
+            `Unrecognized ouput format ${format} for the NagReportLogger`
+          );
+        }
+        writeFileSync(filePath, body);
+      }
     }
   }
 
@@ -356,37 +309,68 @@ export class JsonNagReportLogger implements INagLogger {
     input: NagLoggerInputBase,
     compliance: NagLoggerCompliance
   ): void {
-    const stackName = input.resource.stack.nested
-      ? Names.uniqueId(input.resource.stack)
-      : input.resource.stack.stackName;
-    const fileName = `${input.nagPackName}-${stackName}-NagReport.json`;
-    const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
-    const report = JSON.parse(
-      readFileSync(filePath, 'utf8')
-    ) as NagReportSchema;
-    report.lines.push(createComplianceReportLine());
-    writeFileSync(filePath, JSON.stringify(report));
-    function createComplianceReportLine(): NagReportLine {
-      let exceptionReason = 'N/A';
-      if (compliance === NagRulePostValidationStates.SUPPRESSED) {
-        if (
-          (input as NagLoggerSuppressionInput).suppressionReason !== undefined
-        ) {
-          exceptionReason = (input as NagLoggerSuppressionInput)
-            .suppressionReason;
+    for (const format of this.formats) {
+      const stackName = input.resource.stack.nested
+        ? Names.uniqueId(input.resource.stack)
+        : input.resource.stack.stackName;
+      const fileName = `${input.nagPackName}-${stackName}-NagReport.${format}`;
+      const filePath = join(App.of(input.resource)?.outdir ?? '', fileName);
+      if (format === NagReportFormat.CSV) {
+        //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level | Rule Info
+        const line = Array<string>();
+        line.push(input.ruleId);
+        line.push(input.resource.node.path);
+        if (compliance === NagRulePostValidationStates.SUPPRESSED) {
+          line.push(NagRulePostValidationStates.SUPPRESSED);
+          if (
+            (input as NagLoggerSuppressionInput).suppressionReason !== undefined
+          ) {
+            line.push((input as NagLoggerSuppressionInput).suppressionReason);
+          } else {
+            line.push(
+              (input as NagLoggerSuppressedErrorInput).errorSuppressionReason
+            );
+          }
         } else {
-          exceptionReason = (input as NagLoggerSuppressedErrorInput)
-            .errorSuppressionReason;
+          line.push(compliance);
+          line.push('N/A');
         }
+        line.push(input.ruleLevel);
+        line.push(input.ruleInfo);
+        appendFileSync(
+          filePath,
+          line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n'
+        );
+      } else if (format === NagReportFormat.JSON) {
+        const report = JSON.parse(
+          readFileSync(filePath, 'utf8')
+        ) as NagReportSchema;
+        let exceptionReason = 'N/A';
+        if (compliance === NagRulePostValidationStates.SUPPRESSED) {
+          if (
+            (input as NagLoggerSuppressionInput).suppressionReason !== undefined
+          ) {
+            exceptionReason = (input as NagLoggerSuppressionInput)
+              .suppressionReason;
+          } else {
+            exceptionReason = (input as NagLoggerSuppressedErrorInput)
+              .errorSuppressionReason;
+          }
+          report.lines.push({
+            ruleId: input.ruleId,
+            resourceId: input.resource.node.path,
+            compliance,
+            exceptionReason,
+            ruleLevel: input.ruleLevel,
+            ruleInfo: input.ruleInfo,
+          });
+          writeFileSync(filePath, JSON.stringify(report));
+        }
+      } else {
+        throw new Error(
+          `Unrecognized ouput format ${format} for the NagReportLogger`
+        );
       }
-      return {
-        ruleId: input.ruleId,
-        resourceId: input.resource.node.path,
-        compliance,
-        exceptionReason,
-        ruleLevel: input.ruleLevel,
-        ruleInfo: input.ruleInfo,
-      };
     }
   }
 }

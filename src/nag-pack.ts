@@ -11,9 +11,11 @@ import {
 } from './ignore-suppression-conditions';
 import { NagPackSuppression } from './models/nag-suppression';
 import {
-  AnnotationsLogger,
+  AnnotationLogger,
+  NagReportLogger,
   INagLogger,
   NagLoggerInputBase,
+  NagReportFormat,
 } from './nag-logger';
 import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
@@ -30,14 +32,19 @@ export interface NagPackProps {
   readonly verbose?: boolean;
 
   /**
-   * Whether or not to log triggered rules that have been suppressed as informational messages (default: false).
+   * Whether or not to log suppressed rule violations as informational messages (default: false).
    */
   readonly logIgnores?: boolean;
 
   /**
-   * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).
+   * Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).
    */
   readonly reports?: boolean;
+
+  /**
+   * If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).
+   */
+  readonly reportFormats?: NagReportFormat[];
 
   /**
    * Conditionally prevent rules from being suppressed (default: no user provided condition).
@@ -97,24 +104,24 @@ export enum NagMessageLevel {
  * Base class for all rule packs.
  */
 export abstract class NagPack implements IAspect {
-  protected verbose: boolean;
-  protected logIgnores: boolean;
   protected loggingTargets = new Array<INagLogger>();
   protected packName = '';
   protected userGlobalSuppressionIgnore?: INagSuppressionIgnore;
   protected packGlobalSuppressionIgnore?: INagSuppressionIgnore;
 
   constructor(props?: NagPackProps) {
-    this.verbose =
-      props == undefined || props.verbose == undefined ? false : props.verbose;
-    this.logIgnores =
-      props == undefined || props.logIgnores == undefined
-        ? false
-        : props.logIgnores;
     this.userGlobalSuppressionIgnore = props?.suppressionIgnoreCondition;
-    this.loggingTargets.push(new AnnotationsLogger());
+    this.loggingTargets.push(
+      new AnnotationLogger({
+        verbose: props?.verbose,
+        logIgnores: props?.logIgnores,
+      })
+    );
     if (props?.reports ?? true) {
-      this.loggingTargets.push(new AnnotationsLogger());
+      const formats = props?.reportFormats
+        ? props.reportFormats
+        : [NagReportFormat.CSV];
+      this.loggingTargets.push(new NagReportLogger({ formats }));
     }
     if (props?.additionalNagLoggers) {
       this.loggingTargets.push(...props.additionalNagLoggers);
@@ -152,7 +159,6 @@ export abstract class NagPack implements IAspect {
       ruleInfo: params.info,
       ruleExplanation: params.explanation,
       ruleLevel: params.level,
-      verbose: this.verbose,
     };
     try {
       const ruleCompliance = params.rule(params.node);
@@ -174,7 +180,6 @@ export abstract class NagPack implements IAspect {
               t.onSuppression({
                 ...base,
                 suppressionReason,
-                shouldLogIgnored: this.logIgnores,
                 findingId,
               })
             );
@@ -209,7 +214,6 @@ export abstract class NagPack implements IAspect {
             ...base,
             errorMessage: (error as Error).message,
             errorSuppressionReason: reason,
-            shouldLogIgnored: this.logIgnores,
           })
         );
       } else {
