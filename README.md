@@ -437,7 +437,7 @@ Aspects.of(app).add(
 
 `NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks`come with the `AnnotationsLogger`and the `NagReportLogger` (with CSV reports) enabled by default.
 
-See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
+See the [NagLogger](./docs/md) developer docs for more information.
 
 <details>
   <summary>Example) Adding the `ExtremelyHelpfulConsoleLogger` example from the NagLogger docs</summary>

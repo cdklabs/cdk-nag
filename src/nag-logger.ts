@@ -5,8 +5,13 @@ SPDX-License-Identifier: Apache-2.0
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
-import { NagMessageLevel, VALIDATION_FAILURE_ID } from './nag-pack';
-import { NagRuleCompliance } from './nag-rules';
+import {
+  NagMessageLevel,
+  NagRuleCompliance,
+  NagRulePostValidationStates,
+  NagRuleStates,
+  VALIDATION_FAILURE_ID,
+} from './nag-rules';
 
 /**
  * Shared data for all INagLogger methods
@@ -17,7 +22,7 @@ import { NagRuleCompliance } from './nag-rules';
  * @param ruleExplanation Why the rule exists.
  * @param ruleLevel The severity level of the rule.
  */
-export interface BaseData {
+export interface NagLoggerBaseData {
   readonly nagPackName: string;
   readonly resource: CfnResource;
   readonly ruleId: string;
@@ -29,19 +34,19 @@ export interface BaseData {
 /**
  * Data for onCompliance method of an I
  */
-export interface ComplianceData extends BaseData {}
+export interface NagLoggerComplianceData extends NagLoggerBaseData {}
 /**
  * Data for onNonCompliance method of an I
  * @param findingId The id of the finding that is being checked.
  */
-export interface NonComplianceData extends BaseData {
+export interface NagLoggerNonComplianceData extends NagLoggerBaseData {
   readonly findingId: string;
 }
 /**
  * Data for onSuppressed method of an I
  * @param suppressionReason The reason given for the suppression.
  */
-export interface SuppressedData extends NonComplianceData {
+export interface NagLoggerSuppressedData extends NagLoggerNonComplianceData {
   readonly suppressionReason: string;
 }
 /**
@@ -49,30 +54,21 @@ export interface SuppressedData extends NonComplianceData {
  * @param errorMessage: The error that was thrown
  * @param shouldLogIgnored Whether or not the NagPack user has indicated that they want to log suppression details
  */
-export interface ErrorData extends BaseData {
+export interface NagLoggerErrorData extends NagLoggerBaseData {
   readonly errorMessage: string;
 }
 /**
  * Data for onSuppressedError method of an I
  * @param errorSuppressionReason The reason given for the validation error suppression.
  */
-export interface SuppressedErrorData extends ErrorData {
+export interface NagLoggerSuppressedErrorData extends NagLoggerErrorData {
   readonly errorSuppressionReason: string;
 }
 
 /**
  * Data for onNotApplicable method of an I
  */
-export interface NotApplicableData extends BaseData {}
-
-/**
- * States a rule can be in post validation
- */
-export enum NagRulePostValidationStates {
-  SUPPRESSED = 'Suppressed',
-  UNKNOWN = 'UNKNOWN',
-}
-export type Compliance = NagRuleCompliance | NagRulePostValidationStates;
+export interface NagLoggerNotApplicableData extends NagLoggerBaseData {}
 
 /**
  * Interface for creating NagSuppression Ignores
@@ -81,27 +77,27 @@ export interface INagLogger {
   /**
    * Called when a CfnResource passes the compliance check for a given rule.
    */
-  onCompliance(data: ComplianceData): void;
+  onCompliance(data: NagLoggerComplianceData): void;
   /**
    * Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
    */
-  onNonCompliance(data: NonComplianceData): void;
+  onNonCompliance(data: NagLoggerNonComplianceData): void;
   /**
    * Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user.
    */
-  onSuppressed(data: SuppressedData): void;
+  onSuppressed(data: NagLoggerSuppressedData): void;
   /**
    * Called when a rule throws an error during while validating a CfnResource for compliance.
    */
-  onError(data: ErrorData): void;
+  onError(data: NagLoggerErrorData): void;
   /**
    * Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
    */
-  onSuppressedError(data: SuppressedErrorData): void;
+  onSuppressedError(data: NagLoggerSuppressedErrorData): void;
   /**
    * Called when a rule does not apply to the given CfnResource.
    */
-  onNotApplicable(data: NotApplicableData): void;
+  onNotApplicable(data: NagLoggerNotApplicableData): void;
 }
 
 /**
@@ -129,10 +125,10 @@ export class AnnotationLogger implements INagLogger {
     this.verbose = props?.verbose ?? false;
     this.logIgnores = props?.logIgnores ?? false;
   }
-  onCompliance(_data: ComplianceData): void {
+  onCompliance(_data: NagLoggerComplianceData): void {
     return;
   }
-  onNonCompliance(data: NonComplianceData): void {
+  onNonCompliance(data: NagLoggerNonComplianceData): void {
     const message = this.createMessage(
       data.ruleId,
       data.findingId,
@@ -146,7 +142,7 @@ export class AnnotationLogger implements INagLogger {
       Annotations.of(data.resource).addWarning(message);
     }
   }
-  onSuppressed(data: SuppressedData): void {
+  onSuppressed(data: NagLoggerSuppressedData): void {
     if (this.logIgnores) {
       const message = this.createMessage(
         this.suppressionId,
@@ -158,7 +154,7 @@ export class AnnotationLogger implements INagLogger {
       Annotations.of(data.resource).addInfo(message);
     }
   }
-  onError(data: ErrorData): void {
+  onError(data: NagLoggerErrorData): void {
     const information = `'${data.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. You can suppress the "${VALIDATION_FAILURE_ID}" to get rid of this error. For more details enable verbose logging.'`;
     const message = this.createMessage(
       VALIDATION_FAILURE_ID,
@@ -169,7 +165,7 @@ export class AnnotationLogger implements INagLogger {
     );
     Annotations.of(data.resource).addWarning(message);
   }
-  onSuppressedError(data: SuppressedErrorData): void {
+  onSuppressedError(data: NagLoggerSuppressedErrorData): void {
     if (this.logIgnores === true) {
       const message = this.createMessage(
         this.suppressionId,
@@ -181,7 +177,7 @@ export class AnnotationLogger implements INagLogger {
       Annotations.of(data.resource).addInfo(message);
     }
   }
-  onNotApplicable(_data: NotApplicableData): void {
+  onNotApplicable(_data: NagLoggerNotApplicableData): void {
     return;
   }
 
@@ -240,36 +236,36 @@ export class NagReportLogger implements INagLogger {
     this.formats = props.formats;
   }
 
-  onCompliance(data: ComplianceData): void {
+  onCompliance(data: NagLoggerComplianceData): void {
     this.initializeStackReport(data);
     this.writeToStackComplianceReport(data, NagRuleCompliance.COMPLIANT);
   }
-  onNonCompliance(data: NonComplianceData): void {
+  onNonCompliance(data: NagLoggerNonComplianceData): void {
     this.initializeStackReport(data);
     this.writeToStackComplianceReport(data, NagRuleCompliance.NON_COMPLIANT);
   }
-  onSuppressed(data: SuppressedData): void {
+  onSuppressed(data: NagLoggerSuppressedData): void {
     this.initializeStackReport(data);
     this.writeToStackComplianceReport(
       data,
       NagRulePostValidationStates.SUPPRESSED
     );
   }
-  onError(data: ErrorData): void {
+  onError(data: NagLoggerErrorData): void {
     this.initializeStackReport(data);
     this.writeToStackComplianceReport(
       data,
       NagRulePostValidationStates.UNKNOWN
     );
   }
-  onSuppressedError(data: SuppressedErrorData): void {
+  onSuppressedError(data: NagLoggerSuppressedErrorData): void {
     this.initializeStackReport(data);
     this.writeToStackComplianceReport(
       data,
       NagRulePostValidationStates.SUPPRESSED
     );
   }
-  onNotApplicable(data: NotApplicableData): void {
+  onNotApplicable(data: NagLoggerNotApplicableData): void {
     this.initializeStackReport(data);
   }
 
@@ -281,7 +277,7 @@ export class NagReportLogger implements INagLogger {
    * Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist
    * @param data
    */
-  protected initializeStackReport(data: BaseData): void {
+  protected initializeStackReport(data: NagLoggerBaseData): void {
     for (const format of this.formats) {
       const stackName = data.resource.stack.nested
         ? Names.uniqueId(data.resource.stack)
@@ -308,8 +304,8 @@ export class NagReportLogger implements INagLogger {
   }
 
   protected writeToStackComplianceReport(
-    data: BaseData,
-    compliance: Compliance
+    data: NagLoggerBaseData,
+    compliance: NagRuleStates
   ): void {
     for (const format of this.formats) {
       const stackName = data.resource.stack.nested
@@ -324,10 +320,14 @@ export class NagReportLogger implements INagLogger {
         line.push(data.resource.node.path);
         if (compliance === NagRulePostValidationStates.SUPPRESSED) {
           line.push(NagRulePostValidationStates.SUPPRESSED);
-          if ((data as SuppressedData).suppressionReason !== undefined) {
-            line.push((data as SuppressedData).suppressionReason);
+          if (
+            (data as NagLoggerSuppressedData).suppressionReason !== undefined
+          ) {
+            line.push((data as NagLoggerSuppressedData).suppressionReason);
           } else {
-            line.push((data as SuppressedErrorData).errorSuppressionReason);
+            line.push(
+              (data as NagLoggerSuppressedErrorData).errorSuppressionReason
+            );
           }
         } else {
           line.push(compliance);
@@ -345,10 +345,13 @@ export class NagReportLogger implements INagLogger {
         ) as NagReportSchema;
         let exceptionReason = 'N/A';
         if (compliance === NagRulePostValidationStates.SUPPRESSED) {
-          if ((data as SuppressedData).suppressionReason !== undefined) {
-            exceptionReason = (data as SuppressedData).suppressionReason;
+          if (
+            (data as NagLoggerSuppressedData).suppressionReason !== undefined
+          ) {
+            exceptionReason = (data as NagLoggerSuppressedData)
+              .suppressionReason;
           } else {
-            exceptionReason = (data as SuppressedErrorData)
+            exceptionReason = (data as NagLoggerSuppressedErrorData)
               .errorSuppressionReason;
           }
         }

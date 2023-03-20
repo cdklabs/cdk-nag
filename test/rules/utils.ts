@@ -5,8 +5,9 @@ SPDX-License-Identifier: Apache-2.0
 import { SynthUtils } from '@aws-cdk/assert';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { INagSuppressionIgnore, NagRuleResult } from '../../src';
-import { NagMessageLevel, NagPack, NagPackProps } from '../../src/nag-pack';
+import { INagSuppressionIgnore } from '../../src/ignore-suppression-conditions';
+import { NagPack, NagPackProps } from '../../src/nag-pack';
+import { NagMessageLevel, NagRuleResult } from '../../src/nag-rules';
 
 export enum TestType {
   NON_COMPLIANCE,

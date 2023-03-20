@@ -22,33 +22,33 @@ Here is an example of a basic console logger that outputs a small amount of the 
 
 ```ts
 import { NagLogger } from 'cdk-nag';
-export class ExtremelyHelpfulConsoleLogger implements nagLogger.INagLogger {
-  onCompliance(data: ComplianceData): void {
+export class ExtremelyHelpfulConsoleLogger implements INagLogger {
+  onCompliance(data: NagLoggerComplianceData): void {
     console.log(
       `Yay! ${data.resource.logicalId} is compliant to ${data.ruleId}`
     );
   }
-  onNonCompliance(data: nagLogger.NonComplianceData): void {
+  onNonCompliance(data: NagLoggerNonComplianceData): void {
     console.log(
       `Boo! ${data.resource.logicalId} is non-compliant to ${data.ruleId}`
     );
   }
-  onSuppressed(data: nagLogger.SuppressedData): void {
+  onSuppressed(data: NagLoggerSuppressedData): void {
     console.log(
       `Hmmmm... ${data.ruleId} has been suppressed on ${data.resource.logicalId} with the following reason ${data.suppressionReason}`
     );
   }
-  onError(data: nagLogger.ErrorData): void {
+  onError(data: NagLoggerErrorData): void {
     console.log(
       `WHAT?!?! ${data.ruleId} encountered an error during validation!`
     );
   }
-  onSuppressedError(data: nagLogger.SuppressedErrorData): void {
+  onSuppressedError(data: NagLoggerSuppressedErrorData): void {
     console.log(
       `PHEW! ${data.ruleId} encountered an error during validation, but was suppressed with the following reason ${data.errorSuppressionReason}.`
     );
   }
-  onNotApplicable(data: nagLogger.NotApplicableData): void {
+  onNotApplicable(data: NagLoggerNotApplicableData): void {
     console.log(
       `Meh. ${data.ruleId} and ${data.resource.logicalId} aren't related at all, but INagLogger still want to say something.`
     );

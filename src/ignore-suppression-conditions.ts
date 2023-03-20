@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource } from 'aws-cdk-lib';
-import { NagMessageLevel } from './nag-pack';
+import { NagMessageLevel } from './nag-rules';
 
 /**
  * Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore

@@ -12,15 +12,19 @@ import {
 import { NagPackSuppression } from './models/nag-suppression';
 import {
   AnnotationLogger,
-  NagReportLogger,
-  BaseData,
-  NagReportFormat,
   INagLogger,
+  NagLoggerBaseData,
+  NagReportFormat,
+  NagReportLogger,
 } from './nag-logger';
-import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
+import {
+  NagMessageLevel,
+  NagRuleCompliance,
+  NagRuleFindings,
+  NagRuleResult,
+  VALIDATION_FAILURE_ID,
+} from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
-
-export const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 
 /**
  * Interface for creating a NagPack.
@@ -93,14 +97,6 @@ export interface IApplyRule {
 }
 
 /**
- * The severity level of the rule.
- */
-export enum NagMessageLevel {
-  WARN = 'Warning',
-  ERROR = 'Error',
-}
-
-/**
  * Base class for all rule packs.
  */
 export abstract class NagPack implements IAspect {
@@ -152,7 +148,7 @@ export abstract class NagPack implements IAspect {
       ? params.ruleSuffixOverride
       : params.rule.name;
     const ruleId = `${this.packName}-${ruleSuffix}`;
-    const base: BaseData = {
+    const base: NagLoggerBaseData = {
       nagPackName: this.packName,
       resource: params.node,
       ruleId: ruleId,
