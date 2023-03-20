@@ -7,9 +7,9 @@ SPDX-License-Identifier: Apache-2.0
 
 `NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built`NagPacks`come with the`AnnotationsLogger`and the`CsvNagReportLogger` enabled by default.
 
-## Creating A
+## Creating A NagLogger
 
-s implement the `INagLogger` interface. Corresponding `INagLogger` method of a loggers is called after a `CfnResource` is evaluated against a `NagRule`. Each of these methods are passed information that relate to the validation state.
+`NagLogger`s implement the `INagLogger` interface. Corresponding `INagLogger` method of a loggers is called after a `CfnResource` is evaluated against a `NagRule`. Each of these methods are passed information that relate to the validation state.
 
 1. The `onCompliance` method is called when a CfnResource passes the compliance check for a given rule.
 2. The `onNonCompliance` method is called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
