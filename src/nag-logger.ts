@@ -2,9 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import {
   NagMessageLevel,
   NagRuleCompliance,
@@ -115,7 +115,7 @@ export interface AnnotationLoggerProps {
   readonly logIgnores?: boolean;
 }
 /**
- * A  that outputs to the CDK Annotations system
+ * A NagLogger that outputs to the CDK Annotations system
  */
 export class AnnotationLogger implements INagLogger {
   suppressionId = 'CdkNagSuppression';
@@ -224,7 +224,7 @@ export interface NagReportLoggerProps {
 }
 
 /**
- * A  that creates compliance reports
+ * A NagLogger that creates compliance reports
  */
 export class NagReportLogger implements INagLogger {
   private reportStacks = new Map<NagReportFormat, Array<string>>();
