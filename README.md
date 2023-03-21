@@ -306,6 +306,8 @@ See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more informati
 <details>
   <summary>Example) Supressing Violations in Pipelines</summary>
 
+`example-app.ts`
+
 ```ts
 import { App, Aspects } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
@@ -437,7 +439,7 @@ Aspects.of(app).add(
 
 `NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks`come with the `AnnotationsLogger`and the `NagReportLogger` (with CSV reports) enabled by default.
 
-See the [NagLogger](./docs/md) developer docs for more information.
+See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
 
 <details>
   <summary>Example) Adding the `ExtremelyHelpfulConsoleLogger` example from the NagLogger docs</summary>

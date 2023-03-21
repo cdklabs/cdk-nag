@@ -139,7 +139,7 @@ export class ExampleChecks extends NagPack {
 
 ### Custom Logging
 
-``s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. Read the [](./.md) documentation for more details
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. Read the [NagLogger](./NagLogger.md) documentation for more details
 
 ## Using a NagPack
 
