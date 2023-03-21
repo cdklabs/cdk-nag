@@ -4,13 +4,13 @@
 
 Name|Description
 ----|-----------
-[AnnotationLogger](#cdk-nag-annotationlogger)|A  that outputs to the CDK Annotations system.
+[AnnotationLogger](#cdk-nag-annotationlogger)|A NagLogger that outputs to the CDK Annotations system.
 [AwsSolutionsChecks](#cdk-nag-awssolutionschecks)|Check Best practices based on AWS Solutions Security Matrix.
 [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
 [NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
 [NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule packs.
-[NagReportLogger](#cdk-nag-nagreportlogger)|A  that creates compliance reports.
+[NagReportLogger](#cdk-nag-nagreportlogger)|A NagLogger that creates compliance reports.
 [NagRules](#cdk-nag-nagrules)|Helper class with methods for rule creation.
 [NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
 [PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
@@ -64,7 +64,7 @@ Name|Description
 
 ## class AnnotationLogger  <a id="cdk-nag-annotationlogger"></a>
 
-A  that outputs to the CDK Annotations system.
+A NagLogger that outputs to the CDK Annotations system.
 
 __Implements__: [INagLogger](#cdk-nag-inaglogger)
 
@@ -500,7 +500,7 @@ __Returns__:
 
 ## class NagReportLogger  <a id="cdk-nag-nagreportlogger"></a>
 
-A  that creates compliance reports.
+A NagLogger that creates compliance reports.
 
 __Implements__: [INagLogger](#cdk-nag-inaglogger)
 

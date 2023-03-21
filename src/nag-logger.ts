@@ -2,9 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import {
   NagMessageLevel,
   NagRuleCompliance,
