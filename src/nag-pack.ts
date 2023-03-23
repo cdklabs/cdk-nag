@@ -56,7 +56,7 @@ export interface NagPackProps {
   readonly suppressionIgnoreCondition?: INagSuppressionIgnore;
 
   /**
-   * Additional s for logging rule validation outputs.
+   * Additional NagLoggers for logging rule validation outputs.
    */
   readonly additionalLoggers?: INagLogger[];
 }
