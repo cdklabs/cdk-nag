@@ -251,7 +251,7 @@ new AwsSolutionsChecks(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional s for logging rule validation outputs. __*Optional*__
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
   * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
   * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
@@ -296,7 +296,7 @@ new HIPAASecurityChecks(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional s for logging rule validation outputs. __*Optional*__
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
   * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
   * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
@@ -341,7 +341,7 @@ new NIST80053R4Checks(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional s for logging rule validation outputs. __*Optional*__
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
   * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
   * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
@@ -386,7 +386,7 @@ new NIST80053R5Checks(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional s for logging rule validation outputs. __*Optional*__
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
   * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
   * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
@@ -429,7 +429,7 @@ new NagPack(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional s for logging rule validation outputs. __*Optional*__
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
   * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
   * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
@@ -831,7 +831,7 @@ new PCIDSS321Checks(props?: NagPackProps)
 ```
 
 * **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional s for logging rule validation outputs. __*Optional*__
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
   * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
   * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
   * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
@@ -1408,7 +1408,7 @@ Interface for creating a NagPack.
 
 Name | Type | Description 
 -----|------|-------------
-**additionalLoggers**? | <code>Array<[INagLogger](#cdk-nag-inaglogger)></code> | Additional s for logging rule validation outputs.<br/>__*Optional*__
+**additionalLoggers**? | <code>Array<[INagLogger](#cdk-nag-inaglogger)></code> | Additional NagLoggers for logging rule validation outputs.<br/>__*Optional*__
 **logIgnores**? | <code>boolean</code> | Whether or not to log suppressed rule violations as informational messages (default: false).<br/>__*Optional*__
 **reportFormats**? | <code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code> | If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).<br/>__*Optional*__
 **reports**? | <code>boolean</code> | Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).<br/>__*Optional*__
