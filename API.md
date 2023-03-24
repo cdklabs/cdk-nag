@@ -27,12 +27,12 @@ Name|Description
 ----|-----------
 [AnnotationLoggerProps](#cdk-nag-annotationloggerprops)|Props for the AnnotationLogger.
 [NagLoggerBaseData](#cdk-nag-nagloggerbasedata)|Shared data for all INagLogger methods.
-[NagLoggerComplianceData](#cdk-nag-nagloggercompliancedata)|Data for onCompliance method of an I.
-[NagLoggerErrorData](#cdk-nag-nagloggererrordata)|Data for onError method of an I.
-[NagLoggerNonComplianceData](#cdk-nag-nagloggernoncompliancedata)|Data for onNonCompliance method of an I.
-[NagLoggerNotApplicableData](#cdk-nag-nagloggernotapplicabledata)|Data for onNotApplicable method of an I.
-[NagLoggerSuppressedData](#cdk-nag-nagloggersuppresseddata)|Data for onSuppressed method of an I.
-[NagLoggerSuppressedErrorData](#cdk-nag-nagloggersuppressederrordata)|Data for onSuppressedError method of an I.
+[NagLoggerComplianceData](#cdk-nag-nagloggercompliancedata)|Data for onCompliance method of an INagLogger.
+[NagLoggerErrorData](#cdk-nag-nagloggererrordata)|Data for onError method of an INagLogger.
+[NagLoggerNonComplianceData](#cdk-nag-nagloggernoncompliancedata)|Data for onNonCompliance method of an INagLogger.
+[NagLoggerNotApplicableData](#cdk-nag-nagloggernotapplicabledata)|Data for onNotApplicable method of an INagLogger.
+[NagLoggerSuppressedData](#cdk-nag-nagloggersuppresseddata)|Data for onSuppressed method of an INagLogger.
+[NagLoggerSuppressedErrorData](#cdk-nag-nagloggersuppressederrordata)|Data for onSuppressedError method of an INagLogger.
 [NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a NagPack.
 [NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
 [NagReportLine](#cdk-nag-nagreportline)|*No description*
@@ -1288,7 +1288,7 @@ Name | Type | Description
 ## struct NagLoggerComplianceData  <a id="cdk-nag-nagloggercompliancedata"></a>
 
 
-Data for onCompliance method of an I.
+Data for onCompliance method of an INagLogger.
 
 
 
@@ -1306,7 +1306,7 @@ Name | Type | Description
 ## struct NagLoggerErrorData  <a id="cdk-nag-nagloggererrordata"></a>
 
 
-Data for onError method of an I.
+Data for onError method of an INagLogger.
 
 
 
@@ -1325,7 +1325,7 @@ Name | Type | Description
 ## struct NagLoggerNonComplianceData  <a id="cdk-nag-nagloggernoncompliancedata"></a>
 
 
-Data for onNonCompliance method of an I.
+Data for onNonCompliance method of an INagLogger.
 
 
 
@@ -1344,7 +1344,7 @@ Name | Type | Description
 ## struct NagLoggerNotApplicableData  <a id="cdk-nag-nagloggernotapplicabledata"></a>
 
 
-Data for onNotApplicable method of an I.
+Data for onNotApplicable method of an INagLogger.
 
 
 
@@ -1362,7 +1362,7 @@ Name | Type | Description
 ## struct NagLoggerSuppressedData  <a id="cdk-nag-nagloggersuppresseddata"></a>
 
 
-Data for onSuppressed method of an I.
+Data for onSuppressed method of an INagLogger.
 
 
 
@@ -1382,7 +1382,7 @@ Name | Type | Description
 ## struct NagLoggerSuppressedErrorData  <a id="cdk-nag-nagloggersuppressederrordata"></a>
 
 
-Data for onSuppressedError method of an I.
+Data for onSuppressedError method of an INagLogger.
 
 
 

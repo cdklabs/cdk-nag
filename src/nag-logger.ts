@@ -2,9 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
 import {
   NagMessageLevel,
   NagRuleCompliance,
@@ -32,33 +32,33 @@ export interface NagLoggerBaseData {
 }
 
 /**
- * Data for onCompliance method of an I
+ * Data for onCompliance method of an INagLogger.
  */
 export interface NagLoggerComplianceData extends NagLoggerBaseData {}
 /**
- * Data for onNonCompliance method of an I
+ * Data for onNonCompliance method of an INagLogger.
  * @param findingId The id of the finding that is being checked.
  */
 export interface NagLoggerNonComplianceData extends NagLoggerBaseData {
   readonly findingId: string;
 }
 /**
- * Data for onSuppressed method of an I
+ * Data for onSuppressed method of an INagLogger.
  * @param suppressionReason The reason given for the suppression.
  */
 export interface NagLoggerSuppressedData extends NagLoggerNonComplianceData {
   readonly suppressionReason: string;
 }
 /**
- * Data for onError method of an I
- * @param errorMessage: The error that was thrown
- * @param shouldLogIgnored Whether or not the NagPack user has indicated that they want to log suppression details
+ * Data for onError method of an INagLogger.
+ * @param errorMessage: The error that was thrown.
+ * @param shouldLogIgnored Whether or not the NagPack user has indicated that they want to log suppression details.
  */
 export interface NagLoggerErrorData extends NagLoggerBaseData {
   readonly errorMessage: string;
 }
 /**
- * Data for onSuppressedError method of an I
+ * Data for onSuppressedError method of an INagLogger.
  * @param errorSuppressionReason The reason given for the validation error suppression.
  */
 export interface NagLoggerSuppressedErrorData extends NagLoggerErrorData {
@@ -66,7 +66,7 @@ export interface NagLoggerSuppressedErrorData extends NagLoggerErrorData {
 }
 
 /**
- * Data for onNotApplicable method of an I
+ * Data for onNotApplicable method of an INagLogger.
  */
 export interface NagLoggerNotApplicableData extends NagLoggerBaseData {}
 
@@ -115,7 +115,7 @@ export interface AnnotationLoggerProps {
   readonly logIgnores?: boolean;
 }
 /**
- * A NagLogger that outputs to the CDK Annotations system
+ * A NagLogger that outputs to the CDK Annotations system.
  */
 export class AnnotationLogger implements INagLogger {
   suppressionId = 'CdkNagSuppression';
