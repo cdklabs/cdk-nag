@@ -39,7 +39,7 @@ You could also create the same condition without a class and by just implementin
 
 ### Applying Conditions
 
-There are 3 ways of applying conditions to rules. Users can have 1 way, they can supply an additional global condition that gets applied to all rules. `NagPack` authors have 2 ways, they can individually apply conditions to rules and/or apply a global condition to all rules. All present conditions are evaluated together using a `SuppressionIgnoreOr`(review [this section](#creating-complex-conditions) for more details on complex conditions).
+There are 3 ways of applying conditions to rules. Users have 1 way, they can supply an additional global condition that gets applied to all rules. `NagPack` authors have 2 ways, they can individually apply conditions to rules and/or apply a global condition to all rules. All present conditions are evaluated together using a `SuppressionIgnoreOr`(review [this section](#creating-complex-conditions) for more details on complex conditions).
 
 Here is an example of a `NagPack` author applying both a global condition and an individual condition to the prebuilt `S3BucketSSLRequestsOnly` S3 Rule.
 

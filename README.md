@@ -305,11 +305,11 @@ See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more informati
 
 <details>
   <summary>Example) Supressing Violations in Pipelines</summary>
-  
-  `example-app.ts`
-  
-  ```ts
-  import { App, Aspects } from 'aws-cdk-lib';
+
+`example-app.ts`
+
+```ts
+import { App, Aspects } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import { ExamplePipeline } from '../lib/example-pipeline';
 
@@ -317,45 +317,55 @@ const app = new App();
 new ExamplePipeline(app, 'example-cdk-pipeline');
 Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
 app.synth();
-
-````
+```
 
 `example-pipeline.ts`
 
 ```ts
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
-import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
+import {
+  CodePipeline,
+  CodePipelineSource,
+  ShellStep,
+} from 'aws-cdk-lib/pipelines';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
 export class ExamplePipeline extends Stack {
-constructor(scope: Construct, id: string, props?: StackProps) {
-  super(scope, id, props);
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
 
-  const exampleSynth = new ShellStep('ExampleSynth', {
-    commands: ['yarn build --frozen-lockfile'],
-    input: CodePipelineSource.codeCommit(new Repository(this, 'ExampleRepo', { repositoryName: 'ExampleRepo' }), 'main'),
-  });
+    const exampleSynth = new ShellStep('ExampleSynth', {
+      commands: ['yarn build --frozen-lockfile'],
+      input: CodePipelineSource.codeCommit(
+        new Repository(this, 'ExampleRepo', { repositoryName: 'ExampleRepo' }),
+        'main'
+      ),
+    });
 
-  const ExamplePipeline = new CodePipeline(this, 'ExamplePipeline', {
-    synth: exampleSynth,
-  });
+    const ExamplePipeline = new CodePipeline(this, 'ExamplePipeline', {
+      synth: exampleSynth,
+    });
 
-  // Force the pipeline construct creation forward before applying suppressions.
-  // @See https://github.com/aws/aws-cdk/issues/18440
-  ExamplePipeline.buildPipeline();
+    // Force the pipeline construct creation forward before applying suppressions.
+    // @See https://github.com/aws/aws-cdk/issues/18440
+    ExamplePipeline.buildPipeline();
 
-  // The path suppression will error if you comment out "ExamplePipeline.buildPipeline();""
-  NagSuppressions.addResourceSuppressionsByPath(this, '/example-cdk-pipeline/ExamplePipeline/Pipeline/ArtifactsBucket/Resource', [
-    {
-      id: 'AwsSolutions-S1',
-      reason: 'Because I said so',
-    },
-  ]);
+    // The path suppression will error if you comment out "ExamplePipeline.buildPipeline();""
+    NagSuppressions.addResourceSuppressionsByPath(
+      this,
+      '/example-cdk-pipeline/ExamplePipeline/Pipeline/ArtifactsBucket/Resource',
+      [
+        {
+          id: 'AwsSolutions-S1',
+          reason: 'Because I said so',
+        },
+      ]
+    );
+  }
 }
-}
-````
+```
 
 </details>
 
@@ -366,7 +376,7 @@ In some cases L2 Constructs do not have a native option to remediate an issue an
 <details>
   <summary>Example) Property Overrides</summary>
 
-```typescript
+```ts
 import {
   Instance,
   InstanceType,
@@ -419,6 +429,32 @@ new CdkTestStack(app, 'CdkNagDemo');
 Aspects.of(app).add(
   new AwsSolutionsChecks({
     suppressionIgnoreCondition: new SuppressionIgnoreErrors(),
+  })
+);
+```
+
+</details>
+
+## Customizing Logging
+
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks`come with the `AnnotationsLogger`and the `NagReportLogger` (with CSV reports) enabled by default.
+
+See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
+
+<details>
+  <summary>Example) Adding the `ExtremelyHelpfulConsoleLogger` example from the NagLogger docs</summary>
+
+```ts
+import { App, Aspects } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { ExtremelyHelpfulConsoleLogger } from './docs/NagLogger';
+import { AwsSolutionsChecks } from 'cdk-nag';
+
+const app = new App();
+new CdkTestStack(app, 'CdkNagDemo');
+Aspects.of(app).add(
+  new AwsSolutionsChecks({
+    additionalLoggers: [new ExtremelyHelpfulConsoleLogger()],
   })
 );
 ```

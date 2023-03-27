@@ -2,9 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { appendFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
-import { Annotations, App, CfnResource, IAspect, Names } from 'aws-cdk-lib';
+import { Annotations, CfnResource, IAspect } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
 import {
   INagSuppressionIgnore,
@@ -12,14 +10,24 @@ import {
   SuppressionIgnoreOr,
 } from './ignore-suppression-conditions';
 import { NagPackSuppression } from './models/nag-suppression';
-import { NagRuleCompliance, NagRuleFindings, NagRuleResult } from './nag-rules';
+import {
+  AnnotationLogger,
+  INagLogger,
+  NagLoggerBaseData,
+  NagReportFormat,
+  NagReportLogger,
+} from './nag-logger';
+import {
+  NagMessageLevel,
+  NagRuleCompliance,
+  NagRuleFindings,
+  NagRuleResult,
+  VALIDATION_FAILURE_ID,
+} from './nag-rules';
 import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
-const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
-const SUPPRESSION_ID = 'CdkNagSuppression';
-
 /**
- * Interface for creating a Nag rule pack.
+ * Interface for creating a NagPack.
  */
 export interface NagPackProps {
   /**
@@ -28,19 +36,29 @@ export interface NagPackProps {
   readonly verbose?: boolean;
 
   /**
-   * Whether or not to log triggered rules that have been suppressed as informational messages (default: false).
+   * Whether or not to log suppressed rule violations as informational messages (default: false).
    */
   readonly logIgnores?: boolean;
 
   /**
-   * Whether or not to generate CSV compliance reports for applied Stacks in the App's output directory (default: true).
+   * Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).
    */
   readonly reports?: boolean;
+
+  /**
+   * If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).
+   */
+  readonly reportFormats?: NagReportFormat[];
 
   /**
    * Conditionally prevent rules from being suppressed (default: no user provided condition).
    */
   readonly suppressionIgnoreCondition?: INagSuppressionIgnore;
+
+  /**
+   * Additional NagLoggers for logging rule validation outputs.
+   */
+  readonly additionalLoggers?: INagLogger[];
 }
 
 /**
@@ -79,43 +97,37 @@ export interface IApplyRule {
 }
 
 /**
- * The severity level of the rule.
- */
-export enum NagMessageLevel {
-  WARN = 'Warning',
-  ERROR = 'Error',
-}
-
-/**
  * Base class for all rule packs.
  */
 export abstract class NagPack implements IAspect {
-  protected verbose: boolean;
-  protected logIgnores: boolean;
-  protected reports: boolean;
-  protected reportStacks = new Array<string>();
+  protected loggers = new Array<INagLogger>();
   protected packName = '';
   protected userGlobalSuppressionIgnore?: INagSuppressionIgnore;
   protected packGlobalSuppressionIgnore?: INagSuppressionIgnore;
 
   constructor(props?: NagPackProps) {
-    this.verbose =
-      props == undefined || props.verbose == undefined ? false : props.verbose;
-    this.logIgnores =
-      props == undefined || props.logIgnores == undefined
-        ? false
-        : props.logIgnores;
-    this.reports =
-      props == undefined || props.reports == undefined ? true : props.reports;
     this.userGlobalSuppressionIgnore = props?.suppressionIgnoreCondition;
+    this.loggers.push(
+      new AnnotationLogger({
+        verbose: props?.verbose,
+        logIgnores: props?.logIgnores,
+      })
+    );
+    if (props?.reports ?? true) {
+      const formats = props?.reportFormats
+        ? props.reportFormats
+        : [NagReportFormat.CSV];
+      this.loggers.push(new NagReportLogger({ formats }));
+    }
+    if (props?.additionalLoggers) {
+      this.loggers.push(...props.additionalLoggers);
+    }
   }
 
   public get readPackName(): string {
     return this.packName;
   }
-  public get readReportStacks(): string[] {
-    return this.reportStacks;
-  }
+
   /**
    * All aspects can visit an IConstruct.
    */
@@ -136,15 +148,19 @@ export abstract class NagPack implements IAspect {
       ? params.ruleSuffixOverride
       : params.rule.name;
     const ruleId = `${this.packName}-${ruleSuffix}`;
+    const base: NagLoggerBaseData = {
+      nagPackName: this.packName,
+      resource: params.node,
+      ruleId: ruleId,
+      ruleInfo: params.info,
+      ruleExplanation: params.explanation,
+      ruleLevel: params.level,
+    };
     try {
       const ruleCompliance = params.rule(params.node);
-      if (this.reports === true) {
-        this.initializeStackReport(params);
-        if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
-          this.writeToStackComplianceReport(params, ruleId, ruleCompliance);
-        }
-      }
-      if (this.isNonCompliant(ruleCompliance)) {
+      if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
+        this.loggers.forEach((t) => t.onCompliance(base));
+      } else if (this.isNonCompliant(ruleCompliance)) {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
           const suppressionReason = this.ignoreRule(
@@ -155,40 +171,29 @@ export abstract class NagPack implements IAspect {
             params.level,
             params.ignoreSuppressionCondition
           );
-
-          if (this.reports === true) {
-            this.writeToStackComplianceReport(
-              params,
-              ruleId,
-              NagRuleCompliance.NON_COMPLIANT,
-              suppressionReason
-            );
-          }
-
           if (suppressionReason) {
-            if (this.logIgnores === true) {
-              const message = this.createMessage(
-                SUPPRESSION_ID,
+            this.loggers.forEach((t) =>
+              t.onSuppressed({
+                ...base,
+                suppressionReason,
                 findingId,
-                `${ruleId} was triggered but suppressed.`,
-                `Provided reason: "${suppressionReason}"`
-              );
-              Annotations.of(params.node).addInfo(message);
-            }
-          } else {
-            const message = this.createMessage(
-              ruleId,
-              findingId,
-              params.info,
-              params.explanation
+              })
             );
-            if (params.level == NagMessageLevel.ERROR) {
-              Annotations.of(params.node).addError(message);
-            } else if (params.level == NagMessageLevel.WARN) {
-              Annotations.of(params.node).addWarning(message);
-            }
+          } else {
+            this.loggers.forEach((t) =>
+              t.onNonCompliance({
+                ...base,
+                findingId,
+              })
+            );
           }
         }
+      } else if (ruleCompliance === NagRuleCompliance.NOT_APPLICABLE) {
+        this.loggers.forEach((t) =>
+          t.onNotApplicable({
+            ...base,
+          })
+        );
       }
     } catch (error) {
       const reason = this.ignoreRule(
@@ -199,28 +204,21 @@ export abstract class NagPack implements IAspect {
         params.level,
         params.ignoreSuppressionCondition
       );
-      if (this.reports === true) {
-        this.writeToStackComplianceReport(params, ruleId, 'UNKNOWN', reason);
-      }
       if (reason) {
-        if (this.logIgnores === true) {
-          const message = this.createMessage(
-            SUPPRESSION_ID,
-            '',
-            `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
-            reason
-          );
-          Annotations.of(params.node).addInfo(message);
-        }
-      } else {
-        const information = `'${ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. For more details enable verbose logging.'`;
-        const message = this.createMessage(
-          VALIDATION_FAILURE_ID,
-          '',
-          information,
-          (error as Error).message
+        this.loggers.forEach((t) =>
+          t.onSuppressedError({
+            ...base,
+            errorMessage: (error as Error).message,
+            errorSuppressionReason: reason,
+          })
         );
-        Annotations.of(params.node).addWarning(message);
+      } else {
+        this.loggers.forEach((t) =>
+          t.onError({
+            ...base,
+            errorMessage: (error as Error).message,
+          })
+        );
       }
     }
   }
@@ -270,113 +268,6 @@ export abstract class NagPack implements IAspect {
       }
     }
     return '';
-  }
-
-  /**
-   * The message to output to the console when a rule is triggered.
-   * @param ruleId The id of the rule.
-   * @param findingId The id of the finding.
-   * @param info Why the rule was triggered.
-   * @param explanation Why the rule exists.
-   * @returns The formatted message string.
-   */
-  protected createMessage(
-    ruleId: string,
-    findingId: string,
-    info: string,
-    explanation: string
-  ): string {
-    let message = findingId
-      ? `${ruleId}[${findingId}]: ${info}`
-      : `${ruleId}: ${info}`;
-    return this.verbose ? `${message} ${explanation}\n` : `${message}\n`;
-  }
-
-  /**
-   * Write a line to the rule pack's compliance report for the resource's Stack
-   * @param params The @IApplyRule interface with rule details.
-   * @param ruleId The id of the rule.
-   * @param compliance The compliance status of the rule.
-   * @param explanation The explanation for suppressed rules.
-   */
-  protected writeToStackComplianceReport(
-    params: IApplyRule,
-    ruleId: string,
-    compliance:
-      | NagRuleCompliance.COMPLIANT
-      | NagRuleCompliance.NON_COMPLIANT
-      | 'UNKNOWN',
-    explanation: string = ''
-  ): void {
-    const line = this.createComplianceReportLine(
-      params,
-      ruleId,
-      compliance,
-      explanation
-    );
-    const outDir = App.of(params.node)?.outdir;
-    const stackName = params.node.stack.nested
-      ? Names.uniqueId(params.node.stack)
-      : params.node.stack.stackName;
-    const fileName = `${this.packName}-${stackName}-NagReport.csv`;
-    const filePath = join(outDir ? outDir : '', fileName);
-    appendFileSync(filePath, line);
-  }
-
-  /**
-   * Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist
-   * @param params
-   */
-  protected initializeStackReport(params: IApplyRule): void {
-    const stackName = params.node.stack.nested
-      ? Names.uniqueId(params.node.stack)
-      : params.node.stack.stackName;
-    const fileName = `${this.packName}-${stackName}-NagReport.csv`;
-    if (!this.reportStacks.includes(fileName)) {
-      const outDir = App.of(params.node)?.outdir;
-      const filePath = join(outDir ? outDir : '', fileName);
-      this.reportStacks.push(fileName);
-      writeFileSync(
-        filePath,
-        'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info\n'
-      );
-    }
-  }
-
-  /**
-   * Helper function to create a line for the compliance report
-   * @param params The @IApplyRule interface with rule details.
-   * @param ruleId The id of the rule.
-   * @param compliance The compliance status of the rule.
-   * @param explanation The explanation for suppressed rules.
-   */
-  protected createComplianceReportLine(
-    params: IApplyRule,
-    ruleId: string,
-    compliance:
-      | NagRuleCompliance.COMPLIANT
-      | NagRuleCompliance.NON_COMPLIANT
-      | 'UNKNOWN',
-    explanation: string = ''
-  ): string {
-    //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level | Rule Info
-    const line = Array<string>();
-    line.push(ruleId);
-    line.push(params.node.node.path);
-    if (
-      (compliance === NagRuleCompliance.NON_COMPLIANT ||
-        compliance === 'UNKNOWN') &&
-      explanation !== ''
-    ) {
-      line.push('Suppressed');
-      line.push(explanation);
-    } else {
-      line.push(compliance);
-      line.push('N/A');
-    }
-    line.push(params.level);
-    line.push(params.info);
-    return line.map((i) => '"' + i.replace(/"/g, '""') + '"').join(',') + '\n';
   }
 
   private isNonCompliant(ruleResult: NagRuleResult) {

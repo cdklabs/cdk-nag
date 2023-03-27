@@ -4,6 +4,16 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource, Stack } from 'aws-cdk-lib';
 
+export const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
+
+/**
+ * The severity level of the rule.
+ */
+export enum NagMessageLevel {
+  WARN = 'Warning',
+  ERROR = 'Error',
+}
+
 /**
  * The compliance level of a resource in relation to a rule.
  */
@@ -12,6 +22,19 @@ export enum NagRuleCompliance {
   NON_COMPLIANT = 'Non-Compliant',
   NOT_APPLICABLE = 'N/A',
 }
+
+/**
+ * Additional states a rule can be in post compliance validation
+ */
+export enum NagRulePostValidationStates {
+  SUPPRESSED = 'Suppressed',
+  UNKNOWN = 'UNKNOWN',
+}
+
+/**
+ * All states a rule can be in post compliance validation
+ */
+export type NagRuleStates = NagRuleCompliance | NagRulePostValidationStates;
 
 export type NagRuleFinding = string;
 

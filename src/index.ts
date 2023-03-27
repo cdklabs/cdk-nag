@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 export * from './ignore-suppression-conditions';
 export * from './models/nag-suppression';
+export * from './nag-logger';
 export * from './nag-pack';
 export * from './nag-rules';
 export * from './nag-suppressions';
