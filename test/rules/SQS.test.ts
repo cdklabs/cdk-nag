@@ -3,17 +3,16 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import {
+  AnyPrincipal,
+  Effect,
   PolicyDocument,
   PolicyStatement,
-  Effect,
-  AnyPrincipal,
   StarPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnQueuePolicy, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
-import { NagSuppressions } from '../../src';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   SQSQueueDLQ,
   SQSQueueSSE,
@@ -28,29 +27,54 @@ const testPack = new TestPack([
 let stack: Stack;
 
 beforeEach(() => {
-  stack = new Stack();
+  stack = new Stack(undefined, undefined, {
+    env: { account: '111222333444', region: 'us-west-2' },
+  });
   Aspects.of(stack).add(testPack);
 });
 
 describe('Amazon Simple Queue Service (SQS)', () => {
-  describe('SQSQueueDLQ: SQS queues have a dead-letter queue enabled or have a cdk-nag rule suppression indicating they are a dead-letter queue', () => {
+  describe('SQSQueueDLQ: SQS queues have a dead-letter queue enabled if they are not used as a dead-letter queue', () => {
     const ruleId = 'SQSQueueDLQ';
     test('Noncompliance 1', () => {
-      new Queue(stack, 'rQueue');
+      new Queue(stack, 'Queue');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2', () => {
+      new Queue(stack, 'Dlq', { queueName: 'foo' });
+      new Queue(stack, 'Queue2', {
+        deadLetterQueue: {
+          queue: Queue.fromQueueArn(
+            stack,
+            'Dlq2',
+            `arn:aws:sqs:${stack.region}:${stack.account}:foo2`
+          ),
+          maxReceiveCount: 42,
+        },
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
     test('Compliance', () => {
-      const dlq = new Queue(stack, 'rDlq');
-      new Queue(stack, 'rQueue', {
-        deadLetterQueue: { queue: dlq, maxReceiveCount: 42 },
-      });
-      NagSuppressions.addResourceSuppressions(dlq, [
-        {
-          id: `${testPack.readPackName}-SQSQueueDLQ`,
-          reason: 'This queue is a dead-letter queue.',
+      const dlq = new Queue(stack, 'Dlq');
+      new Queue(stack, 'Queue', {
+        deadLetterQueue: {
+          queue: dlq,
+          maxReceiveCount: 42,
         },
-      ]);
+      });
+      new Queue(stack, 'Dlq2', { queueName: 'foo' });
+      new Queue(stack, 'Queue2', {
+        deadLetterQueue: {
+          queue: Queue.fromQueueArn(
+            stack,
+            'Dlq2FromArn',
+            `arn:aws:sqs:${stack.region}:${stack.account}:foo`
+          ),
+          maxReceiveCount: 42,
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });

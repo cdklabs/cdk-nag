@@ -22,7 +22,7 @@ import {
   CfnBucketPolicy,
 } from 'aws-cdk-lib/aws-s3';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   S3BucketDefaultLockEnabled,
   S3BucketLevelPublicAccessProhibited,
@@ -116,19 +116,31 @@ describe('Amazon Simple Storage Service (S3)', () => {
   describe('S3BucketLoggingEnabled: S3 Buckets have server access logs enabled', () => {
     const ruleId = 'S3BucketLoggingEnabled';
     test('Noncompliance 1', () => {
-      new Bucket(stack, 'rBucket');
+      new Bucket(stack, 'Bucket');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Bucket(stack, 'LogsBucket', { bucketName: 'foo' });
+      new Bucket(stack, 'Bucket', {
+        serverAccessLogsBucket: Bucket.fromBucketName(
+          stack,
+          'LogsBucketFromName',
+          'foobar'
+        ),
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new Bucket(stack, 'rBucket', {
+      new Bucket(stack, 'LogsBucket', { bucketName: 'bar' });
+      new Bucket(stack, 'Bucket', {
         serverAccessLogsBucket: Bucket.fromBucketName(
           stack,
-          'rLogsBucket',
-          'foo'
+          'LogsBucketFromName',
+          'bar'
         ),
       });
-      new Bucket(stack, 'rBucket2', {
-        serverAccessLogsPrefix: 'foo',
+      new Bucket(stack, 'Bucket2', {
+        serverAccessLogsBucket: new Bucket(stack, 'LogsBucket2'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

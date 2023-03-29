@@ -1377,7 +1377,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'SQS3',
-      info: 'The SQS queue does not have a dead-letter queue (DLQ) enabled or have a cdk-nag rule suppression indicating it is a DLQ.',
+      info: 'The SQS queue is not used as a dead-letter queue (DLQ) and does not have a DLQ enabled.',
       explanation:
         'Using a DLQ helps maintain the queue flow and avoid losing data by detecting and mitigating failures and service disruptions on time.',
       level: NagMessageLevel.ERROR,
