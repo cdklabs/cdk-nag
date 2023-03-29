@@ -67,8 +67,7 @@ function isMatchingBucket(
   );
   if (
     new RegExp(`${bucketLogicalId}(?![\\w])`).test(destinationBucketName) ||
-    (bucketName !== undefined &&
-      new RegExp(`^${bucketName}(?![\\w\\-_\\.])$`).test(destinationBucketName))
+    bucketName === destinationBucketName
   ) {
     return true;
   }
