@@ -60,7 +60,7 @@
     "jsii-pacmak": "^1.79.0",
     "npm-check-updates": "^16",
     "prettier": "^2.8.7",
-    "projen": "^0.69.15",
+    "projen": "^0.70.0",
     "standard-version": "^9",
     "ts-jest": "^27",
     "typescript": "^4.9.5"
