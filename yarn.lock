@@ -337,9 +337,9 @@
     eslint-visitor-keys "^3.3.0"
 
 "@eslint-community/regexpp@^4.4.0":
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.4.1.tgz#087cb8d9d757bb22e9c9946c9c0c2bf8806830f1"
-  integrity sha512-BISJ6ZE4xQsuL/FmsyRaiffpq977bMlsKfGHTQrOGFErfByxIe6iZTxPf/00Zon9b9a7iUykfQwejN3s2ZW/Bw==
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.5.0.tgz#f6f729b02feee2c749f57e334b7a1b5f40a81724"
+  integrity sha512-vITaYzIcNmjn5tF5uxcZ/ft7/RXGrMUIS9HalWckEOF6ESiwXKoMzAQf2UW0aVd6rnOeExTJVd5hmWXucBKGXQ==
 
 "@eslint/eslintrc@^2.0.2":
   version "2.0.2"
@@ -2187,9 +2187,9 @@ eastasianwidth@^0.2.0:
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.342"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.342.tgz#3c7e199c3aa89c993df4b6f5223d6d26988f58e6"
-  integrity sha512-dTei3VResi5bINDENswBxhL+N0Mw5YnfWyTqO75KGsVldurEkhC9+CelJVAse8jycWyP8pv3VSj4BSyP8wTWJA==
+  version "1.4.343"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.343.tgz#90f85c4c67aec42b3d076e597911b7b6a2d026fd"
+  integrity sha512-22C6pOljO+QQ/yeBZJkxewjsGwSKCXymng7dF8lir3m8iJGi6guoLVkK8jghCf3o0/tARFASAgLP8OzR9SKRCA==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4724,9 +4724,9 @@ npm-bundled@^3.0.0:
     npm-normalize-package-bin "^3.0.0"
 
 npm-check-updates@^16:
-  version "16.8.2"
-  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.8.2.tgz#1dfc6e766bf9f0d6738ff720ad890bf7aabafd05"
-  integrity sha512-6eOHZdS+u8ZLc1qCDfU04uedWjVOgBbvGKWodc9j4QjT2GbVW9mGYcSUvFYLu/jaXSb1YxfwC6HfFr7h8txWmg==
+  version "16.9.0"
+  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.9.0.tgz#eead7405cc272ca11ae18408f6007afe4d75479d"
+  integrity sha512-AOAAre4AAPzB5p41E8vbkisx7FypdNCy4mkiF4mMUl6ptOUVkaMGlWVx1eqgmaoraeAnvhyByIGS+4LN7U+XHg==
   dependencies:
     chalk "^5.2.0"
     cli-table3 "^0.6.3"
@@ -5168,10 +5168,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.69.15:
-  version "0.69.15"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.69.15.tgz#c392389e457947e77975e7a88988bbe88687de8d"
-  integrity sha512-OvJQzrjifB5bpc0QpE5dqetPiyUj0+ImJnukYv205V0Yf13heq/CUQppXPYQGZc2/SO/uKfJLCpNO25e4+DRxQ==
+projen@^0.70.0:
+  version "0.70.0"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.70.0.tgz#29711cc46d50d0f641b9f57b105c7661636cb1c5"
+  integrity sha512-ioDJz5CE5vUp3R/VKdWcP9eh6n0x8O3SiB+IuRr1qqE5CdYvHQhE67jIisYPxreZ/HlnjYaPypsvNrN3KWQRfA==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
