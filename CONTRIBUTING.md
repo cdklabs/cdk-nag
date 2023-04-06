@@ -59,6 +59,7 @@ GitHub provides additional document on [forking a repository](https://help.githu
 #### Option 1: Local
 
 The following tools need to be installed on your system prior to building `cdk-nag` locally:
+
 - [Node.js >= 14.15.0](https://nodejs.org/download/release/latest-v14.x/)
   - We recommend using a version in [Active LTS](https://nodejs.org/en/about/releases/)
 - [Yarn >= 1.19.1, < 2](https://yarnpkg.com/lang/en/docs/install)
@@ -67,8 +68,15 @@ The following tools need to be installed on your system prior to building `cdk-n
 - [Java Development Kit >= 17.0.0](https://www.oracle.com/java/technologies/downloads/)
 - [Golang >= 16.0.0](https://go.dev/doc/install)
 
+Install dependencies
+
+- `yarn install`
+- `npx projen`
+
 #### Option 2: Dev Container
+
 `cdk-nag` provides a VS Code Dev Container with all dependencies pre-installed. The following tools need to be installed on your system prior to building `cdk-nag` in a Dev Container:
+
 - [Docker >= 19.03](https://docs.docker.com/get-docker/)
   - the Docker daemon must also be running
 
@@ -77,6 +85,7 @@ Please follow the [setup instructions](https://code.visualstudio.com/docs/remote
 With VS Code setup, you will be prompted to open the `cdk-nag` repo in a Dev Container, or you can choos "Dev Containers: Reopen in Container" from the VS Code command palette.
 
 ### Step 4: Develop
+
 1. Change code
 2. If relevant, add [tests](./test/)
 3. Run tests
