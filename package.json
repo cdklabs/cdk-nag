@@ -12,6 +12,7 @@
     "compat": "npx projen compat",
     "compile": "npx projen compile",
     "default": "npx projen default",
+    "dev-container-setup": "npx projen dev-container-setup",
     "docgen": "npx projen docgen",
     "eject": "npx projen eject",
     "eslint": "npx projen eslint",

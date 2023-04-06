@@ -103,6 +103,14 @@
         }
       ]
     },
+    "dev-container-setup": {
+      "name": "dev-container-setup",
+      "steps": [
+        {
+          "exec": "sudo chown superchain . -R"
+        }
+      ]
+    },
     "docgen": {
       "name": "docgen",
       "description": "Generate API.md from .jsii manifest",

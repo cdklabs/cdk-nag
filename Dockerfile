@@ -11,16 +11,15 @@ RUN groupmod --gid 1000 superchain \
 RUN yarn install
 RUN chmod -R 777 node_modules
 
-# Setup dependencies
+# Setup pre-commit
 RUN python3 -m pip install pre-commit
 
 USER superchain
 
 # Setup oh-my-zsh
 RUN sudo apt-get update && export DEBIAN_FRONTEND=noninteractive \
-  && sudo apt-get -y install --no-install-recommends zsh vim \
+  && sudo apt-get -y install --no-install-recommends zsh vim git-all \
   && sudo rm -rf /var/lib/apt/lists/* \
   && sudo chsh -s $(which zsh) $(whoami)
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
-  # Required, otherwise shell is extermly slow due the size of the aws-cdk
   && sudo sh -c 'echo "[oh-my-zsh]\n        hide-dirty = 1" > /etc/gitconfig'

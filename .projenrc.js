@@ -66,12 +66,18 @@ project.eslint.addRules({
 eslint = project.tasks
   .tryFind('eslint')
   .prependExec('npx prettier --write RULES.md');
-setup = project.tasks.tryFind('default');
-setup.prependExec('python3 -m pip install pre-commit && pre-commit install');
+setup = project.addTask('dev-container-setup', {
+  exec: 'sudo chown superchain . -R',
+});
+def = project.tasks.tryFind('default');
+def.prependExec('python3 -m pip install pre-commit && pre-commit install');
 
 new vscode.DevContainer(project, {
-  features: [{ name: 'docker-in-docker' }],
-  tasks: [setup],
+  features: [
+    { name: 'docker-in-docker' },
+    { name: 'ghcr.io/devcontainers/features/github-cli' },
+  ],
+  tasks: [setup, def],
   dockerImage: {
     containerUser: 'superchain',
     remoteUser: 'superchain',
