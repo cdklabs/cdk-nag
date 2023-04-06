@@ -45,8 +45,6 @@ jobs:
         with:
           name: build-artifact
           path: dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   release_github:
     name: Publish to GitHub Releases
     needs: release
@@ -76,8 +74,6 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
         run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   release_npm:
     name: Publish to npm
     needs: release
@@ -111,8 +107,6 @@ jobs:
           NPM_REGISTRY: registry.npmjs.org
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx -p publib@latest publib-npm
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   release_maven:
     name: Publish to Maven Central
     needs: release
@@ -153,8 +147,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_STAGING_PROFILE_ID: ${{ secrets.MAVEN_STAGING_PROFILE_ID }}
         run: npx -p publib@latest publib-maven
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   release_pypi:
     name: Publish to PyPI
     needs: release
@@ -190,8 +182,6 @@ jobs:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
         run: npx -p publib@latest publib-pypi
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   release_nuget:
     name: Publish to NuGet Gallery
     needs: release
@@ -226,8 +216,6 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: npx -p publib@latest publib-nuget
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   release_golang:
     name: Publish to GitHub Go Module Repository
     needs: release
@@ -264,5 +252,3 @@ jobs:
           GIT_USER_EMAIL: cdklabs-automation@amazon.com
           GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
         run: npx -p publib@latest publib-golang
-    container:
-      image: jsii/superchain:1-buster-slim-node14

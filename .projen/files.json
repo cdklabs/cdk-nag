@@ -1,5 +1,6 @@
 {
   "files": [
+    ".devcontainer.json",
     ".eslintrc.json",
     ".gitattributes",
     ".github/pull_request_template.md",

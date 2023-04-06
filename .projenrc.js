@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const { awscdk } = require('projen');
+const { awscdk, vscode, Task } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
@@ -45,12 +45,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     workflowOptions: {
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
-      container: {
-        image: 'jsii/superchain:1-buster-slim-node14',
-      },
     },
   },
-  workflowContainerImage: 'jsii/superchain:1-buster-slim-node14',
   eslintOptions: { prettier: true },
   buildWorkflow: true,
   release: true,
@@ -70,4 +66,17 @@ project.eslint.addRules({
 eslint = project.tasks
   .tryFind('eslint')
   .prependExec('npx prettier --write RULES.md');
+setup = project.tasks.tryFind('default');
+setup.prependExec('python3 -m pip install pre-commit && pre-commit install');
+
+new vscode.DevContainer(project, {
+  features: [{ name: 'docker-in-docker' }],
+  tasks: [setup],
+  dockerImage: {
+    containerUser: 'superchain',
+    remoteUser: 'superchain',
+    extensions: ['dbaeumer.vscode-eslint'],
+    dockerFile: './Dockerfile',
+  },
+});
 project.synth();

@@ -52,8 +52,6 @@ jobs:
         with:
           name: build-artifact
           path: dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   self-mutation:
     needs: build
     runs-on: ubuntu-latest
@@ -108,8 +106,6 @@ jobs:
         run: cd .repo && npx projen package:js
       - name: Collect js Artifact
         run: mv .repo/dist dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   package-java:
     needs: build
     runs-on: ubuntu-latest
@@ -139,8 +135,6 @@ jobs:
         run: cd .repo && npx projen package:java
       - name: Collect java Artifact
         run: mv .repo/dist dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   package-python:
     needs: build
     runs-on: ubuntu-latest
@@ -169,8 +163,6 @@ jobs:
         run: cd .repo && npx projen package:python
       - name: Collect python Artifact
         run: mv .repo/dist dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   package-dotnet:
     needs: build
     runs-on: ubuntu-latest
@@ -199,8 +191,6 @@ jobs:
         run: cd .repo && npx projen package:dotnet
       - name: Collect dotnet Artifact
         run: mv .repo/dist dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
   package-go:
     needs: build
     runs-on: ubuntu-latest
@@ -229,5 +219,3 @@ jobs:
         run: cd .repo && npx projen package:go
       - name: Collect go Artifact
         run: mv .repo/dist dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
