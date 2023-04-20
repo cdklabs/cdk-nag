@@ -40,6 +40,7 @@ import {
 import {
   EC2EBSInBackupPlan,
   EC2EBSOptimizedInstance,
+  EC2IMDSv2Enabled,
   EC2InstanceDetailedMonitoringEnabled,
   EC2InstanceNoPublicIp,
   EC2InstanceProfileAttached,
@@ -395,7 +396,15 @@ export class HIPAASecurityChecks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The EC2 instance does not have detailed monitoring enabled - (Control IDs: 164.312(b)).',
+      info: 'The EC2 instance does not have IMDSV2 (Instance Metadata Service Version 2) enabled - (Control IDs: 164.308(a)(3)(i), 164.308(a)(4)(ii)(A), 164.308(a)(4)(ii)(C), 164.312(a)(1)).',
+      explanation:
+        'Instance Metadata Service Version 2 (IMDSv2) helps protect access and control of Amazon Elastic Compute Cloud (Amazon EC2) instance metadata. The IMDSv2 method uses session-based controls. With IMDSv2, controls can be implemented to restrict changes to instance metadata.',
+      level: NagMessageLevel.ERROR,
+      rule: EC2IMDSv2Enabled,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The EC2 instance does not have detailed monitoring enabled - (Control ID: 164.312(b)).',
       explanation:
         'Detailed monitoring provides additional monitoring information (such as 1-minute period graphs) on the AWS console.',
       level: NagMessageLevel.ERROR,

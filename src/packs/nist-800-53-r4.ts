@@ -34,6 +34,7 @@ import {
 } from '../rules/dynamodb';
 import {
   EC2EBSInBackupPlan,
+  EC2IMDSv2Enabled,
   EC2InstanceDetailedMonitoringEnabled,
   EC2InstanceNoPublicIp,
   EC2InstancesInVPC,
@@ -333,6 +334,14 @@ export class NIST80053R4Checks extends NagPack {
         'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
       level: NagMessageLevel.ERROR,
       rule: EC2EBSInBackupPlan,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The EC2 instance does not have IMDSV2 (Instance Metadata Service Version 2) enabled - (Control ID: AC-6).',
+      explanation:
+        'Instance Metadata Service Version 2 (IMDSv2) helps protect access and control of Amazon Elastic Compute Cloud (Amazon EC2) instance metadata. The IMDSv2 method uses session-based controls. With IMDSv2, controls can be implemented to restrict changes to instance metadata.',
+      level: NagMessageLevel.ERROR,
+      rule: EC2IMDSv2Enabled,
       node: node,
     });
     this.applyRule({
