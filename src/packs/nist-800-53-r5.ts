@@ -36,6 +36,7 @@ import {
 import {
   EC2EBSInBackupPlan,
   EC2EBSOptimizedInstance,
+  EC2IMDSv2Enabled,
   EC2InstanceNoPublicIp,
   EC2InstanceProfileAttached,
   EC2InstancesInVPC,
@@ -359,6 +360,14 @@ export class NIST80053R5Checks extends NagPack {
         'An optimized instance in Amazon Elastic Block Store (Amazon EBS) provides additional, dedicated capacity for Amazon EBS I/O operations. This optimization provides the most efficient performance for your EBS volumes by minimizing contention between Amazon EBS I/O operations and other traffic from your instance.',
       level: NagMessageLevel.ERROR,
       rule: EC2EBSOptimizedInstance,
+      node: node,
+    });
+    this.applyRule({
+      info: 'The EC2 instance does not have IMDSV2 (Instance Metadata Service Version 2) enabled - (Control ID: AC-2(6), AC-3, AC-3(3)(a), AC-3(3)(b)(1), AC-3(3)(b)(2), AC-3(3)(b)(3), AC-3(3)(b)(4), AC-3(3)(b)(5), AC-3(3)(c), AC-3(3), AC-3(4)(a), AC-3(4)(b), AC-3(4)(c), AC-3(4)(d), AC-3(4)(e), AC-3(4), AC-3(7), AC-3(8), AC-3(12)(a), AC-3(13), AC-3(15)(a), AC-3(15)(b), AC-4(28), AC-6, AC-24, CM-5(1)(a), MP-2, SC-23(3)).',
+      explanation:
+        'Instance Metadata Service Version 2 (IMDSv2) helps protect access and control of Amazon Elastic Compute Cloud (Amazon EC2) instance metadata. The IMDSv2 method uses session-based controls. With IMDSv2, controls can be implemented to restrict changes to instance metadata.',
+      level: NagMessageLevel.ERROR,
+      rule: EC2IMDSv2Enabled,
       node: node,
     });
     this.applyRule({
