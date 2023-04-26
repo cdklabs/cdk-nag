@@ -913,14 +913,14 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "18.16.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.0.tgz#4668bc392bb6938637b47e98b1f2ed5426f33316"
-  integrity sha512-BsAaKhB+7X+H4GnSjGhJG9Qi8Tw+inU9nJDwmD5CgOmBLEI6ArdhikpLX7DjbjDRDTbqZzU2LSQNZg8WGPiSZQ==
+  version "18.16.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.1.tgz#5db121e9c5352925bb1f1b892c4ae620e3526799"
+  integrity sha512-DZxSZWXxFfOlx7k7Rv4LAyiMroaxa3Ly/7OOzZO8cBNho0YzAi4qlbrx8W27JGqG57IgR/6J7r+nOJWw6kcvZA==
 
 "@types/node@^16":
-  version "16.18.24"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.24.tgz#f21925dd56cd3467b4e1e0c5071d0f2af5e9a316"
-  integrity sha512-zvSN2Esek1aeLdKDYuntKAYjti9Z2oT4I8bfkLLhIxHlv3dwZ5vvATxOc31820iYm4hQRCwjUgDpwSMFjfTUnw==
+  version "16.18.25"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.25.tgz#8863940fefa1234d3fcac7a4b7a48a6c992d67af"
+  integrity sha512-rUDO6s9Q/El1R1I21HG4qw/LstTHCPO/oQNAwI/4b2f9EWvMnqt4d3HJwPMawfZ3UvodB8516Yg+VAq54YM+eA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -1505,9 +1505,9 @@ cacheable-lookup@^7.0.0:
   integrity sha512-+qJyx4xiKra8mZrcwhjMRMUhD5NR1R8esPkzIYxX96JiecFoxAXFuz/GpR3+ev4PE1WamHip78wV0vcmPQtp8w==
 
 cacheable-request@^10.2.8:
-  version "10.2.9"
-  resolved "https://registry.yarnpkg.com/cacheable-request/-/cacheable-request-10.2.9.tgz#6375833d2b99921d8870df9fdc26cb703c56f356"
-  integrity sha512-CaAMr53AS1Tb9evO1BIWFnZjSr8A4pbXofpsNVWPMDZZj3ZQKHwsQG9BrTqQ4x5ZYJXz1T2b8LLtTZODxSpzbg==
+  version "10.2.10"
+  resolved "https://registry.yarnpkg.com/cacheable-request/-/cacheable-request-10.2.10.tgz#1785984a9a4ddec8dd01792232cca474be49a8af"
+  integrity sha512-v6WB+Epm/qO4Hdlio/sfUn69r5Shgh39SsE9DSd4bIezP0mblOlObI+I0kUEM7J0JFc+I7pSeMeYaOYtX1N/VQ==
   dependencies:
     "@types/http-cache-semantics" "^4.0.1"
     get-stream "^6.0.1"
@@ -2190,9 +2190,9 @@ eastasianwidth@^0.2.0:
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.371"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.371.tgz#393983ef087268a20c926a89be30e9f0bfc803b0"
-  integrity sha512-jlBzY4tFcJaiUjzhRTCWAqRvTO/fWzjA3Bls0mykzGZ7zvcMP7h05W6UcgzfT9Ca1SW2xyKDOFRyI0pQeRNZGw==
+  version "1.4.372"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.372.tgz#7888ac92ccb9556627c3a37eba3b89ee5ac345f8"
+  integrity sha512-MrlFq/j+TYHOjeWsWGYfzevc25HNeJdsF6qaLFrqBTRWZQtWkb1myq/Q2veLWezVaa5OcSZ99CFwTT4aF4Mung==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -5189,10 +5189,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.71.23:
-  version "0.71.23"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.23.tgz#7ddc6ccf52b20418384c5c07606558cad82e9fb6"
-  integrity sha512-HaG0l02L3D96DZVQkGKKbAEzHME119JFl0JkB3IhEBIuMWYOqycsZM70STTIdnHKHtRMUAamFciYhJHxnL3nlQ==
+projen@^0.71.25:
+  version "0.71.25"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.25.tgz#f1ff7567c60e688a219bb6dd43c05ce442c9ede3"
+  integrity sha512-Dy/VKwAWAmr0jAUavDUmtosW8ZouFOnSv6Lh0Hn4yKggotLj0rutvxvHe3vGWbUPCWE5I0ODhif41jAAzzYCKQ==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -5205,7 +5205,7 @@ projen@^0.71.23:
     semver "^7.5.0"
     shx "^0.3.4"
     xmlbuilder2 "^2.4.1"
-    yaml "2.0.0"
+    yaml "^2.2.2"
     yargs "^16.2.0"
 
 promise-inflight@^1.0.1:
@@ -6612,10 +6612,10 @@ yaml@1.10.2:
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
 
-yaml@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.0.0.tgz#cbc588ad58e0cd924cd3f5f2b1a9485103048e25"
-  integrity sha512-JbfdlHKGP2Ik9IHylzWlGd4pPK++EU46/IxMykphS2ZKw7a7h+dHNmcXObLgpRDriBY+rpWslldikckX8oruWQ==
+yaml@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.2.2.tgz#ec551ef37326e6d42872dad1970300f8eb83a073"
+  integrity sha512-CBKFWExMn46Foo4cldiChEzn7S7SRV+wqiluAb6xmueD/fGyRHIhX8m14vVGgeFWjN540nKCNVj6P21eQjgTuA==
 
 yargs-parser@20.x, yargs-parser@^20.2.2, yargs-parser@^20.2.3:
   version "20.2.9"
