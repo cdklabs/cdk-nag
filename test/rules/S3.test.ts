@@ -96,12 +96,9 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance 1', () => {
+    test('Compliance', () => {
       new Bucket(stack, 'rBucket');
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-    test('Compliance 2', () => {
-      new Bucket(stack, 'rBucket', {
+      new Bucket(stack, 'rBucket2', {
         blockPublicAccess: {
           blockPublicPolicy: true,
           blockPublicAcls: true,
