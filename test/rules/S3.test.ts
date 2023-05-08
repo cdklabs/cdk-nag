@@ -85,11 +85,7 @@ describe('Amazon Simple Storage Service (S3)', () => {
 
   describe('S3BucketLevelPublicAccessProhibited: S3 Buckets prohibit public access through bucket level settings', () => {
     const ruleId = 'S3BucketLevelPublicAccessProhibited';
-    test('Noncompliance 1', () => {
-      new Bucket(stack, 'rBucket');
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
+    test('Noncompliance', () => {
       new Bucket(stack, 'rBucket', {
         blockPublicAccess: {
           blockPublicPolicy: true,
@@ -100,7 +96,11 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Compliance 1', () => {
+      new Bucket(stack, 'rBucket');
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
       new Bucket(stack, 'rBucket', {
         blockPublicAccess: {
           blockPublicPolicy: true,
