@@ -14,6 +14,7 @@ import {
   StarPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import {
+  BlockPublicAccess,
   Bucket,
   BucketAccessControl,
   BucketEncryption,
@@ -93,6 +94,18 @@ describe('Amazon Simple Storage Service (S3)', () => {
           ignorePublicAcls: false,
           restrictPublicBuckets: false,
         },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Bucket(stack, 'rBucket', {
+        blockPublicAccess: new BlockPublicAccess({ blockPublicAcls: true }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new CfnBucket(stack, 'Bucket', {
+        publicAccessBlockConfiguration: { blockPublicAcls: true },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
