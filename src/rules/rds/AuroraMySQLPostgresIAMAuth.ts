@@ -14,6 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBCluster) {
+      if (!node.engine) return NagRuleCompliance.NOT_APPLICABLE;
       if (node.engine.toLowerCase().includes('aurora')) {
         if (node.enableIamDatabaseAuthentication == undefined) {
           return NagRuleCompliance.NON_COMPLIANT;
