@@ -46,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "aws-cdk-lib": "2.78.0",
-    "constructs": "10.2.18",
+    "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-node": "^0.3.7",
@@ -68,7 +68,7 @@
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.78.0",
-    "constructs": "^10.2.18"
+    "constructs": "^10.0.5"
   },
   "resolutions": {
     "@types/prettier": "2.6.0",
