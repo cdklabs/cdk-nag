@@ -15,7 +15,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
       if (node.publicAccessBlockConfiguration == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
+        return NagRuleCompliance.COMPLIANT;
       }
       const publicAccess = Stack.of(node).resolve(
         node.publicAccessBlockConfiguration
