@@ -6,7 +6,7 @@ import {
   TaskDefinition,
   Compatibility,
   NetworkMode,
-  EcsOptimizedImage,
+  ContainerImage,
   Cluster,
   LogDriver,
 } from 'aws-cdk-lib/aws-ecs';
@@ -52,7 +52,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       new TaskDefinition(stack, 'rTaskDef', {
         compatibility: Compatibility.EC2,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -62,12 +62,12 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
       });
       taskDef.addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         logging: LogDriver.awsLogs({ streamPrefix: 'foo' }),
       });
       taskDef.addContainer('rContainer2', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -77,12 +77,12 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
       });
       taskDef.addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         logging: LogDriver.awsLogs({ streamPrefix: 'foo' }),
       });
       taskDef.addContainer('rContainer2', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         logging: LogDriver.awsLogs({ streamPrefix: 'bar' }),
       });
@@ -96,7 +96,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       new TaskDefinition(stack, 'rTaskDef', {
         compatibility: Compatibility.EC2,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         environment: { foo: 'bar' },
       });
@@ -106,7 +106,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       new TaskDefinition(stack, 'rTaskDef', {
         compatibility: Compatibility.EC2,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -120,7 +120,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
         networkMode: NetworkMode.HOST,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -130,7 +130,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
         networkMode: NetworkMode.HOST,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         user: 'ec2-user',
       });
@@ -141,7 +141,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
         networkMode: NetworkMode.HOST,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         privileged: true,
         user: '0',
@@ -153,7 +153,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
         networkMode: NetworkMode.HOST,
       }).addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         privileged: true,
         user: '0:root',
@@ -166,13 +166,13 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         networkMode: NetworkMode.HOST,
       });
       taskDef.addContainer('rContainer', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         privileged: true,
         user: 'not-root',
       });
       taskDef.addContainer('rContainer2', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -186,7 +186,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
         networkMode: NetworkMode.HOST,
       }).addContainer('rContainer2', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
         privileged: true,
         user: 'not-root',
@@ -195,7 +195,7 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
         compatibility: Compatibility.EC2,
         networkMode: NetworkMode.BRIDGE,
       }).addContainer('rContainer3', {
-        image: EcsOptimizedImage,
+        image: ContainerImage.fromRegistry('imageName'),
         memoryReservationMiB: 42,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
