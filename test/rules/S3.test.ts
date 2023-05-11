@@ -14,6 +14,7 @@ import {
   StarPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import {
+  BlockPublicAccess,
   Bucket,
   BucketAccessControl,
   BucketEncryption,
@@ -86,10 +87,6 @@ describe('Amazon Simple Storage Service (S3)', () => {
   describe('S3BucketLevelPublicAccessProhibited: S3 Buckets prohibit public access through bucket level settings', () => {
     const ruleId = 'S3BucketLevelPublicAccessProhibited';
     test('Noncompliance 1', () => {
-      new Bucket(stack, 'rBucket');
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new Bucket(stack, 'rBucket', {
         blockPublicAccess: {
           blockPublicPolicy: true,
@@ -100,8 +97,21 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Noncompliance 2', () => {
       new Bucket(stack, 'rBucket', {
+        blockPublicAccess: new BlockPublicAccess({ blockPublicAcls: true }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3', () => {
+      new CfnBucket(stack, 'Bucket', {
+        publicAccessBlockConfiguration: { blockPublicAcls: true },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Bucket(stack, 'rBucket');
+      new Bucket(stack, 'rBucket2', {
         blockPublicAccess: {
           blockPublicPolicy: true,
           blockPublicAcls: true,
