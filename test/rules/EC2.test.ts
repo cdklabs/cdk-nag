@@ -915,7 +915,7 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 4 - AutoScalingGroup', () => {
+    test('Compliance 4 - LaunchConfiguration', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
@@ -927,9 +927,6 @@ describe('Amazon Elastic Block Store (EBS)', () => {
           },
         ],
       });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-    test('Compliance 5 - LaunchConfiguration', () => {
       new CfnLaunchConfiguration(stack, 'LaunchConfig', {
         imageId: 'ami-123456',
         instanceType: 't3.small',
