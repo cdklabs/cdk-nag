@@ -25,7 +25,7 @@ export default Object.defineProperty(
         node.launchTemplateData
       );
       if (launchTemplateData.blockDeviceMappings == undefined) {
-        return NagRuleCompliance.NOT_APPLICABLE;
+        return NagRuleCompliance.NON_COMPLIANT;
       } else {
         const blockDeviceMappings = Stack.of(node).resolve(
           launchTemplateData.blockDeviceMappings
@@ -46,7 +46,7 @@ export default Object.defineProperty(
         node.blockDeviceMappings
       );
       if (blockDeviceMappings == undefined) {
-        return NagRuleCompliance.NOT_APPLICABLE;
+        return NagRuleCompliance.NON_COMPLIANT;
       } else {
         for (const blockDeviceMapping of blockDeviceMappings) {
           const encryption = NagRules.resolveIfPrimitive(
@@ -64,7 +64,7 @@ export default Object.defineProperty(
         node.blockDeviceMappings
       );
       if (blockDeviceMappings == undefined) {
-        return NagRuleCompliance.NOT_APPLICABLE;
+        return NagRuleCompliance.NON_COMPLIANT;
       } else {
         for (const blockDeviceMapping of blockDeviceMappings) {
           const encryption = NagRules.resolveIfPrimitive(
