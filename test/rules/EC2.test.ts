@@ -7,17 +7,24 @@ import {
   CfnAutoScalingGroup,
   CfnLaunchConfiguration,
   Monitoring,
+  BlockDeviceVolume as ASBlockDeviceVolume,
 } from 'aws-cdk-lib/aws-autoscaling';
 import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import {
+  AmazonLinuxCpuType,
+  AmazonLinuxGeneration,
+  AmazonLinuxImage,
+  BlockDeviceVolume,
   CfnInstance,
   CfnLaunchTemplate,
   CfnSecurityGroup,
   CfnSecurityGroupIngress,
+  CfnVolume,
   Instance,
   InstanceClass,
   InstanceSize,
   InstanceType,
+  LaunchTemplate,
   MachineImage,
   Peer,
   Port,
@@ -784,7 +791,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
 describe('Amazon Elastic Block Store (EBS)', () => {
   describe('EC2EBSVolumeEncrypted: EBS volumes have encryption enabled', () => {
     const ruleId = 'EC2EBSVolumeEncrypted';
-    test('Noncompliance 1', () => {
+    test('Noncompliance 1 - Volume', () => {
       new Volume(stack, 'rVolume', {
         availabilityZone: stack.availabilityZones[0],
         size: Size.gibibytes(42),
@@ -792,11 +799,148 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
-      new Volume(stack, 'rVolume', {
+    test('Noncompliance 2 - CfnVolume', () => {
+      new CfnVolume(stack, 'rVolume', {
+        availabilityZone: stack.availabilityZones[0],
+        encrypted: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3 - LaunchTemplate', () => {
+      new LaunchTemplate(stack, 'rLaunchTemplate', {
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: false }),
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4 - CfnLaunchTemplate', () => {
+      new CfnLaunchTemplate(stack, 'rLaunchTemplate', {
+        launchTemplateData: {
+          blockDeviceMappings: [{ ebs: { encrypted: false } }],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5 - Instance', () => {
+      new Instance(stack, 'rInstance', {
+        vpc: new Vpc(stack, 'rVpc', {}),
+        instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.MICRO),
+        machineImage: new AmazonLinuxImage({
+          generation: AmazonLinuxGeneration.AMAZON_LINUX_2,
+          cpuType: AmazonLinuxCpuType.X86_64,
+        }),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: false }),
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 6 - CfnInstance', () => {
+      new CfnInstance(stack, 'rInstance', {
+        blockDeviceMappings: [
+          { deviceName: 'device', ebs: { encrypted: false } },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 7 - AutoScalingGroup', () => {
+      new AutoScalingGroup(stack, 'rAutoScalingGroup', {
+        vpc: new Vpc(stack, 'rVpc', {}),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: ASBlockDeviceVolume.ebs(1, { encrypted: false }),
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 8 - CfnLaunchConfiguration', () => {
+      new CfnLaunchConfiguration(stack, 'rLaunchConfiguration', {
+        imageId: 'image',
+        instanceType: 't3.micro',
+        blockDeviceMappings: [
+          { deviceName: 'device', ebs: { encrypted: false } },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance 1 - Volume', () => {
+      new Volume(stack, 'rVolume1', {
         availabilityZone: stack.availabilityZones[0],
         size: Size.gibibytes(42),
         encrypted: true,
+      });
+      new CfnVolume(stack, 'rVolume2', {
+        availabilityZone: stack.availabilityZones[0],
+        encrypted: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2 - LaunchTemplate', () => {
+      new LaunchTemplate(stack, 'rLaunchTemplate1', {
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: true }),
+          },
+        ],
+      });
+      new CfnLaunchTemplate(stack, 'rLaunchTemplate2', {
+        launchTemplateData: {
+          blockDeviceMappings: [{ ebs: { encrypted: true } }],
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 3 - Instance', () => {
+      new Instance(stack, 'rInstance1', {
+        vpc: new Vpc(stack, 'rVpc', {}),
+        instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.MICRO),
+        machineImage: new AmazonLinuxImage({
+          generation: AmazonLinuxGeneration.AMAZON_LINUX_2,
+          cpuType: AmazonLinuxCpuType.X86_64,
+        }),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: true }),
+          },
+        ],
+      });
+      new CfnInstance(stack, 'rInstance', {
+        blockDeviceMappings: [
+          { deviceName: 'device', ebs: { encrypted: true } },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 4 - AutoScalingGroup', () => {
+      new AutoScalingGroup(stack, 'rAutoScalingGroup', {
+        vpc: new Vpc(stack, 'rVpc', {}),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: ASBlockDeviceVolume.ebs(1, { encrypted: true }),
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 5 - LaunchConfiguration', () => {
+      new CfnLaunchConfiguration(stack, 'rLaunchConfiguration', {
+        imageId: 'image',
+        instanceType: 't3.micro',
+        blockDeviceMappings: [
+          { deviceName: 'device', ebs: { encrypted: true } },
+        ],
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
