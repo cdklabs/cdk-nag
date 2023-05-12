@@ -50,8 +50,7 @@ export default Object.defineProperty(
         .sort((a, b) => {
           return a.version.localeCompare(b.version, undefined, {
             numeric: true,
-            sensitivity: 'case',
-            caseFirst: 'upper',
+            sensitivity: 'base',
           });
         });
 
