@@ -11,9 +11,6 @@ import {
 } from 'aws-cdk-lib/aws-autoscaling';
 import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import {
-  AmazonLinuxCpuType,
-  AmazonLinuxGeneration,
-  AmazonLinuxImage,
   BlockDeviceVolume,
   CfnInstance,
   CfnLaunchTemplate,
@@ -129,7 +126,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -137,12 +134,12 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       }).instance.ebsOptimized = true;
       new Instance(stack, 'rInstance2', {
         vpc: new Vpc(stack, 'rVpc2'),
         instanceType: InstanceType.of(InstanceClass.A1, InstanceSize.MEDIUM),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       new CfnInstance(stack, 'rInstance3');
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -155,7 +152,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -163,7 +160,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         instanceMonitoring: Monitoring.BASIC,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -172,12 +169,12 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       }).instance.monitoring = true;
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc2'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         instanceMonitoring: Monitoring.DETAILED,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -215,7 +212,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance3', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -232,7 +229,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: InstanceType.of(InstanceClass.C3, InstanceSize.XLARGE),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       }).addToRolePolicy(
         new PolicyStatement({
           actions: ['s3:ListAllMyBuckets'],
@@ -249,7 +246,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -258,7 +255,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       const instance = new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       instance.instance.disableApiTermination = true;
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -281,7 +278,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -574,7 +571,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
         new Instance(stack, 'Instance', {
           vpc: vpc,
           instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-          machineImage: MachineImage.latestAmazonLinux(),
+          machineImage: MachineImage.latestAmazonLinux2(),
           requireImdsv2: false,
         });
         validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -585,7 +582,7 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
         new Instance(stack, 'Instance', {
           vpc: vpc,
           instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-          machineImage: MachineImage.latestAmazonLinux(),
+          machineImage: MachineImage.latestAmazonLinux2(),
           requireImdsv2: true,
         });
         const launchTemplate = new CfnLaunchTemplate(stack, 'LaunchTemplate', {
@@ -828,11 +825,8 @@ describe('Amazon Elastic Block Store (EBS)', () => {
     test('Noncompliance 5 - Instance', () => {
       new Instance(stack, 'rInstance', {
         vpc: new Vpc(stack, 'rVpc', {}),
-        instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.MICRO),
-        machineImage: new AmazonLinuxImage({
-          generation: AmazonLinuxGeneration.AMAZON_LINUX_2,
-          cpuType: AmazonLinuxCpuType.X86_64,
-        }),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
         blockDevices: [
           {
             deviceName: 'device',
@@ -851,8 +845,10 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 7 - AutoScalingGroup', () => {
-      new AutoScalingGroup(stack, 'rAutoScalingGroup', {
-        vpc: new Vpc(stack, 'rVpc', {}),
+      new AutoScalingGroup(stack, 'rAsg', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
         blockDevices: [
           {
             deviceName: 'device',
@@ -863,9 +859,9 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 8 - CfnLaunchConfiguration', () => {
-      new CfnLaunchConfiguration(stack, 'rLaunchConfiguration', {
-        imageId: 'image',
-        instanceType: 't3.micro',
+      new CfnLaunchConfiguration(stack, 'LaunchConfig', {
+        imageId: 'ami-123456',
+        instanceType: 't3.small',
         blockDeviceMappings: [
           { deviceName: 'device', ebs: { encrypted: false } },
         ],
@@ -902,12 +898,9 @@ describe('Amazon Elastic Block Store (EBS)', () => {
     });
     test('Compliance 3 - Instance', () => {
       new Instance(stack, 'rInstance1', {
-        vpc: new Vpc(stack, 'rVpc', {}),
-        instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.MICRO),
-        machineImage: new AmazonLinuxImage({
-          generation: AmazonLinuxGeneration.AMAZON_LINUX_2,
-          cpuType: AmazonLinuxCpuType.X86_64,
-        }),
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
         blockDevices: [
           {
             deviceName: 'device',
@@ -915,7 +908,7 @@ describe('Amazon Elastic Block Store (EBS)', () => {
           },
         ],
       });
-      new CfnInstance(stack, 'rInstance', {
+      new CfnInstance(stack, 'rInstance2', {
         blockDeviceMappings: [
           { deviceName: 'device', ebs: { encrypted: true } },
         ],
@@ -923,8 +916,10 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 4 - AutoScalingGroup', () => {
-      new AutoScalingGroup(stack, 'rAutoScalingGroup', {
-        vpc: new Vpc(stack, 'rVpc', {}),
+      new AutoScalingGroup(stack, 'rAsg', {
+        vpc: new Vpc(stack, 'rVpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
         blockDevices: [
           {
             deviceName: 'device',
@@ -935,9 +930,9 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 5 - LaunchConfiguration', () => {
-      new CfnLaunchConfiguration(stack, 'rLaunchConfiguration', {
-        imageId: 'image',
-        instanceType: 't3.micro',
+      new CfnLaunchConfiguration(stack, 'LaunchConfig', {
+        imageId: 'ami-123456',
+        instanceType: 't3.small',
         blockDeviceMappings: [
           { deviceName: 'device', ebs: { encrypted: true } },
         ],
