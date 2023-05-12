@@ -35,7 +35,7 @@ export default Object.defineProperty(
             node,
             blockDeviceMapping.ebs.encrypted
           );
-          if (encryption != true) {
+          if (encryption !== true) {
             return NagRuleCompliance.NON_COMPLIANT;
           }
         }
@@ -53,7 +53,7 @@ export default Object.defineProperty(
             node,
             blockDeviceMapping.ebs.encrypted
           );
-          if (encryption != true) {
+          if (encryption !== true) {
             return NagRuleCompliance.NON_COMPLIANT;
           }
         }
@@ -71,7 +71,7 @@ export default Object.defineProperty(
             node,
             blockDeviceMapping.ebs.encrypted
           );
-          if (encryption != true) {
+          if (encryption !== true) {
             return NagRuleCompliance.NON_COMPLIANT;
           }
         }
