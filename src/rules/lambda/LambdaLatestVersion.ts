@@ -44,13 +44,14 @@ export default Object.defineProperty(
           return {
             value: rt.toString(),
             family: match![1],
-            version: parseFloat(match![2]),
+            version: match![2] ?? '0',
           };
         })
         .sort((a, b) => {
-          if (a.version < b.version) return -1;
-          else if (a.version > b.version) return 1;
-          else return 0;
+          return a.version.localeCompare(b.version, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          });
         });
 
       if (familyVersions.length === 0) {

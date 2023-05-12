@@ -44,13 +44,14 @@ function getLatestRuntime(family: string): Runtime {
       return {
         value: rt,
         family: match![1],
-        version: parseFloat(match![2]),
+        version: match![2] ?? '0',
       };
     })
     .sort((a, b) => {
-      if (a.version < b.version) return -1;
-      else if (a.version > b.version) return 1;
-      else return 0;
+      return a.version.localeCompare(b.version, undefined, {
+        numeric: true,
+        sensitivity: 'base',
+      });
     });
 
   return familyVersions.pop()!.value;
@@ -216,7 +217,7 @@ describe('AWS Lambda', () => {
     const ruleId = 'LambdaLatestVersion';
     test('Noncompliance 1 - nodejs', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: Runtime.NODEJS_12_X.toString(),
+        runtime: Runtime.NODEJS_16_X.toString(),
         code: {},
         role: 'somerole',
       });
@@ -224,7 +225,7 @@ describe('AWS Lambda', () => {
     });
     test('Noncompliance 2 - python', () => {
       new CfnFunction(stack, 'rFunction', {
-        runtime: Runtime.PYTHON_3_8.toString(),
+        runtime: Runtime.PYTHON_3_9.toString(),
         code: {},
         role: 'somerole',
       });
@@ -248,9 +249,17 @@ describe('AWS Lambda', () => {
     });
     test('Noncompliance 5 - L2 - nodejs', () => {
       new Function(stack, 'rFunction', {
-        runtime: Runtime.NODEJS_12_X,
+        runtime: Runtime.NODEJS_16_X,
         code: Code.fromInline('hi'),
         handler: 'index.handler',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 6 - ruby', () => {
+      new CfnFunction(stack, 'rFunction', {
+        runtime: Runtime.RUBY_2_5.toString(),
+        code: {},
+        role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -314,6 +323,14 @@ describe('AWS Lambda', () => {
     test('Compliance 8 - L2 - container', () => {
       new DockerImageFunction(stack, 'rFunction', {
         code: DockerImageCode.fromEcr(new Repository(stack, 'rRepo')),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 9 - ruby', () => {
+      new CfnFunction(stack, 'rFunction', {
+        runtime: getLatestRuntime('ruby').toString(),
+        code: {},
+        role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
