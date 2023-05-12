@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
-import { CfnLaunchTemplate, CfnVolume } from 'aws-cdk-lib/aws-ec2';
+import { CfnLaunchTemplate, CfnVolume, CfnInstance } from 'aws-cdk-lib/aws-ec2';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
@@ -30,10 +30,9 @@ export default Object.defineProperty(
           launchTemplateData.blockDeviceMappings
         );
         for (const blockDeviceMapping of blockDeviceMappings) {
-          const resolvedDevice = Stack.of(node).resolve(blockDeviceMapping);
           const encryption = NagRules.resolveIfPrimitive(
             node,
-            resolvedDevice.ebs.encrypted
+            blockDeviceMapping.ebs.encrypted
           );
           if (encryption != true) {
             return NagRuleCompliance.NON_COMPLIANT;
@@ -41,6 +40,24 @@ export default Object.defineProperty(
         }
         return NagRuleCompliance.COMPLIANT;
       }
+    } else if (node instanceof CfnInstance) {
+      const blockDeviceMappings = Stack.of(node).resolve(
+        node.blockDeviceMappings
+      );
+      if (blockDeviceMappings == undefined) {
+        return NagRuleCompliance.NOT_APPLICABLE;
+      } else {
+        for (const blockDeviceMapping of blockDeviceMappings) {
+          const encryption = NagRules.resolveIfPrimitive(
+            node,
+            blockDeviceMapping.ebs.encrypted
+          );
+          if (encryption != true) {
+            return NagRuleCompliance.NON_COMPLIANT;
+          }
+        }
+      }
+      return NagRuleCompliance.COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
