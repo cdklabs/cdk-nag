@@ -38,7 +38,6 @@ export default Object.defineProperty(
           node,
           node.getMetadata('aws:asset:path')
         );
-        console.log(assetOutdir, assetPath);
         const specFile = yamlparse(
           readFileSync(assetOutdir + '/' + assetPath, 'utf-8')
         );
