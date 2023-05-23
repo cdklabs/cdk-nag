@@ -14,6 +14,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   description:
     'Check CDK v2 applications for best practices using a combination on available rule packs.',
   repositoryUrl: 'https://github.com/cdklabs/cdk-nag.git',
+  deps: ['yaml'],
   devDeps: ['@aws-cdk/assert@^2.18'],
   publishToPypi: {
     distName: 'cdk-nag',

@@ -70,6 +70,9 @@
     "aws-cdk-lib": "^2.78.0",
     "constructs": "^10.0.5"
   },
+  "dependencies": {
+    "yaml": "^2.3.0"
+  },
   "resolutions": {
     "@types/prettier": "2.6.0",
     "@types/babel__traverse": "7.18.2"
