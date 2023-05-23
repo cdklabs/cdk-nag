@@ -2,9 +2,11 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { readFileSync } from 'fs';
 import { parse } from 'path';
-import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnResource, Stack, Stage } from 'aws-cdk-lib';
 import { CfnRequestValidator, CfnRestApi } from 'aws-cdk-lib/aws-apigateway';
+import { parse as yamlparse } from 'yaml';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
@@ -24,6 +26,36 @@ export default Object.defineProperty(
           if (isMatchingRequestValidator(child, apiLogicalId)) {
             found = true;
             break;
+          }
+        }
+      }
+      if (node.bodyS3Location) {
+        const assetOutdir = NagRules.resolveResourceFromInstrinsic(
+          node,
+          Stage.of(node)?.assetOutdir
+        );
+        const assetPath = NagRules.resolveResourceFromInstrinsic(
+          node,
+          node.getMetadata('aws:asset:path')
+        );
+        console.log(assetOutdir, assetPath);
+        const specFile = yamlparse(
+          readFileSync(assetOutdir + '/' + assetPath, 'utf-8')
+        );
+        if ('x-amazon-apigateway-request-validators' in specFile) {
+          for (const prop in specFile[
+            'x-amazon-apigateway-request-validators'
+          ]) {
+            if (
+              specFile['x-amazon-apigateway-request-validators'][prop]
+                .validateRequestBody &&
+              specFile['x-amazon-apigateway-request-validators'][prop]
+                .validateRequestParameters
+            ) {
+              found = true;
+            } else {
+              found = false;
+            }
           }
         }
       }
