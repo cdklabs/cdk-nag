@@ -2,14 +2,18 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { cx_api } from 'aws-cdk-lib';
 import {
+  ApiDefinition,
   AuthorizationType,
   CfnClientCertificate,
   CfnRequestValidator,
   CfnRestApi,
   CfnStage,
+  InlineApiDefinition,
   MethodLoggingLevel,
   RestApi,
+  SpecRestApi,
 } from 'aws-cdk-lib/aws-apigateway';
 import { CfnRoute, CfnStage as CfnV2Stage } from 'aws-cdk-lib/aws-apigatewayv2';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
@@ -268,6 +272,62 @@ describe('Amazon API Gateway', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3', () => {
+      const apiSpec = new InlineApiDefinition({
+        openapi: '3.0.2',
+        paths: {
+          '/pets': {
+            get: {
+              responses: {
+                200: {
+                  content: {
+                    'application/json': {
+                      schema: {
+                        $ref: '#/components/schemas/Empty',
+                      },
+                    },
+                  },
+                },
+              },
+              'x-amazon-apigateway-integration': {
+                responses: {
+                  default: {
+                    statusCode: '200',
+                  },
+                },
+                requestTemplates: {
+                  'application/json': '{"statusCode": 200}',
+                },
+                passthroughBehavior: 'when_no_match',
+                type: 'mock',
+              },
+            },
+          },
+        },
+        components: {
+          schemas: {
+            Empty: {
+              title: 'Empty Schema',
+              type: 'object',
+            },
+          },
+        },
+      });
+      new SpecRestApi(stack, 'SpecRestApi1', { apiDefinition: apiSpec });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4', () => {
+      stack.node.setContext(
+        cx_api.ASSET_RESOURCE_METADATA_ENABLED_CONTEXT,
+        true
+      );
+      new SpecRestApi(stack, 'SpecRestApi2', {
+        apiDefinition: ApiDefinition.fromAsset(
+          './test/rules/assets/NonCompliantOpenApi.json'
+        ),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const compliantRestApi = new RestApi(stack, 'RestApi');
       compliantRestApi.addRequestValidator('RequestValidator', {
@@ -281,6 +341,18 @@ describe('Amazon API Gateway', () => {
         restApiId: compliantRestApi2.restApiId,
         validateRequestBody: true,
         validateRequestParameters: true,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance - API import', () => {
+      stack.node.setContext(
+        cx_api.ASSET_RESOURCE_METADATA_ENABLED_CONTEXT,
+        true
+      );
+      new SpecRestApi(stack, 'SpecRestApi', {
+        apiDefinition: ApiDefinition.fromAsset(
+          './test/rules/assets/CompliantOpenApi.json'
+        ),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
