@@ -804,7 +804,7 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 3 - LaunchTemplate', () => {
-      new LaunchTemplate(stack, 'LaunchTemplate', {
+      const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {
         blockDevices: [
           {
             deviceName: 'device',
@@ -812,24 +812,60 @@ describe('Amazon Elastic Block Store (EBS)', () => {
           },
         ],
       });
+      const instance = new Instance(stack, 'Instance', {
+        vpc: new Vpc(stack, 'Vpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance.instance.launchTemplate = {
+        version: launchTemplate.versionNumber,
+        launchTemplateId: launchTemplate.launchTemplateId,
+      };
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 4 - LaunchTemplate (blockDevices is not configured)', () => {
-      new LaunchTemplate(stack, 'LaunchTemplate', {});
+      const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {});
+      const instance = new Instance(stack, 'Instance', {
+        vpc: new Vpc(stack, 'Vpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance.instance.launchTemplate = {
+        version: launchTemplate.versionNumber,
+        launchTemplateId: launchTemplate.launchTemplateId,
+      };
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 5 - CfnLaunchTemplate', () => {
-      new CfnLaunchTemplate(stack, 'LaunchTemplate', {
+      const launchTemplate = new CfnLaunchTemplate(stack, 'LaunchTemplate', {
         launchTemplateData: {
           blockDeviceMappings: [{ ebs: { encrypted: false } }],
         },
       });
+      const instance = new Instance(stack, 'Instance', {
+        vpc: new Vpc(stack, 'Vpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance.instance.launchTemplate = {
+        version: launchTemplate.getAtt('LatestVersionNumber').toString(),
+        launchTemplateName: launchTemplate.launchTemplateName,
+      };
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 6 - CfnLaunchTemplate (blockDeviceMappings is not configured)', () => {
-      new CfnLaunchTemplate(stack, 'LaunchTemplate', {
+      const launchTemplate = new CfnLaunchTemplate(stack, 'LaunchTemplate', {
         launchTemplateData: {},
       });
+      const instance = new Instance(stack, 'Instance', {
+        vpc: new Vpc(stack, 'Vpc'),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance.instance.launchTemplate = {
+        version: launchTemplate.getAtt('LatestVersionNumber').toString(),
+        launchTemplateName: launchTemplate.launchTemplateName,
+      };
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 7 - Instance', () => {
@@ -918,7 +954,8 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 2 - LaunchTemplate', () => {
-      new LaunchTemplate(stack, 'LaunchTemplate1', {
+      const vpc = new Vpc(stack, 'Vpc');
+      const launchTemplate1 = new LaunchTemplate(stack, 'LaunchTemplate1', {
         blockDevices: [
           {
             deviceName: 'device',
@@ -926,16 +963,45 @@ describe('Amazon Elastic Block Store (EBS)', () => {
           },
         ],
       });
-      new CfnLaunchTemplate(stack, 'LaunchTemplate2', {
+      const instance1 = new Instance(stack, 'Instance1', {
+        vpc: vpc,
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance1.instance.launchTemplate = {
+        version: launchTemplate1.versionNumber,
+        launchTemplateId: launchTemplate1.launchTemplateId,
+      };
+
+      const launchTemplate2 = new CfnLaunchTemplate(stack, 'LaunchTemplate2', {
         launchTemplateData: {
           blockDeviceMappings: [{ ebs: { encrypted: true } }],
         },
       });
+      const instance2 = new Instance(stack, 'Instance2', {
+        vpc: vpc,
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance2.instance.launchTemplate = {
+        version: launchTemplate2.getAtt('LatestVersionNumber').toString(),
+        launchTemplateName: launchTemplate2.launchTemplateName,
+      };
+
+      // LaunchTemplate that is not in use.
+      new LaunchTemplate(stack, 'LaunchTemplate3', {});
+
+      // CfnLaunchTemplate that is not in use.
+      new CfnLaunchTemplate(stack, 'LaunchTemplate4', {
+        launchTemplateData: {},
+      });
+
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 3 - Instance', () => {
+      const vpc = new Vpc(stack, 'Vpc');
       new Instance(stack, 'Instance1', {
-        vpc: new Vpc(stack, 'Vpc'),
+        vpc: vpc,
         instanceType: new InstanceType(InstanceClass.T3),
         machineImage: MachineImage.latestAmazonLinux2(),
         blockDevices: [
@@ -945,7 +1011,19 @@ describe('Amazon Elastic Block Store (EBS)', () => {
           },
         ],
       });
-      new CfnInstance(stack, 'Instance2', {
+      new Instance(stack, 'Instance2', {
+        vpc: vpc,
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: true }),
+          },
+        ],
+        requireImdsv2: true,
+      });
+      new CfnInstance(stack, 'Instance3', {
         blockDeviceMappings: [
           { deviceName: 'device', ebs: { encrypted: true } },
         ],
