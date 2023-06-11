@@ -39,41 +39,8 @@ export default Object.defineProperty(
         }
         return NagRuleCompliance.COMPLIANT;
       }
-
-      const instanceLaunchTemplate = Stack.of(node).resolve(
-        node.launchTemplate
-      );
-      for (const child of Stack.of(node).node.findAll()) {
-        if (child instanceof CfnLaunchTemplate) {
-          if (
-            isMatchingLaunchTemplate(
-              child,
-              instanceLaunchTemplate.launchTemplateName,
-              instanceLaunchTemplate.launchTemplateId
-            )
-          ) {
-            const launchTemplateData = Stack.of(node).resolve(
-              child.launchTemplateData
-            );
-            if (launchTemplateData.blockDeviceMappings == undefined) {
-              return NagRuleCompliance.NON_COMPLIANT;
-            } else {
-              const launchTemplateBlockDeviceMappings = Stack.of(child).resolve(
-                launchTemplateData.blockDeviceMappings
-              );
-              for (const blockDeviceMapping of launchTemplateBlockDeviceMappings) {
-                const encryption = NagRules.resolveIfPrimitive(
-                  node,
-                  blockDeviceMapping.ebs.encrypted
-                );
-                if (encryption !== true) {
-                  return NagRuleCompliance.NON_COMPLIANT;
-                }
-              }
-              return NagRuleCompliance.COMPLIANT;
-            }
-          }
-        }
+      if (isLaunchTemplateCompliant(node)) {
+        return NagRuleCompliance.COMPLIANT;
       }
       return NagRuleCompliance.NON_COMPLIANT;
     } else if (node instanceof CfnLaunchConfiguration) {
@@ -99,37 +66,8 @@ export default Object.defineProperty(
       if (launchTemplate === undefined) {
         return NagRuleCompliance.NOT_APPLICABLE;
       }
-      for (const child of Stack.of(node).node.findAll()) {
-        if (child instanceof CfnLaunchTemplate) {
-          if (
-            isMatchingLaunchTemplate(
-              child,
-              launchTemplate.launchTemplateName,
-              launchTemplate.launchTemplateId
-            )
-          ) {
-            const launchTemplateData = Stack.of(node).resolve(
-              child.launchTemplateData
-            );
-            if (launchTemplateData.blockDeviceMappings == undefined) {
-              return NagRuleCompliance.NON_COMPLIANT;
-            } else {
-              const launchTemplateBlockDeviceMappings = Stack.of(child).resolve(
-                launchTemplateData.blockDeviceMappings
-              );
-              for (const blockDeviceMapping of launchTemplateBlockDeviceMappings) {
-                const encryption = NagRules.resolveIfPrimitive(
-                  node,
-                  blockDeviceMapping.ebs.encrypted
-                );
-                if (encryption !== true) {
-                  return NagRuleCompliance.NON_COMPLIANT;
-                }
-              }
-              return NagRuleCompliance.COMPLIANT;
-            }
-          }
-        }
+      if (isLaunchTemplateCompliant(node)) {
+        return NagRuleCompliance.COMPLIANT;
       }
       return NagRuleCompliance.NON_COMPLIANT;
     } else {
@@ -149,4 +87,44 @@ function isMatchingLaunchTemplate(
     launchTemplateName === node.launchTemplateName ||
     launchTemplateId === NagRules.resolveResourceFromInstrinsic(node, node.ref)
   );
+}
+
+function isLaunchTemplateCompliant(
+  node: CfnInstance | CfnAutoScalingGroup
+): boolean {
+  const launchTemplate = Stack.of(node).resolve(node.launchTemplate);
+
+  for (const child of Stack.of(node).node.findAll()) {
+    if (child instanceof CfnLaunchTemplate) {
+      if (
+        isMatchingLaunchTemplate(
+          child,
+          launchTemplate.launchTemplateName,
+          launchTemplate.launchTemplateId
+        )
+      ) {
+        const launchTemplateData = Stack.of(node).resolve(
+          child.launchTemplateData
+        );
+        if (launchTemplateData.blockDeviceMappings == undefined) {
+          return false;
+        } else {
+          const launchTemplateBlockDeviceMappings = Stack.of(child).resolve(
+            launchTemplateData.blockDeviceMappings
+          );
+          for (const blockDeviceMapping of launchTemplateBlockDeviceMappings) {
+            const encryption = NagRules.resolveIfPrimitive(
+              node,
+              blockDeviceMapping.ebs.encrypted
+            );
+            if (encryption !== true) {
+              return false;
+            }
+          }
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
