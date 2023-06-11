@@ -4,7 +4,10 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
-import { CfnLaunchConfiguration } from 'aws-cdk-lib/aws-autoscaling';
+import {
+  CfnAutoScalingGroup,
+  CfnLaunchConfiguration,
+} from 'aws-cdk-lib/aws-autoscaling';
 import { CfnLaunchTemplate, CfnVolume, CfnInstance } from 'aws-cdk-lib/aws-ec2';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
@@ -91,6 +94,44 @@ export default Object.defineProperty(
         }
       }
       return NagRuleCompliance.COMPLIANT;
+    } else if (node instanceof CfnAutoScalingGroup) {
+      const launchTemplate = Stack.of(node).resolve(node.launchTemplate);
+      if (launchTemplate === undefined) {
+        return NagRuleCompliance.NOT_APPLICABLE;
+      }
+      for (const child of Stack.of(node).node.findAll()) {
+        if (child instanceof CfnLaunchTemplate) {
+          if (
+            isMatchingLaunchTemplate(
+              child,
+              launchTemplate.launchTemplateName,
+              launchTemplate.launchTemplateId
+            )
+          ) {
+            const launchTemplateData = Stack.of(node).resolve(
+              child.launchTemplateData
+            );
+            if (launchTemplateData.blockDeviceMappings == undefined) {
+              return NagRuleCompliance.NON_COMPLIANT;
+            } else {
+              const launchTemplateBlockDeviceMappings = Stack.of(child).resolve(
+                launchTemplateData.blockDeviceMappings
+              );
+              for (const blockDeviceMapping of launchTemplateBlockDeviceMappings) {
+                const encryption = NagRules.resolveIfPrimitive(
+                  node,
+                  blockDeviceMapping.ebs.encrypted
+                );
+                if (encryption !== true) {
+                  return NagRuleCompliance.NON_COMPLIANT;
+                }
+              }
+              return NagRuleCompliance.COMPLIANT;
+            }
+          }
+        }
+      }
+      return NagRuleCompliance.NON_COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
