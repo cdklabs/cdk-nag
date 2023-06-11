@@ -1009,6 +1009,8 @@ describe('Amazon Elastic Block Store (EBS)', () => {
     });
     test('Compliance 2 - LaunchTemplate', () => {
       const vpc = new Vpc(stack, 'Vpc');
+
+      // LaunchTemplate configuring an encrypted volume.
       const launchTemplate1 = new LaunchTemplate(stack, 'LaunchTemplate1', {
         blockDevices: [
           {
@@ -1033,6 +1035,7 @@ describe('Amazon Elastic Block Store (EBS)', () => {
         launchTemplate: launchTemplate1,
       });
 
+      // CfnLaunchTemplate configuring an encrypted volume.
       const launchTemplate2 = new CfnLaunchTemplate(stack, 'LaunchTemplate2', {
         launchTemplateData: {
           blockDeviceMappings: [{ ebs: { encrypted: true } }],
@@ -1064,6 +1067,66 @@ describe('Amazon Elastic Block Store (EBS)', () => {
         launchTemplateData: {},
       });
 
+      // LaunchTemplate configuring an unencrypted volume but will be overwritten.
+      const launchTemplate5 = new LaunchTemplate(stack, 'LaunchTemplate5', {
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: false }),
+          },
+        ],
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      const instance5 = new Instance(stack, 'Instance5', {
+        vpc: vpc,
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: true }),
+          },
+        ],
+      });
+      instance5.instance.launchTemplate = {
+        version: launchTemplate5.versionNumber,
+        launchTemplateId: launchTemplate5.launchTemplateId,
+      };
+      new CfnInstance(stack, 'Instance6', {
+        blockDeviceMappings: [
+          { deviceName: 'device', ebs: { encrypted: true } },
+        ],
+        launchTemplate: {
+          version: launchTemplate5.versionNumber,
+          launchTemplateId: launchTemplate5.launchTemplateId,
+        },
+      });
+
+      // CfnLaunchTemplate configuring an unencrypted volume but will be overwritten.
+      const launchTemplate6 = new CfnLaunchTemplate(stack, 'LaunchTemplate6', {
+        launchTemplateData: {
+          blockDeviceMappings: [{ ebs: { encrypted: false } }],
+        },
+      });
+      const instance7 = new Instance(stack, 'Instance7', {
+        vpc: vpc,
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+      });
+      instance7.instance.launchTemplate = {
+        version: launchTemplate6.getAtt('LatestVersionNumber').toString(),
+        launchTemplateName: launchTemplate6.launchTemplateName,
+      };
+      new CfnInstance(stack, 'Instance8', {
+        blockDeviceMappings: [
+          { deviceName: 'device', ebs: { encrypted: true } },
+        ],
+        launchTemplate: {
+          version: launchTemplate6.getAtt('LatestVersionNumber').toString(),
+          launchTemplateName: launchTemplate6.launchTemplateName,
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 3 - Instance', () => {
