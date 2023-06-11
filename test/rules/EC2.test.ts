@@ -885,20 +885,17 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 8 - CfnLaunchTemplate used by AutoScalingGroup', () => {
-      const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {
-        blockDevices: [
-          {
-            deviceName: 'device',
-            volume: BlockDeviceVolume.ebs(1, { encrypted: false }),
-          },
-        ],
-        instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux2(),
+    test('Noncompliance 8 - CfnLaunchTemplate used by CfnAutoScalingGroup', () => {
+      const launchTemplate = new CfnLaunchTemplate(stack, 'LaunchTemplate', {
+        launchTemplateData: {},
       });
-      new AutoScalingGroup(stack, 'Asg', {
-        vpc: new Vpc(stack, 'Vpc'),
-        launchTemplate: launchTemplate,
+      new CfnAutoScalingGroup(stack, 'Asg', {
+        launchTemplate: {
+          version: launchTemplate.getAtt('LatestVersionNumber').toString(),
+          launchTemplateName: launchTemplate.launchTemplateName,
+        },
+        minSize: '1',
+        maxSize: '1',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -1027,6 +1024,14 @@ describe('Amazon Elastic Block Store (EBS)', () => {
         version: launchTemplate2.getAtt('LatestVersionNumber').toString(),
         launchTemplateName: launchTemplate2.launchTemplateName,
       };
+      new CfnAutoScalingGroup(stack, 'Asg2', {
+        launchTemplate: {
+          version: launchTemplate2.getAtt('LatestVersionNumber').toString(),
+          launchTemplateName: launchTemplate2.launchTemplateName,
+        },
+        minSize: '1',
+        maxSize: '1',
+      });
 
       // LaunchTemplate that is not in use.
       new LaunchTemplate(stack, 'LaunchTemplate3', {});
