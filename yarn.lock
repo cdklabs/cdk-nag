@@ -18,9 +18,9 @@
     "@aws-cdk/cloudformation-diff" "2.68.0"
 
 "@aws-cdk/asset-awscli-v1@^2.2.97":
-  version "2.2.193"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.193.tgz#e98f973273a5f5cc7ffff8e7f69b33d4d2135ffe"
-  integrity sha512-liDhF15WsW2/w7q20o4WQtuxOTkIk+XYKhQ9E4g6A59sJQi56x1Lo4pHLepm3lMAY3Hu43Uz/rQ6FjQt4wsuiw==
+  version "2.2.194"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.194.tgz#d46358da37ed01b9fd2dcab51668e81a76bb17c9"
+  integrity sha512-6u6VZ/KoMQQeX5jK/aNMtZM0TM5SkaNBt8JFdlzGf2cDxddWpJYsvsN2ClFAmvgYg/HPl57vp9kxI57Af2CBIw==
 
 "@aws-cdk/asset-kubectl-v20@^2.1.1":
   version "2.1.2"
@@ -5173,10 +5173,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.71.99:
-  version "0.71.99"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.99.tgz#b3d1b9ed98f1f8e437d9e430b1031b226877d1e3"
-  integrity sha512-yt3zlMMz+BZizXpwFGoEia/JmI6bsO4yypxW8zhxWsqnjJPm4HpZcNgQp8YKrPiAlvT3ovUTI7G2lk9R6RnZ8g==
+projen@^0.71.100:
+  version "0.71.100"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.100.tgz#25d74df66eb9ac1d9f6d55d1a56b31c7215e4e01"
+  integrity sha512-UWig1B/6L4FJmzpnzyErUaCLwyr1z/CezvRsO2TmgABgAugMQAjqTzW9R9QyBAen3VYt8uHGl9B+4CrkoFxHSw==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
