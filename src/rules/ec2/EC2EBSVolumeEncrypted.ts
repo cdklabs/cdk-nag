@@ -24,22 +24,17 @@ export default Object.defineProperty(
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnInstance) {
-      const blockDeviceMappings = Stack.of(node).resolve(
-        node.blockDeviceMappings
-      );
-      if (blockDeviceMappings !== undefined) {
-        for (const blockDeviceMapping of blockDeviceMappings) {
-          const encryption = NagRules.resolveIfPrimitive(
-            node,
-            blockDeviceMapping.ebs.encrypted
-          );
-          if (encryption !== true) {
-            return NagRuleCompliance.NON_COMPLIANT;
-          }
-        }
-        return NagRuleCompliance.COMPLIANT;
+      const instanceEBSCompliant = isInstanceEBSCompliant(node);
+      const launchTemplateCompliant = isLaunchTemplateCompliant(node);
+
+      if (
+        instanceEBSCompliant === undefined &&
+        launchTemplateCompliant === undefined
+      ) {
+        return NagRuleCompliance.NON_COMPLIANT;
       }
-      if (isLaunchTemplateCompliant(node)) {
+
+      if (instanceEBSCompliant !== false && launchTemplateCompliant !== false) {
         return NagRuleCompliance.COMPLIANT;
       }
       return NagRuleCompliance.NON_COMPLIANT;
@@ -91,7 +86,7 @@ function isMatchingLaunchTemplate(
 
 function isLaunchTemplateCompliant(
   node: CfnInstance | CfnAutoScalingGroup
-): boolean {
+): boolean | undefined {
   const launchTemplate = Stack.of(node).resolve(node.launchTemplate);
 
   for (const child of Stack.of(node).node.findAll()) {
@@ -106,25 +101,43 @@ function isLaunchTemplateCompliant(
         const launchTemplateData = Stack.of(node).resolve(
           child.launchTemplateData
         );
-        if (launchTemplateData.blockDeviceMappings == undefined) {
-          return false;
+        if (
+          launchTemplateData.blockDeviceMappings === undefined ||
+          launchTemplateData.blockDeviceMappings.length === 0
+        ) {
+          return undefined;
         } else {
           const launchTemplateBlockDeviceMappings = Stack.of(child).resolve(
             launchTemplateData.blockDeviceMappings
           );
-          for (const blockDeviceMapping of launchTemplateBlockDeviceMappings) {
-            const encryption = NagRules.resolveIfPrimitive(
-              node,
-              blockDeviceMapping.ebs.encrypted
-            );
-            if (encryption !== true) {
-              return false;
+          return launchTemplateBlockDeviceMappings.every(
+            (blockDeviceMapping: any) => {
+              const encryption = NagRules.resolveIfPrimitive(
+                node,
+                blockDeviceMapping.ebs.encrypted
+              );
+              return encryption === true;
             }
-          }
-          return true;
+          );
         }
       }
     }
   }
-  return false;
+  return undefined;
+}
+
+function isInstanceEBSCompliant(node: CfnInstance): boolean | undefined {
+  const blockDeviceMappings = Stack.of(node).resolve(node.blockDeviceMappings);
+
+  if (blockDeviceMappings === undefined || blockDeviceMappings.length === 0) {
+    return undefined;
+  } else {
+    return blockDeviceMappings.every((blockDeviceMapping: any) => {
+      const encryption = NagRules.resolveIfPrimitive(
+        node,
+        blockDeviceMapping.ebs.encrypted
+      );
+      return encryption === true;
+    });
+  }
 }
