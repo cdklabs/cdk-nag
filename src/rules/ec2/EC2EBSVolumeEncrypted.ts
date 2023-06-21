@@ -33,11 +33,10 @@ export default Object.defineProperty(
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-
-      if (instanceEBSCompliant !== false && launchTemplateCompliant !== false) {
-        return NagRuleCompliance.COMPLIANT;
+      if (instanceEBSCompliant === false || launchTemplateCompliant === false) {
+        return NagRuleCompliance.NON_COMPLIANT;
       }
-      return NagRuleCompliance.NON_COMPLIANT;
+      return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnLaunchConfiguration) {
       const blockDeviceMappings = Stack.of(node).resolve(
         node.blockDeviceMappings
