@@ -257,7 +257,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'EC26',
-      info: 'The resource may create one or more EBS volumes that have encryption disabled.',
+      info: 'The resource creates one or more EBS volumes that have encryption disabled.',
       explanation:
         "With EBS encryption, you aren't required to build, maintain, and secure your own key management infrastructure. EBS encryption uses KMS keys when creating encrypted volumes and snapshots. This helps protect data at rest.",
       level: NagMessageLevel.ERROR,
