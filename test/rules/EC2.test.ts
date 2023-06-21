@@ -960,6 +960,32 @@ describe('Amazon Elastic Block Store (EBS)', () => {
       };
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 13 - Instance (using LaunchTemplate which configures unencrypted volume)', () => {
+      const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: false }),
+          },
+        ],
+      });
+      const instance = new Instance(stack, 'Instance', {
+        vpc: new Vpc(stack, 'Vpc', {}),
+        instanceType: new InstanceType(InstanceClass.T3),
+        machineImage: MachineImage.latestAmazonLinux2(),
+        blockDevices: [
+          {
+            deviceName: 'device',
+            volume: BlockDeviceVolume.ebs(1, { encrypted: true }),
+          },
+        ],
+      });
+      instance.instance.launchTemplate = {
+        version: launchTemplate.versionNumber,
+        launchTemplateId: launchTemplate.launchTemplateId,
+      };
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Noncompliance 13 - CfnInstance', () => {
       new CfnInstance(stack, 'Instance', {
         blockDeviceMappings: [
