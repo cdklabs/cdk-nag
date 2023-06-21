@@ -24,16 +24,19 @@ export default Object.defineProperty(
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnInstance) {
-      const instanceEBSCompliant = isInstanceEBSCompliant(node);
-      const launchTemplateCompliant = isLaunchTemplateCompliant(node);
+      const instanceEBSCompliant = InstanceEBSState(node);
+      const launchTemplateCompliant = InstanceLaunchTemplateState(node);
 
       if (
-        instanceEBSCompliant === undefined &&
-        launchTemplateCompliant === undefined
+        instanceEBSCompliant === BlockDevicesState.Absent &&
+        launchTemplateCompliant === BlockDevicesState.Absent
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
-      if (instanceEBSCompliant === false || launchTemplateCompliant === false) {
+      if (
+        instanceEBSCompliant === BlockDevicesState.Unencrypted ||
+        launchTemplateCompliant === BlockDevicesState.Unencrypted
+      ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
@@ -60,7 +63,7 @@ export default Object.defineProperty(
       if (launchTemplate === undefined) {
         return NagRuleCompliance.NOT_APPLICABLE;
       }
-      if (isLaunchTemplateCompliant(node)) {
+      if (InstanceLaunchTemplateState(node) === BlockDevicesState.Encrypted) {
         return NagRuleCompliance.COMPLIANT;
       }
       return NagRuleCompliance.NON_COMPLIANT;
@@ -71,6 +74,12 @@ export default Object.defineProperty(
   'name',
   { value: parse(__filename).name }
 );
+
+enum BlockDevicesState {
+  Encrypted,
+  Unencrypted,
+  Absent,
+}
 
 function isMatchingLaunchTemplate(
   node: CfnLaunchTemplate,
@@ -83,9 +92,9 @@ function isMatchingLaunchTemplate(
   );
 }
 
-function isLaunchTemplateCompliant(
+function InstanceLaunchTemplateState(
   node: CfnInstance | CfnAutoScalingGroup
-): boolean | undefined {
+): BlockDevicesState {
   const launchTemplate = Stack.of(node).resolve(node.launchTemplate);
 
   for (const child of Stack.of(node).node.findAll()) {
@@ -104,12 +113,12 @@ function isLaunchTemplateCompliant(
           launchTemplateData.blockDeviceMappings === undefined ||
           launchTemplateData.blockDeviceMappings.length === 0
         ) {
-          return undefined;
+          return BlockDevicesState.Absent;
         } else {
           const launchTemplateBlockDeviceMappings = Stack.of(child).resolve(
             launchTemplateData.blockDeviceMappings
           );
-          return launchTemplateBlockDeviceMappings.every(
+          const devicesAllEncrypted = launchTemplateBlockDeviceMappings.every(
             (blockDeviceMapping: any) => {
               const encryption = NagRules.resolveIfPrimitive(
                 node,
@@ -118,25 +127,33 @@ function isLaunchTemplateCompliant(
               return encryption === true;
             }
           );
+          return devicesAllEncrypted
+            ? BlockDevicesState.Encrypted
+            : BlockDevicesState.Unencrypted;
         }
       }
     }
   }
-  return undefined;
+  return BlockDevicesState.Absent;
 }
 
-function isInstanceEBSCompliant(node: CfnInstance): boolean | undefined {
+function InstanceEBSState(node: CfnInstance): BlockDevicesState {
   const blockDeviceMappings = Stack.of(node).resolve(node.blockDeviceMappings);
 
   if (blockDeviceMappings === undefined || blockDeviceMappings.length === 0) {
-    return undefined;
+    return BlockDevicesState.Absent;
   } else {
-    return blockDeviceMappings.every((blockDeviceMapping: any) => {
-      const encryption = NagRules.resolveIfPrimitive(
-        node,
-        blockDeviceMapping.ebs.encrypted
-      );
-      return encryption === true;
-    });
+    const devicesAllEncrypted = blockDeviceMappings.every(
+      (blockDeviceMapping: any) => {
+        const encryption = NagRules.resolveIfPrimitive(
+          node,
+          blockDeviceMapping.ebs.encrypted
+        );
+        return encryption === true;
+      }
+    );
+    return devicesAllEncrypted
+      ? BlockDevicesState.Encrypted
+      : BlockDevicesState.Unencrypted;
   }
 }
