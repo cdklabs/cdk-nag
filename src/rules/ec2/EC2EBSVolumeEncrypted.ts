@@ -24,18 +24,18 @@ export default Object.defineProperty(
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnInstance) {
-      const instanceEBSCompliant = InstanceEBSState(node);
-      const launchTemplateCompliant = InstanceLaunchTemplateState(node);
+      const instanceEBSState = InstanceEBSState(node);
+      const instanceLaunchTemplateState = InstanceLaunchTemplateState(node);
 
       if (
-        instanceEBSCompliant === BlockDevicesState.Absent &&
-        launchTemplateCompliant === BlockDevicesState.Absent
+        instanceEBSState === BlockDevicesState.Absent &&
+        instanceLaunchTemplateState === BlockDevicesState.Absent
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       if (
-        instanceEBSCompliant === BlockDevicesState.Unencrypted ||
-        launchTemplateCompliant === BlockDevicesState.Unencrypted
+        instanceEBSState === BlockDevicesState.Unencrypted ||
+        instanceLaunchTemplateState === BlockDevicesState.Unencrypted
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
