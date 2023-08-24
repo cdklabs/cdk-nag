@@ -961,14 +961,14 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "20.5.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.3.tgz#fa52c147f405d56b2f1dd8780d840aa87ddff629"
-  integrity sha512-ITI7rbWczR8a/S6qjAW7DMqxqFMjjTo61qZVWJ1ubPvbIQsL5D/TvwjYEalM8Kthpe3hTzOGrF2TGbAu2uyqeA==
+  version "20.5.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.4.tgz#4666fb40f9974d60c53c4ff554315860ba4feab8"
+  integrity sha512-Y9vbIAoM31djQZrPYjpTLo0XlaSwOIsrlfE3LpulZeRblttsLQRFRlBAppW0LOxyT3ALj2M5vU1ucQQayQH3jA==
 
 "@types/node@^16":
-  version "16.18.43"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.43.tgz#580905f150e1008474bc9bd5a098b82eddc1b6c8"
-  integrity sha512-YFpgPKPRcwYbeNOimfu70B+TVJe6tr88WiW/TzEldkwGxQXrmabpU+lDjrFlNqdqIi3ON0o69EQBW62VH4MIxw==
+  version "16.18.44"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.44.tgz#3c3ea2a832014b869f0f370630d98bb026171e76"
+  integrity sha512-PZXtT+wqSMHnLPVExTh+tMt1VK+GvjRLsGZMbcQ4Mb/cG63xJig/TUmgrDa9aborl2i22UnpIzHYNu7s97NbBQ==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -2242,9 +2242,9 @@ eastasianwidth@^0.2.0:
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
 electron-to-chromium@^1.4.477:
-  version "1.4.499"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.499.tgz#dc36b67f4c8e273524e8d2080c5203a6a76987b6"
-  integrity sha512-0NmjlYBLKVHva4GABWAaHuPJolnDuL0AhV3h1hES6rcLCWEIbRL6/8TghfsVwkx6TEroQVdliX7+aLysUpKvjw==
+  version "1.4.500"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.500.tgz#7dd05fdfbe02ed34b9f6099cfe01407b473d5af7"
+  integrity sha512-P38NO8eOuWOKY1sQk5yE0crNtrjgjJj6r3NrbIKtG18KzCHmHE2Bt+aQA7/y0w3uYsHWxDa6icOohzjLJ4vJ4A==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4797,9 +4797,9 @@ npm-bundled@^3.0.0:
     npm-normalize-package-bin "^3.0.0"
 
 npm-check-updates@^16:
-  version "16.13.0"
-  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.13.0.tgz#92df9da56cc69657705c8abec46934cc99ac79f2"
-  integrity sha512-zTJCqov2+KpCLM7lOOxXLFiqKg8RLt10dempIbE9EfKCzoN1yqSrDcBCpU6uOmlSRy3IIGm1rK+piCrn+uulJw==
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.13.1.tgz#7aa0d24b180b6b7f4a881abff7d7150f0ca5a884"
+  integrity sha512-RIKBemiyAOEAUfzgYzDffLQwXI/Zo4CMSGHtup9fUoBpHqPNtD0pPFjpxDnt/sFpGiV5iANdE2Ck6xOxuQFfJg==
   dependencies:
     chalk "^5.3.0"
     cli-table3 "^0.6.3"
@@ -5244,10 +5244,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.72.21:
-  version "0.72.21"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.72.21.tgz#518f44266e02d24305c7461556e8757da601b1f1"
-  integrity sha512-3Do7uUsoc3KrLrrUdjgbJ+nUozIxr+poYOs64PqdCPk9Ce7xjHeJIUh6nTsKHXDWUskrD2FDO/eQcRyynCJgVA==
+projen@^0.72.22:
+  version "0.72.22"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.72.22.tgz#3f8a3e55ae91deeb6ebd2f752a4b01581ef70d44"
+  integrity sha512-cJ5szJDx/JvyiWFm+NFFn+mqMSjYawBnXffe+4fgpCbCtvZJds8YougwuRbgdRyV8GoroDFiTsV1wpnWjFz4/Q==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
