@@ -8,3 +8,4 @@ export { default as CloudFrontDistributionHttpsViewerNoOutdatedSSL } from './Clo
 export { default as CloudFrontDistributionNoOutdatedSSL } from './CloudFrontDistributionNoOutdatedSSL';
 export { default as CloudFrontDistributionS3OriginAccessIdentity } from './CloudFrontDistributionS3OriginAccessIdentity';
 export { default as CloudFrontDistributionWAFIntegration } from './CloudFrontDistributionWAFIntegration';
+export { default as CloudFrontDefaultRootObjectConfigured } from './CloudFrontDefaultRootObjectConfigured'
