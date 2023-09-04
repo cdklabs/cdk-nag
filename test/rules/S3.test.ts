@@ -35,7 +35,6 @@ import {
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
   S3WebBucketOAIAccess,
-  S3BucketServerSideEncryptionEnabled,
 } from '../../src/rules/s3';
 
 const testPack = new TestPack([
@@ -49,7 +48,6 @@ const testPack = new TestPack([
   S3BucketVersioningEnabled,
   S3DefaultEncryptionKMS,
   S3WebBucketOAIAccess,
-  S3BucketServerSideEncryptionEnabled,
 ]);
 let stack: Stack;
 
@@ -251,20 +249,6 @@ describe('Amazon Simple Storage Service (S3)', () => {
           ignorePublicAcls: false,
           restrictPublicBuckets: false,
         },
-      });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-  });
-
-  describe('S3BucketServerSideEncryptionEnabled: S3 Buckets have default server-side encryption enabled', () => {
-    const ruleId = 'S3BucketServerSideEncryptionEnabled';
-    test('Noncompliance 1', () => {
-      new Bucket(stack, 'rBucket');
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new Bucket(stack, 'rBucket', {
-        encryption: BucketEncryption.S3_MANAGED,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

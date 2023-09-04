@@ -8,7 +8,7 @@ import { CfnSecurityGroupIngress, CfnSecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * Security Groups should only allow inbound access to tcp443
+ * Security Groups only allow inbound access to traffic using TCP on port 443
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
@@ -16,8 +16,7 @@ export default Object.defineProperty(
     if (node instanceof CfnSecurityGroup) {
       const ingressRules = Stack.of(node).resolve(node.securityGroupIngress);
 
-      if (ingressRules != undefined) {
-        //For each ingress rule, check that only TCP 443 is allowed from 0/0
+      if (ingressRules) {
         for (const rule of ingressRules) {
           const resolvedcidrIp = NagRules.resolveIfPrimitive(
             node,
@@ -28,16 +27,12 @@ export default Object.defineProperty(
             Stack.of(node).resolve(rule).cidrIpv6
           );
 
-          // if ipv4
           if (resolvedcidrIp) {
-            // if the rule is not open to the world, it is compliant
             if (!resolvedcidrIp.includes('/0')) {
               return NagRuleCompliance.COMPLIANT;
             }
           }
-          // if ipv6
           if (resolvedcidrIpv6) {
-            // if the rule is not open to the world, it is compliant
             if (!resolvedcidrIpv6.includes('/0')) {
               return NagRuleCompliance.COMPLIANT;
             }
@@ -67,16 +62,12 @@ export default Object.defineProperty(
       const resolvedcidrIp = NagRules.resolveIfPrimitive(node, node.cidrIp);
       const resolvedcidrIpv6 = NagRules.resolveIfPrimitive(node, node.cidrIpv6);
 
-      // if ipv4
       if (resolvedcidrIp) {
-        // if the rule is not open to the world, it is compliant
         if (!resolvedcidrIp.includes('/0')) {
           return NagRuleCompliance.COMPLIANT;
         }
       }
-      // if ipv6
       if (resolvedcidrIpv6) {
-        // if the rule is not open to the world, it is compliant
         if (!resolvedcidrIpv6.includes('/0')) {
           return NagRuleCompliance.COMPLIANT;
         }
