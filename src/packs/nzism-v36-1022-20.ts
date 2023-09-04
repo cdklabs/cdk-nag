@@ -4,7 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import { NagMessageLevel, NagPack, NagPackProps } from '../nag-pack';
+import { NagPack, NagPackProps } from '../nag-pack';
+import { NagMessageLevel } from '../nag-rules';
 import { APIGWExecutionLoggingEnabled } from '../rules/apigw';
 import {
   CloudFrontDistributionAccessLogging,

@@ -9,6 +9,7 @@ Name|Description
 [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
 [NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
 [NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
+[NZISM36Checks](#cdk-nag-nzism36checks)|Check for NZISM v36-1022-20 compliance.
 [NagPack](#cdk-nag-nagpack)|Base class for all rule packs.
 [NagReportLogger](#cdk-nag-nagreportlogger)|A NagLogger that creates compliance reports.
 [NagRules](#cdk-nag-nagrules)|Helper class with methods for rule creation.
@@ -412,12 +413,57 @@ visit(node: IConstruct): void
 
 
 
+## class NZISM36Checks  <a id="cdk-nag-nzism36checks"></a>
+
+Check for NZISM v36-1022-20 compliance.
+
+Based on the NZISM v36-1022-20: <URL To be updated once published>
+
+__Implements__: [IAspect](#aws-cdk-lib-iaspect)
+__Extends__: [NagPack](#cdk-nag-nagpack)
+
+### Initializer
+
+
+
+
+```ts
+new NZISM36Checks(props?: NagPackProps)
+```
+
+* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
+  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
+  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
+  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
+  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
+  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
+  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
+
+
+### Methods
+
+
+#### visit(node) <a id="cdk-nag-nzism36checks-visit"></a>
+
+All aspects can visit an IConstruct.
+
+```ts
+visit(node: IConstruct): void
+```
+
+* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+
+
+
+
+
+
 ## class NagPack  <a id="cdk-nag-nagpack"></a>
 
 Base class for all rule packs.
 
 __Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks), [PCIDSS321Checks](#cdk-nag-pcidss321checks)
+__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks), [NZISM36Checks](#cdk-nag-nzism36checks), [PCIDSS321Checks](#cdk-nag-pcidss321checks)
 
 ### Initializer
 
