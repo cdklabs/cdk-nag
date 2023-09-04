@@ -23,6 +23,7 @@ import {
   CloudFrontDistributionNoOutdatedSSL,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
+  CloudFrontDefaultRootObjectConfigured,
 } from '../../src/rules/cloudfront';
 
 const testPack = new TestPack([
@@ -32,6 +33,7 @@ const testPack = new TestPack([
   CloudFrontDistributionNoOutdatedSSL,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
+  CloudFrontDefaultRootObjectConfigured,
 ]);
 let stack: Stack;
 
@@ -393,6 +395,31 @@ describe('Amazon CloudFront', () => {
             sampledRequestsEnabled: true,
           },
         }).attrId,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('CloudFrontDefaultRootObjectConfigured: CloudFront distributions require a default object', () => {
+    const ruleId = 'CloudFrontDefaultRootObjectConfigured';
+
+    // Non Compliance
+    test('Noncompliance ', () => {
+      new Distribution(stack, 'rDistribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    // Compliance
+    test('Compliance', () => {
+      new Distribution(stack, 'rDistribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+        },
+        defaultRootObject: 'index.html',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
