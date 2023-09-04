@@ -28,6 +28,7 @@ See [RULES](./RULES.md) for more information on all the available packs.
 3. [NIST 800-53 rev 4](./RULES.md#nist-800-53-rev-4)
 4. [NIST 800-53 rev 5](./RULES.md#nist-800-53-rev-5)
 5. [PCI DSS 3.2.1](./RULES.md#pci-dss-321)
+6. [NZISM3.6](./RULES.md#nzism-3.6)
 
 [RULES](./RULES.md) also includes a collection of [additional rules](./RULES.md#additional-rules) that are not currently included in any of the pre-built NagPacks, but are still available for inclusion in custom NagPacks.
 
