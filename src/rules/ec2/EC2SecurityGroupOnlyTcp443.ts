@@ -64,32 +64,36 @@ export default Object.defineProperty(
 
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnSecurityGroupIngress) {
-      const ipProtocol = NagRules.resolveIfPrimitive(node, node.ipProtocol);
-      const toPort = NagRules.resolveIfPrimitive(node, node.toPort);
       const resolvedcidrIp = NagRules.resolveIfPrimitive(node, node.cidrIp);
       const resolvedcidrIpv6 = NagRules.resolveIfPrimitive(node, node.cidrIpv6);
 
       // if ipv4
       if (resolvedcidrIp) {
-        if (resolvedcidrIp === '0.0.0.0/0') {
-          if (toPort === 443 && ipProtocol === 'tcp') {
-            return NagRuleCompliance.COMPLIANT;
-          }
-          return NagRuleCompliance.NON_COMPLIANT;
+        // if the rule is not open to the world, it is compliant
+        if (!resolvedcidrIp.includes('/0')) {
+          return NagRuleCompliance.COMPLIANT;
         }
-        return NagRuleCompliance.COMPLIANT;
       }
-
       // if ipv6
       if (resolvedcidrIpv6) {
-        if (resolvedcidrIpv6 === '::/0') {
-          if (toPort === 443 && ipProtocol === 'tcp') {
-            return NagRuleCompliance.COMPLIANT;
-          }
-          return NagRuleCompliance.NON_COMPLIANT;
+        // if the rule is not open to the world, it is compliant
+        if (!resolvedcidrIpv6.includes('/0')) {
+          return NagRuleCompliance.COMPLIANT;
         }
-        return NagRuleCompliance.COMPLIANT;
       }
+
+      const ipProtocol = NagRules.resolveIfPrimitive(node, node.ipProtocol);
+      const toPort = NagRules.resolveIfPrimitive(node, node.toPort);
+
+      if (!toPort) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+
+      if (!(toPort === 443 && ipProtocol === 'tcp')) {
+        return NagRuleCompliance.NON_COMPLIANT;
+      }
+
+      return NagRuleCompliance.COMPLIANT;
     }
 
     return NagRuleCompliance.NOT_APPLICABLE;
