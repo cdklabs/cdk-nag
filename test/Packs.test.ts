@@ -648,6 +648,7 @@ describe('Check NagPack Details', () => {
     });
     test('Pack contains expected warning and error rules', () => {
       const expectedWarnings = [
+        'NZISM3.6-EC2RestrictedSSH',
         'NZISM3.6-CloudFrontDefaultRootObjectConfigured',
         'NZISM3.6-CloudTrailEncryptionEnabled',
         'NZISM3.6-EC2EBSVolumeEncrypted',
@@ -669,6 +670,7 @@ describe('Check NagPack Details', () => {
         'NZISM3.6-SageMakerEndpointConfigurationKMSKeyConfigured',
         'NZISM3.6-SageMakerNotebookInstanceKMSKeyConfigured',
         'NZISM3.6-SecretsManagerUsingKMSKey',
+        'NZISM3.6-RedshiftClusterConfiguration',
       ];
 
       const expectedErrors = [
@@ -690,7 +692,6 @@ describe('Check NagPack Details', () => {
         'NZISM3.6-EC2IMDSv2Enabled',
         'NZISM3.6-EC2InstanceNoPublicIp',
         'NZISM3.6-EC2InstancesInVPC',
-        'NZISM3.6-EC2RestrictedSSH',
         'NZISM3.6-EFSInBackupPlan',
         'NZISM3.6-ELBCrossZoneLoadBalancingEnabled',
         'NZISM3.6-ELBLoggingEnabled',
@@ -705,7 +706,6 @@ describe('Check NagPack Details', () => {
         'NZISM3.6-RDSLoggingEnabled',
         'NZISM3.6-RDSMultiAZSupport',
         'NZISM3.6-RedshiftBackupEnabled',
-        'NZISM3.6-RedshiftClusterConfiguration',
         'NZISM3.6-RedshiftClusterMaintenanceSettings',
         'NZISM3.6-RedshiftClusterPublicAccess',
         'NZISM3.6-RedshiftRequireTlsSSL',
