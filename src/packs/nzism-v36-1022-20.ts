@@ -859,7 +859,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkWAF(node: CfnResource): void {
     this.applyRule({
-      info: 'The WAFv2 web ACL does not have logging enabled  - (Control IDs: SHOULD 16.6.10.C.02[CID:2013], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The WAFv2 web ACL does not have logging enabled  - (Control IDs: SHOULD(16.6.10.C.02[CID:2013]), MUST(23.5.11.C.01[CID:7496]))',
       explanation:
         'AWS WAF logging provides detailed information about the traffic that is analyzed by your web ACL. The logs record the time that AWS WAF received the request from your AWS resource, information about the request, and an action for the rule that each request matched.',
       level: NagMessageLevel.ERROR,
