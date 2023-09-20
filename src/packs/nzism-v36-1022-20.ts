@@ -755,7 +755,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The S3 Bucket is not encrypted with a KMS Key by default - (Control IDs: SHOULD 17.1.46.C.04[CID:2082])',
+      info: 'The S3 Bucket is not encrypted with a KMS Key by default - (Control IDs: SHOULD(17.1.46.C.04[CID:2082]))',
       explanation:
         'Ensure that encryption is enabled for your Amazon Simple Storage Service (Amazon S3) buckets. Because sensitive data can exist at rest in an Amazon S3 bucket, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.WARN,
