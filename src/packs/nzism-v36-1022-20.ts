@@ -157,7 +157,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkCloudFront(node: CfnResource): void {
     this.applyRule({
-      info: 'The CloudFront distribution does not have access logging enabled. - (Control IDs: SHOULD 16.6.10.C.02[CID:2013], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The CloudFront distribution does not have access logging enabled. - (Control IDs: SHOULD(16.6.10.C.02[CID:2013]), MUST(23.5.11.C.01[CID:7496]))',
       explanation:
         'Enabling access logs helps operators track all viewer requests for the content delivered through the Content Delivery Network.',
       level: NagMessageLevel.ERROR,
