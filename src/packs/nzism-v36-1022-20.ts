@@ -469,7 +469,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'Load Balancer is not enabled for Cross Zone - (Control IDs: MUST 22.1.23.C.01[CID:4829])',
+      info: 'Load Balancer is not enabled for Cross Zone - (Control IDs: MUST(22.1.23.C.01[CID:4829]))',
       explanation:
         "Enable cross-zone load balancing for your Classic Load Balancers (CLBs) to help maintain adequate capacity and availability. The cross-zone load balancing reduces the need to maintain equivalent numbers of instances in each enabled availability zone. It also improves your application's ability to handle the loss of one or more instances.",
       level: NagMessageLevel.ERROR,
