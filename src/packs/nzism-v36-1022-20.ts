@@ -747,7 +747,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The S3 Bucket does not have versioning enabled - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The S3 Bucket does not have versioning enabled - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'Use versioning to preserve, retrieve, and restore every version of every object stored in your Amazon S3 bucket. Versioning helps you to easily recover from unintended user actions and application failures.',
       level: NagMessageLevel.ERROR,
