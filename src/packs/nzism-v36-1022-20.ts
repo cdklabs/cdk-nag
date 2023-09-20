@@ -663,7 +663,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: SHOULD 20.4.4.C.02[CID:4441], SHOULD 20.4.5.C.02[CID:4445], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The Redshift cluster does not have encryption or audit logging enabled - (Control IDs: SHOULD(20.4.4.C.02[CID:4441], 20.4.5.C.02[CID:4445], 22.1.24.C.04[CID:4839]))',
       explanation:
         'To protect data at rest, ensure that encryption is enabled for your Amazon Redshift clusters. You must also ensure that required configurations are deployed on Amazon Redshift clusters. The audit logging should be enabled to provide information about connections and user activities in the database.',
       level: NagMessageLevel.WARN,
