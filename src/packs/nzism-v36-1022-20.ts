@@ -259,7 +259,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkDMS(node: CfnResource) {
     this.applyRule({
-      info: 'The DMS replication instance is public - (Control IDs: MUST 19.1.12.C.01[CID:3562], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The DMS replication instance is public - (Control IDs: MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'DMS replication instances can contain sensitive information and access control is required for such accounts.',
       level: NagMessageLevel.ERROR,
