@@ -334,7 +334,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The EBS volume has encryption disabled - (Control IDs: SHOULD 17.1.46.C.04[CID:2082], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The EBS volume has encryption disabled - (Control IDs: SHOULD(17.1.46.C.04[CID:2082], 22.1.24.C.04[CID:4839]))',
       explanation:
         'With EBS encryption, you aren not required to build, maintain, and secure your own key management infrastructure. EBS encryption uses KMS keys when creating encrypted volumes and snapshots. This helps protect data at rest.',
       level: NagMessageLevel.WARN,
