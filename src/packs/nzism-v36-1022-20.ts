@@ -234,7 +234,7 @@ export class NZISM36Checks extends NagPack {
 
   private checkCloudWatch(node: CfnResource): void {
     this.applyRule({
-      info: 'The CloudWatch Log Group does not have an explicit retention period configured - (Control IDs: SHOULD 16.6.6.C.02[CID:1998], MUST 16.6.13.C.01[CID:2028])',
+      info: 'The CloudWatch Log Group does not have an explicit retention period configured - (Control IDs: SHOULD(16.6.6.C.02[CID:1998]), MUST(16.6.13.C.01[CID:2028]))',
       explanation:
         'Ensure a minimum duration of event log data is retained for your log groups to help with troubleshooting and forensics investigations. The lack of available past event log data makes it difficult to reconstruct and identify potentially malicious events.',
       level: NagMessageLevel.ERROR,
