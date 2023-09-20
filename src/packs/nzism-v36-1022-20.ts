@@ -593,7 +593,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The RDS DB Instance does not have multi-AZ support - (Control IDs: MUST 22.1.23.C.01[CID:4829])',
+      info: 'The RDS DB Instance does not have multi-AZ support - (Control IDs: MUST(22.1.23.C.01[CID:4829]))',
       explanation:
         'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS DB instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.',
       level: NagMessageLevel.ERROR,
