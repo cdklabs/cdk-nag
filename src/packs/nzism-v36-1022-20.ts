@@ -714,7 +714,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The S3 Bucket or bucket policy does not require requests to use SSL - (Control IDs:  SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The S3 Bucket or bucket policy does not require requests to use SSL - (Control IDs: SHOULD(22.1.24.C.04[CID:4839]))',
       explanation:
         'To help protect data in transit, ensure that your Amazon Simple Storage Service (Amazon S3) buckets require requests to use Secure Socket Layer (SSL). Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.WARN,
