@@ -352,7 +352,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The Security Group allows access other than tcp 443 - (Control IDs: SHOULD 18.1.13.C.02[CID:3205])',
+      info: 'The Security Group allows access other than tcp 443 - (Control IDs: SHOULD(18.1.13.C.02[CID:3205]))',
       explanation:
         'Not allowing ingress (or remote) traffic to ports other than tcp port 443 helps improve security',
       level: NagMessageLevel.WARN,
