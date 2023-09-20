@@ -394,7 +394,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkEFS(node: CfnResource) {
     this.applyRule({
-      info: 'The EFS is not in an AWS Backup plan - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The EFS is not in an AWS Backup plan - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'To help with data back-up processes, ensure your Amazon Elastic File System (Amazon EFS) file systems are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
       level: NagMessageLevel.ERROR,
