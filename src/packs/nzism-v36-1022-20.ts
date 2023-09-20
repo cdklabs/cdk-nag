@@ -199,7 +199,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkCloudTrail(node: CfnResource): void {
     this.applyRule({
-      info: 'The trail does not have CloudWatch logs enabled - (Control IDs: SHOULD 16.6.6.C.02[CID:1998], MUST 16.4.35.C.02[CID:6860])',
+      info: 'The trail does not have CloudWatch logs enabled - (Control IDs: SHOULD(16.6.6.C.02[CID:1998]), MUST(16.4.35.C.02[CID:6860]))',
       explanation:
         'Use Amazon CloudWatch to centrally collect and manage log event activity. Inclusion of AWS CloudTrail data provides details of API call activity within your AWS account.',
       level: NagMessageLevel.ERROR,
