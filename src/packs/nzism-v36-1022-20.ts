@@ -620,7 +620,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The non-Aurora RDS DB instance or Aurora cluster does not have all CloudWatch log types exported - (Control IDs: SHOULD 16.6.10.C.02[CID:2013], SHOULD 20.4.4.C.02[CID:4441], SHOULD 20.4.5.C.02[CID:4445], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The non-Aurora RDS DB instance or Aurora cluster does not have all CloudWatch log types exported - (Control IDs: SHOULD(16.6.10.C.02[CID:2013], 20.4.4.C.02[CID:4441], 20.4.5.C.02[CID:4445]), MUST(23.5.11.C.01[CID:7496]))',
       explanation:
         'To help with logging and monitoring within your environment, ensure Amazon Relational Database Service (Amazon RDS) logging is enabled. With Amazon RDS logging, you can capture events such as connections, disconnections, queries, or tables queried.' +
         "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'LogExport::<log>' for exported logs. Example: appliesTo: ['LogExport::audit'].",
