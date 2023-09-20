@@ -835,7 +835,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkVPC(node: CfnResource): void {
     this.applyRule({
-      info: 'The VPCs default security group allows inbound or outbound traffic - (Control IDs: MUST 19.1.12.C.01[CID:3562], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The VPCs default security group allows inbound or outbound traffic - (Control IDs: MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'Amazon Elastic Compute Cloud (Amazon EC2) security groups can help in the management of network access by providing stateful filtering of ingress and egress network traffic to AWS resources. Restricting all the traffic on the default security group helps in restricting remote access to your AWS resources.',
       level: NagMessageLevel.ERROR,
