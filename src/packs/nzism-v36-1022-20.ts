@@ -787,7 +787,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The SageMaker notebook does not disable direct internet access - (Control IDs: MUST 19.1.12.C.01[CID:3562], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The SageMaker notebook does not disable direct internet access - (Control IDs: MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.',
       level: NagMessageLevel.ERROR,
