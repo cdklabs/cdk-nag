@@ -706,7 +706,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkS3(node: CfnResource): void {
     this.applyRule({
-      info: 'The S3 bucket does not prohibit public access through bucket level settings - (Control IDs: SHOULD 22.1.24.C.03[CID:4838])',
+      info: 'The S3 bucket does not prohibit public access through bucket level settings - (Control IDs: SHOULD(22.1.24.C.03[CID:4838]))',
       explanation:
         'Keep sensitive data safe from unauthorized remote users by preventing public access at the bucket level.',
       level: NagMessageLevel.WARN,
