@@ -362,7 +362,7 @@ export class NZISM36Checks extends NagPack {
 
     // this can be modified to use EC2IMDVs2 enabled.
     this.applyRule({
-      info: 'THe Ec2 Instance does not use IMDSv2 - (Control IDs: MUST 19.1.12.C.01[CID:3562], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The EC2 Instance does not use IMDSv2 - (Control IDs: MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'IMDSv2 adds additional protection by using session authentication to the Instance Meta Data Service',
       level: NagMessageLevel.ERROR,
