@@ -534,7 +534,7 @@ export class NZISM36Checks extends NagPack {
 
   private checkLambda(node: CfnResource) {
     this.applyRule({
-      info: 'The Lambda function permission grants public access - (Control IDs: MUST 19.1.12.C.01[CID:3562], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The Lambda function permission grants public access - (Control IDs: MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'Public access allows anyone on the internet to perform unauthenticated actions on your function and can potentially lead to degraded availability.',
       level: NagMessageLevel.ERROR,
