@@ -803,7 +803,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkSecretsManager(node: CfnResource): void {
     this.applyRule({
-      info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The secret is not encrypted with a KMS Customer managed key - (Control IDs: SHOULD(22.1.24.C.04[CID:4839]))',
       explanation:
         'To help protect data at rest, ensure encryption with AWS Key Management Service (AWS KMS) is enabled for AWS Secrets Manager secrets. Because sensitive data can exist at rest in Secrets Manager secrets, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.WARN,
