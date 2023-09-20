@@ -291,7 +291,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The DynamoDB table does not have Point-in-time Recovery enabled - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'The recovery maintains continuous backups of your table for the last 35 days.',
       level: NagMessageLevel.ERROR,
