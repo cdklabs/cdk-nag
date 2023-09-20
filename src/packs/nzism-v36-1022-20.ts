@@ -630,7 +630,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The RDS DB Instance or Aurora Cluster does not have storage encrypted - (Control IDs: SHOULD 17.1.46.C.04[CID:2082], SHOULD 20.4.4.C.02[CID:4441], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The RDS DB Instance or Aurora Cluster does not have storage encrypted - (Control IDs: SHOULD(17.1.46.C.04[CID:2082], 20.4.4.C.02[CID:4441], 22.1.24.C.04[CID:4839]))',
       explanation:
         'Because sensitive data can exist at rest in Amazon RDS instances, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.WARN,
