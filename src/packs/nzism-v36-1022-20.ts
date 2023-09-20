@@ -654,7 +654,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkRedshift(node: CfnResource): void {
     this.applyRule({
-      info: 'The Redshift cluster does not have automated snapshots enabled or the retention period is not between 1 and 35 days - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The Redshift cluster does not have automated snapshots enabled or the retention period is not between 1 and 35 days - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'To help with data back-up processes, ensure your Amazon Redshift clusters have automated snapshots. When automated snapshots are enabled for a cluster, Redshift periodically takes snapshots of that cluster. By default, Redshift takes a snapshot every eight hours or every 5 GB per node of data changes, or whichever comes first.',
       level: NagMessageLevel.ERROR,
