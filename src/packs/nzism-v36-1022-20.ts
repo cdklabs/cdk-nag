@@ -771,7 +771,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkSageMaker(node: CfnResource) {
     this.applyRule({
-      info: 'The SageMaker resource endpoint is not encrypted with a KMS key  - (Control IDs: SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The SageMaker resource endpoint is not encrypted with a KMS key - (Control IDs: SHOULD(22.1.24.C.04[CID:4839]))',
       explanation:
         'Because sensitive data can exist at rest in SageMaker endpoint, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.WARN,
