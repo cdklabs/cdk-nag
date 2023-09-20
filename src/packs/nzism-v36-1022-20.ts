@@ -378,7 +378,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkECS(node: CfnResource): void {
     this.applyRule({
-      info: 'The ECS task definition is configured for host networking and has at least one container with definitions with privileged set to false or empty or user set to root or empty - (Control IDs: SHOULD 14.1.8.C.01[CID:1149])',
+      info: 'The ECS task definition is configured for host networking and has at least one container with definitions with privileged set to false or empty or user set to root or empty - (Control IDs: SHOULD(14.1.8.C.01[CID:1149]))',
       explanation:
         'If a task definition has elevated privileges it is because you have specifically opted-in to those configurations. This rule checks for unexpected privilege escalation when a task definition has host networking enabled but the customer has not opted-in to elevated privileges.',
       level: NagMessageLevel.WARN,
