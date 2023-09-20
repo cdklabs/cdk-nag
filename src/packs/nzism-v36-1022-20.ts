@@ -316,7 +316,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The EC2 instance is associated with a public IP address - (Control IDs: MUST 19.1.12.C.01[CID:3562], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The EC2 instance is associated with a public IP address - (Control IDs: MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'Manage access to the AWS Cloud by ensuring Amazon Elastic Compute Cloud (Amazon EC2) instances cannot be publicly accessed. Amazon EC2 instances can contain sensitive information and access control is required for such accounts.',
       level: NagMessageLevel.ERROR,
