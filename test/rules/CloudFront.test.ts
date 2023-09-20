@@ -407,7 +407,7 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance ', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
