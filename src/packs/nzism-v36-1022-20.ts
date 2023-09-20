@@ -141,7 +141,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkAPIGW(node: CfnResource): void {
     this.applyRule({
-      info: 'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: SHOULD 16.6.10.C.02[CID:2013], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The API Gateway stage does not have execution logging enabled for all methods - (Control IDs: SHOULD(16.6.10.C.02[CID:2013]), MUST(23.5.11.C.01[CID:7496]))',
       explanation:
         'API Gateway logging displays detailed views of users who accessed the API and the way they accessed the API. This insight enables visibility of user activities.',
       level: NagMessageLevel.ERROR,
