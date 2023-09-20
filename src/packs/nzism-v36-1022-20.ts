@@ -584,7 +584,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkRDS(node: CfnResource): void {
     this.applyRule({
-      info: 'The RDS DB Instance or Aurora Cluster does not have deletion protection enabled - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The RDS DB Instance or Aurora Cluster does not have deletion protection enabled - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'Ensure Amazon Relational Database Service (Amazon RDS) instances and clusters have deletion protection enabled. Use deletion protection to prevent your Amazon RDS DB instances and clusters from being accidentally or maliciously deleted, which can lead to loss of availability for your applications.',
       level: NagMessageLevel.ERROR,
