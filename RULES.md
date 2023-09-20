@@ -697,7 +697,7 @@ Unimplemented rules from the AWS PCI DSS 3.2.1 Conformance Pack.
 
 ## NZISM 3.6
 
-The Operational Best Practices for NZISM3.6 provides a sample mapping between the New Zealand Government Communications Security Bureau (GCSB) Information Security Manual (NZISM) and AWS Managed Config rules. Each Config rule applies to a specific AWS resource, and relates to one or more NZISM controls. An NZISM control can be related to multiple Config rules
+The [Operational Best Practices for NZISM 3.6](https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nzism.html) Conformance pack offers a collection of AWS Config Rules that enable customers to align to a subset of the Zealand Government Communications Security Bureau (GCSB) Information Security Manual (NZISM) standards. NZISM 3.6 NagPack implements many of the checks within the conformance pack.
 
 ### Errors
 
