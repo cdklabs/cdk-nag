@@ -568,7 +568,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The OpenSearch Service domain does not have node-to-node encryption enabled - (Control IDs: MUST 16.1.37.C.01[CID:1847], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The OpenSearch Service domain does not have node-to-node encryption enabled - (Control IDs: SHOULD(22.1.24.C.04[CID:4839]), MUST(16.1.37.C.01[CID:1847])) ',
       explanation:
         'Because sensitive data can exist, enable encryption in transit to help protect that data within your Amazon OpenSearch Service (OpenSearch Service) domains.',
       level: NagMessageLevel.ERROR,
