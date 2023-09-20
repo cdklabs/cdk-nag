@@ -243,7 +243,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: MUST 16.6.12.C.01[CID:2022], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The CloudWatch Log Group is not encrypted with an AWS KMS key - (Control IDs: MUST(16.6.12.C.01[CID:2022], 23.5.11.C.01[CID:7496]))',
       explanation:
         'To help protect sensitive data at rest, ensure encryption is enabled for your Amazon CloudWatch Log Groups.',
       level: NagMessageLevel.ERROR,
