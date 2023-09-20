@@ -418,7 +418,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkElastiCache(node: CfnResource) {
     this.applyRule({
-      info: 'The ElastiCache Redis cluster does not retain automatic backups for at least 15 days - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The ElastiCache Redis cluster does not retain automatic backups for at least 15 days - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'Automatic backups can help guard against data loss. If a failure occurs, you can create a new cluster, which restores your data from the most recent backup.',
       level: NagMessageLevel.ERROR,
