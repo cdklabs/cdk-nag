@@ -1170,7 +1170,7 @@ describe('EC2SecurityGroupOnlyTcp443: Security Groups should only allow TCP 443 
   const ruleId = 'EC2SecurityGroupOnlyTcp443';
 
   test('a non compliant ipv6 rule', () => {
-    new CfnSecurityGroup(stack, 'rSecurityGroup', {
+    new CfnSecurityGroup(stack, 'SecurityGroup', {
       groupDescription: 'security group tcp port 80 open on port 80',
       securityGroupIngress: [
         {
