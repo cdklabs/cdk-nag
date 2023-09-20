@@ -434,7 +434,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkElasticBeanstalk(node: CfnResource): void {
     this.applyRule({
-      info: 'The Elastic Beanstalk environment does not have enhanced health reporting enabled - (Control IDs: SHOULD 12.4.4.C.05[CID:3452])',
+      info: 'The Elastic Beanstalk environment does not have enhanced health reporting enabled - (Control IDs: SHOULD(12.4.4.C.05[CID:3452]))',
       explanation:
         'Enabling managed platform updates for an Amazon Elastic Beanstalk environment ensures that the latest available platform fixes, updates, and features for the environment are installed. Keeping up to date with patch installation is a best practice in securing systems.',
       level: NagMessageLevel.WARN,
