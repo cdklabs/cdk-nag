@@ -402,7 +402,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The EFS does not have encryption at rest enabled - (Control IDs: SHOULD 17.1.46.C.04[CID:2082], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The EFS does not have encryption at rest enabled - (Control IDs: SHOULD(17.1.46.C.04[CID:2082], 22.1.24.C.04[CID:4839]))',
       explanation:
         'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon Elastic File System (EFS).',
       level: NagMessageLevel.WARN,
