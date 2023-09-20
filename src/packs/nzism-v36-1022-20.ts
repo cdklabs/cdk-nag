@@ -550,7 +550,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkOpenSearch(node: CfnResource) {
     this.applyRule({
-      info: 'The OpenSearch Service domain does not have encryption at rest enabled - (Control IDs: SHOULD 17.1.46.C.04[CID:2082], SHOULD 20.4.4.C.02[CID:4441], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The OpenSearch Service domain does not have encryption at rest enabled - (Control IDs: SHOULD(17.1.46.C.04[CID:2082], 20.4.4.C.02[CID:4441], 22.1.24.C.04[CID:4839]))',
       explanation:
         'Because sensitive data can exist and to help protect data at rest, ensure encryption is enabled for your Amazon OpenSearch Service (OpenSearch Service) domains.',
       level: NagMessageLevel.WARN,
