@@ -183,7 +183,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The Cloudfront distribution requires a default object - (Control IDs:  SHOULD 14.5.6.C.01[CID:1661])',
+      info: 'The Cloudfront distribution requires a default object - (Control IDs: SHOULD(14.5.6.C.01[CID:1661]))',
       explanation:
         'Specifying a default root object lets you avoid exposing the contents of your distribution',
       level: NagMessageLevel.WARN,
