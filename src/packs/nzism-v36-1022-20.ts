@@ -639,7 +639,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'RDS DB Instance is not configured for minor patches - (Control IDs: SHOULD 12.4.4.C.05[CID:3452])',
+      info: 'RDS DB Instance is not configured for minor patches - (Control IDs: SHOULD(12.4.4.C.05[CID:3452]))',
       explanation: 'Provides automatic Patching in the Database',
       level: NagMessageLevel.WARN,
       rule: RDSAutomaticMinorVersionUpgradeEnabled,
