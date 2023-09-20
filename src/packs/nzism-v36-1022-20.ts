@@ -208,7 +208,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The trail does not have encryption enabled - (Control IDs:  SHOULD 17.1.46.C.04[CID:2082])',
+      info: 'The trail does not have encryption enabled - (Control IDs:  SHOULD(17.1.46.C.04[CID:2082]))',
       explanation:
         'Because sensitive data may exist and to help protect data at rest, ensure encryption is enabled for your AWS CloudTrail trails.',
       level: NagMessageLevel.WARN,
