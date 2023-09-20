@@ -559,7 +559,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The OpenSearch Service domain is not running within a VPC - (Control IDs: MUST 19.1.12.C.01[CID:3562], SHOULD 19.1.14.C.02[CID:3623])',
+      info: 'The OpenSearch Service domain is not running within a VPC - (Control IDs: SHOULD(19.1.14.C.02[CID:3623]), MUST(19.1.12.C.01[CID:3562]))',
       explanation:
         'VPCs help secure your AWS resources and provide an extra layer of protection.',
       level: NagMessageLevel.ERROR,
