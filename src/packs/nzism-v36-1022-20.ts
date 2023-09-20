@@ -722,7 +722,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The S3 Buckets does not have server access logs enabled - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The S3 Buckets does not have server access logs enabled - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'Amazon Simple Storage Service (Amazon S3) server access logging provides a method to monitor the network for potential cybersecurity events. The events are monitored by capturing detailed records for the requests that are made to an Amazon S3 bucket. Each access log record provides details about a single access request. The details include the requester, bucket name, request time, request action, response status, and an error code, if relevant.',
       level: NagMessageLevel.ERROR,
