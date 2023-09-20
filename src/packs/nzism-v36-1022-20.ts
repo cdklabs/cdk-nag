@@ -460,7 +460,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The ALB is not associated with AWS WAFv2 web ACL  - (Control IDs: MUST 19.1.12.C.01[CID:3562], SHOULD 20.3.7.C.02[CID:4333], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The ALB is not associated with AWS WAFv2 web ACL  - (Control IDs: SHOULD(20.3.7.C.02[CID:4333]), MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'A WAF helps to protect your web applications or APIs against common web exploits. These web exploits may affect availability, compromise security, or consume excessive resources within your environment.',
       level: NagMessageLevel.ERROR,
