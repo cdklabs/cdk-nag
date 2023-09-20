@@ -518,7 +518,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkKMS(node: CfnResource): void {
     this.applyRule({
-      info: 'The KMS Symmetric key does not have automatic key rotation enabled - (Control IDs: SHOULD 17.9.25.C.01[CID:3021])',
+      info: 'The KMS Symmetric key does not have automatic key rotation enabled - (Control IDs: SHOULD(17.9.25.C.01[CID:3021]))',
       explanation:
         'Enable key rotation to ensure that keys are rotated once they have reached the end of their crypto period.',
       level: NagMessageLevel.WARN,
