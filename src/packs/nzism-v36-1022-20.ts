@@ -502,7 +502,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkIAM(node: CfnResource): void {
     this.applyRule({
-      info: 'The IAM policy grants admin access, meaning the policy allows a principal to perform all actions on all resources - (Control IDs: SHOULD 16.3.5.C.02[CID:1946])',
+      info: 'The IAM policy grants admin access, meaning the policy allows a principal to perform all actions on all resources - (Control IDs: SHOULD(16.3.5.C.02[CID:1946]))',
       explanation:
         'AWS Identity and Access Management (IAM) can help you incorporate the principles of least privilege and separation of duties with access permissions and authorizations, by ensuring that IAM groups have at least one IAM user. Placing IAM users in groups based on their associated permissions or job function is one way to incorporate least privilege.',
       level: NagMessageLevel.WARN,
