@@ -307,7 +307,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkEC2(node: CfnResource): void {
     this.applyRule({
-      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: MUST 22.1.26.C.01[CID:4849])',
+      info: 'The EBS volume is not in an AWS Backup plan - (Control IDs: MUST(22.1.26.C.01[CID:4849]))',
       explanation:
         'To help with data back-up processes, ensure your Amazon Elastic Block Store (Amazon EBS) volumes are a part of an AWS Backup plan. AWS Backup is a fully managed backup service with a policy-based backup solution. This solution simplifies your backup management and enables you to meet your business and regulatory backup compliance requirements.',
       level: NagMessageLevel.ERROR,
