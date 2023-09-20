@@ -1225,7 +1225,7 @@ describe('EC2SecurityGroupOnlyTcp443: Security Groups should only allow TCP 443 
   });
 
   test('udp port from 0/0', () => {
-    new CfnSecurityGroup(stack, 'rSecurityGroup2', {
+    new CfnSecurityGroup(stack, 'SecurityGroup2', {
       groupDescription: 'security group with udp port 53',
       securityGroupIngress: [
         {
