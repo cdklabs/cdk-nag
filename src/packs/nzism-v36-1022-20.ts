@@ -486,7 +486,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The ELB does not restrict its listeners to only the SSL and HTTPS protocol - (Control IDs: SHOULD 14.5.8.C.01[CID:1667], MUST 16.1.37.C.01[CID:1847], MUST 17.1.48.C.03[CID:2091], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The ELB does not restrict its listeners to only the SSL and HTTPS protocol - (Control IDs: SHOULD(14.5.8.C.01[CID:1667], 22.1.24.C.04[CID:4839])), MUST(16.1.37.C.01[CID:1847], 17.1.48.C.03[CID:2091])) ',
       explanation:
         'Ensure that your Classic Load Balancers (CLBs) are configured with SSL or HTTPS listeners. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
