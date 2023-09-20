@@ -690,7 +690,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The Redshift cluster must use  TLS/SSL encryption. - (Control IDs: MUST 17.1.48.C.03[CID:2091], SHOULD 22.1.24.C.04[CID:4839])',
+      info: 'The Redshift cluster does not require TLS/SSL encryption - (Control IDs: SHOULD(22.1.24.C.04[CID:4839]), MUST(17.1.48.C.03[CID:2091])).',
       explanation:
         'Ensure that your Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
