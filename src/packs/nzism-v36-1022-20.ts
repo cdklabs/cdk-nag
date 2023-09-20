@@ -451,7 +451,7 @@ export class NZISM36Checks extends NagPack {
 
   private checkELB(node: CfnResource): void {
     this.applyRule({
-      info: 'The ALBs HTTP listeners are not configured to redirect to HTTPS - (Control IDs: MUST 16.1.37.C.01[CID:1847], MUST 17.1.48.C.03[CID:2091])',
+      info: 'The ALBs HTTP listeners are not configured to redirect to HTTPS - (Control IDs: MUST(16.1.37.C.01[CID:1847], 17.1.48.C.03[CID:2091]))',
       explanation:
         'To help protect data in transit, ensure that your Application Load Balancer automatically redirects unencrypted HTTP requests to HTTPS. Because sensitive data can exist, enable encryption in transit to help protect that data.',
       level: NagMessageLevel.ERROR,
