@@ -217,7 +217,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The trail does not have log file validation  - (Control IDs: MUST 16.6.12.C.01[CID:2022], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The trail does not have log file validation  - (Control IDs: MUST(16.6.12.C.01[CID:2022], 23.5.11.C.01[CID:7496]))',
       explanation:
         'Utilize AWS CloudTrail log file validation to check the integrity of CloudTrail logs. Log file validation helps determine if a log file was modified or deleted or unchanged after CloudTrail delivered it. This feature is built using industry standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing. This makes it computationally infeasible to modify, delete or forge CloudTrail log files without detection.',
       level: NagMessageLevel.ERROR,
