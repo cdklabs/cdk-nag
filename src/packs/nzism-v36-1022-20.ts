@@ -731,7 +731,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The S3 Bucket does not prohibit public read access through its Block Public Access configurations and bucket ACLs - (Control IDs: SHOULD 22.1.24.C.03[CID:4838])',
+      info: 'The S3 Bucket does not prohibit public read access through its Block Public Access configurations and bucket ACLs - (Control IDs: SHOULD(22.1.24.C.03[CID:4838]))',
       explanation:
         'The management of access should be consistent with the classification of the data.',
       level: NagMessageLevel.WARN,
