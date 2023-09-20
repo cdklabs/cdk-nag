@@ -165,7 +165,7 @@ export class NZISM36Checks extends NagPack {
       node: node,
     });
     this.applyRule({
-      info: 'The CloudFront distribution requires integration with WAF  - (Control IDs: MUST 19.1.12.C.01[CID:3562])',
+      info: 'The CloudFront distribution requires integration with WAF  - (Control IDs: MUST(19.1.12.C.01[CID:3562]))',
       explanation:
         'The Web Application Firewall can help protect against application-layer attacks that can compromise the security of the system or place unnecessary load on them.',
       level: NagMessageLevel.ERROR,
