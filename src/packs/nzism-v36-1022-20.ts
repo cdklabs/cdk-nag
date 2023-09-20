@@ -343,7 +343,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The Security Group allows unrestricted SSH access - (Control IDs: SHOULD 17.5.8.C.02[CID:2726])',
+      info: 'The Security Group allows unrestricted SSH access - (Control IDs: SHOULD(17.5.8.C.02[CID:2726]))',
       explanation:
         'Not allowing ingress (or remote) traffic from 0.0.0.0/0 or ::/0 to port 22 on your resources helps to restrict remote access.',
       level: NagMessageLevel.WARN,
