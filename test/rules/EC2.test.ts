@@ -1198,7 +1198,7 @@ describe('EC2SecurityGroupOnlyTcp443: Security Groups should only allow TCP 443 
   });
 
   test('no specified port', () => {
-    new CfnSecurityGroup(stack, 'rSecurityGroup', {
+    new CfnSecurityGroup(stack, 'SecurityGroup', {
       groupDescription: 'security group tcp port 80 open',
       securityGroupIngress: [
         {
