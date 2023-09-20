@@ -672,7 +672,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configure - (Control IDs:  MUST 12.4.4.C.02[CID:3449], SHOULD 12.4.4.C.06[CID:3453])',
+      info: 'The Redshift cluster does not have version upgrades enabled, automated snapshot retention periods enabled, and an explicit maintenance window configure - (Control IDs: SHOULD(12.4.4.C.06[CID:3453]), MUST(12.4.4.C.02[CID:3449]))',
       explanation:
         'Ensure that Amazon Redshift clusters have the preferred settings for your organization. Specifically, that they have preferred maintenance windows and automated snapshot retention periods for the database.                                                                            ',
       level: NagMessageLevel.ERROR,
