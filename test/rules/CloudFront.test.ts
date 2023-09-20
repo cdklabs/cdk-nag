@@ -415,7 +415,7 @@ describe('Amazon CloudFront', () => {
 
     // Compliance
     test('Compliance', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
           origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
         },
