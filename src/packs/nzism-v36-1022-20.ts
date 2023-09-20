@@ -611,7 +611,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The RDS DB Instance allows public access - (Control IDs: MUST 19.1.12.C.01[CID:3562], SHOULD 19.1.14.C.02[CID:3623], MUST 23.4.10.C.01[CID:7466])',
+      info: 'The RDS DB Instance allows public access - (Control IDs: SHOULD(19.1.14.C.02[CID:3623]), MUST(19.1.12.C.01[CID:3562], 23.4.10.C.01[CID:7466]))',
       explanation:
         'Amazon RDS database instances can contain sensitive information, and principles and access control is required for such accounts.',
       level: NagMessageLevel.ERROR,
