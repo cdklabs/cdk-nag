@@ -275,7 +275,7 @@ export class NZISM36Checks extends NagPack {
    */
   private checkDynamoDB(node: CfnResource) {
     this.applyRule({
-      info: 'The provisioned capacity DynamoDB table does not have Auto Scaling enabled on its indexes - (Control IDs: MUST 22.1.23.C.01[CID:4829])',
+      info: 'The provisioned capacity DynamoDB table does not have Auto Scaling enabled on its indexes - (Control IDs: MUST(22.1.23.C.01[CID:4829]))',
       explanation:
         'Amazon DynamoDB auto scaling uses the AWS Application Auto Scaling service to adjust provisioned throughput capacity that automatically responds to actual traffic patterns. This enables a table or a global secondary index to increase its provisioned read/write capacity to handle sudden increases in traffic, without throttling.',
       level: NagMessageLevel.ERROR,
