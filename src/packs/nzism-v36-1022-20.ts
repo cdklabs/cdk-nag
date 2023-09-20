@@ -478,7 +478,7 @@ export class NZISM36Checks extends NagPack {
     });
 
     this.applyRule({
-      info: 'The ELB does not have logging enabled - (Control IDs: SHOULD 16.6.10.C.02[CID:2013], MUST 23.5.11.C.01[CID:7496])',
+      info: 'The ELB does not have logging enabled - (Control IDs: SHOULD(16.6.10.C.02[CID:2013]), MUST(23.5.11.C.01[CID:7496]))',
       explanation:
         "Elastic Load Balancing activity is a central point of communication within an environment. Ensure ELB logging is enabled. The collected data provides detailed information about requests sent to The ELB. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses.",
       level: NagMessageLevel.ERROR,
