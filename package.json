@@ -62,7 +62,7 @@
     "jsii-rosetta": "1.x",
     "npm-check-updates": "^16",
     "prettier": "^2.8.8",
-    "projen": "^0.73.27",
+    "projen": "^0.73.28",
     "standard-version": "^9",
     "ts-jest": "^27",
     "typescript": "^4.9.5"
