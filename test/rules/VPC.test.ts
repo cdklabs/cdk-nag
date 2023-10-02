@@ -3,19 +3,19 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import {
-  CfnVPC,
+  CfnFlowLog,
   CfnRoute,
   CfnSubnet,
-  Subnet,
-  Vpc,
+  CfnVPC,
   FlowLog,
   FlowLogResourceType,
-  CfnFlowLog,
   FlowLogTrafficType,
   NetworkAcl,
+  Subnet,
+  Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, validateStack, TestType } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,
@@ -42,10 +42,18 @@ describe('Amazon Virtual Private Cloud (VPC)', () => {
   describe('VPCDefaultSecurityGroupClosed: VPCs have their default security group closed', () => {
     const ruleId = 'VPCDefaultSecurityGroupClosed';
     test('Noncompliance 1', () => {
-      new CfnVPC(stack, 'rVPC', {
+      new CfnVPC(stack, 'VPC', {
         cidrBlock: '1.1.1.1',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Vpc(stack, 'VPC', { restrictDefaultSecurityGroup: false });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Vpc(stack, 'VPC', { restrictDefaultSecurityGroup: true });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
 
