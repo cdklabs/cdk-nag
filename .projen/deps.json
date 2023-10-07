@@ -26,16 +26,6 @@
       "type": "build"
     },
     {
-      "name": "aws-cdk-lib",
-      "version": "2.78.0",
-      "type": "build"
-    },
-    {
-      "name": "constructs",
-      "version": "10.0.5",
-      "type": "build"
-    },
-    {
       "name": "eslint-config-prettier",
       "type": "build"
     },
