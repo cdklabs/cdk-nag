@@ -110,6 +110,7 @@ onCompliance(_data: NagLoggerComplianceData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -129,6 +130,7 @@ onError(data: NagLoggerErrorData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **errorMessage** (<code>string</code>)  *No description* 
 
 
@@ -149,6 +151,7 @@ onNonCompliance(data: NagLoggerNonComplianceData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **findingId** (<code>string</code>)  *No description* 
 
 
@@ -169,6 +172,7 @@ onNotApplicable(_data: NagLoggerNotApplicableData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -188,6 +192,7 @@ onSuppressed(data: NagLoggerSuppressedData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **findingId** (<code>string</code>)  *No description* 
   * **suppressionReason** (<code>string</code>)  *No description* 
 
@@ -209,6 +214,7 @@ onSuppressedError(data: NagLoggerSuppressedErrorData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **errorMessage** (<code>string</code>)  *No description* 
   * **errorSuppressionReason** (<code>string</code>)  *No description* 
 
@@ -556,6 +562,7 @@ onCompliance(data: NagLoggerComplianceData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -575,6 +582,7 @@ onError(data: NagLoggerErrorData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **errorMessage** (<code>string</code>)  *No description* 
 
 
@@ -595,6 +603,7 @@ onNonCompliance(data: NagLoggerNonComplianceData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **findingId** (<code>string</code>)  *No description* 
 
 
@@ -615,6 +624,7 @@ onNotApplicable(data: NagLoggerNotApplicableData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -634,6 +644,7 @@ onSuppressed(data: NagLoggerSuppressedData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **findingId** (<code>string</code>)  *No description* 
   * **suppressionReason** (<code>string</code>)  *No description* 
 
@@ -655,6 +666,7 @@ onSuppressedError(data: NagLoggerSuppressedErrorData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **errorMessage** (<code>string</code>)  *No description* 
   * **errorSuppressionReason** (<code>string</code>)  *No description* 
 
@@ -676,6 +688,7 @@ protected initializeStackReport(data: NagLoggerBaseData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -1132,6 +1145,7 @@ onCompliance(data: NagLoggerComplianceData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -1151,6 +1165,7 @@ onError(data: NagLoggerErrorData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **errorMessage** (<code>string</code>)  *No description* 
 
 
@@ -1171,6 +1186,7 @@ onNonCompliance(data: NagLoggerNonComplianceData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **findingId** (<code>string</code>)  *No description* 
 
 
@@ -1191,6 +1207,7 @@ onNotApplicable(data: NagLoggerNotApplicableData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
 
 
 
@@ -1210,6 +1227,7 @@ onSuppressed(data: NagLoggerSuppressedData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **findingId** (<code>string</code>)  *No description* 
   * **suppressionReason** (<code>string</code>)  *No description* 
 
@@ -1231,6 +1249,7 @@ onSuppressedError(data: NagLoggerSuppressedErrorData): void
   * **ruleId** (<code>string</code>)  *No description* 
   * **ruleInfo** (<code>string</code>)  *No description* 
   * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+  * **ruleOriginalName** (<code>string</code>)  *No description* 
   * **errorMessage** (<code>string</code>)  *No description* 
   * **errorSuppressionReason** (<code>string</code>)  *No description* 
 
@@ -1282,6 +1301,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 
 
 
@@ -1300,6 +1320,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 
 
 
@@ -1319,6 +1340,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 
 
 
@@ -1338,6 +1360,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 
 
 
@@ -1356,6 +1379,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 
 
 
@@ -1375,6 +1399,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 **suppressionReason** | <code>string</code> | <span></span>
 
 
@@ -1396,6 +1421,7 @@ Name | Type | Description
 **ruleId** | <code>string</code> | <span></span>
 **ruleInfo** | <code>string</code> | <span></span>
 **ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
+**ruleOriginalName** | <code>string</code> | <span></span>
 
 
 

@@ -27,6 +27,14 @@ import {
   NagReportLine,
   NagReportSchema,
   NagReportFormat,
+  INagLogger,
+  NagLoggerComplianceData,
+  NagLoggerErrorData,
+  NagLoggerNonComplianceData,
+  NagLoggerNotApplicableData,
+  NagLoggerSuppressedData,
+  NagLoggerSuppressedErrorData,
+  NagLoggerBaseData,
 } from '../src/nag-logger';
 
 describe('NagReportLogger', () => {
@@ -43,38 +51,67 @@ describe('NagReportLogger', () => {
           NagRuleCompliance.NOT_APPLICABLE,
         ];
         compliances.forEach((compliance) => {
+          const ReportPackRule = function (
+            node2: CfnResource
+          ): NagRuleCompliance {
+            if (node2.cfnResourceType === 'N/A') {
+              return NagRuleCompliance.NOT_APPLICABLE;
+            } else if (node2.cfnResourceType !== 'Error') {
+              return compliance;
+            }
+            throw Error('foobar');
+          };
           this.applyRule({
             ruleSuffixOverride: compliance,
             info: 'foo.',
             explanation: 'bar.',
             level: NagMessageLevel.ERROR,
-            rule: function (node2: CfnResource): NagRuleCompliance {
-              if (node2.cfnResourceType === 'N/A') {
-                return NagRuleCompliance.NOT_APPLICABLE;
-              } else if (node2.cfnResourceType !== 'Error') {
-                return compliance;
-              }
-              throw Error('foobar');
-            },
+            rule: ReportPackRule,
             node: node,
           });
         });
       }
     }
   }
+
+  class MemoryLogger implements INagLogger {
+    public results: NagLoggerBaseData[] = [];
+
+    onCompliance(data: NagLoggerComplianceData): void {
+      this.results.push(data);
+    }
+    onNonCompliance(data: NagLoggerNonComplianceData): void {
+      this.results.push(data);
+    }
+    onSuppressed(data: NagLoggerSuppressedData): void {
+      this.results.push(data);
+    }
+    onError(data: NagLoggerErrorData): void {
+      this.results.push(data);
+    }
+    onSuppressedError(data: NagLoggerSuppressedErrorData): void {
+      this.results.push(data);
+    }
+    onNotApplicable(data: NagLoggerNotApplicableData): void {
+      this.results.push(data);
+    }
+  }
+
   let app: App;
   let pack: NagPack;
   let reportLogger: NagReportLogger;
+  let memoryLogger: MemoryLogger;
 
   beforeEach(() => {
     app = new App();
     reportLogger = new NagReportLogger({
       formats: [NagReportFormat.CSV, NagReportFormat.JSON],
     });
+    memoryLogger = new MemoryLogger();
     pack = new ReportPack({
       // Add reports as an additional logger for testing
       reports: false,
-      additionalLoggers: [reportLogger],
+      additionalLoggers: [reportLogger, memoryLogger],
     });
     Aspects.of(app).add(pack);
   });
@@ -109,6 +146,14 @@ describe('NagReportLogger', () => {
       });
       reportLogger.getFormatStacks(NagReportFormat.JSON)?.forEach((r) => {
         expect(Token.isUnresolved(r)).toBeFalsy();
+      });
+    });
+    test('Original rule names are included in the logger base data', () => {
+      const stack = new Stack(app, 'Stack1');
+      new CfnResource(stack, 'rResource', { type: 'foo' });
+      app.synth();
+      memoryLogger.results.forEach((r) => {
+        expect(r.ruleOriginalName).toBe('ReportPackRule');
       });
     });
   });

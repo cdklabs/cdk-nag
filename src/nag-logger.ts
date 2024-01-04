@@ -17,8 +17,9 @@ import {
  * Shared data for all INagLogger methods
  * @param nagPackName The name of the NagPack that the rule belongs to.
  * @param resource The resource the suppression is applied to.
- * @param ruleId Why the rule was triggered.
- * @param ruleInfo The id of the rule to ignore.
+ * @param ruleId The id of the rule to ignore.
+ * @param ruleOriginalName Original name of the rule.
+ * @param ruleInfo Why the rule was triggered.
  * @param ruleExplanation Why the rule exists.
  * @param ruleLevel The severity level of the rule.
  */
@@ -26,6 +27,7 @@ export interface NagLoggerBaseData {
   readonly nagPackName: string;
   readonly resource: CfnResource;
   readonly ruleId: string;
+  readonly ruleOriginalName: string;
   readonly ruleInfo: string;
   readonly ruleExplanation: string;
   readonly ruleLevel: NagMessageLevel;
