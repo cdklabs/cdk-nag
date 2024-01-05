@@ -152,6 +152,7 @@ export abstract class NagPack implements IAspect {
       nagPackName: this.packName,
       resource: params.node,
       ruleId: ruleId,
+      ruleOriginalName: params.rule.name,
       ruleInfo: params.info,
       ruleExplanation: params.explanation,
       ruleLevel: params.level,
