@@ -33,7 +33,6 @@ jspm_packages/
 .cache
 .vscode
 **/.DS_Store
-!/.projenrc.js
 /test-reports/
 junit.xml
 /coverage/
@@ -54,3 +53,4 @@ junit.xml
 tsconfig.json
 !/API.md
 !/.devcontainer.json
+!/.projenrc.js

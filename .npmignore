@@ -22,3 +22,4 @@ dist
 tsconfig.tsbuildinfo
 /.eslintrc.json
 !.jsii
+/.gitattributes
