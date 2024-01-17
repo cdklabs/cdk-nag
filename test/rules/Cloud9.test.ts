@@ -21,6 +21,7 @@ describe('AWS Cloud9', () => {
     const ruleId = 'Cloud9InstanceNoIngressSystemsManager';
     test('Noncompliance ', () => {
       new CfnEnvironmentEC2(stack, 'rC9Env', {
+        imageId: 'ami-123456',
         instanceType: InstanceType.of(
           InstanceClass.T2,
           InstanceSize.MICRO
@@ -31,6 +32,7 @@ describe('AWS Cloud9', () => {
 
     test('Compliance', () => {
       new CfnEnvironmentEC2(stack, 'rC9Env', {
+        imageId: 'ami-123456',
         instanceType: InstanceType.of(
           InstanceClass.T2,
           InstanceSize.MICRO
