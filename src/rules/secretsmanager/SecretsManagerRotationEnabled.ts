@@ -120,7 +120,13 @@ function isMatchingRotationSchedule(
       const automaticallyAfterDays = Stack.of(node).resolve(
         rotationRules.automaticallyAfterDays
       );
-      if (automaticallyAfterDays !== undefined) {
+      const scheduleExpression = Stack.of(node).resolve(
+        rotationRules.scheduleExpression
+      );
+      if (
+        automaticallyAfterDays !== undefined ||
+        scheduleExpression !== undefined
+      ) {
         return true;
       }
     }
