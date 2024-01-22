@@ -9,7 +9,7 @@ As a [NagPack](./NagPack.md) author or user, you can optionally create a conditi
 
 ## Creating A Condition
 
-Conditions implement the `INagSuppressionIgnore` interface. They return a message string when the `createMessage()` method is called. If the method returns a non-empty string the suppression is ignored. Conversely if the method returns an empty string the suppression is allowed.
+Conditions implement the `INagSuppressionIgnore` interface. They return a message string when the `createMessage()` method is called. If the method returns a non-empty string the suppression is ignored. Conversely, if the method returns an empty string the suppression is allowed.
 
 Here is an example of a re-usable condition class that ignores a suppression if the suppression reason doesn't contain the word `Arun`
 
@@ -102,7 +102,7 @@ A user would see the following output when attempting to synthesize an applicati
 
 `cdk-nag` exposes both a `SuppressionIgnoreAnd` class and a `SuppressionIgnoreOr` to help developers create more complicated conditions
 
-- `SuppressionIgnoreAnd`: Ignores the suppression if **ALL** of the given INagSuppressionIgnore return a non-empty message (logical and)
+- `SuppressionIgnoreAnd`: Ignores the suppression if **ALL** the given INagSuppressionIgnore return a non-empty message (logical and)
 - `SuppressionIgnoreOr`: Ignores the suppression if **ANY** of the given INagSuppressionIgnore return a non-empty message (logical or)
 
 Here is an example `SuppressionIgnoreAnd` that ignores a suppression if both a 'ticket' CloudFormation metadata entry does not exist on the resource and the current year is after 2022.

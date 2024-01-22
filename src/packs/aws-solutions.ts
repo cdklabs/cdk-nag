@@ -223,7 +223,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'EB1',
       info: 'The Elastic Beanstalk environment is not configured to use a specific VPC.',
       explanation:
-        'Use a non-default VPC in order to seperate your environment from default resources.',
+        'Use a non-default VPC in order to separate your environment from default resources.',
       level: NagMessageLevel.ERROR,
       rule: ElasticBeanstalkVPCSpecified,
       node: node,
@@ -725,7 +725,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'RS11',
       info: 'The Redshift cluster does not have user activity logging enabled.',
       explanation:
-        'User activity logging logs each query before it is performed on the clusters databse. To enable this feature associate a Resdhsift Cluster Parameter Group with the "enable_user_activity_logging" parameter set to "true".',
+        'User activity logging logs each query before it is performed on the clusters database. To enable this feature associate a Redshift Cluster Parameter Group with the "enable_user_activity_logging" parameter set to "true".',
       level: NagMessageLevel.ERROR,
       rule: RedshiftClusterUserActivityLogging,
       node: node,
@@ -1326,7 +1326,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'SF2',
       info: 'The Step Function does not have X-Ray tracing enabled.',
       explanation:
-        'X-ray provides an end-to-end view of how an application is performing. This helps operators to discover performance issues, detect permission problems, and track requests made to and from other AWS services.',
+        'X-Ray provides an end-to-end view of how an application is performing. This helps operators to discover performance issues, detect permission problems, and track requests made to and from other AWS services.',
       level: NagMessageLevel.ERROR,
       rule: StepFunctionStateMachineXray,
       node: node,

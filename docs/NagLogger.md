@@ -12,7 +12,7 @@ SPDX-License-Identifier: Apache-2.0
 `NagLogger`s implement the `INagLogger` interface. Corresponding `INagLogger` method of a loggers is called after a `CfnResource` is evaluated against a `NagRule`. Each of these methods are passed information that relate to the validation state.
 
 1. The `onCompliance` method is called when a CfnResource passes the compliance check for a given rule.
-2. The `onNonCompliance` method is called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
+2. The `onNonCompliance` method is called when a CfnResource does not pass the compliance check for a given rule and the rule violation is not suppressed by the user.
 3. The `onSuppressed` method is called when a CfnResource does not pass the compliance check for a given rule **and** the rule violation is suppressed by the user.
 4. The `onError` method is called when a rule throws an error during while validating a CfnResource for compliance.
 5. The `onSuppressedError` method is called when a rule throws an error during while validating a CfnResource for compliance **and** the error is suppressed.

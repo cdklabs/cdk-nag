@@ -15,7 +15,7 @@ A rule returns a `NagRuleResult` which is either a `NagRuleCompliance` status or
 - `NagRuleCompliance.COMPLIANT` - The resource that **meets** the requirements.
 - `NagRuleCompliance.NOT_APPLICABLE` - The rule **does not apply** to the given resource.
   - Ex. The current resource is a S3 Bucket but the rule is for validating DMS Replication Instances.
-- `NagRuleFindings` A a string array with a list of all findings.
+- `NagRuleFindings` A string array with a list of all findings.
 
 ```typescript
 import { CfnResource } from 'aws-cdk-lib';
