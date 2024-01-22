@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # NagPack
 
-A `NagPack` is a named collection of [rules](./RuleCreation.md) that can be used to validate your stacks and applications. All the [pre-built packs](../README.md#available-rules-and-packs) are `NagPacks`.
+A `NagPack` is a named collection of [rules](./RuleCreation.md) that can be used to validate your stacks and applications. All of the [pre-built packs](../README.md#available-rules-and-packs) are `NagPacks`.
 
 ## Creating a NagPack
 

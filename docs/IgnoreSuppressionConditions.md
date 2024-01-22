@@ -102,7 +102,7 @@ A user would see the following output when attempting to synthesize an applicati
 
 `cdk-nag` exposes both a `SuppressionIgnoreAnd` class and a `SuppressionIgnoreOr` to help developers create more complicated conditions
 
-- `SuppressionIgnoreAnd`: Ignores the suppression if **ALL** the given INagSuppressionIgnore return a non-empty message (logical and)
+- `SuppressionIgnoreAnd`: Ignores the suppression if **ALL** of the given INagSuppressionIgnore return a non-empty message (logical and)
 - `SuppressionIgnoreOr`: Ignores the suppression if **ANY** of the given INagSuppressionIgnore return a non-empty message (logical or)
 
 Here is an example `SuppressionIgnoreAnd` that ignores a suppression if both a 'ticket' CloudFormation metadata entry does not exist on the resource and the current year is after 2022.
