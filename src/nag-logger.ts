@@ -297,7 +297,7 @@ export class NagReportLogger implements INagLogger {
           body = JSON.stringify({ lines: [] } as NagReportSchema);
         } else {
           throw new Error(
-            `Unrecognized ouput format ${format} for the NagReportLogger`
+            `Unrecognized output format ${format} for the NagReportLogger`
           );
         }
         writeFileSync(filePath, body);
@@ -368,7 +368,7 @@ export class NagReportLogger implements INagLogger {
         writeFileSync(filePath, JSON.stringify(report));
       } else {
         throw new Error(
-          `Unrecognized ouput format ${format} for the NagReportLogger`
+          `Unrecognized output format ${format} for the NagReportLogger`
         );
       }
     }

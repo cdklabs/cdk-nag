@@ -9,7 +9,7 @@ As a [NagPack](./NagPack.md) author or user, you can optionally create a conditi
 
 ## Creating A Condition
 
-Conditions implement the `INagSuppressionIgnore` interface. They return a message string when the `createMessage()` method is called. If the method returns a non-empty string the suppression is ignored. Conversely if the method returns an empty string the suppression is allowed.
+Conditions implement the `INagSuppressionIgnore` interface. They return a message string when the `createMessage()` method is called. If the method returns a non-empty string the suppression is ignored. Conversely, if the method returns an empty string the suppression is allowed.
 
 Here is an example of a re-usable condition class that ignores a suppression if the suppression reason doesn't contain the word `Arun`
 

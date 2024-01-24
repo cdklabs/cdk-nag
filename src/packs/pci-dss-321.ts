@@ -191,7 +191,7 @@ export class PCIDSS321Checks extends NagPack {
    */
   private checkAutoScaling(node: CfnResource): void {
     this.applyRule({
-      info: 'The Auto Scaling group (which is associated with a load balancer) does not utilize ELB healthchecks - (Control ID: 2.2).',
+      info: 'The Auto Scaling group (which is associated with a load balancer) does not utilize ELB health checks - (Control ID: 2.2).',
       explanation:
         'The Elastic Load Balancer (ELB) health checks for Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups support maintenance of adequate capacity and availability. The load balancer periodically sends pings, attempts connections, or sends requests to test Amazon EC2 instances health in an auto-scaling group. If an instance is not reporting back, traffic is sent to a new Amazon EC2 instance.',
       level: NagMessageLevel.ERROR,

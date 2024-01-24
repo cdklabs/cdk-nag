@@ -304,7 +304,7 @@ Error: Suppression path "/this/construct/path" did not match any resource. This 
 See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more information.
 
 <details>
-  <summary>Example) Supressing Violations in Pipelines</summary>
+  <summary>Example) Suppressing Violations in Pipelines</summary>
 
 `example-app.ts`
 
