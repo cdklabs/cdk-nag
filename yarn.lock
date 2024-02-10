@@ -1919,9 +1919,9 @@ dotgitignore@^2.1.0:
     minimatch "^3.0.4"
 
 electron-to-chromium@^1.4.648:
-  version "1.4.662"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.662.tgz#0e014d31687210312c5f601bc9edcae2fa1663ef"
-  integrity sha512-gfl1XVWTQmPHhqEG0kN77SpUxaqPpMb9r83PT4gvKhg7P3irSxru3lW85RxvK1uI1j2CAcTWPjG/HbE0IP/Rtg==
+  version "1.4.665"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.665.tgz#681700bd590b0e5a3be66e3e2874ce62abcf5da5"
+  integrity sha512-UpyCWObBoD+nSZgOC2ToaIdZB0r9GhqT2WahPKiSki6ckkSuKhQNso8V2PrFcHBMleI/eqbKgVQgVC4Wni4ilw==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4306,10 +4306,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.79.9:
-  version "0.79.9"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.79.9.tgz#530e8c4640db2716488a7c8b854f36573269552e"
-  integrity sha512-W0SBkRHLORWzvgkzlZHQgArTBpeMrZklP3g9U8EpflAAeG1hLNUFHPkneODz8a1EDPt63FDnLkAsXXJOsPiP2A==
+projen@^0.79.14:
+  version "0.79.14"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.79.14.tgz#69bcdfb166d782a76542e0c949f19fd630eb8284"
+  integrity sha512-LtRdoUlXoM3jdY3KxJ33qZ2Ymh6SDNZjAhAU4q/FVSm8c+QUjFCvhNH7YygNrjEcKkD/H3PQrHNTN+DmVmfLmA==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -4724,9 +4724,9 @@ spdx-expression-parse@^3.0.0:
     spdx-license-ids "^3.0.0"
 
 spdx-license-ids@^3.0.0:
-  version "3.0.16"
-  resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.16.tgz#a14f64e0954f6e25cc6587bd4f392522db0d998f"
-  integrity sha512-eWN+LnM3GR6gPu35WxNgbGl8rmY1AEmoMDvL/QD6zYmPWgywxWqJWNdLGT+ke8dKNWrcYgYjPpG5gbTfghP8rw==
+  version "3.0.17"
+  resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.17.tgz#887da8aa73218e51a1d917502d79863161a93f9c"
+  integrity sha512-sh8PWc/ftMqAAdFiBu6Fy6JUOYjqDJBJvIhpfDMyHrr0Rbp5liZqd4TjtQ/RgfLjKFZb+LMx5hpml5qOWy0qvg==
 
 spdx-license-list@^6.6.0:
   version "6.7.0"
