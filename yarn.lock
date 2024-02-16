@@ -787,9 +787,9 @@
   integrity sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==
 
 "@types/node@*":
-  version "20.11.17"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.17.tgz#cdd642d0e62ef3a861f88ddbc2b61e32578a9292"
-  integrity sha512-QmgQZGWu1Yw9TDyAP9ZzpFJKynYNeOvwMJmaxABfieQoVoiVOS6MN1WSpqpRcbeA5+RW82kraAVxCCJg+780Qw==
+  version "20.11.19"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.11.19.tgz#b466de054e9cb5b3831bee38938de64ac7f81195"
+  integrity sha512-7xMnVEcZFu0DikYjWOlRq7NTPETrm7teqUT2WkQjrTIkEgUyyGdWsj/Zg8bEJt5TNklzbPD1X3fqfsHw3SpapQ==
   dependencies:
     undici-types "~5.26.4"
 
@@ -1897,9 +1897,9 @@ dotgitignore@^2.1.0:
     minimatch "^3.0.4"
 
 electron-to-chromium@^1.4.668:
-  version "1.4.669"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.669.tgz#37e9cc16cc2fbdd8e06a46fc1fd3a1249e091f64"
-  integrity sha512-E2SmpffFPrZhBSgf8ibqanRS2mpuk3FIRDzLDwt7WFpfgJMKDHJs0hmacyP0PS1cWsq0dVkwIIzlscNaterkPg==
+  version "1.4.671"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.671.tgz#fa3094d6d2512a6c4d609a9bc4997154543febfe"
+  integrity sha512-UUlE+/rWbydmp+FW8xlnnTA5WNA0ZZd2XL8CuMS72rh+k4y1f8+z6yk3UQhEwqHQWj6IBdL78DwWOdGMvYfQyA==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4256,10 +4256,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.79.21:
-  version "0.79.21"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.79.21.tgz#8c0f769d2f8052f9dce95ddf9209ec5d7bccda2e"
-  integrity sha512-q1tdKuFMW9dIuPU27PqHs5iVAWWQ+9BCbLjihfnEkaCaPMl7F8k//+d7DpJcZhghMiYLcmBdr3N8jKVtw8iDeQ==
+projen@^0.79.22:
+  version "0.79.22"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.79.22.tgz#14225ccf9bbaeb14ca018cff6120aaa7b5ddbbe4"
+  integrity sha512-95m5kBcdTaGr1JR6i/6z5XpHjXhaKwfKANXDN0y3/SsTLSPtXDCz0o8HCrKnAMjpSrR86ZGBbENm5gxhvq2B2Q==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -4662,9 +4662,9 @@ spdx-correct@^3.0.0:
     spdx-license-ids "^3.0.0"
 
 spdx-exceptions@^2.1.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/spdx-exceptions/-/spdx-exceptions-2.4.0.tgz#c07a4ede25b16e4f78e6707bbd84b15a45c19c1b"
-  integrity sha512-hcjppoJ68fhxA/cjbN4T8N6uCUejN8yFw69ttpqtBeCbF3u13n7mb31NB9jKwGTTWWnt9IbRA/mf1FprYS8wfw==
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/spdx-exceptions/-/spdx-exceptions-2.5.0.tgz#5d607d27fc806f66d7b64a766650fa890f04ed66"
+  integrity sha512-PiU42r+xO4UbUS1buo3LPJkjlO7430Xn5SVAhdpzzsPHsjbYVflnnFdATgabnLude+Cqu25p6N+g2lw/PFsa4w==
 
 spdx-expression-parse@^3.0.0:
   version "3.0.1"
