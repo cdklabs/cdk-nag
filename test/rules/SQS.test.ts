@@ -10,6 +10,7 @@ import {
   StarPrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
+import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnQueuePolicy, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { TestPack, TestType, validateStack } from './utils';
@@ -56,6 +57,31 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
+    test('Noncompliance 3', () => {
+      new Queue(stack, 'Queue');
+      new Function(stack, 'Function', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 4', () => {
+      new Queue(stack, 'Dlq', { queueName: 'foo' });
+      new Function(stack, 'Function', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        deadLetterQueue: Queue.fromQueueArn(
+          stack,
+          'Dlq2FromArn',
+          `arn:aws:sqs:${stack.region}:${stack.account}:foo2`
+        ),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
     test('Compliance', () => {
       const dlq = new Queue(stack, 'Dlq');
       new Queue(stack, 'Queue', {
@@ -74,6 +100,27 @@ describe('Amazon Simple Queue Service (SQS)', () => {
           ),
           maxReceiveCount: 42,
         },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance2', () => {
+      const dlq = new Queue(stack, 'Dlq');
+      new Function(stack, 'Function', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        deadLetterQueue: dlq,
+      });
+      new Queue(stack, 'Dlq2', { queueName: 'foo' });
+      new Function(stack, 'Function2', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+        deadLetterQueue: Queue.fromQueueArn(
+          stack,
+          'Dlq2FromArn',
+          `arn:aws:sqs:${stack.region}:${stack.account}:foo`
+        ),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
