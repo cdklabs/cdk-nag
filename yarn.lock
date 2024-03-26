@@ -1918,9 +1918,9 @@ dotgitignore@^2.1.0:
     minimatch "^3.0.4"
 
 electron-to-chromium@^1.4.668:
-  version "1.4.715"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.715.tgz#bb16bcf2a3537962fccfa746b5c98c5f7404ff46"
-  integrity sha512-XzWNH4ZSa9BwVUQSDorPWAUQ5WGuYz7zJUNpNif40zFCiCl20t8zgylmreNmn26h5kiyw2lg7RfTmeMBsDklqg==
+  version "1.4.716"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.716.tgz#90c229ce0af2ad3b6e54472af1200e07f10293a4"
+  integrity sha512-t/MXMzFKQC3UfMDpw7V5wdB/UAB8dWx4hEsy+fpPYJWW3gqh3u5T1uXp6vR+H6dGCPBxkRo+YBcapBLvbGQHRw==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4295,10 +4295,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.80.12:
-  version "0.80.12"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.80.12.tgz#57451d4af20b557b9ad210d64d9ee78ac4dc53b9"
-  integrity sha512-emMvNBi8gGEeLg71IL/8Xx262hnPvzTnbl0Oua+Ce+25yXCAclGfDjzPGEoHgXpmaVYtFWp8jVnaGvXKfNTKgQ==
+projen@^0.80.13:
+  version "0.80.13"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.80.13.tgz#b2ed33b8a28ab238ce26fed09d4ab942b495d876"
+  integrity sha512-6kOhiKSr5pwIB07euAzuo84UMLg7dYc1kPG4aqdULeUOnPpHIQSIoF0R2GHcf6iT1ZldrLgrtYy7SRsluobdAA==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
