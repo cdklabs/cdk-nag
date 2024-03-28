@@ -13,4 +13,5 @@ export * from './packs/hipaa-security';
 export * from './packs/nist-800-53-r4';
 export * from './packs/nist-800-53-r5';
 export * from './packs/pci-dss-321';
+export * from './packs/nzism-v36-1022-20';
 export * as rules from './rules';

@@ -13,6 +13,7 @@ import {
   NIST80053R5Checks,
   NagMessageLevel,
   PCIDSS321Checks,
+  NZISM36Checks,
 } from '../src';
 
 describe('Check NagPack Details', () => {
@@ -615,6 +616,105 @@ describe('Check NagPack Details', () => {
         'PCI.DSS.321-VPCNoUnrestrictedRouteToIGW',
         'PCI.DSS.321-VPCSubnetAutoAssignPublicIpDisabled',
         'PCI.DSS.321-WAFv2LoggingEnabled',
+      ];
+      jest.spyOn(pack, 'applyRule');
+      const stack = new Stack();
+      Aspects.of(stack).add(pack);
+      new CfnResource(stack, 'rTestResource', { type: 'foo' });
+      SynthUtils.synthesize(stack).messages;
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
+  describe('NZISM3.6', () => {
+    class NZISM36ChecksExtended extends NZISM36Checks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
+        const ruleSuffix = params.ruleSuffixOverride
+          ? params.ruleSuffixOverride
+          : params.rule.name;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
+        if (params.level === NagMessageLevel.WARN) {
+          this.actualWarnings.push(ruleId);
+        } else {
+          this.actualErrors.push(ruleId);
+        }
+      }
+    }
+    const pack = new NZISM36ChecksExtended();
+    test('Pack Name is correct', () => {
+      expect(pack.readPackName).toStrictEqual('NZISM3.6');
+    });
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = [
+        'NZISM3.6-EC2RestrictedSSH',
+        'NZISM3.6-CloudFrontDefaultRootObjectConfigured',
+        'NZISM3.6-CloudTrailEncryptionEnabled',
+        'NZISM3.6-EC2EBSVolumeEncrypted',
+        'NZISM3.6-EC2SecurityGroupOnlyTcp443',
+        'NZISM3.6-ECSTaskDefinitionUserForHostMode',
+        'NZISM3.6-EFSEncrypted',
+        'NZISM3.6-ElasticBeanstalkManagedUpdatesEnabled',
+        'NZISM3.6-IAMPolicyNoStatementsWithAdminAccess',
+        'NZISM3.6-KMSBackingKeyRotationEnabled',
+        'NZISM3.6-OpenSearchEncryptedAtRest',
+        'NZISM3.6-RDSAutomaticMinorVersionUpgradeEnabled',
+        'NZISM3.6-RDSStorageEncrypted',
+        'NZISM3.6-S3BucketLevelPublicAccessProhibited',
+        'NZISM3.6-S3BucketPublicReadProhibited',
+        'NZISM3.6-S3BucketPublicWriteProhibited',
+        'NZISM3.6-S3BucketSSLRequestsOnly',
+        'NZISM3.6-S3DefaultEncryptionKMS',
+        'NZISM3.6-SNSEncryptedKMS',
+        'NZISM3.6-SageMakerEndpointConfigurationKMSKeyConfigured',
+        'NZISM3.6-SageMakerNotebookInstanceKMSKeyConfigured',
+        'NZISM3.6-SecretsManagerUsingKMSKey',
+        'NZISM3.6-RedshiftClusterConfiguration',
+      ];
+
+      const expectedErrors = [
+        'NZISM3.6-ALBHttpToHttpsRedirection',
+        'NZISM3.6-ALBWAFEnabled',
+        'NZISM3.6-APIGWExecutionLoggingEnabled',
+        'NZISM3.6-CloudFrontDistributionAccessLogging',
+        'NZISM3.6-CloudFrontDistributionHttpsViewerNoOutdatedSSL',
+        'NZISM3.6-CloudFrontDistributionWAFIntegration',
+        'NZISM3.6-CloudTrailCloudWatchLogsEnabled',
+        'NZISM3.6-CloudTrailLogFileValidationEnabled',
+        'NZISM3.6-CloudWatchLogGroupEncrypted',
+        'NZISM3.6-CloudWatchLogGroupRetentionPeriod',
+        'NZISM3.6-DMSReplicationNotPublic',
+        'NZISM3.6-DynamoDBAutoScalingEnabled',
+        'NZISM3.6-DynamoDBInBackupPlan',
+        'NZISM3.6-DynamoDBPITREnabled',
+        'NZISM3.6-EC2EBSInBackupPlan',
+        'NZISM3.6-EC2IMDSv2Enabled',
+        'NZISM3.6-EC2InstanceNoPublicIp',
+        'NZISM3.6-EC2InstancesInVPC',
+        'NZISM3.6-EFSInBackupPlan',
+        'NZISM3.6-ELBCrossZoneLoadBalancingEnabled',
+        'NZISM3.6-ELBLoggingEnabled',
+        'NZISM3.6-ELBTlsHttpsListenersOnly',
+        'NZISM3.6-ElastiCacheRedisClusterAutomaticBackup',
+        'NZISM3.6-LambdaFunctionPublicAccessProhibited',
+        'NZISM3.6-OpenSearchInVPCOnly',
+        'NZISM3.6-OpenSearchNodeToNodeEncryption',
+        'NZISM3.6-RDSInBackupPlan',
+        'NZISM3.6-RDSInstanceDeletionProtectionEnabled',
+        'NZISM3.6-RDSInstancePublicAccess',
+        'NZISM3.6-RDSLoggingEnabled',
+        'NZISM3.6-RDSMultiAZSupport',
+        'NZISM3.6-RedshiftBackupEnabled',
+        'NZISM3.6-RedshiftClusterMaintenanceSettings',
+        'NZISM3.6-RedshiftClusterPublicAccess',
+        'NZISM3.6-RedshiftRequireTlsSSL',
+        'NZISM3.6-S3BucketLoggingEnabled',
+        'NZISM3.6-S3BucketVersioningEnabled',
+        'NZISM3.6-SageMakerNotebookNoDirectInternetAccess',
+        'NZISM3.6-VPCDefaultSecurityGroupClosed',
+        'NZISM3.6-VPCFlowLogsEnabled',
+        'NZISM3.6-WAFv2LoggingEnabled',
       ];
       jest.spyOn(pack, 'applyRule');
       const stack = new Stack();
