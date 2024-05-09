@@ -357,7 +357,7 @@ describe('AWS Lambda', () => {
   describe('LambdaLogging: Ensure that Lambda functions have a corresponding Log Group', () => {
     const ruleId = 'LambdaLogging';
     test('Noncompliance 1', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
