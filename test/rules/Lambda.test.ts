@@ -365,7 +365,7 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         loggingConfig: {
