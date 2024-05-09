@@ -8,7 +8,7 @@ import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Ensure that Lambda functions have a corresponding Log Group
+ * Lambda functions explicitly define their CloudWatch Log Groups
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
