@@ -1901,9 +1901,9 @@ dotgitignore@^2.1.0:
     minimatch "^3.0.4"
 
 electron-to-chromium@^1.4.796:
-  version "1.4.797"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.797.tgz#0e15657e4ebcfeb8df8d8cdd29e6a6784b76dc57"
-  integrity sha512-RWMYymqyWwIdCEb7Psag5zyAHirYnB354ZREoF8c5QOHbt8AodF7lwVxGUnu5gzBVjzDo9R3XeTwy7pbvubxGw==
+  version "1.4.799"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.799.tgz#271c56654ab4dc703037e47a5af4fc8945160611"
+  integrity sha512-3D3DwWkRTzrdEpntY0hMLYwj7SeBk1138CkPE8sBDSj3WzrzOiG2rHm3luw8jucpf+WiyLBCZyU9lMHyQI9M9Q==
 
 emittery@^0.8.1:
   version "0.8.1"
