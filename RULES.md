@@ -702,6 +702,7 @@ A collection of community rules that are not currently included in any of the pr
 | Rule ID               | Cause                                                              | Explanation                                                                                                                                                                 |
 | --------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LambdaFunctionUrlAuth | The Lambda Function URL allows for public, unauthenticated access. | AWS Lambda Function URLs allow you to invoke your function via a HTTPS end-point, setting the authentication to NONE allows anyone on the internet to invoke your function. |
+| LambdaLogging | The Lambda Function does not define a corresponding log group | Ensure that Lambda functions have a corresponding Log Group |
 
 ## Footnotes
 
