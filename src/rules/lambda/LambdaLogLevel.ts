@@ -8,7 +8,7 @@ import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Lambda functions explicitly define their CloudWatch Log Groups
+ * By default, CloudWatch log groups created by Lambda functions have an unlimited retention time. For cost optimization purposes, you should explicitly define a LogGroup which allows for the CloudWatchLogGroupRetentionPeriod rule to detect unspecified log retention periods. 
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

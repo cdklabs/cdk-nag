@@ -27,7 +27,7 @@ import {
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
-  LambdaLogging,
+  LambdaLogLevel,
 } from '../../src/rules/lambda';
 
 const testPack = new TestPack([
@@ -37,7 +37,7 @@ const testPack = new TestPack([
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
-  LambdaLogging,
+  LambdaLogLevel,
 ]);
 let stack: Stack;
 
@@ -358,8 +358,8 @@ describe('AWS Lambda', () => {
     });
   });
 
-  describe('LambdaLogging: Ensure that Lambda functions have a corresponding Log Group', () => {
-    const ruleId = 'LambdaLogging';
+  describe('LambdaLogLevel: Lambda functions have a explicit log level', () => {
+    const ruleId = 'LambdaLogLevel';
     test('Noncompliance 1 - L1 Construct', () => {
       new CfnFunction(stack, 'Function', {
         code: {},
@@ -368,14 +368,24 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - L2 Constructs', () => {
+    test('Noncompliance 2 - L2 Constructs missing ApplicationLogLevel', () => {
+      new Function(stack, 'Function', {
+        handler: '',
+        runtime: Runtime.NODEJS_LATEST,
+        code: Code.fromInline('console.log("hello world'),
+        logFormat: LogFormat.JSON,
+        systemLogLevel: SystemLogLevel.WARN
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - L2 Constructs missing systemLogLevel', () => {
       new Function(stack, 'Function', {
         handler: '',
         runtime: Runtime.NODEJS_LATEST,
         code: Code.fromInline('console.log("hello world'),
         logFormat: LogFormat.JSON,
         applicationLogLevel: ApplicationLogLevel.TRACE,
-        systemLogLevel: SystemLogLevel.WARN
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -385,10 +395,10 @@ describe('AWS Lambda', () => {
         code: {},
         role: 'somerole',
         loggingConfig: {
-          applicationLogLevel: 'applicationLogLevel',
+          applicationLogLevel: 'WARN',
           logFormat: 'logFormat',
           logGroup: 'logGroup',
-          systemLogLevel: 'systemLogLevel',
+          systemLogLevel: 'DEBUG',
         },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -402,7 +412,6 @@ describe('AWS Lambda', () => {
         logFormat: LogFormat.JSON,
         applicationLogLevel: ApplicationLogLevel.TRACE,
         systemLogLevel: SystemLogLevel.WARN,
-        logGroup: new LogGroup(stack, 'LogGroup'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
