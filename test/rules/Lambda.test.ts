@@ -14,7 +14,11 @@ import {
   Function,
   FunctionUrlAuthType,
   Runtime,
+  LogFormat,
+  SystemLogLevel,
+  ApplicationLogLevel,
 } from 'aws-cdk-lib/aws-lambda';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import { TestPack, TestType, validateStack } from './utils';
 import {
   LambdaConcurrency,
@@ -356,7 +360,7 @@ describe('AWS Lambda', () => {
 
   describe('LambdaLogging: Ensure that Lambda functions have a corresponding Log Group', () => {
     const ruleId = 'LambdaLogging';
-    test('Noncompliance 1', () => {
+    test('Noncompliance 1 - L1 Construct', () => {
       new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
@@ -364,7 +368,19 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance', () => {
+    test('Noncompliance 2 - L2 Constructs', () => {
+      new Function(stack, 'Function', {
+        handler: '',
+        runtime: Runtime.NODEJS_LATEST,
+        code: Code.fromInline('console.log("hello world'),
+        logFormat: LogFormat.JSON,
+        applicationLogLevel: ApplicationLogLevel.TRACE,
+        systemLogLevel: SystemLogLevel.WARN
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance - L1 Construct', () => {
       new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
@@ -374,6 +390,19 @@ describe('AWS Lambda', () => {
           logGroup: 'logGroup',
           systemLogLevel: 'systemLogLevel',
         },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 1 - L2 Constructs', () => {
+      new Function(stack, 'Function', {
+        handler: '',
+        runtime: Runtime.NODEJS_LATEST,
+        code: Code.fromInline('console.log("hello world'),
+        logFormat: LogFormat.JSON,
+        applicationLogLevel: ApplicationLogLevel.TRACE,
+        systemLogLevel: SystemLogLevel.WARN,
+        logGroup: new LogGroup(stack, 'LogGroup'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
