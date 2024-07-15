@@ -702,7 +702,7 @@ A collection of community rules that are not currently included in any of the pr
 | Rule ID               | Cause                                                              | Explanation                                                                                                                                                                 |
 | --------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LambdaFunctionUrlAuth | The Lambda Function URL allows for public, unauthenticated access. | AWS Lambda Function URLs allow you to invoke your function via a HTTPS end-point, setting the authentication to NONE allows anyone on the internet to invoke your function. |
-| LambdaLogLevel | The Lambda Function does not define an explicit Log Level | For cost optimization purposes, you should explicitly define the required log level for cost effective storage of Lambda Logs. |
+| LambdaLogging | The Lambda Function does not define an explicit Log Level | For cost optimization purposes, you should explicitly define the required log level for cost effective storage of Lambda Logs. |
 
 ## Footnotes
 

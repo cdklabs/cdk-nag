@@ -358,8 +358,8 @@ describe('AWS Lambda', () => {
     });
   });
 
-  describe('LambdaLogLevel: Lambda functions have a explicit log level', () => {
-    const ruleId = 'LambdaLogLevel';
+  describe('LambdaLogging: Lambda functions have a explicit log level', () => {
+    const ruleId = 'LambdaLogging';
     test('Noncompliance 1 - L1 Construct', () => {
       new CfnFunction(stack, 'Function', {
         code: {},
