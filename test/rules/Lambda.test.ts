@@ -14,7 +14,11 @@ import {
   Function,
   FunctionUrlAuthType,
   Runtime,
+  LogFormat,
+  SystemLogLevel,
+  ApplicationLogLevel,
 } from 'aws-cdk-lib/aws-lambda';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import { TestPack, TestType, validateStack } from './utils';
 import {
   LambdaConcurrency,
@@ -23,6 +27,7 @@ import {
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaLogging,
 } from '../../src/rules/lambda';
 
 const testPack = new TestPack([
@@ -32,6 +37,7 @@ const testPack = new TestPack([
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaLogging,
 ]);
 let stack: Stack;
 
@@ -349,6 +355,65 @@ describe('AWS Lambda', () => {
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+    });
+  });
+
+  describe('LambdaLogging: Lambda functions have a explicit log level', () => {
+    const ruleId = 'LambdaLogging';
+    test('Noncompliance 1 - L1 Construct', () => {
+      new CfnFunction(stack, 'Function', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - L2 Constructs missing ApplicationLogLevel', () => {
+      new Function(stack, 'Function', {
+        handler: '',
+        runtime: Runtime.NODEJS_LATEST,
+        code: Code.fromInline('console.log("hello world'),
+        logFormat: LogFormat.JSON,
+        systemLogLevel: SystemLogLevel.WARN
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - L2 Constructs missing systemLogLevel', () => {
+      new Function(stack, 'Function', {
+        handler: '',
+        runtime: Runtime.NODEJS_LATEST,
+        code: Code.fromInline('console.log("hello world'),
+        logFormat: LogFormat.JSON,
+        applicationLogLevel: ApplicationLogLevel.TRACE,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance - L1 Construct', () => {
+      new CfnFunction(stack, 'Function', {
+        code: {},
+        role: 'somerole',
+        loggingConfig: {
+          applicationLogLevel: 'WARN',
+          logFormat: 'logFormat',
+          logGroup: 'logGroup',
+          systemLogLevel: 'DEBUG',
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 1 - L2 Constructs', () => {
+      new Function(stack, 'Function', {
+        handler: '',
+        runtime: Runtime.NODEJS_LATEST,
+        code: Code.fromInline('console.log("hello world'),
+        logFormat: LogFormat.JSON,
+        applicationLogLevel: ApplicationLogLevel.TRACE,
+        systemLogLevel: SystemLogLevel.WARN,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
 });
