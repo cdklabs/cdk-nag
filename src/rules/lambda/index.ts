@@ -9,4 +9,4 @@ export { default as LambdaFunctionPublicAccessProhibited } from './LambdaFunctio
 export { default as LambdaFunctionUrlAuth } from './LambdaFunctionUrlAuth';
 export { default as LambdaInsideVPC } from './LambdaInsideVPC';
 export { default as LambdaLatestVersion } from './LambdaLatestVersion';
-export { default as LambdaLogLevel } from './LambdaLogLevel'
+export { default as LambdaLogging } from './LambdaLogging'

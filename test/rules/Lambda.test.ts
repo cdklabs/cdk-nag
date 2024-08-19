@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { Aspects, Stack } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
+  ApplicationLogLevel,
   CfnFunction,
   CfnPermission,
   CfnUrl,
@@ -13,13 +14,10 @@ import {
   DockerImageFunction,
   Function,
   FunctionUrlAuthType,
-  Runtime,
   LogFormat,
+  Runtime,
   SystemLogLevel,
-  ApplicationLogLevel,
 } from 'aws-cdk-lib/aws-lambda';
-import { LogGroup } from 'aws-cdk-lib/aws-logs';
-import { TestPack, TestType, validateStack } from './utils';
 import {
   LambdaConcurrency,
   LambdaDLQ,
@@ -27,8 +25,9 @@ import {
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
-  LambdaLogLevel,
+  LambdaLogging
 } from '../../src/rules/lambda';
+import { TestPack, TestType, validateStack } from './utils';
 
 const testPack = new TestPack([
   LambdaConcurrency,
@@ -37,7 +36,7 @@ const testPack = new TestPack([
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
-  LambdaLogLevel,
+  LambdaLogging,
 ]);
 let stack: Stack;
 
@@ -358,8 +357,8 @@ describe('AWS Lambda', () => {
     });
   });
 
-  describe('LambdaLogLevel: Lambda functions have a explicit log level', () => {
-    const ruleId = 'LambdaLogLevel';
+  describe('LambdaLogging: Lambda functions have a explicit log level', () => {
+    const ruleId = 'LambdaLogging';
     test('Noncompliance 1 - L1 Construct', () => {
       new CfnFunction(stack, 'Function', {
         code: {},
