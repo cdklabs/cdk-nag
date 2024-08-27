@@ -1,1575 +1,2718 @@
-# API Reference
-
-**Classes**
-
-Name|Description
-----|-----------
-[AnnotationLogger](#cdk-nag-annotationlogger)|A NagLogger that outputs to the CDK Annotations system.
-[AwsSolutionsChecks](#cdk-nag-awssolutionschecks)|Check Best practices based on AWS Solutions Security Matrix.
-[HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks)|Check for HIPAA Security compliance.
-[NIST80053R4Checks](#cdk-nag-nist80053r4checks)|Check for NIST 800-53 rev 4 compliance.
-[NIST80053R5Checks](#cdk-nag-nist80053r5checks)|Check for NIST 800-53 rev 5 compliance.
-[NagPack](#cdk-nag-nagpack)|Base class for all rule packs.
-[NagReportLogger](#cdk-nag-nagreportlogger)|A NagLogger that creates compliance reports.
-[NagRules](#cdk-nag-nagrules)|Helper class with methods for rule creation.
-[NagSuppressions](#cdk-nag-nagsuppressions)|Helper class with methods to add cdk-nag suppressions to cdk resources.
-[PCIDSS321Checks](#cdk-nag-pcidss321checks)|Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
-[SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways)|Always ignore the suppression.
-[SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand)|Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
-[SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors)|Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
-[SuppressionIgnoreNever](#cdk-nag-suppressionignorenever)|Don't ignore the suppression.
-[SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)|Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
+# API Reference <a name="API Reference" id="api-reference"></a>
 
 
-**Structs**
+## Structs <a name="Structs" id="Structs"></a>
 
-Name|Description
-----|-----------
-[AnnotationLoggerProps](#cdk-nag-annotationloggerprops)|Props for the AnnotationLogger.
-[NagLoggerBaseData](#cdk-nag-nagloggerbasedata)|Shared data for all INagLogger methods.
-[NagLoggerComplianceData](#cdk-nag-nagloggercompliancedata)|Data for onCompliance method of an INagLogger.
-[NagLoggerErrorData](#cdk-nag-nagloggererrordata)|Data for onError method of an INagLogger.
-[NagLoggerNonComplianceData](#cdk-nag-nagloggernoncompliancedata)|Data for onNonCompliance method of an INagLogger.
-[NagLoggerNotApplicableData](#cdk-nag-nagloggernotapplicabledata)|Data for onNotApplicable method of an INagLogger.
-[NagLoggerSuppressedData](#cdk-nag-nagloggersuppresseddata)|Data for onSuppressed method of an INagLogger.
-[NagLoggerSuppressedErrorData](#cdk-nag-nagloggersuppressederrordata)|Data for onSuppressedError method of an INagLogger.
-[NagPackProps](#cdk-nag-nagpackprops)|Interface for creating a NagPack.
-[NagPackSuppression](#cdk-nag-nagpacksuppression)|Interface for creating a rule suppression.
-[NagReportLine](#cdk-nag-nagreportline)|*No description*
-[NagReportLoggerProps](#cdk-nag-nagreportloggerprops)|Props for the NagReportLogger.
-[NagReportSchema](#cdk-nag-nagreportschema)|*No description*
-[RegexAppliesTo](#cdk-nag-regexappliesto)|A regular expression to apply to matching findings.
-[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)|Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
+### AnnotationLoggerProps <a name="AnnotationLoggerProps" id="cdk-nag.AnnotationLoggerProps"></a>
 
+Props for the AnnotationLogger.
 
-**Interfaces**
+#### Initializer <a name="Initializer" id="cdk-nag.AnnotationLoggerProps.Initializer"></a>
 
-Name|Description
-----|-----------
-[IApplyRule](#cdk-nag-iapplyrule)|Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
-[INagLogger](#cdk-nag-inaglogger)|Interface for creating NagSuppression Ignores.
-[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)|Interface for creating NagSuppression Ignores.
+```typescript
+import { AnnotationLoggerProps } from 'cdk-nag'
 
+const annotationLoggerProps: AnnotationLoggerProps = { ... }
+```
 
-**Enums**
+#### Properties <a name="Properties" id="Properties"></a>
 
-Name|Description
-----|-----------
-[NagMessageLevel](#cdk-nag-nagmessagelevel)|The severity level of the rule.
-[NagReportFormat](#cdk-nag-nagreportformat)|Possible output formats of the NagReport.
-[NagRuleCompliance](#cdk-nag-nagrulecompliance)|The compliance level of a resource in relation to a rule.
-[NagRulePostValidationStates](#cdk-nag-nagrulepostvalidationstates)|Additional states a rule can be in post compliance validation.
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AnnotationLoggerProps.property.logIgnores">logIgnores</a></code> | <code>boolean</code> | Whether or not to log suppressed rule violations as informational messages (default: false). |
+| <code><a href="#cdk-nag.AnnotationLoggerProps.property.verbose">verbose</a></code> | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages. |
 
+---
 
+##### `logIgnores`<sup>Optional</sup> <a name="logIgnores" id="cdk-nag.AnnotationLoggerProps.property.logIgnores"></a>
 
-## class AnnotationLogger  <a id="cdk-nag-annotationlogger"></a>
+```typescript
+public readonly logIgnores: boolean;
+```
+
+- *Type:* boolean
+
+Whether or not to log suppressed rule violations as informational messages (default: false).
+
+---
+
+##### `verbose`<sup>Optional</sup> <a name="verbose" id="cdk-nag.AnnotationLoggerProps.property.verbose"></a>
+
+```typescript
+public readonly verbose: boolean;
+```
+
+- *Type:* boolean
+
+Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages.
+
+---
+
+### NagLoggerBaseData <a name="NagLoggerBaseData" id="cdk-nag.NagLoggerBaseData"></a>
+
+Shared data for all INagLogger methods.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerBaseData.Initializer"></a>
+
+```typescript
+import { NagLoggerBaseData } from 'cdk-nag'
+
+const nagLoggerBaseData: NagLoggerBaseData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerBaseData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerBaseData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerBaseData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerBaseData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerBaseData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerBaseData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerBaseData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerBaseData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+### NagLoggerComplianceData <a name="NagLoggerComplianceData" id="cdk-nag.NagLoggerComplianceData"></a>
+
+Data for onCompliance method of an INagLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerComplianceData.Initializer"></a>
+
+```typescript
+import { NagLoggerComplianceData } from 'cdk-nag'
+
+const nagLoggerComplianceData: NagLoggerComplianceData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerComplianceData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerComplianceData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerComplianceData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerComplianceData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerComplianceData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerComplianceData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerComplianceData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerComplianceData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+### NagLoggerErrorData <a name="NagLoggerErrorData" id="cdk-nag.NagLoggerErrorData"></a>
+
+Data for onError method of an INagLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerErrorData.Initializer"></a>
+
+```typescript
+import { NagLoggerErrorData } from 'cdk-nag'
+
+const nagLoggerErrorData: NagLoggerErrorData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerErrorData.property.errorMessage">errorMessage</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerErrorData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerErrorData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerErrorData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerErrorData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerErrorData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerErrorData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerErrorData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `errorMessage`<sup>Required</sup> <a name="errorMessage" id="cdk-nag.NagLoggerErrorData.property.errorMessage"></a>
+
+```typescript
+public readonly errorMessage: string;
+```
+
+- *Type:* string
+
+---
+
+### NagLoggerNonComplianceData <a name="NagLoggerNonComplianceData" id="cdk-nag.NagLoggerNonComplianceData"></a>
+
+Data for onNonCompliance method of an INagLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerNonComplianceData.Initializer"></a>
+
+```typescript
+import { NagLoggerNonComplianceData } from 'cdk-nag'
+
+const nagLoggerNonComplianceData: NagLoggerNonComplianceData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNonComplianceData.property.findingId">findingId</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerNonComplianceData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerNonComplianceData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerNonComplianceData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerNonComplianceData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerNonComplianceData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerNonComplianceData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerNonComplianceData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `findingId`<sup>Required</sup> <a name="findingId" id="cdk-nag.NagLoggerNonComplianceData.property.findingId"></a>
+
+```typescript
+public readonly findingId: string;
+```
+
+- *Type:* string
+
+---
+
+### NagLoggerNotApplicableData <a name="NagLoggerNotApplicableData" id="cdk-nag.NagLoggerNotApplicableData"></a>
+
+Data for onNotApplicable method of an INagLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerNotApplicableData.Initializer"></a>
+
+```typescript
+import { NagLoggerNotApplicableData } from 'cdk-nag'
+
+const nagLoggerNotApplicableData: NagLoggerNotApplicableData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerNotApplicableData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerNotApplicableData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerNotApplicableData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerNotApplicableData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerNotApplicableData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerNotApplicableData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerNotApplicableData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerNotApplicableData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+### NagLoggerSuppressedData <a name="NagLoggerSuppressedData" id="cdk-nag.NagLoggerSuppressedData"></a>
+
+Data for onSuppressed method of an INagLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerSuppressedData.Initializer"></a>
+
+```typescript
+import { NagLoggerSuppressedData } from 'cdk-nag'
+
+const nagLoggerSuppressedData: NagLoggerSuppressedData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.findingId">findingId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedData.property.suppressionReason">suppressionReason</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerSuppressedData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerSuppressedData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerSuppressedData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerSuppressedData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerSuppressedData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerSuppressedData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerSuppressedData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `findingId`<sup>Required</sup> <a name="findingId" id="cdk-nag.NagLoggerSuppressedData.property.findingId"></a>
+
+```typescript
+public readonly findingId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `suppressionReason`<sup>Required</sup> <a name="suppressionReason" id="cdk-nag.NagLoggerSuppressedData.property.suppressionReason"></a>
+
+```typescript
+public readonly suppressionReason: string;
+```
+
+- *Type:* string
+
+---
+
+### NagLoggerSuppressedErrorData <a name="NagLoggerSuppressedErrorData" id="cdk-nag.NagLoggerSuppressedErrorData"></a>
+
+Data for onSuppressedError method of an INagLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagLoggerSuppressedErrorData.Initializer"></a>
+
+```typescript
+import { NagLoggerSuppressedErrorData } from 'cdk-nag'
+
+const nagLoggerSuppressedErrorData: NagLoggerSuppressedErrorData = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.nagPackName">nagPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.ruleExplanation">ruleExplanation</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.ruleOriginalName">ruleOriginalName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.errorMessage">errorMessage</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagLoggerSuppressedErrorData.property.errorSuppressionReason">errorSuppressionReason</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `nagPackName`<sup>Required</sup> <a name="nagPackName" id="cdk-nag.NagLoggerSuppressedErrorData.property.nagPackName"></a>
+
+```typescript
+public readonly nagPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.NagLoggerSuppressedErrorData.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleExplanation`<sup>Required</sup> <a name="ruleExplanation" id="cdk-nag.NagLoggerSuppressedErrorData.property.ruleExplanation"></a>
+
+```typescript
+public readonly ruleExplanation: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagLoggerSuppressedErrorData.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagLoggerSuppressedErrorData.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagLoggerSuppressedErrorData.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+##### `ruleOriginalName`<sup>Required</sup> <a name="ruleOriginalName" id="cdk-nag.NagLoggerSuppressedErrorData.property.ruleOriginalName"></a>
+
+```typescript
+public readonly ruleOriginalName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `errorMessage`<sup>Required</sup> <a name="errorMessage" id="cdk-nag.NagLoggerSuppressedErrorData.property.errorMessage"></a>
+
+```typescript
+public readonly errorMessage: string;
+```
+
+- *Type:* string
+
+---
+
+##### `errorSuppressionReason`<sup>Required</sup> <a name="errorSuppressionReason" id="cdk-nag.NagLoggerSuppressedErrorData.property.errorSuppressionReason"></a>
+
+```typescript
+public readonly errorSuppressionReason: string;
+```
+
+- *Type:* string
+
+---
+
+### NagPackProps <a name="NagPackProps" id="cdk-nag.NagPackProps"></a>
+
+Interface for creating a NagPack.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagPackProps.Initializer"></a>
+
+```typescript
+import { NagPackProps } from 'cdk-nag'
+
+const nagPackProps: NagPackProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagPackProps.property.additionalLoggers">additionalLoggers</a></code> | <code><a href="#cdk-nag.INagLogger">INagLogger</a>[]</code> | Additional NagLoggers for logging rule validation outputs. |
+| <code><a href="#cdk-nag.NagPackProps.property.logIgnores">logIgnores</a></code> | <code>boolean</code> | Whether or not to log suppressed rule violations as informational messages (default: false). |
+| <code><a href="#cdk-nag.NagPackProps.property.reportFormats">reportFormats</a></code> | <code><a href="#cdk-nag.NagReportFormat">NagReportFormat</a>[]</code> | If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). |
+| <code><a href="#cdk-nag.NagPackProps.property.reports">reports</a></code> | <code>boolean</code> | Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). |
+| <code><a href="#cdk-nag.NagPackProps.property.suppressionIgnoreCondition">suppressionIgnoreCondition</a></code> | <code><a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a></code> | Conditionally prevent rules from being suppressed (default: no user provided condition). |
+| <code><a href="#cdk-nag.NagPackProps.property.verbose">verbose</a></code> | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). |
+
+---
+
+##### `additionalLoggers`<sup>Optional</sup> <a name="additionalLoggers" id="cdk-nag.NagPackProps.property.additionalLoggers"></a>
+
+```typescript
+public readonly additionalLoggers: INagLogger[];
+```
+
+- *Type:* <a href="#cdk-nag.INagLogger">INagLogger</a>[]
+
+Additional NagLoggers for logging rule validation outputs.
+
+---
+
+##### `logIgnores`<sup>Optional</sup> <a name="logIgnores" id="cdk-nag.NagPackProps.property.logIgnores"></a>
+
+```typescript
+public readonly logIgnores: boolean;
+```
+
+- *Type:* boolean
+
+Whether or not to log suppressed rule violations as informational messages (default: false).
+
+---
+
+##### `reportFormats`<sup>Optional</sup> <a name="reportFormats" id="cdk-nag.NagPackProps.property.reportFormats"></a>
+
+```typescript
+public readonly reportFormats: NagReportFormat[];
+```
+
+- *Type:* <a href="#cdk-nag.NagReportFormat">NagReportFormat</a>[]
+
+If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).
+
+---
+
+##### `reports`<sup>Optional</sup> <a name="reports" id="cdk-nag.NagPackProps.property.reports"></a>
+
+```typescript
+public readonly reports: boolean;
+```
+
+- *Type:* boolean
+
+Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).
+
+---
+
+##### `suppressionIgnoreCondition`<sup>Optional</sup> <a name="suppressionIgnoreCondition" id="cdk-nag.NagPackProps.property.suppressionIgnoreCondition"></a>
+
+```typescript
+public readonly suppressionIgnoreCondition: INagSuppressionIgnore;
+```
+
+- *Type:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
+
+Conditionally prevent rules from being suppressed (default: no user provided condition).
+
+---
+
+##### `verbose`<sup>Optional</sup> <a name="verbose" id="cdk-nag.NagPackProps.property.verbose"></a>
+
+```typescript
+public readonly verbose: boolean;
+```
+
+- *Type:* boolean
+
+Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).
+
+---
+
+### NagPackSuppression <a name="NagPackSuppression" id="cdk-nag.NagPackSuppression"></a>
+
+Interface for creating a rule suppression.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagPackSuppression.Initializer"></a>
+
+```typescript
+import { NagPackSuppression } from 'cdk-nag'
+
+const nagPackSuppression: NagPackSuppression = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagPackSuppression.property.id">id</a></code> | <code>string</code> | The id of the rule to ignore. |
+| <code><a href="#cdk-nag.NagPackSuppression.property.reason">reason</a></code> | <code>string</code> | The reason to ignore the rule (minimum 10 characters). |
+| <code><a href="#cdk-nag.NagPackSuppression.property.appliesTo">appliesTo</a></code> | <code>string \| <a href="#cdk-nag.RegexAppliesTo">RegexAppliesTo</a>[]</code> | Rule specific granular suppressions. |
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="cdk-nag.NagPackSuppression.property.id"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* string
+
+The id of the rule to ignore.
+
+---
+
+##### `reason`<sup>Required</sup> <a name="reason" id="cdk-nag.NagPackSuppression.property.reason"></a>
+
+```typescript
+public readonly reason: string;
+```
+
+- *Type:* string
+
+The reason to ignore the rule (minimum 10 characters).
+
+---
+
+##### `appliesTo`<sup>Optional</sup> <a name="appliesTo" id="cdk-nag.NagPackSuppression.property.appliesTo"></a>
+
+```typescript
+public readonly appliesTo: string | RegexAppliesTo[];
+```
+
+- *Type:* string | <a href="#cdk-nag.RegexAppliesTo">RegexAppliesTo</a>[]
+
+Rule specific granular suppressions.
+
+---
+
+### NagReportLine <a name="NagReportLine" id="cdk-nag.NagReportLine"></a>
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagReportLine.Initializer"></a>
+
+```typescript
+import { NagReportLine } from 'cdk-nag'
+
+const nagReportLine: NagReportLine = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagReportLine.property.compliance">compliance</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportLine.property.exceptionReason">exceptionReason</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportLine.property.resourceId">resourceId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportLine.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportLine.property.ruleInfo">ruleInfo</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportLine.property.ruleLevel">ruleLevel</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `compliance`<sup>Required</sup> <a name="compliance" id="cdk-nag.NagReportLine.property.compliance"></a>
+
+```typescript
+public readonly compliance: string;
+```
+
+- *Type:* string
+
+---
+
+##### `exceptionReason`<sup>Required</sup> <a name="exceptionReason" id="cdk-nag.NagReportLine.property.exceptionReason"></a>
+
+```typescript
+public readonly exceptionReason: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resourceId`<sup>Required</sup> <a name="resourceId" id="cdk-nag.NagReportLine.property.resourceId"></a>
+
+```typescript
+public readonly resourceId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.NagReportLine.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleInfo`<sup>Required</sup> <a name="ruleInfo" id="cdk-nag.NagReportLine.property.ruleInfo"></a>
+
+```typescript
+public readonly ruleInfo: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.NagReportLine.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: string;
+```
+
+- *Type:* string
+
+---
+
+### NagReportLoggerProps <a name="NagReportLoggerProps" id="cdk-nag.NagReportLoggerProps"></a>
+
+Props for the NagReportLogger.
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagReportLoggerProps.Initializer"></a>
+
+```typescript
+import { NagReportLoggerProps } from 'cdk-nag'
+
+const nagReportLoggerProps: NagReportLoggerProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagReportLoggerProps.property.formats">formats</a></code> | <code><a href="#cdk-nag.NagReportFormat">NagReportFormat</a>[]</code> | *No description.* |
+
+---
+
+##### `formats`<sup>Required</sup> <a name="formats" id="cdk-nag.NagReportLoggerProps.property.formats"></a>
+
+```typescript
+public readonly formats: NagReportFormat[];
+```
+
+- *Type:* <a href="#cdk-nag.NagReportFormat">NagReportFormat</a>[]
+
+---
+
+### NagReportSchema <a name="NagReportSchema" id="cdk-nag.NagReportSchema"></a>
+
+#### Initializer <a name="Initializer" id="cdk-nag.NagReportSchema.Initializer"></a>
+
+```typescript
+import { NagReportSchema } from 'cdk-nag'
+
+const nagReportSchema: NagReportSchema = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagReportSchema.property.lines">lines</a></code> | <code><a href="#cdk-nag.NagReportLine">NagReportLine</a>[]</code> | *No description.* |
+
+---
+
+##### `lines`<sup>Required</sup> <a name="lines" id="cdk-nag.NagReportSchema.property.lines"></a>
+
+```typescript
+public readonly lines: NagReportLine[];
+```
+
+- *Type:* <a href="#cdk-nag.NagReportLine">NagReportLine</a>[]
+
+---
+
+### RegexAppliesTo <a name="RegexAppliesTo" id="cdk-nag.RegexAppliesTo"></a>
+
+A regular expression to apply to matching findings.
+
+#### Initializer <a name="Initializer" id="cdk-nag.RegexAppliesTo.Initializer"></a>
+
+```typescript
+import { RegexAppliesTo } from 'cdk-nag'
+
+const regexAppliesTo: RegexAppliesTo = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.RegexAppliesTo.property.regex">regex</a></code> | <code>string</code> | An ECMA-262 regex string. |
+
+---
+
+##### `regex`<sup>Required</sup> <a name="regex" id="cdk-nag.RegexAppliesTo.property.regex"></a>
+
+```typescript
+public readonly regex: string;
+```
+
+- *Type:* string
+
+An ECMA-262 regex string.
+
+---
+
+### SuppressionIgnoreInput <a name="SuppressionIgnoreInput" id="cdk-nag.SuppressionIgnoreInput"></a>
+
+Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
+
+#### Initializer <a name="Initializer" id="cdk-nag.SuppressionIgnoreInput.Initializer"></a>
+
+```typescript
+import { SuppressionIgnoreInput } from 'cdk-nag'
+
+const suppressionIgnoreInput: SuppressionIgnoreInput = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreInput.property.findingId">findingId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.SuppressionIgnoreInput.property.reason">reason</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.SuppressionIgnoreInput.property.resource">resource</a></code> | <code>aws-cdk-lib.CfnResource</code> | *No description.* |
+| <code><a href="#cdk-nag.SuppressionIgnoreInput.property.ruleId">ruleId</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.SuppressionIgnoreInput.property.ruleLevel">ruleLevel</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | *No description.* |
+
+---
+
+##### `findingId`<sup>Required</sup> <a name="findingId" id="cdk-nag.SuppressionIgnoreInput.property.findingId"></a>
+
+```typescript
+public readonly findingId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `reason`<sup>Required</sup> <a name="reason" id="cdk-nag.SuppressionIgnoreInput.property.reason"></a>
+
+```typescript
+public readonly reason: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resource`<sup>Required</sup> <a name="resource" id="cdk-nag.SuppressionIgnoreInput.property.resource"></a>
+
+```typescript
+public readonly resource: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+---
+
+##### `ruleId`<sup>Required</sup> <a name="ruleId" id="cdk-nag.SuppressionIgnoreInput.property.ruleId"></a>
+
+```typescript
+public readonly ruleId: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleLevel`<sup>Required</sup> <a name="ruleLevel" id="cdk-nag.SuppressionIgnoreInput.property.ruleLevel"></a>
+
+```typescript
+public readonly ruleLevel: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+---
+
+## Classes <a name="Classes" id="Classes"></a>
+
+### AnnotationLogger <a name="AnnotationLogger" id="cdk-nag.AnnotationLogger"></a>
+
+- *Implements:* <a href="#cdk-nag.INagLogger">INagLogger</a>
 
 A NagLogger that outputs to the CDK Annotations system.
 
-__Implements__: [INagLogger](#cdk-nag-inaglogger)
+#### Initializers <a name="Initializers" id="cdk-nag.AnnotationLogger.Initializer"></a>
 
-### Initializer
+```typescript
+import { AnnotationLogger } from 'cdk-nag'
 
-
-
-
-```ts
 new AnnotationLogger(props?: AnnotationLoggerProps)
 ```
 
-* **props** (<code>[AnnotationLoggerProps](#cdk-nag-annotationloggerprops)</code>)  *No description*
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages. __*Optional*__
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AnnotationLogger.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.AnnotationLoggerProps">AnnotationLoggerProps</a></code> | *No description.* |
 
+---
 
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.AnnotationLogger.Initializer.parameter.props"></a>
 
-### Properties
+- *Type:* <a href="#cdk-nag.AnnotationLoggerProps">AnnotationLoggerProps</a>
 
+---
 
-Name | Type | Description 
------|------|-------------
-**logIgnores** | <code>boolean</code> | <span></span>
-**suppressionId** | <code>string</code> | <span></span>
-**verbose** | <code>boolean</code> | <span></span>
+#### Methods <a name="Methods" id="Methods"></a>
 
-### Methods
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.AnnotationLogger.onCompliance">onCompliance</a></code> | Called when a CfnResource passes the compliance check for a given rule. |
+| <code><a href="#cdk-nag.AnnotationLogger.onError">onError</a></code> | Called when a rule throws an error during while validating a CfnResource for compliance. |
+| <code><a href="#cdk-nag.AnnotationLogger.onNonCompliance">onNonCompliance</a></code> | Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user. |
+| <code><a href="#cdk-nag.AnnotationLogger.onNotApplicable">onNotApplicable</a></code> | Called when a rule does not apply to the given CfnResource. |
+| <code><a href="#cdk-nag.AnnotationLogger.onSuppressed">onSuppressed</a></code> | Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user. |
+| <code><a href="#cdk-nag.AnnotationLogger.onSuppressedError">onSuppressedError</a></code> | Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed. |
 
+---
 
-#### onCompliance(_data) <a id="cdk-nag-annotationlogger-oncompliance"></a>
+##### `onCompliance` <a name="onCompliance" id="cdk-nag.AnnotationLogger.onCompliance"></a>
+
+```typescript
+public onCompliance(_data: NagLoggerComplianceData): void
+```
 
 Called when a CfnResource passes the compliance check for a given rule.
 
-```ts
-onCompliance(_data: NagLoggerComplianceData): void
+###### `_data`<sup>Required</sup> <a name="_data" id="cdk-nag.AnnotationLogger.onCompliance.parameter._data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerComplianceData">NagLoggerComplianceData</a>
+
+---
+
+##### `onError` <a name="onError" id="cdk-nag.AnnotationLogger.onError"></a>
+
+```typescript
+public onError(data: NagLoggerErrorData): void
 ```
-
-* **_data** (<code>[NagLoggerComplianceData](#cdk-nag-nagloggercompliancedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### onError(data) <a id="cdk-nag-annotationlogger-onerror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance.
 
-```ts
-onError(data: NagLoggerErrorData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.AnnotationLogger.onError.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerErrorData">NagLoggerErrorData</a>
+
+---
+
+##### `onNonCompliance` <a name="onNonCompliance" id="cdk-nag.AnnotationLogger.onNonCompliance"></a>
+
+```typescript
+public onNonCompliance(data: NagLoggerNonComplianceData): void
 ```
-
-* **data** (<code>[NagLoggerErrorData](#cdk-nag-nagloggererrordata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **errorMessage** (<code>string</code>)  *No description* 
-
-
-
-
-#### onNonCompliance(data) <a id="cdk-nag-annotationlogger-onnoncompliance"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
 
-```ts
-onNonCompliance(data: NagLoggerNonComplianceData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.AnnotationLogger.onNonCompliance.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerNonComplianceData">NagLoggerNonComplianceData</a>
+
+---
+
+##### `onNotApplicable` <a name="onNotApplicable" id="cdk-nag.AnnotationLogger.onNotApplicable"></a>
+
+```typescript
+public onNotApplicable(_data: NagLoggerNotApplicableData): void
 ```
-
-* **data** (<code>[NagLoggerNonComplianceData](#cdk-nag-nagloggernoncompliancedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **findingId** (<code>string</code>)  *No description* 
-
-
-
-
-#### onNotApplicable(_data) <a id="cdk-nag-annotationlogger-onnotapplicable"></a>
 
 Called when a rule does not apply to the given CfnResource.
 
-```ts
-onNotApplicable(_data: NagLoggerNotApplicableData): void
+###### `_data`<sup>Required</sup> <a name="_data" id="cdk-nag.AnnotationLogger.onNotApplicable.parameter._data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerNotApplicableData">NagLoggerNotApplicableData</a>
+
+---
+
+##### `onSuppressed` <a name="onSuppressed" id="cdk-nag.AnnotationLogger.onSuppressed"></a>
+
+```typescript
+public onSuppressed(data: NagLoggerSuppressedData): void
 ```
-
-* **_data** (<code>[NagLoggerNotApplicableData](#cdk-nag-nagloggernotapplicabledata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### onSuppressed(data) <a id="cdk-nag-annotationlogger-onsuppressed"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user.
 
-```ts
-onSuppressed(data: NagLoggerSuppressedData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.AnnotationLogger.onSuppressed.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerSuppressedData">NagLoggerSuppressedData</a>
+
+---
+
+##### `onSuppressedError` <a name="onSuppressedError" id="cdk-nag.AnnotationLogger.onSuppressedError"></a>
+
+```typescript
+public onSuppressedError(data: NagLoggerSuppressedErrorData): void
 ```
-
-* **data** (<code>[NagLoggerSuppressedData](#cdk-nag-nagloggersuppresseddata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **findingId** (<code>string</code>)  *No description* 
-  * **suppressionReason** (<code>string</code>)  *No description* 
-
-
-
-
-#### onSuppressedError(data) <a id="cdk-nag-annotationlogger-onsuppressederror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
 
-```ts
-onSuppressedError(data: NagLoggerSuppressedErrorData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.AnnotationLogger.onSuppressedError.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerSuppressedErrorData">NagLoggerSuppressedErrorData</a>
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AnnotationLogger.property.logIgnores">logIgnores</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#cdk-nag.AnnotationLogger.property.verbose">verbose</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#cdk-nag.AnnotationLogger.property.suppressionId">suppressionId</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `logIgnores`<sup>Required</sup> <a name="logIgnores" id="cdk-nag.AnnotationLogger.property.logIgnores"></a>
+
+```typescript
+public readonly logIgnores: boolean;
 ```
 
-* **data** (<code>[NagLoggerSuppressedErrorData](#cdk-nag-nagloggersuppressederrordata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **errorMessage** (<code>string</code>)  *No description* 
-  * **errorSuppressionReason** (<code>string</code>)  *No description* 
+- *Type:* boolean
 
+---
 
+##### `verbose`<sup>Required</sup> <a name="verbose" id="cdk-nag.AnnotationLogger.property.verbose"></a>
 
-
-#### protected createMessage(ruleId, findingId, ruleInfo, ruleExplanation, verbose) <a id="cdk-nag-annotationlogger-createmessage"></a>
-
-
-
-```ts
-protected createMessage(ruleId: string, findingId: string, ruleInfo: string, ruleExplanation: string, verbose: boolean): string
+```typescript
+public readonly verbose: boolean;
 ```
 
-* **ruleId** (<code>string</code>)  *No description*
-* **findingId** (<code>string</code>)  *No description*
-* **ruleInfo** (<code>string</code>)  *No description*
-* **ruleExplanation** (<code>string</code>)  *No description*
-* **verbose** (<code>boolean</code>)  *No description*
+- *Type:* boolean
 
-__Returns__:
-* <code>string</code>
+---
+
+##### `suppressionId`<sup>Required</sup> <a name="suppressionId" id="cdk-nag.AnnotationLogger.property.suppressionId"></a>
+
+```typescript
+public readonly suppressionId: string;
+```
+
+- *Type:* string
+
+---
 
 
-
-## class AwsSolutionsChecks  <a id="cdk-nag-awssolutionschecks"></a>
+### AwsSolutionsChecks <a name="AwsSolutionsChecks" id="cdk-nag.AwsSolutionsChecks"></a>
 
 Check Best practices based on AWS Solutions Security Matrix.
 
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Extends__: [NagPack](#cdk-nag-nagpack)
+#### Initializers <a name="Initializers" id="cdk-nag.AwsSolutionsChecks.Initializer"></a>
 
-### Initializer
+```typescript
+import { AwsSolutionsChecks } from 'cdk-nag'
 
-
-
-
-```ts
 new AwsSolutionsChecks(props?: NagPackProps)
 ```
 
-* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
-  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AwsSolutionsChecks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
 
+---
 
-### Methods
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.AwsSolutionsChecks.Initializer.parameter.props"></a>
 
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
 
-#### visit(node) <a id="cdk-nag-awssolutionschecks-visit"></a>
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.AwsSolutionsChecks.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="cdk-nag.AwsSolutionsChecks.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
 
 All aspects can visit an IConstruct.
 
-```ts
-visit(node: IConstruct): void
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.AwsSolutionsChecks.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AwsSolutionsChecks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.AwsSolutionsChecks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
 ```
 
-* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+- *Type:* string
+
+---
 
 
-
-
-
-
-## class HIPAASecurityChecks  <a id="cdk-nag-hipaasecuritychecks"></a>
+### HIPAASecurityChecks <a name="HIPAASecurityChecks" id="cdk-nag.HIPAASecurityChecks"></a>
 
 Check for HIPAA Security compliance.
 
 Based on the HIPAA Security AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-hipaa_security.html
 
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Extends__: [NagPack](#cdk-nag-nagpack)
+#### Initializers <a name="Initializers" id="cdk-nag.HIPAASecurityChecks.Initializer"></a>
 
-### Initializer
+```typescript
+import { HIPAASecurityChecks } from 'cdk-nag'
 
-
-
-
-```ts
 new HIPAASecurityChecks(props?: NagPackProps)
 ```
 
-* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
-  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.HIPAASecurityChecks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
 
+---
 
-### Methods
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.HIPAASecurityChecks.Initializer.parameter.props"></a>
 
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
 
-#### visit(node) <a id="cdk-nag-hipaasecuritychecks-visit"></a>
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.HIPAASecurityChecks.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="cdk-nag.HIPAASecurityChecks.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
 
 All aspects can visit an IConstruct.
 
-```ts
-visit(node: IConstruct): void
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.HIPAASecurityChecks.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.HIPAASecurityChecks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.HIPAASecurityChecks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
 ```
 
-* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+- *Type:* string
+
+---
 
 
+### NagPack <a name="NagPack" id="cdk-nag.NagPack"></a>
 
-
-
-
-## class NIST80053R4Checks  <a id="cdk-nag-nist80053r4checks"></a>
-
-Check for NIST 800-53 rev 4 compliance.
-
-Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
-
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Extends__: [NagPack](#cdk-nag-nagpack)
-
-### Initializer
-
-
-
-
-```ts
-new NIST80053R4Checks(props?: NagPackProps)
-```
-
-* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
-  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
-
-
-### Methods
-
-
-#### visit(node) <a id="cdk-nag-nist80053r4checks-visit"></a>
-
-All aspects can visit an IConstruct.
-
-```ts
-visit(node: IConstruct): void
-```
-
-* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
-
-
-
-
-
-
-## class NIST80053R5Checks  <a id="cdk-nag-nist80053r5checks"></a>
-
-Check for NIST 800-53 rev 5 compliance.
-
-Based on the NIST 800-53 rev 5 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_5.html
-
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Extends__: [NagPack](#cdk-nag-nagpack)
-
-### Initializer
-
-
-
-
-```ts
-new NIST80053R5Checks(props?: NagPackProps)
-```
-
-* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
-  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
-
-
-### Methods
-
-
-#### visit(node) <a id="cdk-nag-nist80053r5checks-visit"></a>
-
-All aspects can visit an IConstruct.
-
-```ts
-visit(node: IConstruct): void
-```
-
-* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
-
-
-
-
-
-
-## class NagPack  <a id="cdk-nag-nagpack"></a>
+- *Implements:* aws-cdk-lib.IAspect
 
 Base class for all rule packs.
 
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Implemented by__: [AwsSolutionsChecks](#cdk-nag-awssolutionschecks), [HIPAASecurityChecks](#cdk-nag-hipaasecuritychecks), [NIST80053R4Checks](#cdk-nag-nist80053r4checks), [NIST80053R5Checks](#cdk-nag-nist80053r5checks), [PCIDSS321Checks](#cdk-nag-pcidss321checks)
+#### Initializers <a name="Initializers" id="cdk-nag.NagPack.Initializer"></a>
 
-### Initializer
+```typescript
+import { NagPack } from 'cdk-nag'
 
-
-
-
-```ts
 new NagPack(props?: NagPackProps)
 ```
 
-* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
-  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagPack.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
 
+---
 
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.NagPack.Initializer.parameter.props"></a>
 
-### Properties
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
 
+---
 
-Name | Type | Description 
------|------|-------------
-**loggers** | <code>Array<[INagLogger](#cdk-nag-inaglogger)></code> | <span></span>
-**packName** | <code>string</code> | <span></span>
-**readPackName** | <code>string</code> | <span></span>
-**packGlobalSuppressionIgnore**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | __*Optional*__
-**userGlobalSuppressionIgnore**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | __*Optional*__
+#### Methods <a name="Methods" id="Methods"></a>
 
-### Methods
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagPack.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
+---
 
-#### visit(node) <a id="cdk-nag-nagpack-visit"></a>
+##### `visit` <a name="visit" id="cdk-nag.NagPack.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
 
 All aspects can visit an IConstruct.
 
-```ts
-visit(node: IConstruct): void
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NagPack.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagPack.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.NagPack.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
 ```
 
-* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+- *Type:* string
+
+---
 
 
+### NagReportLogger <a name="NagReportLogger" id="cdk-nag.NagReportLogger"></a>
 
-
-#### protected applyRule(params) <a id="cdk-nag-nagpack-applyrule"></a>
-
-Create a rule to be used in the NagPack.
-
-```ts
-protected applyRule(params: IApplyRule): void
-```
-
-* **params** (<code>[IApplyRule](#cdk-nag-iapplyrule)</code>)  The.
-
-
-
-
-#### protected ignoreRule(suppressions, ruleId, findingId, resource, level, ignoreSuppressionCondition?) <a id="cdk-nag-nagpack-ignorerule"></a>
-
-Check whether a specific rule should be ignored.
-
-```ts
-protected ignoreRule(suppressions: Array<NagPackSuppression>, ruleId: string, findingId: string, resource: CfnResource, level: NagMessageLevel, ignoreSuppressionCondition?: INagSuppressionIgnore): string
-```
-
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  The suppressions listed in the cdk-nag metadata.
-* **ruleId** (<code>string</code>)  The id of the rule to ignore.
-* **findingId** (<code>string</code>)  The id of the finding that is being checked.
-* **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The resource being evaluated.
-* **level** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description*
-* **ignoreSuppressionCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
-
-__Returns__:
-* <code>string</code>
-
-
-
-## class NagReportLogger  <a id="cdk-nag-nagreportlogger"></a>
+- *Implements:* <a href="#cdk-nag.INagLogger">INagLogger</a>
 
 A NagLogger that creates compliance reports.
 
-__Implements__: [INagLogger](#cdk-nag-inaglogger)
+#### Initializers <a name="Initializers" id="cdk-nag.NagReportLogger.Initializer"></a>
 
-### Initializer
+```typescript
+import { NagReportLogger } from 'cdk-nag'
 
-
-
-
-```ts
 new NagReportLogger(props: NagReportLoggerProps)
 ```
 
-* **props** (<code>[NagReportLoggerProps](#cdk-nag-nagreportloggerprops)</code>)  *No description*
-  * **formats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  *No description* 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagReportLogger.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagReportLoggerProps">NagReportLoggerProps</a></code> | *No description.* |
 
+---
 
+##### `props`<sup>Required</sup> <a name="props" id="cdk-nag.NagReportLogger.Initializer.parameter.props"></a>
 
-### Properties
+- *Type:* <a href="#cdk-nag.NagReportLoggerProps">NagReportLoggerProps</a>
 
+---
 
-Name | Type | Description 
------|------|-------------
-**formats** | <code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code> | <span></span>
+#### Methods <a name="Methods" id="Methods"></a>
 
-### Methods
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagReportLogger.getFormatStacks">getFormatStacks</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportLogger.onCompliance">onCompliance</a></code> | Called when a CfnResource passes the compliance check for a given rule. |
+| <code><a href="#cdk-nag.NagReportLogger.onError">onError</a></code> | Called when a rule throws an error during while validating a CfnResource for compliance. |
+| <code><a href="#cdk-nag.NagReportLogger.onNonCompliance">onNonCompliance</a></code> | Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user. |
+| <code><a href="#cdk-nag.NagReportLogger.onNotApplicable">onNotApplicable</a></code> | Called when a rule does not apply to the given CfnResource. |
+| <code><a href="#cdk-nag.NagReportLogger.onSuppressed">onSuppressed</a></code> | Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user. |
+| <code><a href="#cdk-nag.NagReportLogger.onSuppressedError">onSuppressedError</a></code> | Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed. |
 
+---
 
-#### getFormatStacks(format) <a id="cdk-nag-nagreportlogger-getformatstacks"></a>
+##### `getFormatStacks` <a name="getFormatStacks" id="cdk-nag.NagReportLogger.getFormatStacks"></a>
 
-
-
-```ts
-getFormatStacks(format: NagReportFormat): Array<string>
+```typescript
+public getFormatStacks(format: NagReportFormat): string[]
 ```
 
-* **format** (<code>[NagReportFormat](#cdk-nag-nagreportformat)</code>)  *No description*
+###### `format`<sup>Required</sup> <a name="format" id="cdk-nag.NagReportLogger.getFormatStacks.parameter.format"></a>
 
-__Returns__:
-* <code>Array<string></code>
+- *Type:* <a href="#cdk-nag.NagReportFormat">NagReportFormat</a>
 
-#### onCompliance(data) <a id="cdk-nag-nagreportlogger-oncompliance"></a>
+---
+
+##### `onCompliance` <a name="onCompliance" id="cdk-nag.NagReportLogger.onCompliance"></a>
+
+```typescript
+public onCompliance(data: NagLoggerComplianceData): void
+```
 
 Called when a CfnResource passes the compliance check for a given rule.
 
-```ts
-onCompliance(data: NagLoggerComplianceData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.NagReportLogger.onCompliance.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerComplianceData">NagLoggerComplianceData</a>
+
+---
+
+##### `onError` <a name="onError" id="cdk-nag.NagReportLogger.onError"></a>
+
+```typescript
+public onError(data: NagLoggerErrorData): void
 ```
-
-* **data** (<code>[NagLoggerComplianceData](#cdk-nag-nagloggercompliancedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### onError(data) <a id="cdk-nag-nagreportlogger-onerror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance.
 
-```ts
-onError(data: NagLoggerErrorData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.NagReportLogger.onError.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerErrorData">NagLoggerErrorData</a>
+
+---
+
+##### `onNonCompliance` <a name="onNonCompliance" id="cdk-nag.NagReportLogger.onNonCompliance"></a>
+
+```typescript
+public onNonCompliance(data: NagLoggerNonComplianceData): void
 ```
-
-* **data** (<code>[NagLoggerErrorData](#cdk-nag-nagloggererrordata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **errorMessage** (<code>string</code>)  *No description* 
-
-
-
-
-#### onNonCompliance(data) <a id="cdk-nag-nagreportlogger-onnoncompliance"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
 
-```ts
-onNonCompliance(data: NagLoggerNonComplianceData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.NagReportLogger.onNonCompliance.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerNonComplianceData">NagLoggerNonComplianceData</a>
+
+---
+
+##### `onNotApplicable` <a name="onNotApplicable" id="cdk-nag.NagReportLogger.onNotApplicable"></a>
+
+```typescript
+public onNotApplicable(data: NagLoggerNotApplicableData): void
 ```
-
-* **data** (<code>[NagLoggerNonComplianceData](#cdk-nag-nagloggernoncompliancedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **findingId** (<code>string</code>)  *No description* 
-
-
-
-
-#### onNotApplicable(data) <a id="cdk-nag-nagreportlogger-onnotapplicable"></a>
 
 Called when a rule does not apply to the given CfnResource.
 
-```ts
-onNotApplicable(data: NagLoggerNotApplicableData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.NagReportLogger.onNotApplicable.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerNotApplicableData">NagLoggerNotApplicableData</a>
+
+---
+
+##### `onSuppressed` <a name="onSuppressed" id="cdk-nag.NagReportLogger.onSuppressed"></a>
+
+```typescript
+public onSuppressed(data: NagLoggerSuppressedData): void
 ```
-
-* **data** (<code>[NagLoggerNotApplicableData](#cdk-nag-nagloggernotapplicabledata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### onSuppressed(data) <a id="cdk-nag-nagreportlogger-onsuppressed"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user.
 
-```ts
-onSuppressed(data: NagLoggerSuppressedData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.NagReportLogger.onSuppressed.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerSuppressedData">NagLoggerSuppressedData</a>
+
+---
+
+##### `onSuppressedError` <a name="onSuppressedError" id="cdk-nag.NagReportLogger.onSuppressedError"></a>
+
+```typescript
+public onSuppressedError(data: NagLoggerSuppressedErrorData): void
 ```
-
-* **data** (<code>[NagLoggerSuppressedData](#cdk-nag-nagloggersuppresseddata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **findingId** (<code>string</code>)  *No description* 
-  * **suppressionReason** (<code>string</code>)  *No description* 
-
-
-
-
-#### onSuppressedError(data) <a id="cdk-nag-nagreportlogger-onsuppressederror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
 
-```ts
-onSuppressedError(data: NagLoggerSuppressedErrorData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.NagReportLogger.onSuppressedError.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerSuppressedErrorData">NagLoggerSuppressedErrorData</a>
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NagReportLogger.property.formats">formats</a></code> | <code><a href="#cdk-nag.NagReportFormat">NagReportFormat</a>[]</code> | *No description.* |
+
+---
+
+##### `formats`<sup>Required</sup> <a name="formats" id="cdk-nag.NagReportLogger.property.formats"></a>
+
+```typescript
+public readonly formats: NagReportFormat[];
 ```
 
-* **data** (<code>[NagLoggerSuppressedErrorData](#cdk-nag-nagloggersuppressederrordata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **errorMessage** (<code>string</code>)  *No description* 
-  * **errorSuppressionReason** (<code>string</code>)  *No description* 
+- *Type:* <a href="#cdk-nag.NagReportFormat">NagReportFormat</a>[]
+
+---
 
 
-
-
-#### protected initializeStackReport(data) <a id="cdk-nag-nagreportlogger-initializestackreport"></a>
-
-Initialize the report for the rule pack's compliance report for the resource's Stack if it doesn't exist.
-
-```ts
-protected initializeStackReport(data: NagLoggerBaseData): void
-```
-
-* **data** (<code>[NagLoggerBaseData](#cdk-nag-nagloggerbasedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### protected writeToStackComplianceReport(data, compliance) <a id="cdk-nag-nagreportlogger-writetostackcompliancereport"></a>
-
-
-
-```ts
-protected writeToStackComplianceReport(data: NagLoggerBaseData, compliance: NagRuleCompliance &#124; NagRulePostValidationStates): void
-```
-
-* **data** (<code>[NagLoggerBaseData](#cdk-nag-nagloggerbasedata)</code>)  *No description*
-* **compliance** (<code>[NagRuleCompliance](#cdk-nag-nagrulecompliance) &#124; [NagRulePostValidationStates](#cdk-nag-nagrulepostvalidationstates)</code>)  *No description*
-
-
-
-
-
-
-## class NagRules  <a id="cdk-nag-nagrules"></a>
+### NagRules <a name="NagRules" id="cdk-nag.NagRules"></a>
 
 Helper class with methods for rule creation.
 
+#### Initializers <a name="Initializers" id="cdk-nag.NagRules.Initializer"></a>
 
-### Initializer
+```typescript
+import { NagRules } from 'cdk-nag'
 
-
-
-
-```ts
 new NagRules()
 ```
 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
 
 
-### Methods
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagRules.resolveIfPrimitive">resolveIfPrimitive</a></code> | Use in cases where a primitive value must be known to pass a rule. |
+| <code><a href="#cdk-nag.NagRules.resolveResourceFromInstrinsic">resolveResourceFromInstrinsic</a></code> | Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule. |
 
-#### *static* resolveIfPrimitive(node, parameter) <a id="cdk-nag-nagrules-resolveifprimitive"></a>
+---
+
+##### `resolveIfPrimitive` <a name="resolveIfPrimitive" id="cdk-nag.NagRules.resolveIfPrimitive"></a>
+
+```typescript
+import { NagRules } from 'cdk-nag'
+
+NagRules.resolveIfPrimitive(node: CfnResource, parameter: any)
+```
 
 Use in cases where a primitive value must be known to pass a rule.
 
 https://developer.mozilla.org/en-US/docs/Glossary/Primitive
 
-```ts
-static resolveIfPrimitive(node: CfnResource, parameter: any): any
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NagRules.resolveIfPrimitive.parameter.node"></a>
+
+- *Type:* aws-cdk-lib.CfnResource
+
+The CfnResource to check.
+
+---
+
+###### `parameter`<sup>Required</sup> <a name="parameter" id="cdk-nag.NagRules.resolveIfPrimitive.parameter.parameter"></a>
+
+- *Type:* any
+
+The value to attempt to resolve.
+
+---
+
+##### `resolveResourceFromInstrinsic` <a name="resolveResourceFromInstrinsic" id="cdk-nag.NagRules.resolveResourceFromInstrinsic"></a>
+
+```typescript
+import { NagRules } from 'cdk-nag'
+
+NagRules.resolveResourceFromInstrinsic(node: CfnResource, parameter: any)
 ```
-
-* **node** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The CfnResource to check.
-* **parameter** (<code>any</code>)  The value to attempt to resolve.
-
-__Returns__:
-* <code>any</code>
-
-#### *static* resolveResourceFromInstrinsic(node, parameter) <a id="cdk-nag-nagrules-resolveresourcefrominstrinsic"></a>
 
 Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
 
-```ts
-static resolveResourceFromInstrinsic(node: CfnResource, parameter: any): any
-```
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NagRules.resolveResourceFromInstrinsic.parameter.node"></a>
 
-* **node** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The CfnResource to check.
-* **parameter** (<code>any</code>)  The value to attempt to resolve.
+- *Type:* aws-cdk-lib.CfnResource
 
-__Returns__:
-* <code>any</code>
+The CfnResource to check.
+
+---
+
+###### `parameter`<sup>Required</sup> <a name="parameter" id="cdk-nag.NagRules.resolveResourceFromInstrinsic.parameter.parameter"></a>
+
+- *Type:* any
+
+The value to attempt to resolve.
+
+---
 
 
 
-## class NagSuppressions  <a id="cdk-nag-nagsuppressions"></a>
+### NagSuppressions <a name="NagSuppressions" id="cdk-nag.NagSuppressions"></a>
 
 Helper class with methods to add cdk-nag suppressions to cdk resources.
 
+#### Initializers <a name="Initializers" id="cdk-nag.NagSuppressions.Initializer"></a>
 
-### Initializer
+```typescript
+import { NagSuppressions } from 'cdk-nag'
 
-
-
-
-```ts
 new NagSuppressions()
 ```
 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
 
 
-### Methods
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagSuppressions.addResourceSuppressions">addResourceSuppressions</a></code> | Add cdk-nag suppressions to a CfnResource and optionally its children. |
+| <code><a href="#cdk-nag.NagSuppressions.addResourceSuppressionsByPath">addResourceSuppressionsByPath</a></code> | Add cdk-nag suppressions to a CfnResource and optionally its children via its path. |
+| <code><a href="#cdk-nag.NagSuppressions.addStackSuppressions">addStackSuppressions</a></code> | Apply cdk-nag suppressions to a Stack and optionally nested stacks. |
 
-#### *static* addResourceSuppressions(construct, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressions"></a>
+---
+
+##### `addResourceSuppressions` <a name="addResourceSuppressions" id="cdk-nag.NagSuppressions.addResourceSuppressions"></a>
+
+```typescript
+import { NagSuppressions } from 'cdk-nag'
+
+NagSuppressions.addResourceSuppressions(construct: IConstruct | IConstruct[], suppressions: NagPackSuppression[], applyToChildren?: boolean)
+```
 
 Add cdk-nag suppressions to a CfnResource and optionally its children.
 
-```ts
-static addResourceSuppressions(construct: IConstruct &#124; Array<IConstruct>, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
+###### `construct`<sup>Required</sup> <a name="construct" id="cdk-nag.NagSuppressions.addResourceSuppressions.parameter.construct"></a>
+
+- *Type:* constructs.IConstruct | constructs.IConstruct[]
+
+The IConstruct(s) to apply the suppression to.
+
+---
+
+###### `suppressions`<sup>Required</sup> <a name="suppressions" id="cdk-nag.NagSuppressions.addResourceSuppressions.parameter.suppressions"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackSuppression">NagPackSuppression</a>[]
+
+A list of suppressions to apply to the resource.
+
+---
+
+###### `applyToChildren`<sup>Optional</sup> <a name="applyToChildren" id="cdk-nag.NagSuppressions.addResourceSuppressions.parameter.applyToChildren"></a>
+
+- *Type:* boolean
+
+Apply the suppressions to children CfnResources  (default:false).
+
+---
+
+##### `addResourceSuppressionsByPath` <a name="addResourceSuppressionsByPath" id="cdk-nag.NagSuppressions.addResourceSuppressionsByPath"></a>
+
+```typescript
+import { NagSuppressions } from 'cdk-nag'
+
+NagSuppressions.addResourceSuppressionsByPath(stack: Stack, path: string | string[], suppressions: NagPackSuppression[], applyToChildren?: boolean)
 ```
-
-* **construct** (<code>[IConstruct](#constructs-iconstruct) &#124; Array<[IConstruct](#constructs-iconstruct)></code>)  The IConstruct(s) to apply the suppression to.
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
-* **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
-
-
-
-
-#### *static* addResourceSuppressionsByPath(stack, path, suppressions, applyToChildren?) <a id="cdk-nag-nagsuppressions-addresourcesuppressionsbypath"></a>
 
 Add cdk-nag suppressions to a CfnResource and optionally its children via its path.
 
-```ts
-static addResourceSuppressionsByPath(stack: Stack, path: string &#124; Array<string>, suppressions: Array<NagPackSuppression>, applyToChildren?: boolean): void
+###### `stack`<sup>Required</sup> <a name="stack" id="cdk-nag.NagSuppressions.addResourceSuppressionsByPath.parameter.stack"></a>
+
+- *Type:* aws-cdk-lib.Stack
+
+The Stack the construct belongs to.
+
+---
+
+###### `path`<sup>Required</sup> <a name="path" id="cdk-nag.NagSuppressions.addResourceSuppressionsByPath.parameter.path"></a>
+
+- *Type:* string | string[]
+
+The path(s) to the construct in the provided stack.
+
+---
+
+###### `suppressions`<sup>Required</sup> <a name="suppressions" id="cdk-nag.NagSuppressions.addResourceSuppressionsByPath.parameter.suppressions"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackSuppression">NagPackSuppression</a>[]
+
+A list of suppressions to apply to the resource.
+
+---
+
+###### `applyToChildren`<sup>Optional</sup> <a name="applyToChildren" id="cdk-nag.NagSuppressions.addResourceSuppressionsByPath.parameter.applyToChildren"></a>
+
+- *Type:* boolean
+
+Apply the suppressions to children CfnResources  (default:false).
+
+---
+
+##### `addStackSuppressions` <a name="addStackSuppressions" id="cdk-nag.NagSuppressions.addStackSuppressions"></a>
+
+```typescript
+import { NagSuppressions } from 'cdk-nag'
+
+NagSuppressions.addStackSuppressions(stack: Stack, suppressions: NagPackSuppression[], applyToNestedStacks?: boolean)
 ```
-
-* **stack** (<code>[Stack](#aws-cdk-lib-stack)</code>)  The Stack the construct belongs to.
-* **path** (<code>string &#124; Array<string></code>)  The path(s) to the construct in the provided stack.
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the resource.
-* **applyToChildren** (<code>boolean</code>)  Apply the suppressions to children CfnResources  (default:false).
-
-
-
-
-#### *static* addStackSuppressions(stack, suppressions, applyToNestedStacks?) <a id="cdk-nag-nagsuppressions-addstacksuppressions"></a>
 
 Apply cdk-nag suppressions to a Stack and optionally nested stacks.
 
-```ts
-static addStackSuppressions(stack: Stack, suppressions: Array<NagPackSuppression>, applyToNestedStacks?: boolean): void
+###### `stack`<sup>Required</sup> <a name="stack" id="cdk-nag.NagSuppressions.addStackSuppressions.parameter.stack"></a>
+
+- *Type:* aws-cdk-lib.Stack
+
+The Stack to apply the suppression to.
+
+---
+
+###### `suppressions`<sup>Required</sup> <a name="suppressions" id="cdk-nag.NagSuppressions.addStackSuppressions.parameter.suppressions"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackSuppression">NagPackSuppression</a>[]
+
+A list of suppressions to apply to the stack.
+
+---
+
+###### `applyToNestedStacks`<sup>Optional</sup> <a name="applyToNestedStacks" id="cdk-nag.NagSuppressions.addStackSuppressions.parameter.applyToNestedStacks"></a>
+
+- *Type:* boolean
+
+Apply the suppressions to children stacks (default:false).
+
+---
+
+
+
+### NIST80053R4Checks <a name="NIST80053R4Checks" id="cdk-nag.NIST80053R4Checks"></a>
+
+Check for NIST 800-53 rev 4 compliance.
+
+Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
+
+#### Initializers <a name="Initializers" id="cdk-nag.NIST80053R4Checks.Initializer"></a>
+
+```typescript
+import { NIST80053R4Checks } from 'cdk-nag'
+
+new NIST80053R4Checks(props?: NagPackProps)
 ```
 
-* **stack** (<code>[Stack](#aws-cdk-lib-stack)</code>)  The Stack to apply the suppression to.
-* **suppressions** (<code>Array<[NagPackSuppression](#cdk-nag-nagpacksuppression)></code>)  A list of suppressions to apply to the stack.
-* **applyToNestedStacks** (<code>boolean</code>)  Apply the suppressions to children stacks (default:false).
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NIST80053R4Checks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
 
+---
 
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.NIST80053R4Checks.Initializer.parameter.props"></a>
 
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
 
+---
 
+#### Methods <a name="Methods" id="Methods"></a>
 
-## class PCIDSS321Checks  <a id="cdk-nag-pcidss321checks"></a>
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NIST80053R4Checks.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
-Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
+---
 
-__Implements__: [IAspect](#aws-cdk-lib-iaspect)
-__Extends__: [NagPack](#cdk-nag-nagpack)
+##### `visit` <a name="visit" id="cdk-nag.NIST80053R4Checks.visit"></a>
 
-### Initializer
-
-
-
-
-```ts
-new PCIDSS321Checks(props?: NagPackProps)
+```typescript
+public visit(node: IConstruct): void
 ```
-
-* **props** (<code>[NagPackProps](#cdk-nag-nagpackprops)</code>)  *No description*
-  * **additionalLoggers** (<code>Array<[INagLogger](#cdk-nag-inaglogger)></code>)  Additional NagLoggers for logging rule validation outputs. __*Optional*__
-  * **logIgnores** (<code>boolean</code>)  Whether or not to log suppressed rule violations as informational messages (default: false). __*Optional*__
-  * **reportFormats** (<code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code>)  If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV). __*Optional*__
-  * **reports** (<code>boolean</code>)  Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true). __*Optional*__
-  * **suppressionIgnoreCondition** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  Conditionally prevent rules from being suppressed (default: no user provided condition). __*Optional*__
-  * **verbose** (<code>boolean</code>)  Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false). __*Optional*__
-
-
-### Methods
-
-
-#### visit(node) <a id="cdk-nag-pcidss321checks-visit"></a>
 
 All aspects can visit an IConstruct.
 
-```ts
-visit(node: IConstruct): void
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NIST80053R4Checks.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NIST80053R4Checks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.NIST80053R4Checks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
 ```
 
-* **node** (<code>[IConstruct](#constructs-iconstruct)</code>)  *No description*
+- *Type:* string
+
+---
 
 
+### NIST80053R5Checks <a name="NIST80053R5Checks" id="cdk-nag.NIST80053R5Checks"></a>
+
+Check for NIST 800-53 rev 5 compliance.
+
+Based on the NIST 800-53 rev 5 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_5.html
+
+#### Initializers <a name="Initializers" id="cdk-nag.NIST80053R5Checks.Initializer"></a>
+
+```typescript
+import { NIST80053R5Checks } from 'cdk-nag'
+
+new NIST80053R5Checks(props?: NagPackProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NIST80053R5Checks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.NIST80053R5Checks.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NIST80053R5Checks.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="cdk-nag.NIST80053R5Checks.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NIST80053R5Checks.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
 
 
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.NIST80053R5Checks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.NIST80053R5Checks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
+```
+
+- *Type:* string
+
+---
 
 
-## class SuppressionIgnoreAlways  <a id="cdk-nag-suppressionignorealways"></a>
+### PCIDSS321Checks <a name="PCIDSS321Checks" id="cdk-nag.PCIDSS321Checks"></a>
+
+Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
+
+#### Initializers <a name="Initializers" id="cdk-nag.PCIDSS321Checks.Initializer"></a>
+
+```typescript
+import { PCIDSS321Checks } from 'cdk-nag'
+
+new PCIDSS321Checks(props?: NagPackProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.PCIDSS321Checks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.PCIDSS321Checks.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.PCIDSS321Checks.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="cdk-nag.PCIDSS321Checks.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.PCIDSS321Checks.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.PCIDSS321Checks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.PCIDSS321Checks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
+```
+
+- *Type:* string
+
+---
+
+
+### SuppressionIgnoreAlways <a name="SuppressionIgnoreAlways" id="cdk-nag.SuppressionIgnoreAlways"></a>
+
+- *Implements:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
 Always ignore the suppression.
 
-__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+#### Initializers <a name="Initializers" id="cdk-nag.SuppressionIgnoreAlways.Initializer"></a>
 
-### Initializer
+```typescript
+import { SuppressionIgnoreAlways } from 'cdk-nag'
 
-
-
-
-```ts
 new SuppressionIgnoreAlways(triggerMessage: string)
 ```
 
-* **triggerMessage** (<code>string</code>)  *No description*
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreAlways.Initializer.parameter.triggerMessage">triggerMessage</a></code> | <code>string</code> | *No description.* |
 
+---
 
-### Methods
+##### `triggerMessage`<sup>Required</sup> <a name="triggerMessage" id="cdk-nag.SuppressionIgnoreAlways.Initializer.parameter.triggerMessage"></a>
 
+- *Type:* string
 
-#### createMessage(_input) <a id="cdk-nag-suppressionignorealways-createmessage"></a>
+---
 
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreAlways.createMessage">createMessage</a></code> | *No description.* |
 
-```ts
-createMessage(_input: SuppressionIgnoreInput): string
+---
+
+##### `createMessage` <a name="createMessage" id="cdk-nag.SuppressionIgnoreAlways.createMessage"></a>
+
+```typescript
+public createMessage(_input: SuppressionIgnoreInput): string
 ```
 
-* **_input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
-  * **findingId** (<code>string</code>)  *No description* 
-  * **reason** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+###### `_input`<sup>Required</sup> <a name="_input" id="cdk-nag.SuppressionIgnoreAlways.createMessage.parameter._input"></a>
 
-__Returns__:
-* <code>string</code>
+- *Type:* <a href="#cdk-nag.SuppressionIgnoreInput">SuppressionIgnoreInput</a>
+
+---
 
 
 
-## class SuppressionIgnoreAnd  <a id="cdk-nag-suppressionignoreand"></a>
+
+### SuppressionIgnoreAnd <a name="SuppressionIgnoreAnd" id="cdk-nag.SuppressionIgnoreAnd"></a>
+
+- *Implements:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
 Ignore the suppression if all of the given INagSuppressionIgnore return a non-empty message.
 
-__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+#### Initializers <a name="Initializers" id="cdk-nag.SuppressionIgnoreAnd.Initializer"></a>
 
-### Initializer
+```typescript
+import { SuppressionIgnoreAnd } from 'cdk-nag'
 
-
-
-
-```ts
-new SuppressionIgnoreAnd(...SuppressionIgnoreAnds: INagSuppressionIgnore[])
+new SuppressionIgnoreAnd(SuppressionIgnoreAnds: INagSuppressionIgnore)
 ```
 
-* **SuppressionIgnoreAnds** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreAnd.Initializer.parameter.SuppressionIgnoreAnds">SuppressionIgnoreAnds</a></code> | <code><a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a></code> | *No description.* |
 
+---
 
-### Methods
+##### `SuppressionIgnoreAnds`<sup>Required</sup> <a name="SuppressionIgnoreAnds" id="cdk-nag.SuppressionIgnoreAnd.Initializer.parameter.SuppressionIgnoreAnds"></a>
 
+- *Type:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
-#### createMessage(input) <a id="cdk-nag-suppressionignoreand-createmessage"></a>
+---
 
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreAnd.createMessage">createMessage</a></code> | *No description.* |
 
-```ts
-createMessage(input: SuppressionIgnoreInput): string
+---
+
+##### `createMessage` <a name="createMessage" id="cdk-nag.SuppressionIgnoreAnd.createMessage"></a>
+
+```typescript
+public createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
-  * **findingId** (<code>string</code>)  *No description* 
-  * **reason** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+###### `input`<sup>Required</sup> <a name="input" id="cdk-nag.SuppressionIgnoreAnd.createMessage.parameter.input"></a>
 
-__Returns__:
-* <code>string</code>
+- *Type:* <a href="#cdk-nag.SuppressionIgnoreInput">SuppressionIgnoreInput</a>
+
+---
 
 
 
-## class SuppressionIgnoreErrors  <a id="cdk-nag-suppressionignoreerrors"></a>
+
+### SuppressionIgnoreErrors <a name="SuppressionIgnoreErrors" id="cdk-nag.SuppressionIgnoreErrors"></a>
+
+- *Implements:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
 Ignore Suppressions for Rules with a NagMessageLevel.ERROR.
 
-__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+#### Initializers <a name="Initializers" id="cdk-nag.SuppressionIgnoreErrors.Initializer"></a>
 
-### Initializer
+```typescript
+import { SuppressionIgnoreErrors } from 'cdk-nag'
 
-
-
-
-```ts
 new SuppressionIgnoreErrors()
 ```
 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
 
+---
 
-### Methods
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreErrors.createMessage">createMessage</a></code> | *No description.* |
 
-#### createMessage(input) <a id="cdk-nag-suppressionignoreerrors-createmessage"></a>
+---
 
+##### `createMessage` <a name="createMessage" id="cdk-nag.SuppressionIgnoreErrors.createMessage"></a>
 
-
-```ts
-createMessage(input: SuppressionIgnoreInput): string
+```typescript
+public createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
-  * **findingId** (<code>string</code>)  *No description* 
-  * **reason** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+###### `input`<sup>Required</sup> <a name="input" id="cdk-nag.SuppressionIgnoreErrors.createMessage.parameter.input"></a>
 
-__Returns__:
-* <code>string</code>
+- *Type:* <a href="#cdk-nag.SuppressionIgnoreInput">SuppressionIgnoreInput</a>
+
+---
 
 
 
-## class SuppressionIgnoreNever  <a id="cdk-nag-suppressionignorenever"></a>
+
+### SuppressionIgnoreNever <a name="SuppressionIgnoreNever" id="cdk-nag.SuppressionIgnoreNever"></a>
+
+- *Implements:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
 Don't ignore the suppression.
 
-__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+#### Initializers <a name="Initializers" id="cdk-nag.SuppressionIgnoreNever.Initializer"></a>
 
-### Initializer
+```typescript
+import { SuppressionIgnoreNever } from 'cdk-nag'
 
-
-
-
-```ts
 new SuppressionIgnoreNever()
 ```
 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
 
+---
 
-### Methods
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreNever.createMessage">createMessage</a></code> | *No description.* |
 
-#### createMessage(_input) <a id="cdk-nag-suppressionignorenever-createmessage"></a>
+---
 
+##### `createMessage` <a name="createMessage" id="cdk-nag.SuppressionIgnoreNever.createMessage"></a>
 
-
-```ts
-createMessage(_input: SuppressionIgnoreInput): string
+```typescript
+public createMessage(_input: SuppressionIgnoreInput): string
 ```
 
-* **_input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
-  * **findingId** (<code>string</code>)  *No description* 
-  * **reason** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+###### `_input`<sup>Required</sup> <a name="_input" id="cdk-nag.SuppressionIgnoreNever.createMessage.parameter._input"></a>
 
-__Returns__:
-* <code>string</code>
+- *Type:* <a href="#cdk-nag.SuppressionIgnoreInput">SuppressionIgnoreInput</a>
+
+---
 
 
 
-## class SuppressionIgnoreOr  <a id="cdk-nag-suppressionignoreor"></a>
+
+### SuppressionIgnoreOr <a name="SuppressionIgnoreOr" id="cdk-nag.SuppressionIgnoreOr"></a>
+
+- *Implements:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
 Ignore the suppression if any of the given INagSuppressionIgnore return a non-empty message.
 
-__Implements__: [INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)
+#### Initializers <a name="Initializers" id="cdk-nag.SuppressionIgnoreOr.Initializer"></a>
 
-### Initializer
+```typescript
+import { SuppressionIgnoreOr } from 'cdk-nag'
 
-
-
-
-```ts
-new SuppressionIgnoreOr(...orSuppressionIgnores: INagSuppressionIgnore[])
+new SuppressionIgnoreOr(orSuppressionIgnores: INagSuppressionIgnore)
 ```
 
-* **orSuppressionIgnores** (<code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code>)  *No description*
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreOr.Initializer.parameter.orSuppressionIgnores">orSuppressionIgnores</a></code> | <code><a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a></code> | *No description.* |
 
+---
 
-### Methods
+##### `orSuppressionIgnores`<sup>Required</sup> <a name="orSuppressionIgnores" id="cdk-nag.SuppressionIgnoreOr.Initializer.parameter.orSuppressionIgnores"></a>
 
+- *Type:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
-#### createMessage(input) <a id="cdk-nag-suppressionignoreor-createmessage"></a>
+---
 
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.SuppressionIgnoreOr.createMessage">createMessage</a></code> | *No description.* |
 
-```ts
-createMessage(input: SuppressionIgnoreInput): string
+---
+
+##### `createMessage` <a name="createMessage" id="cdk-nag.SuppressionIgnoreOr.createMessage"></a>
+
+```typescript
+public createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
-  * **findingId** (<code>string</code>)  *No description* 
-  * **reason** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+###### `input`<sup>Required</sup> <a name="input" id="cdk-nag.SuppressionIgnoreOr.createMessage.parameter.input"></a>
 
-__Returns__:
-* <code>string</code>
+- *Type:* <a href="#cdk-nag.SuppressionIgnoreInput">SuppressionIgnoreInput</a>
+
+---
 
 
 
-## struct AnnotationLoggerProps  <a id="cdk-nag-annotationloggerprops"></a>
 
+## Protocols <a name="Protocols" id="Protocols"></a>
 
-Props for the AnnotationLogger.
+### IApplyRule <a name="IApplyRule" id="cdk-nag.IApplyRule"></a>
 
-
-
-Name | Type | Description 
------|------|-------------
-**logIgnores**? | <code>boolean</code> | Whether or not to log suppressed rule violations as informational messages (default: false).<br/>__*Optional*__
-**verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages.<br/>__*Optional*__
-
-
-
-## interface IApplyRule  <a id="cdk-nag-iapplyrule"></a>
-
+- *Implemented By:* <a href="#cdk-nag.IApplyRule">IApplyRule</a>
 
 Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
 
-### Properties
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.IApplyRule.rule">rule</a></code> | The callback to the rule. |
 
-Name | Type | Description 
------|------|-------------
-**explanation** | <code>string</code> | Why the rule exists.
-**info** | <code>string</code> | Why the rule was triggered.
-**level** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | The annotations message level to apply to the rule if triggered.
-**node** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | The CfnResource to check.
-**ignoreSuppressionCondition**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | A condition in which a suppression should be ignored.<br/>__*Optional*__
-**ruleSuffixOverride**? | <code>string</code> | Override for the suffix of the Rule ID for this rule.<br/>__*Optional*__
+---
 
-### Methods
+##### `rule` <a name="rule" id="cdk-nag.IApplyRule.rule"></a>
 
-
-#### rule(node) <a id="cdk-nag-iapplyrule-rule"></a>
+```typescript
+public rule(node: CfnResource): NagRuleCompliance | string[]
+```
 
 The callback to the rule.
 
-```ts
-rule(node: CfnResource): NagRuleCompliance &#124; Array<string>
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.IApplyRule.rule.parameter.node"></a>
+
+- *Type:* aws-cdk-lib.CfnResource
+
+The CfnResource to check.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.IApplyRule.property.explanation">explanation</a></code> | <code>string</code> | Why the rule exists. |
+| <code><a href="#cdk-nag.IApplyRule.property.info">info</a></code> | <code>string</code> | Why the rule was triggered. |
+| <code><a href="#cdk-nag.IApplyRule.property.level">level</a></code> | <code><a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a></code> | The annotations message level to apply to the rule if triggered. |
+| <code><a href="#cdk-nag.IApplyRule.property.node">node</a></code> | <code>aws-cdk-lib.CfnResource</code> | The CfnResource to check. |
+| <code><a href="#cdk-nag.IApplyRule.property.ignoreSuppressionCondition">ignoreSuppressionCondition</a></code> | <code><a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a></code> | A condition in which a suppression should be ignored. |
+| <code><a href="#cdk-nag.IApplyRule.property.ruleSuffixOverride">ruleSuffixOverride</a></code> | <code>string</code> | Override for the suffix of the Rule ID for this rule. |
+
+---
+
+##### `explanation`<sup>Required</sup> <a name="explanation" id="cdk-nag.IApplyRule.property.explanation"></a>
+
+```typescript
+public readonly explanation: string;
 ```
 
-* **node** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  The CfnResource to check.
+- *Type:* string
 
-__Returns__:
-* <code>[NagRuleCompliance](#cdk-nag-nagrulecompliance) &#124; Array<string></code>
+Why the rule exists.
 
+---
 
+##### `info`<sup>Required</sup> <a name="info" id="cdk-nag.IApplyRule.property.info"></a>
 
-## interface INagLogger  <a id="cdk-nag-inaglogger"></a>
+```typescript
+public readonly info: string;
+```
 
-__Implemented by__: [AnnotationLogger](#cdk-nag-annotationlogger), [NagReportLogger](#cdk-nag-nagreportlogger)
+- *Type:* string
+
+Why the rule was triggered.
+
+---
+
+##### `level`<sup>Required</sup> <a name="level" id="cdk-nag.IApplyRule.property.level"></a>
+
+```typescript
+public readonly level: NagMessageLevel;
+```
+
+- *Type:* <a href="#cdk-nag.NagMessageLevel">NagMessageLevel</a>
+
+The annotations message level to apply to the rule if triggered.
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="cdk-nag.IApplyRule.property.node"></a>
+
+```typescript
+public readonly node: CfnResource;
+```
+
+- *Type:* aws-cdk-lib.CfnResource
+
+The CfnResource to check.
+
+---
+
+##### `ignoreSuppressionCondition`<sup>Optional</sup> <a name="ignoreSuppressionCondition" id="cdk-nag.IApplyRule.property.ignoreSuppressionCondition"></a>
+
+```typescript
+public readonly ignoreSuppressionCondition: INagSuppressionIgnore;
+```
+
+- *Type:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
+
+A condition in which a suppression should be ignored.
+
+---
+
+##### `ruleSuffixOverride`<sup>Optional</sup> <a name="ruleSuffixOverride" id="cdk-nag.IApplyRule.property.ruleSuffixOverride"></a>
+
+```typescript
+public readonly ruleSuffixOverride: string;
+```
+
+- *Type:* string
+
+Override for the suffix of the Rule ID for this rule.
+
+---
+
+### INagLogger <a name="INagLogger" id="cdk-nag.INagLogger"></a>
+
+- *Implemented By:* <a href="#cdk-nag.AnnotationLogger">AnnotationLogger</a>, <a href="#cdk-nag.NagReportLogger">NagReportLogger</a>, <a href="#cdk-nag.INagLogger">INagLogger</a>
 
 Interface for creating NagSuppression Ignores.
-### Methods
 
+#### Methods <a name="Methods" id="Methods"></a>
 
-#### onCompliance(data) <a id="cdk-nag-inaglogger-oncompliance"></a>
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.INagLogger.onCompliance">onCompliance</a></code> | Called when a CfnResource passes the compliance check for a given rule. |
+| <code><a href="#cdk-nag.INagLogger.onError">onError</a></code> | Called when a rule throws an error during while validating a CfnResource for compliance. |
+| <code><a href="#cdk-nag.INagLogger.onNonCompliance">onNonCompliance</a></code> | Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user. |
+| <code><a href="#cdk-nag.INagLogger.onNotApplicable">onNotApplicable</a></code> | Called when a rule does not apply to the given CfnResource. |
+| <code><a href="#cdk-nag.INagLogger.onSuppressed">onSuppressed</a></code> | Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user. |
+| <code><a href="#cdk-nag.INagLogger.onSuppressedError">onSuppressedError</a></code> | Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed. |
+
+---
+
+##### `onCompliance` <a name="onCompliance" id="cdk-nag.INagLogger.onCompliance"></a>
+
+```typescript
+public onCompliance(data: NagLoggerComplianceData): void
+```
 
 Called when a CfnResource passes the compliance check for a given rule.
 
-```ts
-onCompliance(data: NagLoggerComplianceData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.INagLogger.onCompliance.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerComplianceData">NagLoggerComplianceData</a>
+
+---
+
+##### `onError` <a name="onError" id="cdk-nag.INagLogger.onError"></a>
+
+```typescript
+public onError(data: NagLoggerErrorData): void
 ```
-
-* **data** (<code>[NagLoggerComplianceData](#cdk-nag-nagloggercompliancedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### onError(data) <a id="cdk-nag-inaglogger-onerror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance.
 
-```ts
-onError(data: NagLoggerErrorData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.INagLogger.onError.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerErrorData">NagLoggerErrorData</a>
+
+---
+
+##### `onNonCompliance` <a name="onNonCompliance" id="cdk-nag.INagLogger.onNonCompliance"></a>
+
+```typescript
+public onNonCompliance(data: NagLoggerNonComplianceData): void
 ```
-
-* **data** (<code>[NagLoggerErrorData](#cdk-nag-nagloggererrordata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **errorMessage** (<code>string</code>)  *No description* 
-
-
-
-
-#### onNonCompliance(data) <a id="cdk-nag-inaglogger-onnoncompliance"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the the rule violation is not suppressed by the user.
 
-```ts
-onNonCompliance(data: NagLoggerNonComplianceData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.INagLogger.onNonCompliance.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerNonComplianceData">NagLoggerNonComplianceData</a>
+
+---
+
+##### `onNotApplicable` <a name="onNotApplicable" id="cdk-nag.INagLogger.onNotApplicable"></a>
+
+```typescript
+public onNotApplicable(data: NagLoggerNotApplicableData): void
 ```
-
-* **data** (<code>[NagLoggerNonComplianceData](#cdk-nag-nagloggernoncompliancedata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **findingId** (<code>string</code>)  *No description* 
-
-
-
-
-#### onNotApplicable(data) <a id="cdk-nag-inaglogger-onnotapplicable"></a>
 
 Called when a rule does not apply to the given CfnResource.
 
-```ts
-onNotApplicable(data: NagLoggerNotApplicableData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.INagLogger.onNotApplicable.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerNotApplicableData">NagLoggerNotApplicableData</a>
+
+---
+
+##### `onSuppressed` <a name="onSuppressed" id="cdk-nag.INagLogger.onSuppressed"></a>
+
+```typescript
+public onSuppressed(data: NagLoggerSuppressedData): void
 ```
-
-* **data** (<code>[NagLoggerNotApplicableData](#cdk-nag-nagloggernotapplicabledata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-
-
-
-
-#### onSuppressed(data) <a id="cdk-nag-inaglogger-onsuppressed"></a>
 
 Called when a CfnResource does not pass the compliance check for a given rule and the rule violation is suppressed by the user.
 
-```ts
-onSuppressed(data: NagLoggerSuppressedData): void
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.INagLogger.onSuppressed.parameter.data"></a>
+
+- *Type:* <a href="#cdk-nag.NagLoggerSuppressedData">NagLoggerSuppressedData</a>
+
+---
+
+##### `onSuppressedError` <a name="onSuppressedError" id="cdk-nag.INagLogger.onSuppressedError"></a>
+
+```typescript
+public onSuppressedError(data: NagLoggerSuppressedErrorData): void
 ```
-
-* **data** (<code>[NagLoggerSuppressedData](#cdk-nag-nagloggersuppresseddata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **findingId** (<code>string</code>)  *No description* 
-  * **suppressionReason** (<code>string</code>)  *No description* 
-
-
-
-
-#### onSuppressedError(data) <a id="cdk-nag-inaglogger-onsuppressederror"></a>
 
 Called when a rule throws an error during while validating a CfnResource for compliance and the error is suppressed.
 
-```ts
-onSuppressedError(data: NagLoggerSuppressedErrorData): void
-```
+###### `data`<sup>Required</sup> <a name="data" id="cdk-nag.INagLogger.onSuppressedError.parameter.data"></a>
 
-* **data** (<code>[NagLoggerSuppressedErrorData](#cdk-nag-nagloggersuppressederrordata)</code>)  *No description*
-  * **nagPackName** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleExplanation** (<code>string</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleInfo** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
-  * **ruleOriginalName** (<code>string</code>)  *No description* 
-  * **errorMessage** (<code>string</code>)  *No description* 
-  * **errorSuppressionReason** (<code>string</code>)  *No description* 
+- *Type:* <a href="#cdk-nag.NagLoggerSuppressedErrorData">NagLoggerSuppressedErrorData</a>
+
+---
 
 
+### INagSuppressionIgnore <a name="INagSuppressionIgnore" id="cdk-nag.INagSuppressionIgnore"></a>
 
-
-
-
-## interface INagSuppressionIgnore  <a id="cdk-nag-inagsuppressionignore"></a>
-
-__Implemented by__: [SuppressionIgnoreAlways](#cdk-nag-suppressionignorealways), [SuppressionIgnoreAnd](#cdk-nag-suppressionignoreand), [SuppressionIgnoreErrors](#cdk-nag-suppressionignoreerrors), [SuppressionIgnoreNever](#cdk-nag-suppressionignorenever), [SuppressionIgnoreOr](#cdk-nag-suppressionignoreor)
+- *Implemented By:* <a href="#cdk-nag.SuppressionIgnoreAlways">SuppressionIgnoreAlways</a>, <a href="#cdk-nag.SuppressionIgnoreAnd">SuppressionIgnoreAnd</a>, <a href="#cdk-nag.SuppressionIgnoreErrors">SuppressionIgnoreErrors</a>, <a href="#cdk-nag.SuppressionIgnoreNever">SuppressionIgnoreNever</a>, <a href="#cdk-nag.SuppressionIgnoreOr">SuppressionIgnoreOr</a>, <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
 
 Interface for creating NagSuppression Ignores.
-### Methods
 
+#### Methods <a name="Methods" id="Methods"></a>
 
-#### createMessage(input) <a id="cdk-nag-inagsuppressionignore-createmessage"></a>
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.INagSuppressionIgnore.createMessage">createMessage</a></code> | *No description.* |
 
+---
 
+##### `createMessage` <a name="createMessage" id="cdk-nag.INagSuppressionIgnore.createMessage"></a>
 
-```ts
-createMessage(input: SuppressionIgnoreInput): string
+```typescript
+public createMessage(input: SuppressionIgnoreInput): string
 ```
 
-* **input** (<code>[SuppressionIgnoreInput](#cdk-nag-suppressionignoreinput)</code>)  *No description*
-  * **findingId** (<code>string</code>)  *No description* 
-  * **reason** (<code>string</code>)  *No description* 
-  * **resource** (<code>[CfnResource](#aws-cdk-lib-cfnresource)</code>)  *No description* 
-  * **ruleId** (<code>string</code>)  *No description* 
-  * **ruleLevel** (<code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code>)  *No description* 
+###### `input`<sup>Required</sup> <a name="input" id="cdk-nag.INagSuppressionIgnore.createMessage.parameter.input"></a>
 
-__Returns__:
-* <code>string</code>
+- *Type:* <a href="#cdk-nag.SuppressionIgnoreInput">SuppressionIgnoreInput</a>
 
+---
 
 
-## struct NagLoggerBaseData  <a id="cdk-nag-nagloggerbasedata"></a>
+## Enums <a name="Enums" id="Enums"></a>
 
-
-Shared data for all INagLogger methods.
-
-
-
-Name | Type | Description 
------|------|-------------
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-
-
-
-## struct NagLoggerComplianceData  <a id="cdk-nag-nagloggercompliancedata"></a>
-
-
-Data for onCompliance method of an INagLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-
-
-
-## struct NagLoggerErrorData  <a id="cdk-nag-nagloggererrordata"></a>
-
-
-Data for onError method of an INagLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**errorMessage** | <code>string</code> | <span></span>
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-
-
-
-## struct NagLoggerNonComplianceData  <a id="cdk-nag-nagloggernoncompliancedata"></a>
-
-
-Data for onNonCompliance method of an INagLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**findingId** | <code>string</code> | <span></span>
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-
-
-
-## struct NagLoggerNotApplicableData  <a id="cdk-nag-nagloggernotapplicabledata"></a>
-
-
-Data for onNotApplicable method of an INagLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-
-
-
-## struct NagLoggerSuppressedData  <a id="cdk-nag-nagloggersuppresseddata"></a>
-
-
-Data for onSuppressed method of an INagLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**findingId** | <code>string</code> | <span></span>
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-**suppressionReason** | <code>string</code> | <span></span>
-
-
-
-## struct NagLoggerSuppressedErrorData  <a id="cdk-nag-nagloggersuppressederrordata"></a>
-
-
-Data for onSuppressedError method of an INagLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**errorMessage** | <code>string</code> | <span></span>
-**errorSuppressionReason** | <code>string</code> | <span></span>
-**nagPackName** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleExplanation** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-**ruleOriginalName** | <code>string</code> | <span></span>
-
-
-
-## struct NagPackProps  <a id="cdk-nag-nagpackprops"></a>
-
-
-Interface for creating a NagPack.
-
-
-
-Name | Type | Description 
------|------|-------------
-**additionalLoggers**? | <code>Array<[INagLogger](#cdk-nag-inaglogger)></code> | Additional NagLoggers for logging rule validation outputs.<br/>__*Optional*__
-**logIgnores**? | <code>boolean</code> | Whether or not to log suppressed rule violations as informational messages (default: false).<br/>__*Optional*__
-**reportFormats**? | <code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code> | If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).<br/>__*Optional*__
-**reports**? | <code>boolean</code> | Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).<br/>__*Optional*__
-**suppressionIgnoreCondition**? | <code>[INagSuppressionIgnore](#cdk-nag-inagsuppressionignore)</code> | Conditionally prevent rules from being suppressed (default: no user provided condition).<br/>__*Optional*__
-**verbose**? | <code>boolean</code> | Whether or not to enable extended explanatory descriptions on warning, error, and logged ignore messages (default: false).<br/>__*Optional*__
-
-
-
-## struct NagPackSuppression  <a id="cdk-nag-nagpacksuppression"></a>
-
-
-Interface for creating a rule suppression.
-
-
-
-Name | Type | Description 
------|------|-------------
-**id** | <code>string</code> | The id of the rule to ignore.
-**reason** | <code>string</code> | The reason to ignore the rule (minimum 10 characters).
-**appliesTo**? | <code>Array<string &#124; [RegexAppliesTo](#cdk-nag-regexappliesto)></code> | Rule specific granular suppressions.<br/>__*Optional*__
-
-
-
-## struct NagReportLine  <a id="cdk-nag-nagreportline"></a>
-
-
-
-
-
-
-Name | Type | Description 
------|------|-------------
-**compliance** | <code>string</code> | <span></span>
-**exceptionReason** | <code>string</code> | <span></span>
-**resourceId** | <code>string</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleInfo** | <code>string</code> | <span></span>
-**ruleLevel** | <code>string</code> | <span></span>
-
-
-
-## struct NagReportLoggerProps  <a id="cdk-nag-nagreportloggerprops"></a>
-
-
-Props for the NagReportLogger.
-
-
-
-Name | Type | Description 
------|------|-------------
-**formats** | <code>Array<[NagReportFormat](#cdk-nag-nagreportformat)></code> | <span></span>
-
-
-
-## struct NagReportSchema  <a id="cdk-nag-nagreportschema"></a>
-
-
-
-
-
-
-Name | Type | Description 
------|------|-------------
-**lines** | <code>Array<[NagReportLine](#cdk-nag-nagreportline)></code> | <span></span>
-
-
-
-## struct RegexAppliesTo  <a id="cdk-nag-regexappliesto"></a>
-
-
-A regular expression to apply to matching findings.
-
-
-
-Name | Type | Description 
------|------|-------------
-**regex** | <code>string</code> | An ECMA-262 regex string.
-
-
-
-## struct SuppressionIgnoreInput  <a id="cdk-nag-suppressionignoreinput"></a>
-
-
-Information about the NagRule and the relevant NagSuppression for the INagSuppressionIgnore.
-
-
-
-Name | Type | Description 
------|------|-------------
-**findingId** | <code>string</code> | <span></span>
-**reason** | <code>string</code> | <span></span>
-**resource** | <code>[CfnResource](#aws-cdk-lib-cfnresource)</code> | <span></span>
-**ruleId** | <code>string</code> | <span></span>
-**ruleLevel** | <code>[NagMessageLevel](#cdk-nag-nagmessagelevel)</code> | <span></span>
-
-
-
-## enum NagMessageLevel  <a id="cdk-nag-nagmessagelevel"></a>
+### NagMessageLevel <a name="NagMessageLevel" id="cdk-nag.NagMessageLevel"></a>
 
 The severity level of the rule.
 
-Name | Description
------|-----
-**WARN** |
-**ERROR** |
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagMessageLevel.WARN">WARN</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagMessageLevel.ERROR">ERROR</a></code> | *No description.* |
+
+---
+
+##### `WARN` <a name="WARN" id="cdk-nag.NagMessageLevel.WARN"></a>
+
+---
 
 
-## enum NagReportFormat  <a id="cdk-nag-nagreportformat"></a>
+##### `ERROR` <a name="ERROR" id="cdk-nag.NagMessageLevel.ERROR"></a>
+
+---
+
+
+### NagReportFormat <a name="NagReportFormat" id="cdk-nag.NagReportFormat"></a>
 
 Possible output formats of the NagReport.
 
-Name | Description
------|-----
-**CSV** |
-**JSON** |
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagReportFormat.CSV">CSV</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagReportFormat.JSON">JSON</a></code> | *No description.* |
+
+---
+
+##### `CSV` <a name="CSV" id="cdk-nag.NagReportFormat.CSV"></a>
+
+---
 
 
-## enum NagRuleCompliance  <a id="cdk-nag-nagrulecompliance"></a>
+##### `JSON` <a name="JSON" id="cdk-nag.NagReportFormat.JSON"></a>
+
+---
+
+
+### NagRuleCompliance <a name="NagRuleCompliance" id="cdk-nag.NagRuleCompliance"></a>
 
 The compliance level of a resource in relation to a rule.
 
-Name | Description
------|-----
-**COMPLIANT** |
-**NON_COMPLIANT** |
-**NOT_APPLICABLE** |
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagRuleCompliance.COMPLIANT">COMPLIANT</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagRuleCompliance.NON_COMPLIANT">NON_COMPLIANT</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagRuleCompliance.NOT_APPLICABLE">NOT_APPLICABLE</a></code> | *No description.* |
+
+---
+
+##### `COMPLIANT` <a name="COMPLIANT" id="cdk-nag.NagRuleCompliance.COMPLIANT"></a>
+
+---
 
 
-## enum NagRulePostValidationStates  <a id="cdk-nag-nagrulepostvalidationstates"></a>
+##### `NON_COMPLIANT` <a name="NON_COMPLIANT" id="cdk-nag.NagRuleCompliance.NON_COMPLIANT"></a>
+
+---
+
+
+##### `NOT_APPLICABLE` <a name="NOT_APPLICABLE" id="cdk-nag.NagRuleCompliance.NOT_APPLICABLE"></a>
+
+---
+
+
+### NagRulePostValidationStates <a name="NagRulePostValidationStates" id="cdk-nag.NagRulePostValidationStates"></a>
 
 Additional states a rule can be in post compliance validation.
 
-Name | Description
------|-----
-**SUPPRESSED** |
-**UNKNOWN** |
+#### Members <a name="Members" id="Members"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.NagRulePostValidationStates.SUPPRESSED">SUPPRESSED</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagRulePostValidationStates.UNKNOWN">UNKNOWN</a></code> | *No description.* |
+
+---
+
+##### `SUPPRESSED` <a name="SUPPRESSED" id="cdk-nag.NagRulePostValidationStates.SUPPRESSED"></a>
+
+---
+
+
+##### `UNKNOWN` <a name="UNKNOWN" id="cdk-nag.NagRulePostValidationStates.UNKNOWN"></a>
+
+---
 
