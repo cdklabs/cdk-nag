@@ -11,7 +11,11 @@ import {
   OriginProtocolPolicy,
   OriginSslPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { HttpOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import {
+  HttpOrigin,
+  S3Origin,
+  S3BucketOrigin,
+} from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
@@ -23,6 +27,7 @@ import {
   CloudFrontDistributionNoOutdatedSSL,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
+  CloudFrontDistributionS3OriginAccessControl,
 } from '../../src/rules/cloudfront';
 
 const testPack = new TestPack([
@@ -32,6 +37,7 @@ const testPack = new TestPack([
   CloudFrontDistributionNoOutdatedSSL,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
+  CloudFrontDistributionS3OriginAccessControl,
 ]);
 let stack: Stack;
 
@@ -284,7 +290,7 @@ describe('Amazon CloudFront', () => {
     });
   });
 
-  describe('CloudFrontDistributionS3OriginAccessIdentity: CloudFront distributions use an origin access identity for S3 origins', () => {
+  describe('CloudFrontDistributionS3OriginAccessIdentity: CloudFront Streaming distributions use an origin access identity for S3 origins', () => {
     const ruleId = 'CloudFrontDistributionS3OriginAccessIdentity';
     test('Noncompliance', () => {
       new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
@@ -381,6 +387,38 @@ describe('Amazon CloudFront', () => {
             sampledRequestsEnabled: true,
           },
         }).attrId,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('CloudFrontDistributionS3OriginAccessControl: CloudFront distributions use an origin access control for S3 origins', () => {
+    const ruleId = 'CloudFrontDistributionS3OriginAccessControl';
+    test('Noncompliance 1', () => {
+      new Distribution(stack, 'rDistribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Distribution(stack, 'rDistribution', {
+        defaultBehavior: {
+          origin: S3BucketOrigin.withOriginAccessIdentity(
+            new Bucket(stack, 'rOriginBucket')
+          ),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Distribution(stack, 'rDistribution', {
+        defaultBehavior: {
+          origin: S3BucketOrigin.withOriginAccessControl(
+            new Bucket(stack, 'rOriginBucket')
+          ),
+        },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

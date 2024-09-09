@@ -20,15 +20,21 @@ describe('Amazon QuickSight', () => {
     const ruleId = 'QuicksightSSLConnections';
     test('Noncompliance 1', () => {
       new CfnDataSource(stack, 'rDashboard', {
+        name: 'datasource',
+        type: 'AMAZON_ELASTICSEARCH',
         sslProperties: { disableSsl: true },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
       new CfnDataSource(stack, 'rDashboard', {
+        name: 'datasource',
+        type: 'AMAZON_ELASTICSEARCH',
         sslProperties: { disableSsl: false },
       });
       new CfnDataSource(stack, 'rDashboard2', {
+        name: 'datasource',
+        type: 'AMAZON_ELASTICSEARCH',
         sslProperties: {},
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
