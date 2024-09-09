@@ -858,7 +858,7 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'CFR6',
-      info: 'The CloudFront distribution does not use an origin access identity with an S3 origin.',
+      info: 'The CloudFront Streaming distribution does not use an origin access identity with an S3 origin.',
       explanation:
         'Origin access identities help with security by restricting any direct access to objects through S3 URLs.',
       level: NagMessageLevel.ERROR,

@@ -4,10 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
-import {
-  CfnDistribution,
-  CfnStreamingDistribution,
-} from 'aws-cdk-lib/aws-cloudfront';
+import { CfnStreamingDistribution } from 'aws-cdk-lib/aws-cloudfront';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
@@ -16,37 +13,7 @@ import { NagRuleCompliance } from '../../nag-rules';
  */
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
-    if (node instanceof CfnDistribution) {
-      const distributionConfig = Stack.of(node).resolve(
-        node.distributionConfig
-      );
-      if (distributionConfig.origins != undefined) {
-        const origins = Stack.of(node).resolve(distributionConfig.origins);
-        for (const origin of origins) {
-          const resolvedOrigin = Stack.of(node).resolve(origin);
-          const resolvedDomainName = Stack.of(node).resolve(
-            resolvedOrigin.domainName
-          );
-          const s3Regex =
-            /^.+\.s3(?:-website)?(?:\..+)?(?:(?:\.amazonaws\.com(?:\.cn)?)|(?:\.c2s\.ic\.gov)|(?:\.sc2s\.sgov\.gov))$/;
-          if (s3Regex.test(resolvedDomainName)) {
-            if (resolvedOrigin.s3OriginConfig == undefined) {
-              return NagRuleCompliance.NON_COMPLIANT;
-            }
-            const resolvedConfig = Stack.of(node).resolve(
-              resolvedOrigin.s3OriginConfig
-            );
-            if (
-              resolvedConfig.originAccessIdentity == undefined ||
-              resolvedConfig.originAccessIdentity.replace(/\s/g, '').length == 0
-            ) {
-              return NagRuleCompliance.NON_COMPLIANT;
-            }
-          }
-        }
-      }
-      return NagRuleCompliance.COMPLIANT;
-    } else if (node instanceof CfnStreamingDistribution) {
+    if (node instanceof CfnStreamingDistribution) {
       const distributionConfig = Stack.of(node).resolve(
         node.streamingDistributionConfig
       );

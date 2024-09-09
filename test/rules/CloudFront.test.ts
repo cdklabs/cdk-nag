@@ -286,8 +286,26 @@ describe('Amazon CloudFront', () => {
 
   describe('CloudFrontDistributionS3OriginAccessIdentity: CloudFront distributions use an origin access identity for S3 origins', () => {
     const ruleId = 'CloudFrontDistributionS3OriginAccessIdentity';
-    test('Noncompliance 1', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+    test('Noncompliance', () => {
+      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
+        streamingDistributionConfig: {
+          comment: 'foo',
+          enabled: true,
+          s3Origin: {
+            domainName: 'foo.s3.us-east-1.amazonaws.com',
+            originAccessIdentity: '',
+          },
+          trustedSigners: {
+            awsAccountNumbers: ['1111222233334444'],
+            enabled: true,
+          },
+        },
+        tags: [{ key: 'foo', value: 'bar' }],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new CfnDistribution(stack, 'rDistribution1', {
         distributionConfig: {
           comment: 'foo',
           defaultCacheBehavior: {
@@ -307,41 +325,11 @@ describe('Amazon CloudFront', () => {
         },
         tags: [{ key: 'foo', value: 'bar' }],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'rDistribution2', {
         defaultBehavior: {
           origin: new HttpOrigin('foo.s3-website.amazonaws.com'),
         },
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 3', () => {
-      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
-        streamingDistributionConfig: {
-          comment: 'foo',
-          enabled: true,
-          s3Origin: {
-            domainName: 'foo.s3.us-east-1.amazonaws.com',
-            originAccessIdentity: '',
-          },
-          trustedSigners: {
-            awsAccountNumbers: ['1111222233334444'],
-            enabled: true,
-          },
-        },
-        tags: [{ key: 'foo', value: 'bar' }],
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new Distribution(stack, 'rDistribution', {
-        defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
-        },
-      });
-
       new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
         streamingDistributionConfig: {
           comment: 'foo',
