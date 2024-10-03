@@ -293,7 +293,7 @@ describe('Amazon CloudFront', () => {
   describe('CloudFrontDistributionS3OriginAccessIdentity: CloudFront Streaming distributions use an origin access identity for S3 origins', () => {
     const ruleId = 'CloudFrontDistributionS3OriginAccessIdentity';
     test('Noncompliance', () => {
-      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
         streamingDistributionConfig: {
           comment: 'foo',
           enabled: true,
