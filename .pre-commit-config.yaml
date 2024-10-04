@@ -8,7 +8,7 @@ repos:
       - id: trailing-whitespace
         exclude: ^API.md||.github/$
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v7.31.0
+    rev: v8.56.0
     hooks:
       - id: eslint
         files: \.[jt]sx?$
