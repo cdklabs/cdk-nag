@@ -4,7 +4,6 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { SynthUtils } from '@aws-cdk/assert';
 import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
-import { TestPack } from './rules/utils';
 import {
   INagSuppressionIgnore,
   NagMessageLevel,
@@ -15,6 +14,7 @@ import {
   SuppressionIgnoreErrors,
   SuppressionIgnoreOr,
 } from '../src';
+import { TestPack } from './rules/utils';
 
 describe('Rule Suppression Condition Core Functionality', () => {
   const IGNORE = new SuppressionIgnoreAlways('IGNORED.');
