@@ -2198,18 +2198,18 @@ Ignore the suppression if all of the given INagSuppressionIgnore return a non-em
 ```typescript
 import { SuppressionIgnoreAnd } from 'cdk-nag'
 
-new SuppressionIgnoreAnd(SuppressionIgnoreAnds: INagSuppressionIgnore)
+new SuppressionIgnoreAnd(SuppressionIgnoreAnds: ...INagSuppressionIgnore[])
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-nag.SuppressionIgnoreAnd.Initializer.parameter.SuppressionIgnoreAnds">SuppressionIgnoreAnds</a></code> | <code><a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a></code> | *No description.* |
+| <code><a href="#cdk-nag.SuppressionIgnoreAnd.Initializer.parameter.SuppressionIgnoreAnds">SuppressionIgnoreAnds</a></code> | <code>...<a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>[]</code> | *No description.* |
 
 ---
 
 ##### `SuppressionIgnoreAnds`<sup>Required</sup> <a name="SuppressionIgnoreAnds" id="cdk-nag.SuppressionIgnoreAnd.Initializer.parameter.SuppressionIgnoreAnds"></a>
 
-- *Type:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
+- *Type:* ...<a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>[]
 
 ---
 
@@ -2331,18 +2331,18 @@ Ignore the suppression if any of the given INagSuppressionIgnore return a non-em
 ```typescript
 import { SuppressionIgnoreOr } from 'cdk-nag'
 
-new SuppressionIgnoreOr(orSuppressionIgnores: INagSuppressionIgnore)
+new SuppressionIgnoreOr(orSuppressionIgnores: ...INagSuppressionIgnore[])
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-nag.SuppressionIgnoreOr.Initializer.parameter.orSuppressionIgnores">orSuppressionIgnores</a></code> | <code><a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a></code> | *No description.* |
+| <code><a href="#cdk-nag.SuppressionIgnoreOr.Initializer.parameter.orSuppressionIgnores">orSuppressionIgnores</a></code> | <code>...<a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>[]</code> | *No description.* |
 
 ---
 
 ##### `orSuppressionIgnores`<sup>Required</sup> <a name="orSuppressionIgnores" id="cdk-nag.SuppressionIgnoreOr.Initializer.parameter.orSuppressionIgnores"></a>
 
-- *Type:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
+- *Type:* ...<a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>[]
 
 ---
 

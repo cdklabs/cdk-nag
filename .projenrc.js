@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const { awscdk, vscode, Task } = require('projen');
+const { awscdk, vscode } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
@@ -84,5 +84,8 @@ new vscode.DevContainer(project, {
     extensions: ['dbaeumer.vscode-eslint'],
     dockerFile: './Dockerfile',
   },
+});
+project.package.addField('resolutions', {
+  'jsii-rosetta': '~5.0.7',
 });
 project.synth();
