@@ -87,5 +87,8 @@ new vscode.DevContainer(project, {
 });
 project.package.addField('resolutions', {
   'jsii-rosetta': '~5.0.7',
+  '@babel/types': '7.25.7',
+  '@types/babel__traverse': '7.18.2',
+  '@types/prettier': '2.6.0',
 });
 project.synth();
