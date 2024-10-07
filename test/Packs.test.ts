@@ -78,6 +78,7 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-CFR4',
         'AwsSolutions-CFR5',
         'AwsSolutions-CFR6',
+        'AwsSolutions-CFR7',
         'AwsSolutions-COG1',
         'AwsSolutions-COG3',
         'AwsSolutions-COG4',

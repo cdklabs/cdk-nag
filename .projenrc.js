@@ -6,7 +6,7 @@ const { awscdk, vscode } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '2.116.0',
+  cdkVersion: '2.156.0',
   defaultReleaseBranch: 'main',
   majorVersion: 2,
   npmDistTag: 'latest',
@@ -87,5 +87,8 @@ new vscode.DevContainer(project, {
 });
 project.package.addField('resolutions', {
   'jsii-rosetta': '~5.0.7',
+  '@babel/types': '7.25.7',
+  '@types/babel__traverse': '7.18.2',
+  '@types/prettier': '2.6.0',
 });
 project.synth();

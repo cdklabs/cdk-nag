@@ -26,6 +26,7 @@ import {
   CloudFrontDistributionGeoRestrictions,
   CloudFrontDistributionHttpsViewerNoOutdatedSSL,
   CloudFrontDistributionNoOutdatedSSL,
+  CloudFrontDistributionS3OriginAccessControl,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
 } from '../rules/cloudfront';
@@ -858,11 +859,20 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'CFR6',
-      info: 'The CloudFront distribution does not use an origin access identity with an S3 origin.',
+      info: 'The CloudFront Streaming distribution does not use an origin access identity with an S3 origin.',
       explanation:
         'Origin access identities help with security by restricting any direct access to objects through S3 URLs.',
       level: NagMessageLevel.ERROR,
       rule: CloudFrontDistributionS3OriginAccessIdentity,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'CFR7',
+      info: 'The CloudFront distribution does not use an origin access control with an S3 origin.',
+      explanation:
+        'Origin access controls help with security by restricting any direct access to objects through S3 URLs.',
+      level: NagMessageLevel.ERROR,
+      rule: CloudFrontDistributionS3OriginAccessControl,
       node: node,
     });
     this.applyRule({

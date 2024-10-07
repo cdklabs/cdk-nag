@@ -11,7 +11,11 @@ import {
   OriginProtocolPolicy,
   OriginSslPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { HttpOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import {
+  HttpOrigin,
+  S3Origin,
+  S3BucketOrigin,
+} from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
@@ -23,6 +27,7 @@ import {
   CloudFrontDistributionNoOutdatedSSL,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
+  CloudFrontDistributionS3OriginAccessControl,
 } from '../../src/rules/cloudfront';
 
 const testPack = new TestPack([
@@ -32,6 +37,7 @@ const testPack = new TestPack([
   CloudFrontDistributionNoOutdatedSSL,
   CloudFrontDistributionS3OriginAccessIdentity,
   CloudFrontDistributionWAFIntegration,
+  CloudFrontDistributionS3OriginAccessControl,
 ]);
 let stack: Stack;
 
@@ -44,15 +50,15 @@ describe('Amazon CloudFront', () => {
   describe('CloudFrontDistributionAccessLogging: CloudFront distributions have access logging enabled', () => {
     const ruleId = 'CloudFrontDistributionAccessLogging';
     test('Noncompliance 1', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
         streamingDistributionConfig: {
           comment: 'foo',
           enabled: true,
@@ -71,15 +77,15 @@ describe('Amazon CloudFront', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      const logsBucket = new Bucket(stack, 'rLoggingBucket');
-      new Distribution(stack, 'rDistribution', {
+      const logsBucket = new Bucket(stack, 'LoggingBucket');
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
         logBucket: logsBucket,
       });
 
-      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
         streamingDistributionConfig: {
           comment: 'foo',
           enabled: true,
@@ -107,16 +113,16 @@ describe('Amazon CloudFront', () => {
   describe('CloudFrontDistributionGeoRestrictions: CloudFront distributions may require Geo restrictions', () => {
     const ruleId = 'CloudFrontDistributionGeoRestrictions';
     test('Noncompliance 1', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
     test('Noncompliance 2', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+      new CfnDistribution(stack, 'Distribution', {
         distributionConfig: {
           defaultCacheBehavior: {
             targetOriginId: 'bar',
@@ -130,9 +136,9 @@ describe('Amazon CloudFront', () => {
     });
 
     test('Compliance', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
         geoRestriction: GeoRestriction.allowlist('US'),
       });
@@ -143,7 +149,7 @@ describe('Amazon CloudFront', () => {
   describe('CloudFrontDistributionHttpsViewerNoOutdatedSSL: CloudFront distributions use a security policy with minimum TLSv1.1 or TLSv1.2 and appropriate security ciphers for HTTPS viewer connections', () => {
     const ruleId = 'CloudFrontDistributionHttpsViewerNoOutdatedSSL';
     test('Noncompliance 1: No viewer certificate specified', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+      new CfnDistribution(stack, 'Distribution', {
         distributionConfig: {
           defaultCacheBehavior: {
             targetOriginId: 'bar',
@@ -156,7 +162,7 @@ describe('Amazon CloudFront', () => {
     });
 
     test('Noncompliance 2: using the default CloudFront Viewer Certificate', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+      new CfnDistribution(stack, 'Distribution', {
         distributionConfig: {
           defaultCacheBehavior: {
             targetOriginId: 'bar',
@@ -174,7 +180,7 @@ describe('Amazon CloudFront', () => {
     });
 
     test('Noncompliance 3: using an outdated protocol ', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+      new CfnDistribution(stack, 'Distribution', {
         distributionConfig: {
           defaultCacheBehavior: {
             targetOriginId: 'bar',
@@ -193,7 +199,7 @@ describe('Amazon CloudFront', () => {
     });
 
     test('Noncompliance 3: using a virtual IP for ssl support ', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+      new CfnDistribution(stack, 'Distribution', {
         distributionConfig: {
           defaultCacheBehavior: {
             targetOriginId: 'bar',
@@ -212,16 +218,16 @@ describe('Amazon CloudFront', () => {
     });
 
     test('Compliance', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         domainNames: ['foo.com'],
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
-        certificate: new Certificate(stack, 'rCertificate', {
+        certificate: new Certificate(stack, 'Certificate', {
           domainName: 'foo.com',
         }),
       });
-      new CfnDistribution(stack, 'rDistribution2', {
+      new CfnDistribution(stack, 'Distribution2', {
         distributionConfig: {
           defaultCacheBehavior: {
             targetOriginId: 'bar',
@@ -243,7 +249,7 @@ describe('Amazon CloudFront', () => {
   describe('CloudFrontDistributionNoOutdatedSSL: CloudFront distributions do not use SSLv3 or TLSv1 for communication to the origin', () => {
     const ruleId = 'CloudFrontDistributionNoOutdatedSSL';
     test('Noncompliance 1', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
           origin: new HttpOrigin('foo.bar.com', {
             protocolPolicy: OriginProtocolPolicy.MATCH_VIEWER,
@@ -253,7 +259,7 @@ describe('Amazon CloudFront', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
           origin: new HttpOrigin('foo.bar.com', {
             originSslProtocols: [
@@ -266,14 +272,14 @@ describe('Amazon CloudFront', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      const logsBucket = new Bucket(stack, 'rLoggingBucket');
-      new Distribution(stack, 'rDistribution', {
+      const logsBucket = new Bucket(stack, 'LoggingBucket');
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
         logBucket: logsBucket,
       });
-      new Distribution(stack, 'rDistribution2', {
+      new Distribution(stack, 'Distribution2', {
         defaultBehavior: {
           origin: new HttpOrigin('foo.bar.com', {
             originSslProtocols: [OriginSslPolicy.TLS_V1_2],
@@ -284,10 +290,28 @@ describe('Amazon CloudFront', () => {
     });
   });
 
-  describe('CloudFrontDistributionS3OriginAccessIdentity: CloudFront distributions use an origin access identity for S3 origins', () => {
+  describe('CloudFrontDistributionS3OriginAccessIdentity: CloudFront Streaming distributions use an origin access identity for S3 origins', () => {
     const ruleId = 'CloudFrontDistributionS3OriginAccessIdentity';
-    test('Noncompliance 1', () => {
-      new CfnDistribution(stack, 'rDistribution', {
+    test('Noncompliance', () => {
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
+        streamingDistributionConfig: {
+          comment: 'foo',
+          enabled: true,
+          s3Origin: {
+            domainName: 'foo.s3.us-east-1.amazonaws.com',
+            originAccessIdentity: '',
+          },
+          trustedSigners: {
+            awsAccountNumbers: ['1111222233334444'],
+            enabled: true,
+          },
+        },
+        tags: [{ key: 'foo', value: 'bar' }],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new CfnDistribution(stack, 'Distribution1', {
         distributionConfig: {
           comment: 'foo',
           defaultCacheBehavior: {
@@ -307,42 +331,12 @@ describe('Amazon CloudFront', () => {
         },
         tags: [{ key: 'foo', value: 'bar' }],
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution2', {
         defaultBehavior: {
           origin: new HttpOrigin('foo.s3-website.amazonaws.com'),
         },
       });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 3', () => {
-      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
-        streamingDistributionConfig: {
-          comment: 'foo',
-          enabled: true,
-          s3Origin: {
-            domainName: 'foo.s3.us-east-1.amazonaws.com',
-            originAccessIdentity: '',
-          },
-          trustedSigners: {
-            awsAccountNumbers: ['1111222233334444'],
-            enabled: true,
-          },
-        },
-        tags: [{ key: 'foo', value: 'bar' }],
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new Distribution(stack, 'rDistribution', {
-        defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
-        },
-      });
-
-      new CfnStreamingDistribution(stack, 'rStreamingDistribution', {
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
         streamingDistributionConfig: {
           comment: 'foo',
           enabled: true,
@@ -365,20 +359,20 @@ describe('Amazon CloudFront', () => {
   describe('CloudFrontDistributionWAFIntegration: CloudFront distributions may require integration with AWS WAF', () => {
     const ruleId = 'CloudFrontDistributionWAFIntegration';
     test('Noncompliance ', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
     test('Compliance', () => {
-      new Distribution(stack, 'rDistribution', {
+      new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'rOriginBucket')),
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
         },
-        webAclId: new CfnWebACL(stack, 'rWebAcl', {
+        webAclId: new CfnWebACL(stack, 'WebAcl', {
           defaultAction: {
             allow: {
               customRequestHandling: {
@@ -393,6 +387,38 @@ describe('Amazon CloudFront', () => {
             sampledRequestsEnabled: true,
           },
         }).attrId,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('CloudFrontDistributionS3OriginAccessControl: CloudFront distributions use an origin access control for S3 origins', () => {
+    const ruleId = 'CloudFrontDistributionS3OriginAccessControl';
+    test('Noncompliance 1', () => {
+      new Distribution(stack, 'Distribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2', () => {
+      new Distribution(stack, 'Distribution', {
+        defaultBehavior: {
+          origin: S3BucketOrigin.withOriginAccessIdentity(
+            new Bucket(stack, 'OriginBucket')
+          ),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance', () => {
+      new Distribution(stack, 'Distribution', {
+        defaultBehavior: {
+          origin: S3BucketOrigin.withOriginAccessControl(
+            new Bucket(stack, 'OriginBucket')
+          ),
+        },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

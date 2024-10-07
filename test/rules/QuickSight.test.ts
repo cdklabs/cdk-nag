@@ -19,16 +19,22 @@ describe('Amazon QuickSight', () => {
   describe('QuicksightSSLConnections: Quicksight data sources connections are configured to use SSL', () => {
     const ruleId = 'QuicksightSSLConnections';
     test('Noncompliance 1', () => {
-      new CfnDataSource(stack, 'rDashboard', {
+      new CfnDataSource(stack, 'Dashboard', {
+        name: 'datasource',
+        type: 'AMAZON_ELASTICSEARCH',
         sslProperties: { disableSsl: true },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new CfnDataSource(stack, 'rDashboard', {
+      new CfnDataSource(stack, 'Dashboard', {
+        name: 'datasource',
+        type: 'AMAZON_ELASTICSEARCH',
         sslProperties: { disableSsl: false },
       });
-      new CfnDataSource(stack, 'rDashboard2', {
+      new CfnDataSource(stack, 'Dashboard2', {
+        name: 'datasource',
+        type: 'AMAZON_ELASTICSEARCH',
         sslProperties: {},
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
