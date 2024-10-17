@@ -44,7 +44,7 @@ export class ServerlessChecks extends NagPack {
    */
   private checkLambda(node: CfnResource) {
     this.applyRule({
-      info: 'The Lambda function should have tracing set to Tracing.ACTIVE',
+      info: 'The Lambda function does not have tracing set to Tracing.ACTIVE',
       explanation:
         'When a Lambda function has ACTIVE tracing, Lambda automatically samples invocation requests, based on the sampling algorithm specified by X-Ray.',
       level: NagMessageLevel.WARN,
