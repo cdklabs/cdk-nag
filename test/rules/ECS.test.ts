@@ -27,7 +27,6 @@ const testPack = new TestPack([
   ECSTaskDefinitionNoEnvironmentVariables,
   ECSTaskDefinitionUserForHostMode,
   ECSTaskDefinitionAwslogsDriverNotBlocking,
-  ECSTaskDefinitionAwslogsDriverNotBlocking,
 ]);
 let stack: Stack;
 
