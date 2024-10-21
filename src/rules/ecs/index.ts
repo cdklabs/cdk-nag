@@ -6,3 +6,4 @@ export { default as ECSClusterCloudWatchContainerInsights } from './ECSClusterCl
 export { default as ECSTaskDefinitionContainerLogging } from './ECSTaskDefinitionContainerLogging';
 export { default as ECSTaskDefinitionNoEnvironmentVariables } from './ECSTaskDefinitionNoEnvironmentVariables';
 export { default as ECSTaskDefinitionUserForHostMode } from './ECSTaskDefinitionUserForHostMode';
+export { default as ECSTaskDefinitionAwslogsDriverNotBlocking } from './ECSTaskDefinitionAwslogsDriverNotBlocking';
