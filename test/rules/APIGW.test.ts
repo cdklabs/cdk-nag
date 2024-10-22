@@ -8,6 +8,7 @@ import {
   CfnRequestValidator,
   CfnRestApi,
   CfnStage,
+  Cors,
   MethodLoggingLevel,
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
@@ -193,6 +194,10 @@ describe('Amazon API Gateway', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3', () => {
+      new RestApi(stack, 'rRestApi').root.addMethod('OPTIONS');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance 1', () => {
       new RestApi(stack, 'rRestApi', {
         defaultMethodOptions: { authorizationType: AuthorizationType.CUSTOM },
@@ -206,7 +211,12 @@ describe('Amazon API Gateway', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 2', () => {
-      new RestApi(stack, 'rRestApi').root.addMethod('OPTIONS');
+      new RestApi(stack, 'rRestApi').root.addCorsPreflight({
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowMethods: Cors.ALL_METHODS,
+        allowCredentials: true,
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
