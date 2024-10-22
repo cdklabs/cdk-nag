@@ -193,7 +193,7 @@ describe('Amazon API Gateway', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Compliance 1', () => {
       new RestApi(stack, 'rRestApi', {
         defaultMethodOptions: { authorizationType: AuthorizationType.CUSTOM },
       }).root.addMethod('ANY');
@@ -203,6 +203,10 @@ describe('Amazon API Gateway', () => {
         authorizationType: 'CUSTOM',
         authorizerId: 'baz',
       });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
+      new RestApi(stack, 'rRestApi').root.addMethod('OPTIONS');
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });

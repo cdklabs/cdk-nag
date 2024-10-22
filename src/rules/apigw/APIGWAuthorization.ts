@@ -15,6 +15,12 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnMethod || node instanceof CfnRoute) {
+      if (node instanceof CfnMethod) {
+        const httpMethod = NagRules.resolveIfPrimitive(node, node.httpMethod);
+        if (httpMethod === 'OPTIONS') {
+          return NagRuleCompliance.COMPLIANT;
+        }
+      }
       const authorizationType = NagRules.resolveIfPrimitive(
         node,
         node.authorizationType
