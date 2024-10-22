@@ -8,7 +8,7 @@ import { AuthorizationType, CfnMethod } from 'aws-cdk-lib/aws-apigateway';
 import { CfnRoute } from 'aws-cdk-lib/aws-apigatewayv2';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
-function checkMethodResponses(node: CfnMethod): boolean {
+function checkCORSMethodResponses(node: CfnMethod): boolean {
   const methodResponses: CfnMethod.MethodResponseProperty[] = Stack.of(
     node
   ).resolve(node.methodResponses);
@@ -34,7 +34,7 @@ export default Object.defineProperty(
     if (node instanceof CfnMethod || node instanceof CfnRoute) {
       if (node instanceof CfnMethod) {
         const httpMethod = NagRules.resolveIfPrimitive(node, node.httpMethod);
-        if (httpMethod === 'OPTIONS' && checkMethodResponses(node)) {
+        if (httpMethod === 'OPTIONS' && checkCORSMethodResponses(node)) {
           return NagRuleCompliance.COMPLIANT;
         }
       }
