@@ -35,7 +35,7 @@ export default Object.defineProperty(
       if (node instanceof CfnMethod) {
         const httpMethod = NagRules.resolveIfPrimitive(node, node.httpMethod);
         if (httpMethod === 'OPTIONS' && checkCORSMethodResponses(node)) {
-          return NagRuleCompliance.COMPLIANT;
+          return NagRuleCompliance.NOT_APPLICABLE;
         }
       }
       const authorizationType = NagRules.resolveIfPrimitive(
