@@ -330,9 +330,9 @@
     eslint-visitor-keys "^3.4.3"
 
 "@eslint-community/regexpp@^4.10.0", "@eslint-community/regexpp@^4.6.1":
-  version "4.11.2"
-  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.11.2.tgz#dc6925ab4ea52d3b9d6da204a3f0dd9c3852e3ad"
-  integrity sha512-2WwyTYNVaMNUWPZTOJdkax9iqTdirrApgTbk+Qoq5EPX6myqZvG8QGFRgdKmkjKVG6/G/a565vpPauHk0+hpBA==
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.12.0.tgz#1b8e62d1244557927b9a7fc7a96e5bbd62e1870e"
+  integrity sha512-gh7PdNombP8ftL8TinYC8Xd7WEypB8EKV4PI2h0eMzndKjPCXuo2zUiZtD2Hu+MSPt02Ty2MdS788ADl9ai1rA==
 
 "@eslint/eslintrc@^2.1.4":
   version "2.1.4"
@@ -956,9 +956,9 @@ acorn@^7.1.1:
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
 acorn@^8.2.4, acorn@^8.9.0:
-  version "8.13.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.13.0.tgz#2a30d670818ad16ddd6a35d3842dacec9e5d7ca3"
-  integrity sha512-8zSiw54Oxrdym50NlZ9sUusyO1Z1ZchgRLWRaK6c86XJFClyCgFKetdowBg5bKxyp/u+CDBJG4Mpp0m3HLZl9w==
+  version "8.14.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.14.0.tgz#063e2c70cac5fb4f6467f0b11152e04c682795b0"
+  integrity sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==
 
 add-stream@^1.0.0:
   version "1.0.0"
@@ -1340,9 +1340,9 @@ camelcase@^6.2.0, camelcase@^6.3.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001669:
-  version "1.0.30001672"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001672.tgz#02ac296ad4765c6c4f93031525f60cf8bdf4a44f"
-  integrity sha512-XhW1vRo1ob6aeK2w3rTohwTPBLse/rvjq+s3RTSBwnlZqoFFjx9cHsShJjAIbLsLjyoacaTxpLZy9v3gg6zypw==
+  version "1.0.30001673"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001673.tgz#5aa291557af1c71340e809987367410aab7a5a9e"
+  integrity sha512-WTrjUCSMp3LYX0nE12ECkV0a+e6LC85E0Auz75555/qr78Oc8YWhEPNfDd6SHdtlCMSzqtuXY0uyEMNRcsKpKw==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
