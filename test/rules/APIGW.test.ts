@@ -8,6 +8,7 @@ import {
   CfnRequestValidator,
   CfnRestApi,
   CfnStage,
+  Cors,
   MethodLoggingLevel,
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
@@ -182,26 +183,39 @@ describe('Amazon API Gateway', () => {
   describe('APIGWAuthorization: APIs implement authorization', () => {
     const ruleId = 'APIGWAuthorization';
     test('Noncompliance 1', () => {
-      new RestApi(stack, 'rRestApi').root.addMethod('ANY');
+      new RestApi(stack, 'RestApi').root.addMethod('ANY');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new CfnRoute(stack, 'rRoute', {
+      new CfnRoute(stack, 'Route', {
         apiId: 'foo',
         routeKey: 'ANY /bar',
         authorizationType: 'NONE',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
-      new RestApi(stack, 'rRestApi', {
+    test('Noncompliance 3', () => {
+      new RestApi(stack, 'RestApi').root.addMethod('OPTIONS');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance 1', () => {
+      new RestApi(stack, 'RestApi', {
         defaultMethodOptions: { authorizationType: AuthorizationType.CUSTOM },
       }).root.addMethod('ANY');
-      new CfnRoute(stack, 'rRoute', {
+      new CfnRoute(stack, 'Route', {
         apiId: 'foo',
         routeKey: 'ANY /bar',
         authorizationType: 'CUSTOM',
         authorizerId: 'baz',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
+      new RestApi(stack, 'RestApi').root.addCorsPreflight({
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowHeaders: Cors.DEFAULT_HEADERS,
+        allowMethods: Cors.ALL_METHODS,
+        allowCredentials: true,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
