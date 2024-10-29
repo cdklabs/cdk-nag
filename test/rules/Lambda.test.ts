@@ -134,7 +134,7 @@ describe('AWS Lambda', () => {
     const minValidMultiplier = 6;
     test('Noncompliance 1 - all values defined', () => {
       const testVisibilityTimeoutSeconds = 20;
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         timeout: Duration.seconds(
           Math.ceil(testVisibilityTimeoutSeconds / minValidMultiplier + 1)
@@ -142,10 +142,10 @@ describe('AWS Lambda', () => {
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {
         visibilityTimeout: Duration.seconds(testVisibilityTimeoutSeconds),
       });
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: sqsQueue.queueArn,
       });
@@ -153,7 +153,7 @@ describe('AWS Lambda', () => {
     });
 
     test('Noncompliance 2 - Lambda timeout defined, SQS visibility timeout default', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         timeout: Duration.seconds(
           Math.ceil(defaultSQSVisibilityTimeoutSeconds / minValidMultiplier + 1)
@@ -161,8 +161,8 @@ describe('AWS Lambda', () => {
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {});
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {});
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: sqsQueue.queueArn,
       });
@@ -170,17 +170,17 @@ describe('AWS Lambda', () => {
     });
 
     test('Noncompliance 3 - Lambda timeout default, SQS visibility timeout defined', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {
         visibilityTimeout: Duration.seconds(
           defaultLambdaFunctionTimeoutSeconds * minValidMultiplier - 1
         ),
       });
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: sqsQueue.queueArn,
       });
@@ -188,13 +188,13 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance 1 - all values default', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {});
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {});
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: sqsQueue.queueArn,
       });
@@ -202,7 +202,7 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance 2 - Lambda timeout defined, SQS visibility timeout default', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         timeout: Duration.seconds(
           Math.floor(defaultSQSVisibilityTimeoutSeconds / minValidMultiplier)
@@ -210,8 +210,8 @@ describe('AWS Lambda', () => {
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {});
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {});
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: sqsQueue.queueArn,
       });
@@ -219,17 +219,17 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance 3 - Lambda timeout default, SQS visibility timeout defined', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {
         visibilityTimeout: Duration.seconds(
           defaultLambdaFunctionTimeoutSeconds * minValidMultiplier
         ),
       });
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: sqsQueue.queueArn,
       });
@@ -237,16 +237,16 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance 4 - eventSourceArn is not of an SQS queue', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      const ddbTable = new TableV2(stack, 'rDdbTable', {
+      const ddbTable = new TableV2(stack, 'DdbTable', {
         partitionKey: { name: 'id', type: AttributeType.STRING },
         dynamoStream: StreamViewType.KEYS_ONLY,
       });
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         eventSourceArn: ddbTable.tableStreamArn,
       });
@@ -254,12 +254,12 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance 5 - Kafka source, no eventSourceArn set', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+      const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
         runtime: Runtime.NODEJS_20_X,
       });
-      new EventSourceMapping(stack, 'rEventSourceMapping', {
+      new EventSourceMapping(stack, 'EventSourceMapping', {
         target: lambdaFunction,
         kafkaBootstrapServers: ['abc.example.com:9096'],
       });
@@ -267,10 +267,10 @@ describe('AWS Lambda', () => {
     });
 
     test('Compliance 6 - Lambda function not found in stack', () => {
-      const sqsQueue = new Queue(stack, 'rSqsQueue', {
+      const sqsQueue = new Queue(stack, 'SqsQueue', {
         visibilityTimeout: Duration.seconds(20),
       });
-      new CfnEventSourceMapping(stack, 'rEventSourceMapping', {
+      new CfnEventSourceMapping(stack, 'EventSourceMapping', {
         functionName: 'myFunction',
         eventSourceArn: sqsQueue.queueArn,
       });
