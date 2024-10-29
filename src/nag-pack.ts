@@ -200,7 +200,7 @@ export abstract class NagPack implements IAspect {
       const reason = this.ignoreRule(
         allSuppressions,
         VALIDATION_FAILURE_ID,
-        '',
+        ruleId,
         params.node,
         params.level,
         params.ignoreSuppressionCondition

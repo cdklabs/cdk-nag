@@ -998,15 +998,15 @@ describe('Rule explanations', () => {
 describe('Rule exception handling', () => {
   const ERROR_MESSAGE = 'oops!';
   class BadPack extends NagPack {
-    constructor(props?: NagPackProps) {
+    constructor(props?: NagPackProps, packName?: string) {
       super(props);
-      this.packName = 'Bad.Pack';
+      this.packName = packName ?? 'Bad.Pack';
     }
     public visit(node: IConstruct): void {
       if (node instanceof CfnResource) {
         this.applyRule({
           ruleSuffixOverride: 'BadRule',
-          info: 'This is a imporperly made rule.',
+          info: 'This is an improperly made rule.',
           explanation: 'This will throw an error',
           level: NagMessageLevel.ERROR,
           rule: function (node2: CfnResource): NagRuleCompliance {
@@ -1028,7 +1028,9 @@ describe('Rule exception handling', () => {
     expect(messages).toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('CdkNagValidationFailure:'),
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack-BadRule]:'
+          ),
         }),
       })
     );
@@ -1058,7 +1060,97 @@ describe('Rule exception handling', () => {
     expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
-          data: expect.stringContaining('CdkNagValidationFailure:'),
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack-BadRule]:'
+          ),
+        }),
+      })
+    );
+  });
+  test('Specific errors can be suppressed', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new BadPack({ verbose: true }, 'Bad.Pack.1'));
+    Aspects.of(stack).add(new BadPack({ verbose: true }, 'Bad.Pack.2'));
+    new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+      rules_to_suppress: [
+        {
+          id: 'CdkNagValidationFailure',
+          reason: 'at least 10 characters',
+          appliesTo: ['Bad.Pack.1-BadRule'],
+        },
+      ],
+    });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.1-BadRule]:'
+          ),
+        }),
+      })
+    );
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.2-BadRule]:'
+          ),
+        }),
+      })
+    );
+  });
+  test('Suppressing a rule suppresses errors for the rule', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new BadPack({ verbose: true }, 'Bad.Pack.1'));
+    Aspects.of(stack).add(new BadPack({ verbose: true }, 'Bad.Pack.2'));
+    new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+      rules_to_suppress: [
+        {
+          id: 'Bad.Pack.1-BadRule',
+          reason: 'at least 10 characters',
+        },
+      ],
+    });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.1-BadRule]:'
+          ),
+        }),
+      })
+    );
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.2-BadRule]:'
+          ),
+        }),
+      })
+    );
+  });
+  test('Granularly suppressing a rule does not suppress errors for the rule', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new BadPack({ verbose: true }, 'Bad.Pack.1'));
+    new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+      rules_to_suppress: [
+        {
+          id: 'Bad.Pack.1-BadRule',
+          reason: 'at least 10 characters',
+          appliesTo: ['foo'],
+        },
+      ],
+    });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.1-BadRule]:'
+          ),
         }),
       })
     );
@@ -1076,7 +1168,40 @@ describe('Rule exception handling', () => {
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(
-            'CdkNagSuppression: CdkNagValidationFailure'
+            'CdkNagSuppression[Bad.Pack-BadRule]: CdkNagValidationFailure'
+          ),
+        }),
+      })
+    );
+  });
+  test('Suppressed validation error is logged with specifically suppressed rule logging', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new BadPack({ logIgnores: true }, 'Bad.Pack.1'));
+    Aspects.of(stack).add(new BadPack({}, 'Bad.Pack.2'));
+    new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+      rules_to_suppress: [
+        {
+          id: 'CdkNagValidationFailure',
+          reason: 'at least 10 characters',
+          appliesTo: ['Bad.Pack.1-BadRule'],
+        },
+      ],
+    });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagSuppression[Bad.Pack.1-BadRule]: CdkNagValidationFailure'
+          ),
+        }),
+      })
+    );
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.2-BadRule]:'
           ),
         }),
       })

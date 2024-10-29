@@ -248,7 +248,7 @@ describe('NagReportLogger', () => {
       ]);
       app.synth();
       const expectedOutput = [
-        '"Test-Non-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo."',
+        '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error","foo."',
         '"Test-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo."',
         '"Test-N/A","Stack1/rResource","UNKNOWN","N/A","Error","foo."',
       ];
@@ -391,6 +391,40 @@ describe('NagReportLogger', () => {
     });
     test('Error values are written properly', () => {
       const stack = new Stack(app, 'Stack1');
+      new CfnResource(stack, 'rResource', { type: 'Error' });
+      app.synth();
+      const expectedOutput: NagReportLine[] = [
+        {
+          ruleId: 'Test-Compliant',
+          resourceId: 'Stack1/rResource',
+          compliance: 'UNKNOWN',
+          exceptionReason: 'N/A',
+          ruleLevel: 'Error',
+          ruleInfo: 'foo.',
+        },
+        {
+          ruleId: 'Test-Non-Compliant',
+          resourceId: 'Stack1/rResource',
+          compliance: 'UNKNOWN',
+          exceptionReason: 'N/A',
+          ruleLevel: 'Error',
+          ruleInfo: 'foo.',
+        },
+        {
+          ruleId: 'Test-N/A',
+          resourceId: 'Stack1/rResource',
+          compliance: 'UNKNOWN',
+          exceptionReason: 'N/A',
+          ruleLevel: 'Error',
+          ruleInfo: 'foo.',
+        },
+      ];
+      expect(
+        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
+      ).toEqual(expect.arrayContaining(expectedOutput));
+    });
+    test('Error values are suppressed properly', () => {
+      const stack = new Stack(app, 'Stack1');
       const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
       NagSuppressions.addResourceSuppressions(resource, [
         {
@@ -411,8 +445,8 @@ describe('NagReportLogger', () => {
         {
           ruleId: 'Test-Non-Compliant',
           resourceId: 'Stack1/rResource',
-          compliance: 'UNKNOWN',
-          exceptionReason: 'N/A',
+          compliance: 'Suppressed',
+          exceptionReason: 'lorem ipsum',
           ruleLevel: 'Error',
           ruleInfo: 'foo.',
         },
