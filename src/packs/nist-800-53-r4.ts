@@ -100,7 +100,6 @@ import {
   SageMakerNotebookInstanceKMSKeyConfigured,
   SageMakerNotebookNoDirectInternetAccess,
 } from '../rules/sagemaker';
-import { SNSEncryptedKMS } from '../rules/sns';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,
@@ -139,7 +138,6 @@ export class NIST80053R4Checks extends NagPack {
       this.checkRedshift(node);
       this.checkS3(node);
       this.checkSageMaker(node);
-      this.checkSNS(node);
       this.checkVPC(node);
       this.checkWAF(node);
     }
@@ -834,22 +832,6 @@ export class NIST80053R4Checks extends NagPack {
         'By preventing direct internet access, you can keep sensitive data from being accessed by unauthorized users.',
       level: NagMessageLevel.ERROR,
       rule: SageMakerNotebookNoDirectInternetAccess,
-      node: node,
-    });
-  }
-
-  /**
-   * Check Amazon SNS Resources
-   * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
-   */
-  private checkSNS(node: CfnResource): void {
-    this.applyRule({
-      info: 'The SNS topic does not have KMS encryption enabled - (Control IDs: SC-13, SC-28).',
-      explanation:
-        'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.',
-      level: NagMessageLevel.ERROR,
-      rule: SNSEncryptedKMS,
       node: node,
     });
   }

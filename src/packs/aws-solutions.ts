@@ -174,7 +174,7 @@ import {
   SageMakerNotebookNoDirectInternetAccess,
 } from '../rules/sagemaker';
 import { SecretsManagerRotationEnabled } from '../rules/secretsmanager';
-import { SNSEncryptedKMS, SNSTopicSSLPublishOnly } from '../rules/sns';
+import { SNSTopicSSLPublishOnly } from '../rules/sns';
 import {
   SQSQueueDLQ,
   SQSQueueSSE,
@@ -1356,15 +1356,6 @@ export class AwsSolutionsChecks extends NagPack {
         'An open policy ("*" principal without a condition) grants anonymous access to an event bus. Use a condition to limit the permission to accounts that fulfill a certain requirement, such as being a member of a certain AWS organization.',
       level: NagMessageLevel.ERROR,
       rule: EventBusOpenAccess,
-      node: node,
-    });
-    this.applyRule({
-      ruleSuffixOverride: 'SNS2',
-      info: 'The SNS Topic does not have server-side encryption enabled.',
-      explanation:
-        'Server side encryption adds additional protection of sensitive data delivered as messages to subscribers.',
-      level: NagMessageLevel.ERROR,
-      rule: SNSEncryptedKMS,
       node: node,
     });
     this.applyRule({

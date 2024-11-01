@@ -13,9 +13,9 @@ import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnTopicPolicy, Topic } from 'aws-cdk-lib/aws-sns';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
-import { SNSEncryptedKMS, SNSTopicSSLPublishOnly } from '../../src/rules/sns';
+import { SNSTopicSSLPublishOnly } from '../../src/rules/sns';
 
-const testPack = new TestPack([SNSEncryptedKMS, SNSTopicSSLPublishOnly]);
+const testPack = new TestPack([SNSTopicSSLPublishOnly]);
 let stack: Stack;
 
 beforeEach(() => {
@@ -24,18 +24,6 @@ beforeEach(() => {
 });
 
 describe('Amazon Simple Notification Service (Amazon SNS)', () => {
-  describe('SNSEncryptedKMS: SNS topics are encrypted via KMS', () => {
-    const ruleId = 'SNSEncryptedKMS';
-    test('Noncompliance 1', () => {
-      new Topic(stack, 'rTopic');
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new Topic(stack, 'rTopic', { masterKey: new Key(stack, 'rKey') });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-  });
-
   describe('SNSTopicSSLPublishOnly: SNS topics require SSL requests for publishing', () => {
     const ruleId = 'SNSTopicSSLPublishOnly';
     test('Noncompliance 1', () => {
