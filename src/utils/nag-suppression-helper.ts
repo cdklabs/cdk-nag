@@ -8,7 +8,6 @@ import {
   NagPackSuppression,
   NagPackSuppressionAppliesTo,
 } from '../models/nag-suppression';
-import { VALIDATION_FAILURE_ID } from '../nag-rules';
 
 interface NagCfnMetadata {
   rules_to_suppress: NagCfnSuppression[];
@@ -98,16 +97,6 @@ export class NagSuppressionHelper {
     ruleId: string,
     findingId: string
   ): boolean {
-    // Specific handling to automatically suppress errors on suppressed rules
-    // Only applies if suppression is not granular, as error handling is not scoped to individual findings
-    if (
-      ruleId === VALIDATION_FAILURE_ID &&
-      findingId === suppression.id &&
-      !suppression.appliesTo
-    ) {
-      return true;
-    }
-
     if (ruleId !== suppression.id) {
       return false;
     }

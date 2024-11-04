@@ -30,6 +30,7 @@ import {
   NagRuleCompliance,
   NagRules,
   NagSuppressions,
+  SuppressionIgnoreAlways,
 } from '../src';
 
 describe('Rule suppression system', () => {
@@ -1123,6 +1124,113 @@ describe('Rule exception handling', () => {
       })
     );
     expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.2-BadRule]:'
+          ),
+        }),
+      })
+    );
+  });
+  test.each([
+    [
+      'NagPack level suppression',
+      {
+        id: 'Bad.Pack.1-BadRule',
+        reason: 'at least 10 characters',
+      },
+    ],
+    [
+      'CdkNagValidationFailure suppression',
+      {
+        id: 'CdkNagValidationFailure',
+        reason: 'at least 10 characters',
+      },
+    ],
+    [
+      'CdkNagValidationFailure granular suppression',
+      {
+        id: 'CdkNagValidationFailure',
+        reason: 'at least 10 characters',
+        appliesTo: ['Bad.Pack.1-BadRule'],
+      },
+    ],
+  ])(
+    'Suppression ignore conditions apply to exceptions with %s',
+    (_testName, suppressionRule) => {
+      const stack = new Stack();
+      Aspects.of(stack).add(
+        new BadPack(
+          {
+            suppressionIgnoreCondition: new SuppressionIgnoreAlways('IGNORED.'),
+          },
+          'Bad.Pack.1'
+        )
+      );
+      new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+        rules_to_suppress: [suppressionRule],
+      });
+      const messages = SynthUtils.synthesize(stack).messages;
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'CdkNagValidationFailure[Bad.Pack.1-BadRule]:'
+            ),
+          }),
+        })
+      );
+      expect(messages).toContainEqual(
+        expect.objectContaining({
+          entry: expect.objectContaining({
+            data: expect.stringContaining(
+              'The suppression for Bad.Pack.1-BadRule was ignored'
+            ),
+          }),
+        })
+      );
+    }
+  );
+  test('Suppressing CdkNagValidationFailure still suppresses other failures when one has a suppression ignore', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(
+      new BadPack(
+        {
+          suppressionIgnoreCondition: new SuppressionIgnoreAlways('IGNORED.'),
+        },
+        'Bad.Pack.1'
+      )
+    );
+    Aspects.of(stack).add(new BadPack({ verbose: true }, 'Bad.Pack.2'));
+    new CfnBucket(stack, 'rBucket').addMetadata('cdk_nag', {
+      rules_to_suppress: [
+        {
+          id: 'CdkNagValidationFailure',
+          reason: 'at least 10 characters',
+        },
+      ],
+    });
+    const messages = SynthUtils.synthesize(stack).messages;
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'The suppression for Bad.Pack.1-BadRule was ignored'
+          ),
+        }),
+      })
+    );
+    expect(messages).toContainEqual(
+      expect.objectContaining({
+        entry: expect.objectContaining({
+          data: expect.stringContaining(
+            'CdkNagValidationFailure[Bad.Pack.1-BadRule]:'
+          ),
+        }),
+      })
+    );
+    expect(messages).not.toContainEqual(
       expect.objectContaining({
         entry: expect.objectContaining({
           data: expect.stringContaining(

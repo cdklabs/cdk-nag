@@ -199,11 +199,12 @@ export abstract class NagPack implements IAspect {
     } catch (error) {
       const reason = this.ignoreRule(
         allSuppressions,
-        VALIDATION_FAILURE_ID,
         ruleId,
+        '',
         params.node,
         params.level,
-        params.ignoreSuppressionCondition
+        params.ignoreSuppressionCondition,
+        true
       );
       if (reason) {
         this.loggers.forEach((t) =>
@@ -230,6 +231,7 @@ export abstract class NagPack implements IAspect {
    * @param ruleId The id of the rule to ignore.
    * @param resource The resource being evaluated.
    * @param findingId The id of the finding that is being checked.
+   * @param validationFailure Whether the rule is being checked due to a validation failure.
    * @returns The reason the rule was ignored, or an empty string.
    */
   protected ignoreRule(
@@ -238,10 +240,20 @@ export abstract class NagPack implements IAspect {
     findingId: string,
     resource: CfnResource,
     level: NagMessageLevel,
-    ignoreSuppressionCondition?: INagSuppressionIgnore
+    ignoreSuppressionCondition?: INagSuppressionIgnore,
+    validationFailure: boolean = false
   ): string {
     for (let suppression of suppressions) {
-      if (NagSuppressionHelper.doesApply(suppression, ruleId, findingId)) {
+      if (
+        NagSuppressionHelper.doesApply(suppression, ruleId, findingId) ||
+        // If this is marked as an exception, also check for a suppression on VALIDATION_FAILURE_ID
+        (validationFailure &&
+          NagSuppressionHelper.doesApply(
+            suppression,
+            VALIDATION_FAILURE_ID,
+            ruleId
+          ))
+      ) {
         const ignoreMessage = new SuppressionIgnoreOr(
           this.userGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
           this.packGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
