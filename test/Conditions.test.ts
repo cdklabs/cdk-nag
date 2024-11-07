@@ -15,6 +15,7 @@ import {
   SuppressionIgnoreOr,
 } from '../src';
 import { TestPack } from './rules/utils';
+import { expectMessages } from './test-utils';
 
 describe('Rule Suppression Condition Core Functionality', () => {
   const IGNORE = new SuppressionIgnoreAlways('IGNORED.');
@@ -37,22 +38,10 @@ describe('Rule Suppression Condition Core Functionality', () => {
     Aspects.of(stack).add(testPack);
     new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
     const messages = SynthUtils.synthesize(stack).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('Test-Condition'),
-        }),
-      })
-    );
-    expect(messages).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'was ignored for the following reason(s)'
-          ),
-        }),
-      })
-    );
+    expectMessages(messages, {
+      containing: ['Test-Condition'],
+      notContaining: ['was ignored for the following reason(s)'],
+    });
   });
   test('Not ignored with suppression', () => {
     const testPack = new TestPack(
@@ -74,22 +63,12 @@ describe('Rule Suppression Condition Core Functionality', () => {
       },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
-    expect(messages).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('Test-Condition'),
-        }),
-      })
-    );
-    expect(messages).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'was ignored for the following reason(s)'
-          ),
-        }),
-      })
-    );
+    expectMessages(messages, {
+      notContaining: [
+        'Test-Condition',
+        'was ignored for the following reason(s)',
+      ],
+    });
   });
   test('Ignored no suppression', () => {
     const testPack = new TestPack(
@@ -105,22 +84,10 @@ describe('Rule Suppression Condition Core Functionality', () => {
     new CfnResource(stack, 'nice', { type: 'AWS::Infinidash::Meme' });
     Aspects.of(stack).add(testPack);
     const messages = SynthUtils.synthesize(stack).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('Test-Condition'),
-        }),
-      })
-    );
-    expect(messages).not.toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'was ignored for the following reason(s)'
-          ),
-        }),
-      })
-    );
+    expectMessages(messages, {
+      containing: ['Test-Condition'],
+      notContaining: ['was ignored for the following reason(s)'],
+    });
   });
   test('Ignored with suppression', () => {
     const testPack = new TestPack(
@@ -142,22 +109,9 @@ describe('Rule Suppression Condition Core Functionality', () => {
       },
     ]);
     const messages = SynthUtils.synthesize(stack).messages;
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining('Test-Condition'),
-        }),
-      })
-    );
-    expect(messages).toContainEqual(
-      expect.objectContaining({
-        entry: expect.objectContaining({
-          data: expect.stringContaining(
-            'was ignored for the following reason(s)'
-          ),
-        }),
-      })
-    );
+    expectMessages(messages, {
+      containing: ['Test-Condition', 'was ignored for the following reason(s)'],
+    });
   });
 });
 
@@ -189,20 +143,9 @@ describe('Prebuilt Rule Suppression Conditions', () => {
         },
       ]);
       const messages = SynthUtils.synthesize(stack).messages;
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('Test-Condition'),
-          }),
-        })
-      );
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('IGNORED.\n\tIGNORED.'),
-          }),
-        })
-      );
+      expectMessages(messages, {
+        containing: ['Test-Condition', 'IGNORED.\n\tIGNORED.'],
+      });
     });
     test('Should Not Ignore Suppression', () => {
       const testPack = new TestPack(
@@ -224,20 +167,9 @@ describe('Prebuilt Rule Suppression Conditions', () => {
         },
       ]);
       const messages = SynthUtils.synthesize(stack).messages;
-      expect(messages).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('Test-Condition'),
-          }),
-        })
-      );
-      expect(messages).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('IGNORED.'),
-          }),
-        })
-      );
+      expectMessages(messages, {
+        notContaining: ['Test-Condition', 'IGNORED.'],
+      });
     });
   });
   describe('IgnoreOr', () => {
@@ -261,20 +193,9 @@ describe('Prebuilt Rule Suppression Conditions', () => {
         },
       ]);
       const messages = SynthUtils.synthesize(stack).messages;
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('Test-Condition'),
-          }),
-        })
-      );
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('IGNORED.'),
-          }),
-        })
-      );
+      expectMessages(messages, {
+        containing: ['Test-Condition', 'IGNORED.'],
+      });
     });
     test('Should Not Ignore Suppression', () => {
       const testPack = new TestPack(
@@ -296,22 +217,12 @@ describe('Prebuilt Rule Suppression Conditions', () => {
         },
       ]);
       const messages = SynthUtils.synthesize(stack).messages;
-      expect(messages).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('Test-Condition'),
-          }),
-        })
-      );
-      expect(messages).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining(
-              'was ignored for the following reason(s)'
-            ),
-          }),
-        })
-      );
+      expectMessages(messages, {
+        notContaining: [
+          'Test-Condition',
+          'was ignored for the following reason(s)',
+        ],
+      });
     });
   });
   describe('SuppressionIgnoreErrors', () => {
@@ -336,20 +247,9 @@ describe('Prebuilt Rule Suppression Conditions', () => {
         },
       ]);
       const messages = SynthUtils.synthesize(stack).messages;
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('Test-Condition'),
-          }),
-        })
-      );
-      expect(messages).toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('categorized as an ERROR'),
-          }),
-        })
-      );
+      expectMessages(messages, {
+        containing: ['Test-Condition', 'categorized as an ERROR'],
+      });
     });
     test('Should Not Ignore Suppression', () => {
       const testPack = new TestPack(
@@ -372,20 +272,9 @@ describe('Prebuilt Rule Suppression Conditions', () => {
         },
       ]);
       const messages = SynthUtils.synthesize(stack).messages;
-      expect(messages).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('Test-Condition'),
-          }),
-        })
-      );
-      expect(messages).not.toContainEqual(
-        expect.objectContaining({
-          entry: expect.objectContaining({
-            data: expect.stringContaining('categorized as an ERROR'),
-          }),
-        })
-      );
+      expectMessages(messages, {
+        notContaining: ['Test-Condition', 'categorized as an ERROR'],
+      });
     });
   });
 });

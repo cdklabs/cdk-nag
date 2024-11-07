@@ -160,7 +160,7 @@ export class AnnotationLogger implements INagLogger {
     const information = `'${data.ruleId}' threw an error during validation. This is generally caused by a parameter referencing an intrinsic function. You can suppress the "${VALIDATION_FAILURE_ID}" to get rid of this error. For more details enable verbose logging.'`;
     const message = this.createMessage(
       VALIDATION_FAILURE_ID,
-      '',
+      data.ruleId,
       information,
       data.errorMessage,
       this.verbose
@@ -171,7 +171,7 @@ export class AnnotationLogger implements INagLogger {
     if (this.logIgnores === true) {
       const message = this.createMessage(
         this.suppressionId,
-        '',
+        data.ruleId,
         `${VALIDATION_FAILURE_ID} was triggered but suppressed.`,
         data.errorSuppressionReason,
         this.verbose
