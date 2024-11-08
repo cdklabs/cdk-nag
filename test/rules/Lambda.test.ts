@@ -423,7 +423,7 @@ describe('AWS Lambda', () => {
     });
   });
 
-  describe('LambdaEventSourceMappingDestination: Lambda event source mappings should have a failure destination configured', () => {
+  describe('LambdaEventSourceMappingDestination: Lambda event source mappings have a failure destination configured', () => {
     const ruleId = 'LambdaEventSourceMappingDestination';
 
     test('Noncompliance 1 - No destinationConfig', () => {

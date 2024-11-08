@@ -17,7 +17,7 @@ export default Object.defineProperty(
       const deadLetterConfig = Stack.of(node).resolve(node.deadLetterConfig);
       if (
         deadLetterConfig == undefined ||
-        deadLetterConfig.targetArn == undefined
+        deadLetterConfig.targetArn == undefined 
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

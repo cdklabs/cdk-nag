@@ -8,7 +8,7 @@ import { CfnGraphQLApi } from 'aws-cdk-lib/aws-appsync';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Ensure that AppSync APIs have tracing enabled
+ * AppSync APIs have tracing enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

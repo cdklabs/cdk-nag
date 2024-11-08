@@ -8,7 +8,7 @@ import { CfnRule } from 'aws-cdk-lib/aws-events';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Ensure that EventBus targets have configure a DLQ
+ * EventBridge targets have a Dead Letter Queue configured.
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

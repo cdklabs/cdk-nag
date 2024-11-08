@@ -19,7 +19,7 @@ beforeEach(() => {
   Aspects.of(stack).add(testPack);
 });
 
-describe('EventBusDLQ: EventBridge rules should have a Dead Letter Queue', () => {
+describe('EventBusDLQ: EventBridge rules have a Dead Letter Queue configured.', () => {
   const ruleId = 'EventBusDLQ';
 
   test('Noncompliance: Rule without DLQ', () => {

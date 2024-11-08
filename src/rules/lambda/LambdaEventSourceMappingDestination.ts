@@ -3,7 +3,7 @@ import { CfnEventSourceMapping } from 'aws-cdk-lib/aws-lambda';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Lambda event source mappings should have a failure destination configured
+ * Lambda Event Source Mappings must have a destination configured for failed invocations.
  *
  * @param node - The CfnResource to check
  */

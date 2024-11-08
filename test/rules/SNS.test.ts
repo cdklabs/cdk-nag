@@ -100,7 +100,7 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
     });
   });
 
-  describe('SNSRedrivePolicy: SNS subscriptions specify a redrive policy', () => {
+  describe('SNSRedrivePolicy: SNS subscriptions have a redrive policy configured.', () => {
     const ruleId = 'SNSRedrivePolicy';
 
     test('Noncompliance: CfnSubscription without redrive policy', () => {

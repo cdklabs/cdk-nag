@@ -3,7 +3,7 @@ import { CfnQueue } from 'aws-cdk-lib/aws-sqs';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * SQS queues should have a redrive policy configured
+ * SQS queues have a redrive policy configured
  *
  * @param node - the CfnResource to check
  */

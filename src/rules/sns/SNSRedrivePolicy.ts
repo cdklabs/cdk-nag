@@ -4,7 +4,7 @@ import { CfnSubscription } from 'aws-cdk-lib/aws-sns';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * SNS subscriptions should specify a redrive policy
+ * SNS subscriptions have a redrive policy configured.
  *
  * @see https://docs.aws.amazon.com/sns/latest/dg/sns-dead-letter-queues.html
  */

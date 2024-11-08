@@ -8,7 +8,7 @@ import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Ensure that Lambda functions have an explicit timeout value
+ * Lambda functions must have an explicitly defined timeout value.
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

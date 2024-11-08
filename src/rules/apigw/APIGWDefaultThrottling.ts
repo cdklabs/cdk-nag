@@ -4,7 +4,7 @@ import { CfnStage as CfnHttpStage } from 'aws-cdk-lib/aws-apigatewayv2';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * API Gateway stages have default throttling configured
+ * API Gateway stages are not using default throttling settings
  * @param node The CfnStage or CfnHttpStage to check
  */
 export default Object.defineProperty(

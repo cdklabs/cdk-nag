@@ -19,7 +19,7 @@ const isJSON = (str: string) => {
 };
 
 /**
- * API Gateway REST and HTTP APIs use JSON structured logs
+ * API Gateway logs are configured in JSON format.
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(

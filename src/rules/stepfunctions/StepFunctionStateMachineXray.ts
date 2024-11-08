@@ -8,7 +8,7 @@ import { CfnStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * Step Function have X-Ray tracing enabled
+ * StepFunctions have X-Ray tracing configured.
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
