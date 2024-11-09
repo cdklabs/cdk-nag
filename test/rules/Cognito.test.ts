@@ -116,7 +116,7 @@ describe('Amazon Cognito', () => {
     });
 
     test('Compliance', () => {
-      new RestApi(stack, 'rRest', {
+      new RestApi(stack, 'Rest', {
         defaultCorsPreflightOptions: {
           allowOrigins: Cors.ALL_ORIGINS,
         },
