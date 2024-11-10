@@ -71,7 +71,6 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-AS2',
         'AwsSolutions-AS3',
         'AwsSolutions-ASC3',
-        'AwsSolutions-ATH1',
         'AwsSolutions-CB4',
         'AwsSolutions-C91',
         'AwsSolutions-CFR3',

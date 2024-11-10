@@ -14,7 +14,6 @@ import {
   APIGWRequestValidation,
 } from '../rules/apigw';
 import { AppSyncGraphQLRequestLogging } from '../rules/appsync';
-import { AthenaWorkgroupEncryptedQueryResults } from '../rules/athena';
 import {
   AutoScalingGroupCooldownPeriod,
   AutoScalingGroupHealthCheck,
@@ -1007,15 +1006,6 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkAnalytics(node: CfnResource): void {
-    this.applyRule({
-      ruleSuffixOverride: 'ATH1',
-      info: 'The Athena workgroup does not encrypt query results.',
-      explanation:
-        'Encrypting query results stored in S3 helps secure data to meet compliance requirements for data-at-rest encryption.',
-      level: NagMessageLevel.ERROR,
-      rule: AthenaWorkgroupEncryptedQueryResults,
-      node: node,
-    });
     this.applyRule({
       ruleSuffixOverride: 'EMR2',
       info: 'The EMR cluster does not have S3 logging enabled.',
