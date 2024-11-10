@@ -39,7 +39,6 @@ describe('Check NagPack Details', () => {
     test('Pack contains expected warning and error rules', () => {
       const expectedWarnings = [
         'AwsSolutions-APIG3',
-        'AwsSolutions-CB3',
         'AwsSolutions-CB5',
         'AwsSolutions-CFR1',
         'AwsSolutions-CFR2',

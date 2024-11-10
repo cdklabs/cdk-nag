@@ -32,7 +32,6 @@ import {
 import {
   CodeBuildProjectKMSEncryptedArtifacts,
   CodeBuildProjectManagedImages,
-  CodeBuildProjectPrivilegedModeDisabled,
 } from '../rules/codebuild';
 import {
   CognitoUserPoolAdvancedSecurityModeEnforced,
@@ -1454,15 +1453,6 @@ export class AwsSolutionsChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkDeveloperTools(node: CfnResource): void {
-    this.applyRule({
-      ruleSuffixOverride: 'CB3',
-      info: 'The CodeBuild project has privileged mode enabled.',
-      explanation:
-        'Privileged grants elevated rights to the system, which introduces additional risk. Privileged mode should only be set to true only if the build project is used to build Docker images. Otherwise, a build that attempts to interact with the Docker daemon fails.',
-      level: NagMessageLevel.WARN,
-      rule: CodeBuildProjectPrivilegedModeDisabled,
-      node: node,
-    });
     this.applyRule({
       ruleSuffixOverride: 'CB4',
       info: 'The CodeBuild project does not use an AWS KMS key for encryption.',

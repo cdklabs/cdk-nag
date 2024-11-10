@@ -15,7 +15,6 @@ import {
   CodeBuildProjectEnvVarAwsCred,
   CodeBuildProjectKMSEncryptedArtifacts,
   CodeBuildProjectManagedImages,
-  CodeBuildProjectPrivilegedModeDisabled,
   CodeBuildProjectSourceRepoUrl,
 } from '../../src/rules/codebuild';
 
@@ -23,7 +22,6 @@ const testPack = new TestPack([
   CodeBuildProjectEnvVarAwsCred,
   CodeBuildProjectKMSEncryptedArtifacts,
   CodeBuildProjectManagedImages,
-  CodeBuildProjectPrivilegedModeDisabled,
   CodeBuildProjectSourceRepoUrl,
 ]);
 let stack: Stack;
@@ -254,39 +252,6 @@ describe('Amazon CodeBuild', () => {
         buildSpec: BuildSpec.fromObjectToYaml({
           version: 0.2,
 
-          phases: {
-            build: {
-              commands: ['echo "foo"'],
-            },
-          },
-        }),
-      });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-  });
-
-  describe('CodeBuildProjectPrivilegedModeDisabled: Codebuild projects have privileged mode disabled', () => {
-    const ruleId = 'CodeBuildProjectPrivilegedModeDisabled';
-    test('Noncompliance 1', () => {
-      new Project(stack, 'rBuildProject', {
-        buildSpec: BuildSpec.fromObjectToYaml({
-          version: 0.2,
-          phases: {
-            build: {
-              commands: ['echo "foo"'],
-            },
-          },
-        }),
-        environment: {
-          privileged: true,
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Compliance', () => {
-      new Project(stack, 'rBuildProject', {
-        buildSpec: BuildSpec.fromObjectToYaml({
-          version: 0.2,
           phases: {
             build: {
               commands: ['echo "foo"'],
