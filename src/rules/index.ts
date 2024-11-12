@@ -4,7 +4,6 @@ SPDX-License-Identifier: Apache-2.0
 */
 export * as apigw from './apigw';
 export * as appsync from './appsync';
-export * as athena from './athena';
 export * as autoscaling from './autoscaling';
 export * as cloud9 from './cloud9';
 export * as cloudfront from './cloudfront';
