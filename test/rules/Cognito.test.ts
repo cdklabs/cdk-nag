@@ -2,15 +2,15 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { RestApi, AuthorizationType } from 'aws-cdk-lib/aws-apigateway';
+import { AuthorizationType, Cors, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import {
-  UserPool,
-  Mfa,
-  CfnUserPool,
   CfnIdentityPool,
+  CfnUserPool,
+  Mfa,
+  UserPool,
 } from 'aws-cdk-lib/aws-cognito';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { TestPack, TestType, validateStack } from './utils';
 import {
   CognitoUserPoolAPIGWAuthorizer,
   CognitoUserPoolAdvancedSecurityModeEnforced,
@@ -111,6 +111,15 @@ describe('Amazon Cognito', () => {
     test('Compliance', () => {
       new RestApi(stack, 'rRest').root.addMethod('ANY', undefined, {
         authorizationType: AuthorizationType.COGNITO,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 2', () => {
+      new RestApi(stack, 'Rest', {
+        defaultCorsPreflightOptions: {
+          allowOrigins: Cors.ALL_ORIGINS,
+        },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
