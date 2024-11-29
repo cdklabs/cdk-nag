@@ -835,9 +835,9 @@
   integrity sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==
 
 "@types/node@*":
-  version "22.10.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.0.tgz#89bfc9e82496b9c7edea3382583fa94f75896e81"
-  integrity sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==
+  version "22.10.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.1.tgz#41ffeee127b8975a05f8c4f83fb89bcb2987d766"
+  integrity sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==
   dependencies:
     undici-types "~6.20.0"
 
@@ -1974,9 +1974,9 @@ downlevel-dts@^0.11.0:
     typescript next
 
 electron-to-chromium@^1.5.41:
-  version "1.5.66"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.66.tgz#1e9b4bc7638ac02d3551eea1dbaeb0101ec5823f"
-  integrity sha512-pI2QF6+i+zjPbqRzJwkMvtvkdI7MjVbSh2g8dlMguDJIXEPw+kwasS1Jl+YGPEBfGVxsVgGUratAKymPdPo2vQ==
+  version "1.5.67"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.67.tgz#66ebd2be4a77469ac2760ef5e9e460ba9a43a845"
+  integrity sha512-nz88NNBsD7kQSAGGJyp8hS6xSPtWwqNogA0mjtc2nUYeEf3nURK9qpV18TuBdDmEDgVWotS8Wkzf+V52dSQ/LQ==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -3703,9 +3703,9 @@ jsii-diff@^1.105.0:
     yargs "^16.2.0"
 
 jsii-docgen@^10.5.0:
-  version "10.5.7"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.5.7.tgz#9f06e2841ab40b6bf108a53048ff5ccbdcc52cc0"
-  integrity sha512-tpnFXbDsp36xvIxrSGpOH0QkNvJBdsLVAdr3pbZA+9ANHKEuC7PemopaVzkKHX8GCxvhyyAKTCOu3kR2Yw1ClQ==
+  version "10.6.0"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.6.0.tgz#c0a7ffe4da8bd8ace1e8501a9e4832c93ce34487"
+  integrity sha512-WDLCIz7iuWpyOzBuhJQJngpWvioTLysyFQDpe0nFgKQJC2Qy7mOsLFInSL3BSDYzKcsjuwd7jyyRU9js0yONjw==
   dependencies:
     "@jsii/spec" "^1.105.0"
     case "^1.6.3"
@@ -4530,9 +4530,9 @@ prompts@^2.0.1:
     sisteransi "^1.0.5"
 
 psl@^1.1.33:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/psl/-/psl-1.13.0.tgz#8b2357f13ef3cf546af3f52de00543a94da86cfa"
-  integrity sha512-BFwmFXiJoFqlUpZ5Qssolv15DMyc84gTBds1BjsV1BfXEo1UyyD7GsmN67n7J77uRhoSNW1AXtXKPLcBFQn9Aw==
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/psl/-/psl-1.14.0.tgz#f6ccbbd63e4e663f830ca39eeea08feb3caceaaf"
+  integrity sha512-Syk1bnf6fRZ9wQs03AtKJHcM12cKbOLo9L8JtCCdYj5/DTsHmTyXM4BK5ouWeG2P6kZ4nmFvuNTdtaqfobCOCg==
   dependencies:
     punycode "^2.3.1"
 
