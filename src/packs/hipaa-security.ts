@@ -124,6 +124,7 @@ import {
   SecretsManagerRotationEnabled,
   SecretsManagerUsingKMSKey,
 } from '../rules/secretsmanager';
+import { SNSEncryptedKMS } from '../rules/sns';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,
@@ -166,6 +167,7 @@ export class HIPAASecurityChecks extends NagPack {
       this.checkS3(node);
       this.checkSageMaker(node);
       this.checkSecretsManager(node);
+      this.checkSNS(node);
       this.checkVPC(node);
       this.checkWAF(node);
     }
@@ -1016,6 +1018,22 @@ export class HIPAASecurityChecks extends NagPack {
         'To help protect data at rest, ensure encryption with AWS Key Management Service (AWS KMS) is enabled for AWS Secrets Manager secrets. Because sensitive data can exist at rest in Secrets Manager secrets, enable encryption at rest to help protect that data.',
       level: NagMessageLevel.ERROR,
       rule: SecretsManagerUsingKMSKey,
+      node: node,
+    });
+  }
+
+  /**
+   * Check Amazon SNS Resources
+   * @param node the CfnResource to check
+   * @param ignores list of ignores for the resource
+   */
+  private checkSNS(node: CfnResource): void {
+    this.applyRule({
+      info: 'The SNS topic does not have KMS encryption enabled - (Control IDs: 164.312(a)(2)(iv), 164.312(e)(2)(ii)).',
+      explanation:
+        'Because sensitive data can exist at rest in published messages, enable encryption at rest to help protect that data.',
+      level: NagMessageLevel.ERROR,
+      rule: SNSEncryptedKMS,
       node: node,
     });
   }
