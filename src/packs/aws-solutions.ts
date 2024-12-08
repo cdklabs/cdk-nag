@@ -60,6 +60,7 @@ import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,
   ECSTaskDefinitionNoEnvironmentVariables,
+  ECSTaskDefinitionAwslogsDriverNotBlocking,
 } from '../rules/ecs';
 import { EFSEncrypted } from '../rules/efs';
 import {
@@ -324,6 +325,15 @@ export class AwsSolutionsChecks extends NagPack {
         "Container logging allows operators to view and aggregate the logs from the container. Containers should use the 'awslogs' driver at a minimum.",
       level: NagMessageLevel.ERROR,
       rule: ECSTaskDefinitionContainerLogging,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'ECS8',
+      info: "One or more containers in the ECS Task Definition are using the 'awslogs' driver in blocking mode.",
+      explanation:
+        "Containers using 'awslogs' in blocking mode will be interupted if logs can't be immediately sent to Amazon CloudWatch Logs.",
+      level: NagMessageLevel.ERROR,
+      rule: ECSTaskDefinitionAwslogsDriverNotBlocking,
       node: node,
     });
     this.applyRule({
