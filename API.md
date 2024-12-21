@@ -2375,7 +2375,7 @@ public createMessage(input: SuppressionIgnoreInput): string
 
 - *Implemented By:* <a href="#cdk-nag.IApplyRule">IApplyRule</a>
 
-Interface for JSII interoperability for passing parameters and the Rule Callback to @applyRule method.
+Interface for JSII interoperability for passing parameters and the Rule Callback to.
 
 #### Methods <a name="Methods" id="Methods"></a>
 
