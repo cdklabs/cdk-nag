@@ -358,7 +358,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'ELB2',
       info: 'The ELB does not have access logs enabled.',
       explanation:
-        'Access logs allow operators to to analyze traffic patterns and identify and troubleshoot security issues.',
+        'Access logs allow operators to analyze traffic patterns and identify and troubleshoot security issues.',
       level: NagMessageLevel.ERROR,
       rule: ELBLoggingEnabled,
       node: node,
