@@ -8,7 +8,7 @@ import {
   CfnDistribution,
   CfnStreamingDistribution,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
+import { CfnDelivery, CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
 
@@ -33,6 +33,8 @@ export default Object.defineProperty(
             })
           )
         ).replace('.Id', '');
+
+        let deliverySourceName;
         for (const child of Stack.of(node).node.findAll()) {
           if (child instanceof CfnDeliverySource) {
             const deliverySourceArn = flattenCfnReference(
@@ -42,6 +44,13 @@ export default Object.defineProperty(
             if (
               deliverySourceArn === distributionArn &&
               logType === 'ACCESS_LOGS'
+            ) {
+              deliverySourceName = Stack.of(child).resolve(child.name);
+            }
+          } else if (child instanceof CfnDelivery) {
+            if (
+              deliverySourceName ===
+              Stack.of(child).resolve(child.deliverySourceName)
             ) {
               return NagRuleCompliance.COMPLIANT;
             }
