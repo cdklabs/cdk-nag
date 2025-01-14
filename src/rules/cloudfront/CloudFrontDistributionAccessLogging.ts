@@ -12,7 +12,8 @@ import { CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
 
-const pendingDistributions: CfnDistribution[] = [];
+const pendingDistributions: Map<string, { node: CfnResource; valid: boolean }> =
+  new Map();
 
 /**
  * CloudFront distributions have access logging enabled
@@ -25,7 +26,20 @@ export default Object.defineProperty(
         node.distributionConfig
       );
       if (distributionConfig.logging == undefined) {
-        pendingDistributions.push(node);
+        const distributionArn = flattenCfnReference(
+          Stack.of(node).resolve(
+            Stack.of(node).formatArn({
+              service: 'cloudfront',
+              region: '',
+              resource: 'distribution',
+              resourceName: node.attrId,
+            })
+          )
+        ).replace('.Id', '');
+        pendingDistributions.set(distributionArn, {
+          node,
+          valid: false,
+        });
         // TODO: If there are no CfnDeliverySource defined, then mark as NON_COMPLIANT,
         // otherwise mark as NOT_APPLICABLE to continue in the next step
         return NagRuleCompliance.NOT_APPLICABLE;
@@ -45,27 +59,15 @@ export default Object.defineProperty(
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnDeliverySource) {
-      return pendingDistributions.every((distributionNode) => {
-        const distributionArn = flattenCfnReference(
-          Stack.of(distributionNode).resolve(
-            Stack.of(distributionNode).formatArn({
-              service: 'cloudfront',
-              region: '',
-              resource: 'distribution',
-              resourceName: distributionNode.attrId,
-            })
-          )
-        ).replace('.Id', '');
-        const deliverySourceArn = flattenCfnReference(
-          Stack.of(node).resolve(node.resourceArn)
-        );
-        const logType = Stack.of(node).resolve(node.logType);
-        return (
-          distributionArn === deliverySourceArn && logType === 'ACCESS_LOGS'
-        );
-      })
-        ? NagRuleCompliance.COMPLIANT
-        : NagRuleCompliance.NON_COMPLIANT;
+      const deliverySourceArn = flattenCfnReference(
+        Stack.of(node).resolve(node.resourceArn)
+      );
+      const entry = pendingDistributions.get(deliverySourceArn);
+      if (entry) {
+        entry.valid = true;
+        pendingDistributions.set(deliverySourceArn, entry);
+      }
+      return NagRuleCompliance.NOT_APPLICABLE;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
