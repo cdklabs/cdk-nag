@@ -12,9 +12,6 @@ import { CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
 
-const pendingDistributions: Map<string, { node: CfnResource; valid: boolean }> =
-  new Map();
-
 /**
  * CloudFront distributions have access logging enabled
  * @param node the CfnResource to check
@@ -36,13 +33,21 @@ export default Object.defineProperty(
             })
           )
         ).replace('.Id', '');
-        pendingDistributions.set(distributionArn, {
-          node,
-          valid: false,
-        });
-        // TODO: If there are no CfnDeliverySource defined, then mark as NON_COMPLIANT,
-        // otherwise mark as NOT_APPLICABLE to continue in the next step
-        return NagRuleCompliance.NOT_APPLICABLE;
+        for (const child of Stack.of(node).node.findAll()) {
+          if (child instanceof CfnDeliverySource) {
+            const deliverySourceArn = flattenCfnReference(
+              Stack.of(child).resolve(child.resourceArn)
+            );
+            const logType = Stack.of(child).resolve(child.logType);
+            if (
+              deliverySourceArn === distributionArn &&
+              logType === 'ACCESS_LOGS'
+            ) {
+              return NagRuleCompliance.COMPLIANT;
+            }
+          }
+        }
+        return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnStreamingDistribution) {
@@ -58,16 +63,6 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
-    } else if (node instanceof CfnDeliverySource) {
-      const deliverySourceArn = flattenCfnReference(
-        Stack.of(node).resolve(node.resourceArn)
-      );
-      const entry = pendingDistributions.get(deliverySourceArn);
-      if (entry) {
-        entry.valid = true;
-        pendingDistributions.set(deliverySourceArn, entry);
-      }
-      return NagRuleCompliance.NOT_APPLICABLE;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
