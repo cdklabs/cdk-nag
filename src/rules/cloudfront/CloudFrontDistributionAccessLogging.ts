@@ -8,7 +8,11 @@ import {
   CfnDistribution,
   CfnStreamingDistribution,
 } from 'aws-cdk-lib/aws-cloudfront';
+import { CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
+
+const pendingDistributions: CfnDistribution[] = [];
 
 /**
  * CloudFront distributions have access logging enabled
@@ -21,7 +25,10 @@ export default Object.defineProperty(
         node.distributionConfig
       );
       if (distributionConfig.logging == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
+        pendingDistributions.push(node);
+        // TODO: If there are no CfnDeliverySource defined, then mark as NON_COMPLIANT,
+        // otherwise mark as NOT_APPLICABLE to continue in the next step
+        return NagRuleCompliance.NOT_APPLICABLE;
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnStreamingDistribution) {
@@ -37,6 +44,28 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
+    } else if (node instanceof CfnDeliverySource) {
+      return pendingDistributions.every((distributionNode) => {
+        const distributionArn = flattenCfnReference(
+          Stack.of(distributionNode).resolve(
+            Stack.of(distributionNode).formatArn({
+              service: 'cloudfront',
+              region: '',
+              resource: 'distribution',
+              resourceName: distributionNode.attrId,
+            })
+          )
+        ).replace('.Id', '');
+        const deliverySourceArn = flattenCfnReference(
+          Stack.of(node).resolve(node.resourceArn)
+        );
+        const logType = Stack.of(node).resolve(node.logType);
+        return (
+          distributionArn === deliverySourceArn && logType === 'ACCESS_LOGS'
+        );
+      })
+        ? NagRuleCompliance.COMPLIANT
+        : NagRuleCompliance.NON_COMPLIANT;
     } else {
       return NagRuleCompliance.NOT_APPLICABLE;
     }
