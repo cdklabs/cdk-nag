@@ -11,19 +11,26 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { CfnQueuePolicy, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
+import {
+  CfnQueue,
+  CfnQueuePolicy,
+  Queue,
+  QueueEncryption,
+} from 'aws-cdk-lib/aws-sqs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { TestPack, TestType, validateStack } from './utils';
 import {
   SQSQueueDLQ,
   SQSQueueSSE,
   SQSQueueSSLRequestsOnly,
+  SQSRedrivePolicy,
 } from '../../src/rules/sqs';
 
 const testPack = new TestPack([
   SQSQueueDLQ,
   SQSQueueSSE,
   SQSQueueSSLRequestsOnly,
+  SQSRedrivePolicy,
 ]);
 let stack: Stack;
 
@@ -200,6 +207,45 @@ describe('Amazon Simple Queue Service (SQS)', () => {
             }),
           ],
         }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('SQSRedrivePolicy: SQS queues should have a redrive policy configured', () => {
+    const ruleId = 'SQSRedrivePolicy';
+
+    test('Noncompliance: L2 construct without redrive policy', () => {
+      new Queue(stack, 'QueueWithoutRedrive');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance: L1 construct without redrive policy', () => {
+      new CfnQueue(stack, 'L1QueueWithoutRedrive', {});
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance: L1 construct with redrive policy', () => {
+      new CfnQueue(stack, 'L1QueueWithRedrive', {
+        redrivePolicy: {
+          deadLetterTargetArn:
+            'arn:aws:sqs:us-east-1:123456789012:DeadLetterQueue',
+          maxReceiveCount: 3,
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance: L2 construct with redrive policy', () => {
+      new Queue(stack, 'QueueWithRedrive', {
+        deadLetterQueue: {
+          queue: Queue.fromQueueArn(
+            stack,
+            'Dlq2',
+            `arn:aws:sqs:${stack.region}:${stack.account}:foo2`
+          ),
+          maxReceiveCount: 3,
+        },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
