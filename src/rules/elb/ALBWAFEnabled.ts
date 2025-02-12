@@ -18,7 +18,7 @@ export default Object.defineProperty(
     if (node instanceof CfnLoadBalancer) {
       const type = NagRules.resolveIfPrimitive(node, node.type);
       if (type === undefined || type === 'application') {
-        const loadBalancerLogicalId = NagRules.resolveResourceFromInstrinsic(
+        const loadBalancerLogicalId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.ref
         );
