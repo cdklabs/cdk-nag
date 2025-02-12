@@ -69,14 +69,36 @@ export class NagRules {
       return resolvedValue;
     }
   }
-
+  
   /**
+   * @deprecated
+   * Use resolveResourceFromIntrinsic instead
+   * 
    * Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
    * @param node The CfnResource to check.
    * @param parameter The value to attempt to resolve.
    * @returns Return the Logical resource Id if resolves to a intrinsic function, otherwise the resolved provided value.
    */
   static resolveResourceFromInstrinsic(node: CfnResource, parameter: any): any {
+    const resolvedValue = Stack.of(node).resolve(parameter);
+    const ref = resolvedValue?.Ref;
+    const getAtt = resolvedValue?.['Fn::GetAtt'];
+    if (ref != undefined) {
+      return ref;
+    } else if (Array.isArray(getAtt) && getAtt.length > 0) {
+      return getAtt[0];
+    }
+    return resolvedValue;
+  }
+
+  /**
+   * 
+   * Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
+   * @param node The CfnResource to check.
+   * @param parameter The value to attempt to resolve.
+   * @returns Return the Logical resource Id if resolves to a intrinsic function, otherwise the resolved provided value.
+   */
+  static resolveResourceFromIntrinsic(node: CfnResource, parameter: any): any {
     const resolvedValue = Stack.of(node).resolve(parameter);
     const ref = resolvedValue?.Ref;
     const getAtt = resolvedValue?.['Fn::GetAtt'];
