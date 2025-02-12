@@ -87,7 +87,7 @@ function isMatchingLaunchTemplate(
 ): boolean {
   return (
     launchTemplateName === node.launchTemplateName ||
-    launchTemplateId === NagRules.resolveResourceFromInstrinsic(node, node.ref)
+    launchTemplateId === NagRules.resolveResourceFromIntrinsic(node, node.ref)
   );
 }
 
@@ -97,8 +97,8 @@ function isMatchingLaunchConfiguration(
 ): boolean {
   return (
     launchConfigurationName === node.launchConfigurationName ||
-    NagRules.resolveResourceFromInstrinsic(node, launchConfigurationName) ===
-      NagRules.resolveResourceFromInstrinsic(node, node.ref)
+    NagRules.resolveResourceFromIntrinsic(node, launchConfigurationName) ===
+      NagRules.resolveResourceFromIntrinsic(node, node.ref)
   );
 }
 
