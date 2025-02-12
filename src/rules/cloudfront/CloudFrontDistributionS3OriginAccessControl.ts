@@ -25,13 +25,13 @@ export default Object.defineProperty(
           const resolvedDomainName = Stack.of(node).resolve(
             resolvedOrigin.domainName
           );
-          const originLogicalId = NagRules.resolveResourceFromInstrinsic(
+          const originLogicalId = NagRules.resolveResourceFromIntrinsic(
             node,
             resolvedDomainName
           );
           for (const child of Stack.of(node).node.findAll()) {
             if (child instanceof CfnBucket) {
-              const childLogicalId = NagRules.resolveResourceFromInstrinsic(
+              const childLogicalId = NagRules.resolveResourceFromIntrinsic(
                 child,
                 child.ref
               );
@@ -40,7 +40,7 @@ export default Object.defineProperty(
                   resolvedOrigin.originAccessControlId
                 );
                 const originAccessControlId =
-                  NagRules.resolveResourceFromInstrinsic(
+                  NagRules.resolveResourceFromIntrinsic(
                     node,
                     resolvedAccessControlId
                   );

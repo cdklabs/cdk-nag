@@ -18,7 +18,7 @@ export default Object.defineProperty(
     if (node instanceof CfnQueue) {
       const redrivePolicy = Stack.of(node).resolve(node.redrivePolicy);
       if (redrivePolicy === undefined) {
-        const queueLogicalId = NagRules.resolveResourceFromInstrinsic(
+        const queueLogicalId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.ref
         );

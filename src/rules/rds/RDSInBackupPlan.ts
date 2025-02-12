@@ -16,7 +16,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const dbLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const dbLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
