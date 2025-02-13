@@ -80,7 +80,7 @@ export class NagRules {
    * @returns Return the Logical resource Id if resolves to a intrinsic function, otherwise the resolved provided value.
    */
   static resolveResourceFromInstrinsic(node: CfnResource, parameter: any): any {
-    return resolveResourceFromIntrinsic(node, parameter);
+    return this.resolveResourceFromIntrinsic(node, parameter);
   }
   
   /**
