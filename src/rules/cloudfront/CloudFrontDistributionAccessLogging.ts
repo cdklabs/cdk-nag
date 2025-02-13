@@ -10,7 +10,6 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront';
 import { CfnDelivery, CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
-import { findParameterValue } from '../../utils/find-parameter-value';
 import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
 
 /**
@@ -38,16 +37,9 @@ export default Object.defineProperty(
         let deliverySourceName;
         for (const child of Stack.of(node).node.findAll()) {
           if (child instanceof CfnDeliverySource) {
-            let deliverySourceArn: string | undefined = flattenCfnReference(
+            const deliverySourceArn = flattenCfnReference(
               Stack.of(child).resolve(child.resourceArn)
             );
-            if (deliverySourceArn.startsWith('<SsmParameterValue')) {
-              // Try to resolve the SSM parameter
-              deliverySourceArn = findParameterValue(
-                Stack.of(child),
-                deliverySourceArn
-              );
-            }
             const logType = Stack.of(child).resolve(child.logType);
             if (
               deliverySourceArn === distributionArn &&
