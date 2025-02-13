@@ -196,7 +196,7 @@ describe('Amazon CloudFront', () => {
       }).node.addDependency(distributionDeliverySource);
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test.only('Compliance 2', () => {
+    test('Compliance 2', () => {
       const distribution = new Distribution(stack, 'Distribution', {
         defaultBehavior: {
           origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
