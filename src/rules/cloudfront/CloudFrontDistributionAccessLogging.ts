@@ -47,7 +47,11 @@ export default Object.defineProperty(
             ) {
               deliverySourceName = Stack.of(child).resolve(child.name);
             }
-          } else if (child instanceof CfnDelivery) {
+          }
+        }
+
+        for (const child of Stack.of(node).node.findAll()) {
+          if (child instanceof CfnDelivery) {
             if (
               deliverySourceName ===
               Stack.of(child).resolve(child.deliverySourceName)
@@ -56,6 +60,7 @@ export default Object.defineProperty(
             }
           }
         }
+
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;

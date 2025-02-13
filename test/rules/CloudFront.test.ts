@@ -196,6 +196,42 @@ describe('Amazon CloudFront', () => {
       }).node.addDependency(distributionDeliverySource);
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
+    test.only('Compliance 2', () => {
+      const distribution = new Distribution(stack, 'Distribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+        },
+      });
+
+      const distributionDeliveryDestination = new CfnDeliveryDestination(
+        stack,
+        'DistributionDeliveryDestination',
+        {
+          name: 'distribution-logs-destination',
+          destinationResourceArn: new LogGroup(stack, 'DistributionLogGroup')
+            .logGroupArn,
+          outputFormat: 'json',
+        }
+      );
+
+      new CfnDelivery(stack, 'DistributionDelivery', {
+        deliverySourceName: 'distribution-logs-source',
+        deliveryDestinationArn: distributionDeliveryDestination.attrArn,
+      });
+
+      new CfnDeliverySource(stack, 'DistributionDeliverySource', {
+        name: 'distribution-logs-source',
+        logType: 'ACCESS_LOGS',
+        resourceArn: Stack.of(stack).formatArn({
+          service: 'cloudfront',
+          region: '',
+          resource: 'distribution',
+          resourceName: distribution.distributionId,
+        }),
+      });
+
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
   describe('CloudFrontDistributionGeoRestrictions: CloudFront distributions may require Geo restrictions', () => {
