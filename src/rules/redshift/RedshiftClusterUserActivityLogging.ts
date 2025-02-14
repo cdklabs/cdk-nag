@@ -24,8 +24,10 @@ export default Object.defineProperty(
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnClusterParameterGroup) {
-          const childParameterGroupName =
-            NagRules.resolveResourceFromIntrinsic(node, child.ref);
+          const childParameterGroupName = NagRules.resolveResourceFromIntrinsic(
+            node,
+            child.ref
+          );
           if (childParameterGroupName === clusterParameterGroupName) {
             found = isCompliantClusterParameterGroup(child);
             break;

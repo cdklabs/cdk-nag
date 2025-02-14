@@ -16,10 +16,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDBInstance) {
-      const dbLogicalId = NagRules.resolveResourceFromIntrinsic(
-        node,
-        node.ref
-      );
+      const dbLogicalId = NagRules.resolveResourceFromIntrinsic(node, node.ref);
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnBackupSelection) {
