@@ -15,7 +15,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
       if (node.websiteConfiguration !== undefined) {
-        const bucketLogicalId = NagRules.resolveResourceFromInstrinsic(
+        const bucketLogicalId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.ref
         );
@@ -53,7 +53,7 @@ function isMatchingCompliantPolicy(
   bucketLogicalId: string,
   bucketName: string | undefined
 ): boolean {
-  const bucket = NagRules.resolveResourceFromInstrinsic(node, node.bucket);
+  const bucket = NagRules.resolveResourceFromIntrinsic(node, node.bucket);
   if (bucket !== bucketLogicalId && bucket !== bucketName) {
     return false;
   }

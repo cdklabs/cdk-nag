@@ -14,7 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnRestApi) {
-      const apiLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const apiLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
@@ -49,7 +49,7 @@ function isMatchingRequestValidator(
   node: CfnRequestValidator,
   apiLogicalId: string
 ): boolean {
-  const resourceLogicalId = NagRules.resolveResourceFromInstrinsic(
+  const resourceLogicalId = NagRules.resolveResourceFromIntrinsic(
     node,
     node.restApiId
   );

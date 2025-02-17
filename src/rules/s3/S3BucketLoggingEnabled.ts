@@ -22,7 +22,7 @@ export default Object.defineProperty(
           logging.logFilePrefix == undefined)
       ) {
         let found = false;
-        const bucketLogicalId = NagRules.resolveResourceFromInstrinsic(
+        const bucketLogicalId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.ref
         );

@@ -16,7 +16,7 @@ export default Object.defineProperty(
     if (node instanceof CfnTopic) {
       const topicKey = Stack.of(node).resolve(node.kmsMasterKeyId);
       if (topicKey === undefined) {
-        const topicLogicalId = NagRules.resolveResourceFromInstrinsic(
+        const topicLogicalId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.ref
         );
@@ -57,7 +57,7 @@ function isMatchingCompliantPolicy(
 ): boolean {
   let found = false;
   for (const topic of node.topics) {
-    const resolvedTopic = NagRules.resolveResourceFromInstrinsic(node, topic);
+    const resolvedTopic = NagRules.resolveResourceFromIntrinsic(node, topic);
     if (
       resolvedTopic === topicLogicalId ||
       (topicName !== undefined && (<string>resolvedTopic).endsWith(topicName))

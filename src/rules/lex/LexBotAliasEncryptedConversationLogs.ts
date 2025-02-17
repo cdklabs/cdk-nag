@@ -52,7 +52,7 @@ export default Object.defineProperty(
             const cloudwatch = Stack.of(node).resolve(
               resolvedDestination.cloudWatch
             );
-            const logGroupLogicalId = NagRules.resolveResourceFromInstrinsic(
+            const logGroupLogicalId = NagRules.resolveResourceFromIntrinsic(
               node,
               cloudwatch.cloudWatchLogGroupArn
             );
@@ -61,7 +61,7 @@ export default Object.defineProperty(
               if (child instanceof CfnLogGroup) {
                 if (
                   logGroupLogicalId ===
-                  NagRules.resolveResourceFromInstrinsic(child, child.logicalId)
+                  NagRules.resolveResourceFromIntrinsic(child, child.logicalId)
                 ) {
                   found = true;
                   if (child.kmsKeyId === undefined) {

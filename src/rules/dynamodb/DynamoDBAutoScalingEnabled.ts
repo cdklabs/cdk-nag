@@ -17,12 +17,12 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnTable) {
       if (
-        NagRules.resolveResourceFromInstrinsic(node, node.billingMode) !==
+        NagRules.resolveResourceFromIntrinsic(node, node.billingMode) !==
         BillingMode.PAY_PER_REQUEST
       ) {
         const indexWriteMatches = [''];
         const indexReadMatches = [''];
-        const tableLogicalId = NagRules.resolveResourceFromInstrinsic(
+        const tableLogicalId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.ref
         );
