@@ -14,7 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnQueue) {
-      const queueLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const queueLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
@@ -54,7 +54,7 @@ function isMatchingCompliantPolicy(
 ): boolean {
   let found = false;
   for (const queue of node.queues) {
-    const resolvedQueue = NagRules.resolveResourceFromInstrinsic(node, queue);
+    const resolvedQueue = NagRules.resolveResourceFromIntrinsic(node, queue);
     if (
       resolvedQueue === queueLogicalId ||
       (queueName !== undefined && (<string>resolvedQueue).endsWith(queueName))

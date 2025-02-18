@@ -18,7 +18,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSecret) {
-      const secretLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const secretLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
@@ -79,12 +79,12 @@ function getMatchingSecretTargetAttachment(
   node: CfnSecretTargetAttachment,
   secretLogicalId: string
 ): string {
-  const resourceSecretId = NagRules.resolveResourceFromInstrinsic(
+  const resourceSecretId = NagRules.resolveResourceFromIntrinsic(
     node,
     node.secretId
   );
   if (secretLogicalId === resourceSecretId) {
-    return NagRules.resolveResourceFromInstrinsic(node, node.ref);
+    return NagRules.resolveResourceFromIntrinsic(node, node.ref);
   }
   return '';
 }
@@ -101,7 +101,7 @@ function isMatchingRotationSchedule(
   secretLogicalId: string,
   secretTargetAttachmentLogicalIds: string[]
 ): boolean {
-  const resourceSecretId = NagRules.resolveResourceFromInstrinsic(
+  const resourceSecretId = NagRules.resolveResourceFromIntrinsic(
     node,
     node.secretId
   );

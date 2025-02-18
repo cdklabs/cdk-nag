@@ -14,7 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnVPC) {
-      const vpcLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const vpcLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
@@ -48,7 +48,7 @@ function isMatchingCompliantFlowLog(
   node: CfnFlowLog,
   vpcLogicalId: string
 ): boolean {
-  const resourceLogicalId = NagRules.resolveResourceFromInstrinsic(
+  const resourceLogicalId = NagRules.resolveResourceFromIntrinsic(
     node,
     node.resourceId
   );

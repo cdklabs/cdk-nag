@@ -16,7 +16,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFileSystem) {
-      const fileSystemLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const fileSystemLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );

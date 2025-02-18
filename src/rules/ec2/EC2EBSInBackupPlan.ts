@@ -16,7 +16,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnVolume) {
-      const volumeLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const volumeLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );

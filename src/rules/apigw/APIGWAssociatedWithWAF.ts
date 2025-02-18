@@ -15,15 +15,15 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnStage) {
-      const stageLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const stageLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
-      const stageName = NagRules.resolveResourceFromInstrinsic(
+      const stageName = NagRules.resolveResourceFromIntrinsic(
         node,
         node.stageName
       );
-      const restApiId = NagRules.resolveResourceFromInstrinsic(
+      const restApiId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.restApiId
       );

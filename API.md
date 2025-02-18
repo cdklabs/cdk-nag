@@ -1736,7 +1736,8 @@ new NagRules()
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdk-nag.NagRules.resolveIfPrimitive">resolveIfPrimitive</a></code> | Use in cases where a primitive value must be known to pass a rule. |
-| <code><a href="#cdk-nag.NagRules.resolveResourceFromInstrinsic">resolveResourceFromInstrinsic</a></code> | Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule. |
+| <code><a href="#cdk-nag.NagRules.resolveResourceFromInstrinsic">resolveResourceFromInstrinsic</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagRules.resolveResourceFromIntrinsic">resolveResourceFromIntrinsic</a></code> | Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule. |
 
 ---
 
@@ -1768,15 +1769,13 @@ The value to attempt to resolve.
 
 ---
 
-##### `resolveResourceFromInstrinsic` <a name="resolveResourceFromInstrinsic" id="cdk-nag.NagRules.resolveResourceFromInstrinsic"></a>
+##### ~~`resolveResourceFromInstrinsic`~~ <a name="resolveResourceFromInstrinsic" id="cdk-nag.NagRules.resolveResourceFromInstrinsic"></a>
 
 ```typescript
 import { NagRules } from 'cdk-nag'
 
 NagRules.resolveResourceFromInstrinsic(node: CfnResource, parameter: any)
 ```
-
-Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
 
 ###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NagRules.resolveResourceFromInstrinsic.parameter.node"></a>
 
@@ -1787,6 +1786,32 @@ The CfnResource to check.
 ---
 
 ###### `parameter`<sup>Required</sup> <a name="parameter" id="cdk-nag.NagRules.resolveResourceFromInstrinsic.parameter.parameter"></a>
+
+- *Type:* any
+
+The value to attempt to resolve.
+
+---
+
+##### `resolveResourceFromIntrinsic` <a name="resolveResourceFromIntrinsic" id="cdk-nag.NagRules.resolveResourceFromIntrinsic"></a>
+
+```typescript
+import { NagRules } from 'cdk-nag'
+
+NagRules.resolveResourceFromIntrinsic(node: CfnResource, parameter: any)
+```
+
+Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule.
+
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NagRules.resolveResourceFromIntrinsic.parameter.node"></a>
+
+- *Type:* aws-cdk-lib.CfnResource
+
+The CfnResource to check.
+
+---
+
+###### `parameter`<sup>Required</sup> <a name="parameter" id="cdk-nag.NagRules.resolveResourceFromIntrinsic.parameter.parameter"></a>
 
 - *Type:* any
 

@@ -15,7 +15,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnGroup) {
-      const groupLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const groupLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
