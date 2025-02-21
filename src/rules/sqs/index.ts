@@ -5,3 +5,4 @@ SPDX-License-Identifier: Apache-2.0
 export { default as SQSQueueDLQ } from './SQSQueueDLQ';
 export { default as SQSQueueSSE } from './SQSQueueSSE';
 export { default as SQSQueueSSLRequestsOnly } from './SQSQueueSSLRequestsOnly';
+export { default as SQSRedrivePolicy } from './SQSRedrivePolicy';

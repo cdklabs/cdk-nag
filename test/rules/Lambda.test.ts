@@ -10,6 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-dynamodb';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
+  CfnEventInvokeConfig,
   CfnEventSourceMapping,
   CfnFunction,
   CfnPermission,
@@ -21,17 +22,25 @@ import {
   Function,
   FunctionUrlAuthType,
   Runtime,
+  Tracing,
 } from 'aws-cdk-lib/aws-lambda';
+import { SqsDestination } from 'aws-cdk-lib/aws-lambda-destinations';
+import { SqsDlq } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { TestPack, TestType, validateStack } from './utils';
 import {
+  LambdaAsyncFailureDestination,
   LambdaConcurrency,
+  LambdaDefaultMemorySize,
+  LambdaDefaultTimeout,
   LambdaDLQ,
+  LambdaEventSourceMappingDestination,
   LambdaEventSourceSQSVisibilityTimeout,
   LambdaFunctionPublicAccessProhibited,
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaTracing,
 } from '../../src/rules/lambda';
 
 const testPack = new TestPack([
@@ -42,6 +51,11 @@ const testPack = new TestPack([
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaTracing,
+  LambdaDefaultMemorySize,
+  LambdaEventSourceMappingDestination,
+  LambdaDefaultTimeout,
+  LambdaAsyncFailureDestination,
 ]);
 let stack: Stack;
 
@@ -510,6 +524,281 @@ describe('AWS Lambda', () => {
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+    });
+  });
+
+  describe('LambdaTracing: Lambda functions have X-Ray tracing enabled', () => {
+    const ruleId = 'LambdaTracing';
+
+    test('Noncompliance 1 - Tracing not configured', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - Tracing disabled', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        tracingConfig: {
+          mode: 'PassThrough',
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance - Tracing enabled', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        tracingConfig: {
+          mode: 'Active',
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance - L2 construct with tracing enabled', () => {
+      new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+        tracing: Tracing.ACTIVE,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Noncompliance 3 - L2 construct with tracing disabled', () => {
+      new Function(stack, 'rFunctionDisabled', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+        tracing: Tracing.DISABLED,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+  });
+
+  describe('LambdaEventSourceMappingDestination: Lambda event source mappings have a failure destination configured', () => {
+    const ruleId = 'LambdaEventSourceMappingDestination';
+
+    test('Noncompliance 1 - No destinationConfig', () => {
+      new CfnEventSourceMapping(stack, 'rEventSourceMapping1', {
+        functionName: 'myFunction',
+        eventSourceArn: 'myEventSourceArn',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - onFailure without destination', () => {
+      new CfnEventSourceMapping(stack, 'rEventSourceMapping4', {
+        functionName: 'myFunction',
+        eventSourceArn: 'myEventSourceArn',
+        destinationConfig: {
+          onFailure: {},
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance - Proper failure destination configured', () => {
+      new CfnEventSourceMapping(stack, 'rEventSourceMapping5', {
+        functionName: 'myFunction',
+        eventSourceArn: 'myEventSourceArn',
+        destinationConfig: {
+          onFailure: {
+            destination: 'arn:aws:sqs:us-east-1:123456789012:myQueue',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Noncompliance 3 - L2 construct without onFailure', () => {
+      const lambdaFunction = new Function(stack, 'MyFunction1', {
+        runtime: Runtime.NODEJS_20_X,
+        handler: 'index.handler',
+        code: Code.fromInline('exports.handler = async () => {};'),
+      });
+
+      new EventSourceMapping(stack, 'MyEventSourceMapping1', {
+        target: lambdaFunction,
+        eventSourceArn: 'arn:aws:sqs:us-east-1:123456789012:myQueue',
+      });
+
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance - L2 construct with onFailure', () => {
+      const lambdaFunction = new Function(stack, 'MyFunction2', {
+        runtime: Runtime.NODEJS_20_X,
+        handler: 'index.handler',
+        code: Code.fromInline('exports.handler = async () => {};'),
+      });
+
+      const deadLetterQueue = new Queue(stack, 'DeadLetterQueue');
+
+      new EventSourceMapping(stack, 'MyEventSourceMapping2', {
+        target: lambdaFunction,
+        eventSourceArn: 'arn:aws:sqs:us-east-1:123456789012:myQueue',
+        onFailure: new SqsDlq(deadLetterQueue),
+      });
+
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('LambdaDefaultMemorySize: Lambda functions should not use the default memory size', () => {
+    const ruleId = 'LambdaDefaultMemorySize';
+
+    test('Noncompliance 1 - Default memory size (128 MB)', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - L2 Construct set to default memory size', () => {
+      new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 1 - L1 construct with non-default memory size', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        memorySize: 128,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 2 - L2 construct with non-default memory size', () => {
+      new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+        memorySize: 512,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('LambdaDefaultTimeout: Lambda functions should not use the default timeout', () => {
+    const ruleId = 'LambdaDefaultTimeout';
+
+    test('Noncompliance 1 - Default timeout (3 seconds)', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - L2 construct explicitly using the default timeout', () => {
+      new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 1 - L1 construct with non-default timeout', () => {
+      new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+        timeout: 10,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 2 - L2 construct with non-default timeout', () => {
+      new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+        timeout: Duration.seconds(30),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('LambdaAsyncFailureDestination: Lambda functions with async invocation should have a failure destination', () => {
+    const ruleId = 'LambdaAsyncFailureDestination';
+
+    test('Noncompliance 1 - Lambda function with async event invoke but no failure handler', () => {
+      const lambdaFunction = new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      new CfnEventInvokeConfig(stack, 'rEventInvokeConfig', {
+        functionName: lambdaFunction.ref,
+        qualifier: '$LATEST',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2 - Lambda function with async event invoke but no failure handler', () => {
+      const lambdaFunction = new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+      });
+      const queue = new Queue(stack, 'DestinationQueue');
+      lambdaFunction.configureAsyncInvoke({
+        onSuccess: new SqsDestination(queue),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 3 - L2 Lambda function with async invocation handler for successes but no failure handler', () => {
+      const lambdaFunction = new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+      });
+      const queue = new Queue(stack, 'DestinationQueue');
+      lambdaFunction.configureAsyncInvoke({
+        onSuccess: new SqsDestination(queue),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance - Lambda function with proper async failure destination', () => {
+      const lambdaFunction = new CfnFunction(stack, 'rFunction', {
+        code: {},
+        role: 'somerole',
+      });
+      new CfnEventInvokeConfig(stack, 'rEventInvokeConfig', {
+        functionName: lambdaFunction.ref,
+        qualifier: '$LATEST',
+        destinationConfig: {
+          onFailure: {
+            destination: 'arn:aws:sqs:us-east-1:123456789012:myQueue',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance - L2 construct with async failure destination', () => {
+      const lambdaFunction = new Function(stack, 'rFunction', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+      });
+      const queue = new Queue(stack, 'DestinationQueue');
+      lambdaFunction.configureAsyncInvoke({
+        onFailure: new SqsDestination(queue),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
 });
