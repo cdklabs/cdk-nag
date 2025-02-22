@@ -16,6 +16,12 @@ import {
   S3Origin,
   S3BucketOrigin,
 } from 'aws-cdk-lib/aws-cloudfront-origins';
+import {
+  CfnDelivery,
+  CfnDeliveryDestination,
+  CfnDeliverySource,
+  LogGroup,
+} from 'aws-cdk-lib/aws-logs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
@@ -76,6 +82,49 @@ describe('Amazon CloudFront', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3', () => {
+      const distribution1 = new Distribution(stack, 'Distribution1', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket1')),
+        },
+      });
+      new Distribution(stack, 'Distribution2', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket2')),
+        },
+      });
+      const distributionDeliverySource = new CfnDeliverySource(
+        stack,
+        'DistributionDeliverySource',
+        {
+          name: 'distribution-logs-source',
+          logType: 'ACCESS_LOGS',
+          resourceArn: Stack.of(stack).formatArn({
+            service: 'cloudfront',
+            region: '',
+            resource: 'distribution',
+            resourceName: distribution1.distributionId,
+          }),
+        }
+      );
+
+      const distributionDeliveryDestination = new CfnDeliveryDestination(
+        stack,
+        'DistributionDeliveryDestination',
+        {
+          name: 'distribution-logs-destination',
+          destinationResourceArn: new LogGroup(stack, 'DistributionLogGroup')
+            .logGroupArn,
+          outputFormat: 'json',
+        }
+      );
+
+      new CfnDelivery(stack, 'DistributionDelivery', {
+        deliverySourceName: distributionDeliverySource.name,
+        deliveryDestinationArn: distributionDeliveryDestination.attrArn,
+      }).node.addDependency(distributionDeliverySource);
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const logsBucket = new Bucket(stack, 'LoggingBucket');
       new Distribution(stack, 'Distribution', {
@@ -106,6 +155,81 @@ describe('Amazon CloudFront', () => {
         },
         tags: [{ key: 'foo', value: 'bar' }],
       });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
+      const distribution = new Distribution(stack, 'Distribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+        },
+      });
+
+      const distributionDeliverySource = new CfnDeliverySource(
+        stack,
+        'DistributionDeliverySource',
+        {
+          name: 'distribution-logs-source',
+          logType: 'ACCESS_LOGS',
+          resourceArn: Stack.of(stack).formatArn({
+            service: 'cloudfront',
+            region: '',
+            resource: 'distribution',
+            resourceName: distribution.distributionId,
+          }),
+        }
+      );
+
+      const distributionDeliveryDestination = new CfnDeliveryDestination(
+        stack,
+        'DistributionDeliveryDestination',
+        {
+          name: 'distribution-logs-destination',
+          destinationResourceArn: new LogGroup(stack, 'DistributionLogGroup')
+            .logGroupArn,
+          outputFormat: 'json',
+        }
+      );
+
+      new CfnDelivery(stack, 'DistributionDelivery', {
+        deliverySourceName: distributionDeliverySource.name,
+        deliveryDestinationArn: distributionDeliveryDestination.attrArn,
+      }).node.addDependency(distributionDeliverySource);
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
+      const distribution = new Distribution(stack, 'Distribution', {
+        defaultBehavior: {
+          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+        },
+      });
+
+      const distributionDeliveryDestination = new CfnDeliveryDestination(
+        stack,
+        'DistributionDeliveryDestination',
+        {
+          name: 'distribution-logs-destination',
+          destinationResourceArn: new LogGroup(stack, 'DistributionLogGroup')
+            .logGroupArn,
+          outputFormat: 'json',
+        }
+      );
+
+      new CfnDelivery(stack, 'DistributionDelivery', {
+        deliverySourceName: 'distribution-logs-source',
+        deliveryDestinationArn: distributionDeliveryDestination.attrArn,
+      });
+
+      new CfnDeliverySource(stack, 'DistributionDeliverySource', {
+        name: 'distribution-logs-source',
+        logType: 'ACCESS_LOGS',
+        resourceArn: Stack.of(stack).formatArn({
+          service: 'cloudfront',
+          region: '',
+          resource: 'distribution',
+          resourceName: distribution.distributionId,
+        }),
+      });
+
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
