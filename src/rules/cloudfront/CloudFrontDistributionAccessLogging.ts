@@ -8,7 +8,9 @@ import {
   CfnDistribution,
   CfnStreamingDistribution,
 } from 'aws-cdk-lib/aws-cloudfront';
+import { CfnDelivery, CfnDeliverySource } from 'aws-cdk-lib/aws-logs';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import { flattenCfnReference } from '../../utils/flatten-cfn-reference';
 
 /**
  * CloudFront distributions have access logging enabled
@@ -21,6 +23,44 @@ export default Object.defineProperty(
         node.distributionConfig
       );
       if (distributionConfig.logging == undefined) {
+        const distributionArn = flattenCfnReference(
+          Stack.of(node).resolve(
+            Stack.of(node).formatArn({
+              service: 'cloudfront',
+              region: '',
+              resource: 'distribution',
+              resourceName: node.attrId,
+            })
+          )
+        ).replace('.Id', '');
+
+        let deliverySourceName;
+        for (const child of Stack.of(node).node.findAll()) {
+          if (child instanceof CfnDeliverySource) {
+            const deliverySourceArn = flattenCfnReference(
+              Stack.of(child).resolve(child.resourceArn)
+            );
+            const logType = Stack.of(child).resolve(child.logType);
+            if (
+              deliverySourceArn === distributionArn &&
+              logType === 'ACCESS_LOGS'
+            ) {
+              deliverySourceName = Stack.of(child).resolve(child.name);
+            }
+          }
+        }
+
+        for (const child of Stack.of(node).node.findAll()) {
+          if (child instanceof CfnDelivery) {
+            if (
+              deliverySourceName ===
+              Stack.of(child).resolve(child.deliverySourceName)
+            ) {
+              return NagRuleCompliance.COMPLIANT;
+            }
+          }
+        }
+
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
