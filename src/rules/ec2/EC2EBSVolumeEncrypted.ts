@@ -119,7 +119,7 @@ function isMatchingLaunchTemplate(
 ): boolean {
   return (
     launchTemplateName === node.launchTemplateName ||
-    launchTemplateId === NagRules.resolveResourceFromInstrinsic(node, node.ref)
+    launchTemplateId === NagRules.resolveResourceFromIntrinsic(node, node.ref)
   );
 }
 

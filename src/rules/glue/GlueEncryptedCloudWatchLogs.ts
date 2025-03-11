@@ -20,12 +20,12 @@ export default Object.defineProperty(
     if (node instanceof CfnCrawler || node instanceof CfnJob) {
       let securityConfigurationId;
       if (node instanceof CfnCrawler) {
-        securityConfigurationId = NagRules.resolveResourceFromInstrinsic(
+        securityConfigurationId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.crawlerSecurityConfiguration
         );
       } else {
-        securityConfigurationId = NagRules.resolveResourceFromInstrinsic(
+        securityConfigurationId = NagRules.resolveResourceFromIntrinsic(
           node,
           node.securityConfiguration
         );
@@ -65,7 +65,7 @@ function isMatchingSecurityConfig(
   securityConfigurationId: string
 ): boolean {
   const resolvedSecurityConfigurationLogicalId =
-    NagRules.resolveResourceFromInstrinsic(node, node.ref);
+    NagRules.resolveResourceFromIntrinsic(node, node.ref);
   if (
     resolvedSecurityConfigurationLogicalId === securityConfigurationId ||
     node.name === securityConfigurationId

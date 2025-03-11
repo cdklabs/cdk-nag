@@ -15,7 +15,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBucket) {
-      const bucketLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const bucketLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );
@@ -37,7 +37,7 @@ export default Object.defineProperty(
       }
       return NagRuleCompliance.COMPLIANT;
     } else if (node instanceof CfnBucketPolicy) {
-      const bucketLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const bucketLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.bucket
       );
@@ -64,7 +64,7 @@ function isMatchingPolicy(
   bucketLogicalId: string,
   bucketName: string | undefined
 ): boolean {
-  const bucket = NagRules.resolveResourceFromInstrinsic(node, node.bucket);
+  const bucket = NagRules.resolveResourceFromIntrinsic(node, node.bucket);
   return bucket === bucketLogicalId || bucket === bucketName;
 }
 

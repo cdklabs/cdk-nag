@@ -14,7 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const clusterParameterGroupName = NagRules.resolveResourceFromInstrinsic(
+      const clusterParameterGroupName = NagRules.resolveResourceFromIntrinsic(
         node,
         node.clusterParameterGroupName
       );
@@ -24,8 +24,10 @@ export default Object.defineProperty(
       let found = false;
       for (const child of Stack.of(node).node.findAll()) {
         if (child instanceof CfnClusterParameterGroup) {
-          const childParameterGroupName =
-            NagRules.resolveResourceFromInstrinsic(node, child.ref);
+          const childParameterGroupName = NagRules.resolveResourceFromIntrinsic(
+            node,
+            child.ref
+          );
           if (childParameterGroupName === clusterParameterGroupName) {
             found = isCompliantClusterParameterGroup(child);
             break;

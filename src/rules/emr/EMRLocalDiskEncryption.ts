@@ -14,7 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const securityConfigurationId = NagRules.resolveResourceFromInstrinsic(
+      const securityConfigurationId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.securityConfiguration
       );
@@ -53,7 +53,7 @@ function isMatchingSecurityConfig(
   securityConfigurationId: string
 ): boolean {
   const resolvedSecurityConfigurationLogicalId =
-    NagRules.resolveResourceFromInstrinsic(node, node.ref);
+    NagRules.resolveResourceFromIntrinsic(node, node.ref);
   if (
     resolvedSecurityConfigurationLogicalId === securityConfigurationId ||
     node.name === securityConfigurationId

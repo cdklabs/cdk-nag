@@ -14,7 +14,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnWebACL) {
-      const webAclLogicalId = NagRules.resolveResourceFromInstrinsic(
+      const webAclLogicalId = NagRules.resolveResourceFromIntrinsic(
         node,
         node.ref
       );

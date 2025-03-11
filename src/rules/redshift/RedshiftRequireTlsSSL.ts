@@ -15,7 +15,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCluster) {
-      const clusterParameterGroupName = NagRules.resolveResourceFromInstrinsic(
+      const clusterParameterGroupName = NagRules.resolveResourceFromIntrinsic(
         node,
         node.clusterParameterGroupName
       );
@@ -53,7 +53,7 @@ function isMatchingParameterGroup(
   node: CfnClusterParameterGroup,
   parameterGroupName: string
 ): boolean {
-  const parameterGroupLogicalId = NagRules.resolveResourceFromInstrinsic(
+  const parameterGroupLogicalId = NagRules.resolveResourceFromIntrinsic(
     node,
     node.ref
   );
