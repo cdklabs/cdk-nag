@@ -47,8 +47,10 @@ import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
-// Simple rule informational messages
+// Simple rule informational messages using the AWS Solutions Rule pack
 Aspects.of(app).add(new AwsSolutionsChecks());
+// Multiple rule packs can be run against the same app
+Aspects.of(app).add(new NIST80053R5Checks());
 // Additional explanations on the purpose of triggered rules
 // Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
 ```
