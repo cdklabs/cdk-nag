@@ -89,7 +89,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance', () => {
+    test('Compliance 1', () => {
       const dlq = new Queue(stack, 'Dlq');
       new Queue(stack, 'Queue', {
         deadLetterQueue: {
@@ -110,7 +110,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance2', () => {
+    test('Compliance 2', () => {
       const dlq = new Queue(stack, 'Dlq');
       new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_18_X,
@@ -136,25 +136,25 @@ describe('Amazon Simple Queue Service (SQS)', () => {
   describe('SQSQueueSSE: SQS queues have server-side encryption enabled', () => {
     const ruleId = 'SQSQueueSSE';
     test('Noncompliance 1', () => {
-      new Queue(stack, 'rQueue', {
+      new Queue(stack, 'Queue', {
         encryption: QueueEncryption.UNENCRYPTED,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance 1', () => {
-      new Queue(stack, 'rQueue', {
-        encryptionMasterKey: new Key(stack, 'rQueueKey'),
+      new Queue(stack, 'Queue', {
+        encryptionMasterKey: new Key(stack, 'QueueKey'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 2', () => {
-      new Queue(stack, 'rQueue', {
+      new Queue(stack, 'Queue', {
         encryption: QueueEncryption.SQS_MANAGED,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 3', () => {
-      new Queue(stack, 'rQueue');
+      new Queue(stack, 'Queue');
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
@@ -162,12 +162,12 @@ describe('Amazon Simple Queue Service (SQS)', () => {
   describe('SQSQueueSSLRequestsOnly: SQS queues require SSL requests', () => {
     const ruleId = 'SQSQueueSSLRequestsOnly';
     test('Noncompliance 1', () => {
-      new Queue(stack, 'rQueue');
+      new Queue(stack, 'Queue');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new Queue(stack, 'rQueue', { queueName: 'foo' });
-      new CfnQueuePolicy(stack, 'rQueuePolicy', {
+      new Queue(stack, 'Queue', { queueName: 'foo' });
+      new CfnQueuePolicy(stack, 'QueuePolicy', {
         queues: ['foo'],
         policyDocument: new PolicyDocument({
           statements: [
@@ -184,8 +184,8 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new Queue(stack, 'rQueue', { queueName: 'foo' });
-      new Queue(stack, 'rQueue2').addToResourcePolicy(
+      new Queue(stack, 'Queue', { queueName: 'foo' });
+      new Queue(stack, 'Queue2').addToResourcePolicy(
         new PolicyStatement({
           actions: ['sqs:GetQueueUrl', '*'],
           effect: Effect.DENY,
@@ -194,7 +194,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
           resources: ['foo'],
         })
       );
-      new CfnQueuePolicy(stack, 'rQueuePolicy', {
+      new CfnQueuePolicy(stack, 'QueuePolicy', {
         queues: ['foo'],
         policyDocument: new PolicyDocument({
           statements: [
@@ -215,17 +215,17 @@ describe('Amazon Simple Queue Service (SQS)', () => {
   describe('SQSRedrivePolicy: SQS queues should have a redrive policy configured', () => {
     const ruleId = 'SQSRedrivePolicy';
 
-    test('Noncompliance: L2 construct without redrive policy', () => {
+    test('Noncompliance 1: L2 construct without redrive policy', () => {
       new Queue(stack, 'QueueWithoutRedrive');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance: L1 construct without redrive policy', () => {
+    test('Noncompliance 2: L1 construct without redrive policy', () => {
       new CfnQueue(stack, 'L1QueueWithoutRedrive', {});
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance: L1 construct with redrive policy', () => {
+    test('Compliance 1: L1 construct with redrive policy', () => {
       new CfnQueue(stack, 'L1QueueWithRedrive', {
         redrivePolicy: {
           deadLetterTargetArn:
@@ -236,7 +236,7 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance: L2 construct with redrive policy', () => {
+    test('Compliance 2: L2 construct with redrive policy', () => {
       new Queue(stack, 'QueueWithRedrive', {
         deadLetterQueue: {
           queue: Queue.fromQueueArn(

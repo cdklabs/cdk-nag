@@ -15,7 +15,9 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFunction) {
       const timeout = Stack.of(node).resolve(node.timeout);
-      if (timeout) return NagRuleCompliance.COMPLIANT;
+      if (timeout) {
+        return NagRuleCompliance.COMPLIANT;
+      }
       return NagRuleCompliance.NON_COMPLIANT;
     }
     return NagRuleCompliance.NOT_APPLICABLE;

@@ -30,19 +30,31 @@ export default Object.defineProperty(
       node instanceof CfnStage
     ) {
       const accessLogSetting = Stack.of(node).resolve(node.accessLogSetting);
-      if (!accessLogSetting) return NagRuleCompliance.NOT_APPLICABLE;
-      if (isJSON(accessLogSetting.format)) return NagRuleCompliance.COMPLIANT;
+      if (!accessLogSetting) {
+        return NagRuleCompliance.NOT_APPLICABLE;
+      }
+      if (isJSON(accessLogSetting.format)) {
+        return NagRuleCompliance.COMPLIANT;
+      }
       return NagRuleCompliance.NON_COMPLIANT;
     } else if (node instanceof CfnDeployment) {
       const stageDescription = Stack.of(node).resolve(node.stageDescription);
       const accessLogSetting = stageDescription.accessLogSetting;
-      if (!accessLogSetting) return NagRuleCompliance.NOT_APPLICABLE;
-      if (isJSON(accessLogSetting.format)) return NagRuleCompliance.COMPLIANT;
+      if (!accessLogSetting) {
+        return NagRuleCompliance.NOT_APPLICABLE;
+      }
+      if (isJSON(accessLogSetting.format)) {
+        return NagRuleCompliance.COMPLIANT;
+      }
       return NagRuleCompliance.NON_COMPLIANT;
     } else if (node instanceof CfnStageV2) {
       const accessLogSetting = Stack.of(node).resolve(node.accessLogSettings);
-      if (!accessLogSetting) return NagRuleCompliance.NOT_APPLICABLE;
-      if (isJSON(accessLogSetting.format)) return NagRuleCompliance.COMPLIANT;
+      if (!accessLogSetting) {
+        return NagRuleCompliance.NOT_APPLICABLE;
+      }
+      if (isJSON(accessLogSetting.format)) {
+        return NagRuleCompliance.COMPLIANT;
+      }
       return NagRuleCompliance.NON_COMPLIANT;
     }
     return NagRuleCompliance.NOT_APPLICABLE;

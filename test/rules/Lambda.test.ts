@@ -44,18 +44,18 @@ import {
 } from '../../src/rules/lambda';
 
 const testPack = new TestPack([
+  LambdaAsyncFailureDestination,
   LambdaConcurrency,
+  LambdaDefaultMemorySize,
+  LambdaDefaultTimeout,
   LambdaDLQ,
+  LambdaEventSourceMappingDestination,
   LambdaEventSourceSQSVisibilityTimeout,
   LambdaFunctionPublicAccessProhibited,
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
   LambdaTracing,
-  LambdaDefaultMemorySize,
-  LambdaEventSourceMappingDestination,
-  LambdaDefaultTimeout,
-  LambdaAsyncFailureDestination,
 ]);
 let stack: Stack;
 
@@ -90,14 +90,14 @@ describe('AWS Lambda', () => {
   describe('LambdaConcurrency: Lambda functions are configured with function-level concurrent execution limits', () => {
     const ruleId = 'LambdaConcurrency';
     test('Noncompliance 1', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         reservedConcurrentExecutions: 0,
@@ -105,7 +105,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         reservedConcurrentExecutions: 42,
@@ -117,14 +117,14 @@ describe('AWS Lambda', () => {
   describe('LambdaDLQ: Lambda functions are configured with a dead-letter configuration', () => {
     const ruleId = 'LambdaDLQ';
     test('Noncompliance 1', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         deadLetterConfig: {},
@@ -132,7 +132,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         deadLetterConfig: { targetArn: 'mySnsTopicArn' },
@@ -146,7 +146,7 @@ describe('AWS Lambda', () => {
     const defaultLambdaFunctionTimeoutSeconds = 3;
     const defaultSQSVisibilityTimeoutSeconds = 30;
     const minValidMultiplier = 6;
-    test('Noncompliance 1 - all values defined', () => {
+    test('Noncompliance 1: all values defined', () => {
       const testVisibilityTimeoutSeconds = 20;
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
@@ -166,7 +166,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - Lambda timeout defined, SQS visibility timeout default', () => {
+    test('Noncompliance 2: Lambda timeout defined, SQS visibility timeout default', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         timeout: Duration.seconds(
@@ -183,7 +183,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 3 - Lambda timeout default, SQS visibility timeout defined', () => {
+    test('Noncompliance 3: Lambda timeout default, SQS visibility timeout defined', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
@@ -201,7 +201,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance 1 - all values default', () => {
+    test('Compliance 1: all values default', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
@@ -215,7 +215,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 2 - Lambda timeout defined, SQS visibility timeout default', () => {
+    test('Compliance 2: Lambda timeout defined, SQS visibility timeout default', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         timeout: Duration.seconds(
@@ -232,7 +232,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 3 - Lambda timeout default, SQS visibility timeout defined', () => {
+    test('Compliance 3: Lambda timeout default, SQS visibility timeout defined', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
@@ -250,7 +250,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 4 - eventSourceArn is not of an SQS queue', () => {
+    test('Compliance 4: eventSourceArn is not of an SQS queue', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
@@ -267,7 +267,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 5 - Kafka source, no eventSourceArn set', () => {
+    test('Compliance 5: Kafka source, no eventSourceArn set', () => {
       const lambdaFunction = new Function(stack, 'Function', {
         code: Code.fromInline('hi'),
         handler: 'index.handler',
@@ -280,7 +280,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 6 - Lambda function not found in stack', () => {
+    test('Compliance 6: Lambda function not found in stack', () => {
       const sqsQueue = new Queue(stack, 'SqsQueue', {
         visibilityTimeout: Duration.seconds(20),
       });
@@ -334,14 +334,14 @@ describe('AWS Lambda', () => {
   describe('LambdaFunctionUrlAuth: Lambda function URLs have authentication', () => {
     const ruleId = 'LambdaFunctionUrlAuth';
     test('Noncompliance 1', () => {
-      new CfnUrl(stack, 'rUrl', {
+      new CfnUrl(stack, 'Url', {
         authType: FunctionUrlAuthType.NONE,
         targetFunctionArn: 'somearn',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new CfnUrl(stack, 'rUrl', {
+      new CfnUrl(stack, 'Url', {
         authType: FunctionUrlAuthType.AWS_IAM,
         targetFunctionArn: 'somearn',
       });
@@ -352,14 +352,14 @@ describe('AWS Lambda', () => {
   describe('LambdaInsideVPC: Lambda functions are VPC enabled', () => {
     const ruleId = 'LambdaInsideVPC';
     test('Noncompliance 1', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new CfnFunction(stack, 'rFunction', {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         vpcConfig: {
@@ -370,14 +370,14 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new CfnFunction(stack, 'rFunction1', {
+      new CfnFunction(stack, 'Function1', {
         code: {},
         role: 'somerole',
         vpcConfig: {
           securityGroupIds: ['somesecgroup'],
         },
       });
-      new CfnFunction(stack, 'rFunction2', {
+      new CfnFunction(stack, 'Function2', {
         code: {},
         role: 'somerole',
         vpcConfig: {
@@ -390,48 +390,48 @@ describe('AWS Lambda', () => {
 
   describe('LambdaLatestVersion: Non-container Lambda functions use the latest runtime version', () => {
     const ruleId = 'LambdaLatestVersion';
-    test('Noncompliance 1 - nodejs', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 1: nodejs', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: Runtime.NODEJS_16_X.toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 2 - python', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 2: python', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: Runtime.PYTHON_3_9.toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 3 - dotnet', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 3: dotnet', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: Runtime.DOTNET_CORE_2_1.toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 4 - java', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 4: java', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: Runtime.JAVA_8_CORRETTO.toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 5 - L2 - nodejs', () => {
-      new Function(stack, 'rFunction', {
+    test('Noncompliance 5: L2 - nodejs', () => {
+      new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_16_X,
         code: Code.fromInline('hi'),
         handler: 'index.handler',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 6 - ruby', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 6: ruby', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: Runtime.RUBY_2_5.toString(),
         code: {},
         role: 'somerole',
@@ -439,86 +439,86 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance 1 - nodejs', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 1: nodejs', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: getLatestRuntime('nodejs').toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 2 - python', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 2: python', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: getLatestRuntime('python').toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 3 - dotnet', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 3: dotnet', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: getLatestRuntime('dotnetcore').toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 4 - java', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 4: java', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: getLatestRuntime('java').toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 5 - go', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 5: go', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: getLatestRuntime('go').toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 6 - provided', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 6: provided', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: Runtime.PROVIDED.toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 7 - L2 - nodejs', () => {
-      new Function(stack, 'rFunction', {
+    test('Compliance 7: L2 - nodejs', () => {
+      new Function(stack, 'Function', {
         runtime: getLatestRuntime('nodejs'),
         code: Code.fromInline('hi'),
         handler: 'index.handler',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 8 - L2 - container', () => {
-      new DockerImageFunction(stack, 'rFunction', {
-        code: DockerImageCode.fromEcr(new Repository(stack, 'rRepo')),
+    test('Compliance 8: L2 - container', () => {
+      new DockerImageFunction(stack, 'Function', {
+        code: DockerImageCode.fromEcr(new Repository(stack, 'Repo')),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Compliance 9 - ruby', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 9: ruby', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: getLatestRuntime('ruby').toString(),
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-    test('Validation Failure 1 - regex pattern not matching', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Validation Failure 1: regex pattern not matching', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: '42',
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
     });
-    test('Validation Failure 2 - No families found', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Validation Failure 2: No families found', () => {
+      new CfnFunction(stack, 'Function', {
         runtime: 'unknown',
         code: {},
         role: 'somerole',
@@ -530,16 +530,16 @@ describe('AWS Lambda', () => {
   describe('LambdaTracing: Lambda functions have X-Ray tracing enabled', () => {
     const ruleId = 'LambdaTracing';
 
-    test('Noncompliance 1 - Tracing not configured', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 1: Tracing not configured', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - Tracing disabled', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 2: Tracing disabled', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         tracingConfig: {
@@ -549,8 +549,18 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance - Tracing enabled', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 3: L2 construct with tracing disabled', () => {
+      new Function(stack, 'FunctionDisabled', {
+        runtime: Runtime.NODEJS_20_X,
+        code: Code.fromInline('exports.handler = async () => {};'),
+        handler: 'index.handler',
+        tracing: Tracing.DISABLED,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 1: Tracing enabled', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         tracingConfig: {
@@ -560,8 +570,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance - L2 construct with tracing enabled', () => {
-      new Function(stack, 'rFunction', {
+    test('Compliance 2: L2 construct with tracing enabled', () => {
+      new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -569,31 +579,21 @@ describe('AWS Lambda', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
-
-    test('Noncompliance 3 - L2 construct with tracing disabled', () => {
-      new Function(stack, 'rFunctionDisabled', {
-        runtime: Runtime.NODEJS_20_X,
-        code: Code.fromInline('exports.handler = async () => {};'),
-        handler: 'index.handler',
-        tracing: Tracing.DISABLED,
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
   });
 
   describe('LambdaEventSourceMappingDestination: Lambda event source mappings have a failure destination configured', () => {
     const ruleId = 'LambdaEventSourceMappingDestination';
 
-    test('Noncompliance 1 - No destinationConfig', () => {
-      new CfnEventSourceMapping(stack, 'rEventSourceMapping1', {
+    test('Noncompliance 1: No destinationConfig', () => {
+      new CfnEventSourceMapping(stack, 'EventSourceMapping1', {
         functionName: 'myFunction',
         eventSourceArn: 'myEventSourceArn',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - onFailure without destination', () => {
-      new CfnEventSourceMapping(stack, 'rEventSourceMapping4', {
+    test('Noncompliance 2: onFailure without destination', () => {
+      new CfnEventSourceMapping(stack, 'EventSourceMapping4', {
         functionName: 'myFunction',
         eventSourceArn: 'myEventSourceArn',
         destinationConfig: {
@@ -603,20 +603,7 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance - Proper failure destination configured', () => {
-      new CfnEventSourceMapping(stack, 'rEventSourceMapping5', {
-        functionName: 'myFunction',
-        eventSourceArn: 'myEventSourceArn',
-        destinationConfig: {
-          onFailure: {
-            destination: 'arn:aws:sqs:us-east-1:123456789012:myQueue',
-          },
-        },
-      });
-      validateStack(stack, ruleId, TestType.COMPLIANCE);
-    });
-
-    test('Noncompliance 3 - L2 construct without onFailure', () => {
+    test('Noncompliance 3: L2 construct without onFailure', () => {
       const lambdaFunction = new Function(stack, 'MyFunction1', {
         runtime: Runtime.NODEJS_20_X,
         handler: 'index.handler',
@@ -631,7 +618,20 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance - L2 construct with onFailure', () => {
+    test('Compliance 1: Proper failure destination configured', () => {
+      new CfnEventSourceMapping(stack, 'EventSourceMapping5', {
+        functionName: 'myFunction',
+        eventSourceArn: 'myEventSourceArn',
+        destinationConfig: {
+          onFailure: {
+            destination: 'arn:aws:sqs:us-east-1:123456789012:myQueue',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 2: L2 construct with onFailure', () => {
       const lambdaFunction = new Function(stack, 'MyFunction2', {
         runtime: Runtime.NODEJS_20_X,
         handler: 'index.handler',
@@ -653,16 +653,16 @@ describe('AWS Lambda', () => {
   describe('LambdaDefaultMemorySize: Lambda functions should not use the default memory size', () => {
     const ruleId = 'LambdaDefaultMemorySize';
 
-    test('Noncompliance 1 - Default memory size (128 MB)', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 1: Default memory size (128 MB)', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - L2 Construct set to default memory size', () => {
-      new Function(stack, 'rFunction', {
+    test('Noncompliance 2: L2 Construct set to default memory size', () => {
+      new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -670,8 +670,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance 1 - L1 construct with non-default memory size', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 1: L1 construct with non-default memory size', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         memorySize: 128,
@@ -679,8 +679,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 2 - L2 construct with non-default memory size', () => {
-      new Function(stack, 'rFunction', {
+    test('Compliance 2: L2 construct with non-default memory size', () => {
+      new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -693,16 +693,16 @@ describe('AWS Lambda', () => {
   describe('LambdaDefaultTimeout: Lambda functions should not use the default timeout', () => {
     const ruleId = 'LambdaDefaultTimeout';
 
-    test('Noncompliance 1 - Default timeout (3 seconds)', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 1: Default timeout (3 seconds)', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - L2 construct explicitly using the default timeout', () => {
-      new Function(stack, 'rFunction', {
+    test('Noncompliance 2: L2 construct explicitly using the default timeout', () => {
+      new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -710,8 +710,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance 1 - L1 construct with non-default timeout', () => {
-      new CfnFunction(stack, 'rFunction', {
+    test('Compliance 1: L1 construct with non-default timeout', () => {
+      new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
         timeout: 10,
@@ -719,8 +719,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 2 - L2 construct with non-default timeout', () => {
-      new Function(stack, 'rFunction', {
+    test('Compliance 2: L2 construct with non-default timeout', () => {
+      new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -733,20 +733,20 @@ describe('AWS Lambda', () => {
   describe('LambdaAsyncFailureDestination: Lambda functions with async invocation should have a failure destination', () => {
     const ruleId = 'LambdaAsyncFailureDestination';
 
-    test('Noncompliance 1 - Lambda function with async event invoke but no failure handler', () => {
-      const lambdaFunction = new CfnFunction(stack, 'rFunction', {
+    test('Noncompliance 1: Lambda function with async event invoke but no failure handler', () => {
+      const lambdaFunction = new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
-      new CfnEventInvokeConfig(stack, 'rEventInvokeConfig', {
+      new CfnEventInvokeConfig(stack, 'EventInvokeConfig', {
         functionName: lambdaFunction.ref,
         qualifier: '$LATEST',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 2 - Lambda function with async event invoke but no failure handler', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+    test('Noncompliance 2: Lambda function with async event invoke but no failure handler', () => {
+      const lambdaFunction = new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -758,8 +758,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance 3 - L2 Lambda function with async invocation handler for successes but no failure handler', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+    test('Noncompliance 3: L2 Lambda function with async invocation handler for successes but no failure handler', () => {
+      const lambdaFunction = new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',
@@ -771,12 +771,12 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance - Lambda function with proper async failure destination', () => {
-      const lambdaFunction = new CfnFunction(stack, 'rFunction', {
+    test('Compliance 1: Lambda function with proper async failure destination', () => {
+      const lambdaFunction = new CfnFunction(stack, 'Function', {
         code: {},
         role: 'somerole',
       });
-      new CfnEventInvokeConfig(stack, 'rEventInvokeConfig', {
+      new CfnEventInvokeConfig(stack, 'EventInvokeConfig', {
         functionName: lambdaFunction.ref,
         qualifier: '$LATEST',
         destinationConfig: {
@@ -788,8 +788,8 @@ describe('AWS Lambda', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance - L2 construct with async failure destination', () => {
-      const lambdaFunction = new Function(stack, 'rFunction', {
+    test('Compliance 2: L2 construct with async failure destination', () => {
+      const lambdaFunction = new Function(stack, 'Function', {
         runtime: Runtime.NODEJS_20_X,
         code: Code.fromInline('exports.handler = async () => {};'),
         handler: 'index.handler',

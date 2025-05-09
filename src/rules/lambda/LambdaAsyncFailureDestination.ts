@@ -15,8 +15,9 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnEventInvokeConfig) {
       const destinationConfig = Stack.of(node).resolve(node.destinationConfig);
-      if (destinationConfig?.onFailure?.destination)
+      if (destinationConfig?.onFailure?.destination) {
         return NagRuleCompliance.COMPLIANT;
+      }
       return NagRuleCompliance.NON_COMPLIANT;
     }
     return NagRuleCompliance.NOT_APPLICABLE;

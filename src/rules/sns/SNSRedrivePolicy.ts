@@ -15,8 +15,9 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnSubscription) {
-      if (node.redrivePolicy === undefined)
+      if (node.redrivePolicy === undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
+      }
       return NagRuleCompliance.COMPLIANT;
     }
     return NagRuleCompliance.NOT_APPLICABLE;

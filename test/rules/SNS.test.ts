@@ -36,7 +36,7 @@ beforeEach(() => {
 describe('Amazon Simple Notification Service (Amazon SNS)', () => {
   describe('SNSEncryptedKMS: SNS topics are encrypted via KMS', () => {
     const ruleId = 'SNSEncryptedKMS';
-    test('Noncompliance 1', () => {
+    test('Noncompliance', () => {
       new Topic(stack, 'Topic');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -103,8 +103,8 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
   describe('SNSRedrivePolicy: SNS subscriptions have a redrive policy configured.', () => {
     const ruleId = 'SNSRedrivePolicy';
 
-    test('Noncompliance: CfnSubscription without redrive policy', () => {
-      new CfnSubscription(stack, 'rSubscription', {
+    test('Noncompliance 1: CfnSubscription without redrive policy', () => {
+      new CfnSubscription(stack, 'Subscription', {
         topicArn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
         protocol: 'sqs',
         endpoint: 'arn:aws:sqs:us-east-1:123456789012:MyQueue',
@@ -112,15 +112,15 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Noncompliance: Subscription without redrive policy', () => {
-      const topic = new Topic(stack, 'rTopic');
-      const queue = new Queue(stack, 'rQueue');
+    test('Noncompliance 2: Subscription without redrive policy', () => {
+      const topic = new Topic(stack, 'Topic');
+      const queue = new Queue(stack, 'Queue');
       topic.addSubscription(new SqsSubscription(queue));
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance: CfnSubscription with redrive policy', () => {
-      new CfnSubscription(stack, 'rSubscription', {
+    test('Compliance 1: CfnSubscription with redrive policy', () => {
+      new CfnSubscription(stack, 'Subscription', {
         topicArn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
         protocol: 'sqs',
         endpoint: 'arn:aws:sqs:us-east-1:123456789012:MyQueue',
@@ -131,10 +131,10 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance: Subscription with redrive policy', () => {
-      const topic = new Topic(stack, 'rTopic');
-      const queue = new Queue(stack, 'rQueue');
-      const dlq = new Queue(stack, 'rDLQ');
+    test('Compliance 2: Subscription with redrive policy', () => {
+      const topic = new Topic(stack, 'Topic');
+      const queue = new Queue(stack, 'Queue');
+      const dlq = new Queue(stack, 'DLQ');
       topic.addSubscription(
         new SqsSubscription(queue, {
           deadLetterQueue: dlq,

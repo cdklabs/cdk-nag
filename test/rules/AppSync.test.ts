@@ -22,14 +22,14 @@ describe('AWS AppSync', () => {
   describe('AppSyncGraphQLRequestLogging: GraphQL APIs have request leveling logging enabled', () => {
     const ruleId = 'AppSyncGraphQLRequestLogging';
     test('Noncompliance 1', () => {
-      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+      new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+      new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
         logConfig: { excludeVerboseContent: true },
@@ -37,14 +37,14 @@ describe('AWS AppSync', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 3', () => {
-      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+      new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+      new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
         logConfig: { cloudWatchLogsRoleArn: 'foo' },
@@ -56,7 +56,7 @@ describe('AWS AppSync', () => {
   describe('AppSyncTracing: GraphQL APIs have X-Ray tracing enabled', () => {
     const ruleId = 'AppSyncTracing';
     test('Noncompliance 1', () => {
-      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+      new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOLS',
         name: 'foo',
       });
@@ -64,7 +64,7 @@ describe('AWS AppSync', () => {
     });
 
     test('Compliance - L1 Construct', () => {
-      new CfnGraphQLApi(stack, 'rGraphqlApi', {
+      new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOLS',
         name: 'foo',
         xrayEnabled: true,
