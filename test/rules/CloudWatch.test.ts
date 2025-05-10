@@ -33,7 +33,7 @@ describe('Amazon CloudWatch', () => {
   describe('CloudWatchAlarmAction: CloudWatch alarms have at least one alarm action, one INSUFFICIENT_DATA action, or one OK action enabled', () => {
     const ruleId = 'CloudWatchAlarmAction';
     test('Noncompliance 1', () => {
-      new Alarm(stack, 'rAlarm', {
+      new Alarm(stack, 'Alarm', {
         metric: new Metric({
           namespace: 'MyNamespace',
           metricName: 'MyMetric',
@@ -44,7 +44,7 @@ describe('Amazon CloudWatch', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new Alarm(stack, 'rAlarm', {
+      new Alarm(stack, 'Alarm', {
         metric: new Metric({
           namespace: 'MyNamespace',
           metricName: 'MyMetric',
@@ -57,7 +57,7 @@ describe('Amazon CloudWatch', () => {
     });
 
     test('Compliance', () => {
-      new Alarm(stack, 'rAlarm', {
+      new Alarm(stack, 'Alarm', {
         metric: new Metric({
           namespace: 'MyNamespace',
           metricName: 'MyMetric',
@@ -72,13 +72,13 @@ describe('Amazon CloudWatch', () => {
   describe('CloudWatchLogGroupEncrypted: CloudWatch Log Groups are encrypted with customer managed keys', () => {
     const ruleId = 'CloudWatchLogGroupEncrypted';
     test('Noncompliance 1', () => {
-      new LogGroup(stack, 'rLogGroup');
+      new LogGroup(stack, 'LogGroup');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
     test('Compliance', () => {
-      new LogGroup(stack, 'rLogGroup', {
-        encryptionKey: new Key(stack, 'rLogsKey'),
+      new LogGroup(stack, 'LogGroup', {
+        encryptionKey: new Key(stack, 'LogsKey'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -87,11 +87,11 @@ describe('Amazon CloudWatch', () => {
   describe('CloudWatchLogGroupRetentionPeriod: CloudWatch Log Groups have an explicit retention period configured', () => {
     const ruleId = 'CloudWatchLogGroupRetentionPeriod';
     test('Noncompliance ', () => {
-      new CfnLogGroup(stack, 'rLogGroup');
+      new CfnLogGroup(stack, 'LogGroup');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LogGroup(stack, 'rLogGroup', {
+      new LogGroup(stack, 'LogGroup', {
         retention: RetentionDays.ONE_YEAR,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
