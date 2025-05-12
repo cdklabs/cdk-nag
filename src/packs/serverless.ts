@@ -129,9 +129,10 @@ export class ServerlessChecks extends NagPack {
    */
   private checkIAM(node: CfnResource) {
     this.applyRule({
-      info: 'The Lambda function has overly permissive IAM roles.',
+      info: 'The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.',
       explanation:
-        'Lambda functions should follow the principle of least privilege. Avoid using wildcard (*) permissions in IAM roles attached to Lambda functions. Instead, specify only the permissions required for the function to operate.',
+        'Lambda functions should follow the principle of least privilege. Functions with a requirement for a broad range of permissions should be known ahead of time. Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators. ' +
+        'This is a granular rule that returns individual findings that can be suppressed with "appliesTo". The findings are in the format "Action::<action>" for policy actions and "Resource::<resource>" for resources. Example: appliesTo: ["Action::s3:*"].',
       level: NagMessageLevel.WARN,
       rule: IAMNoWildcardPermissions,
       node: node,
