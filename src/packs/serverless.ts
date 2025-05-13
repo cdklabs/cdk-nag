@@ -8,22 +8,22 @@ import { NagPack, NagPackProps } from '../nag-pack';
 import { NagMessageLevel } from '../nag-rules';
 import {
   APIGWAccessLogging,
-  APIGWXrayEnabled,
-  APIGWStructuredLogging,
   APIGWDefaultThrottling,
+  APIGWStructuredLogging,
+  APIGWXrayEnabled,
 } from '../rules/apigw';
 import { AppSyncTracing } from '../rules/appsync';
 import { CloudWatchLogGroupRetentionPeriod } from '../rules/cloudwatch';
 import { EventBusDLQ } from '../rules/eventbridge';
-import { IAMNoWildcardPermissions } from '../rules/iam';
 import {
-  LambdaTracing,
-  LambdaEventSourceMappingDestination,
-  LambdaLatestVersion,
   LambdaAsyncFailureDestination,
   LambdaDefaultMemorySize,
   LambdaDefaultTimeout,
   LambdaDLQ,
+  LambdaEventSourceMappingDestination,
+  LambdaLatestVersion,
+  LambdaStarPermissions,
+  LambdaTracing,
 } from '../rules/lambda';
 import { SNSRedrivePolicy } from '../rules/sns';
 import { SQSRedrivePolicy } from '../rules/sqs';
@@ -42,7 +42,6 @@ export class ServerlessChecks extends NagPack {
     if (node instanceof CfnResource) {
       this.checkLambda(node);
       this.checkCloudwatch(node);
-      this.checkIAM(node);
       this.checkApiGw(node);
       this.checkAppSync(node);
       this.checkEventBridge(node);
@@ -58,24 +57,6 @@ export class ServerlessChecks extends NagPack {
    * @param ignores list of ignores for the resource
    */
   private checkLambda(node: CfnResource) {
-    this.applyRule({
-      info: 'The Lambda function does not have tracing set to Tracing.ACTIVE.',
-      explanation:
-        'When a Lambda function has ACTIVE tracing, Lambda automatically samples invocation requests, based on the sampling algorithm specified by X-Ray.',
-      level: NagMessageLevel.WARN,
-      rule: LambdaTracing,
-      node: node,
-    });
-
-    this.applyRule({
-      info: 'The Lambda Event Source Mapping does not have a destination configured for failed invocations.',
-      explanation:
-        'Configuring a destination for failed invocations in Lambda Event Source Mappings allows you to capture and process events that fail to be processed by your Lambda function. This helps in monitoring, debugging, and implementing retry mechanisms for failed events, improving the reliability and observability of your serverless applications.',
-      level: NagMessageLevel.ERROR,
-      rule: LambdaEventSourceMappingDestination,
-      node: node,
-    });
-
     this.applyRule({
       info: 'The Lambda function does not have a configured failure destination for asynchronous invocations.',
       explanation:
@@ -113,28 +94,38 @@ export class ServerlessChecks extends NagPack {
     });
 
     this.applyRule({
+      info: 'The Lambda Event Source Mapping does not have a destination configured for failed invocations.',
+      explanation:
+        'Configuring a destination for failed invocations in Lambda Event Source Mappings allows you to capture and process events that fail to be processed by your Lambda function. This helps in monitoring, debugging, and implementing retry mechanisms for failed events, improving the reliability and observability of your serverless applications.',
+      level: NagMessageLevel.ERROR,
+      rule: LambdaEventSourceMappingDestination,
+      node: node,
+    });
+
+    this.applyRule({
       info: 'Lambda function does not use the latest runtime version.',
       explanation:
-        "Using the latest runtime version ensures that your Lambda function has access to the most recent features, performance improvements, and security updates. It's important to regularly update your Lambda functions to use the latest runtime versions to maintain optimal performance and security.",
+        'Using the latest runtime version ensures that your Lambda function has access to the most recent features, performance improvements, and security updates. It is important to regularly update your Lambda functions to use the latest runtime versions to maintain optimal performance and security.',
       level: NagMessageLevel.ERROR,
       rule: LambdaLatestVersion,
       node: node,
     });
-  }
 
-  /**
-   * Check IAM Resources
-   * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
-   */
-  private checkIAM(node: CfnResource) {
     this.applyRule({
-      info: 'The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.',
+      info: 'Lambda function does not have overly permissive permissions.',
       explanation:
-        'Lambda functions should follow the principle of least privilege. Functions with a requirement for a broad range of permissions should be known ahead of time. Metadata explaining the evidence (e.g. via supporting links) for wildcard permissions allows for transparency to operators. ' +
-        'This is a granular rule that returns individual findings that can be suppressed with "appliesTo". The findings are in the format "Action::<action>" for policy actions and "Resource::<resource>" for resources. Example: appliesTo: ["Action::s3:*"].',
+        'You should follow least-privileged access and only allow the access needed to perform a given operation. If your Lambda function needs a broad range of permissions, you should know ahead of time which permissions you will need, have evaluated the risks of using broad permissions and can suppress this rule.',
       level: NagMessageLevel.WARN,
-      rule: IAMNoWildcardPermissions,
+      rule: LambdaStarPermissions,
+      node: node,
+    });
+
+    this.applyRule({
+      info: 'The Lambda function does not have tracing set to Tracing.ACTIVE.',
+      explanation:
+        'When a Lambda function has ACTIVE tracing, Lambda automatically samples invocation requests, based on the sampling algorithm specified by X-Ray.',
+      level: NagMessageLevel.WARN,
+      rule: LambdaTracing,
       node: node,
     });
   }
@@ -169,14 +160,16 @@ export class ServerlessChecks extends NagPack {
       rule: APIGWAccessLogging,
       node: node,
     });
+
     this.applyRule({
-      info: 'The API Gateway does not have Tracing enabled.',
+      info: 'The API Gateway Stage is using default throttling setting.',
       explanation:
-        'Amazon API Gateway provides active tracing support for AWS X-Ray. Enable active tracing on your API stages to sample incoming requests and send traces to X-Ray.',
-      level: NagMessageLevel.WARN,
-      rule: APIGWXrayEnabled,
+        'API Gateway default throttling settings may not be suitable for all applications. Custom throttling limits help protect your backend systems from being overwhelmed with requests, ensure consistent performance, and can be tailored to your specific use case.',
+      level: NagMessageLevel.ERROR,
+      rule: APIGWDefaultThrottling,
       node: node,
     });
+
     this.applyRule({
       info: 'The API Gateway logs are not configured for the JSON format.',
       explanation:
@@ -185,12 +178,13 @@ export class ServerlessChecks extends NagPack {
       rule: APIGWStructuredLogging,
       node: node,
     });
+
     this.applyRule({
-      info: 'The API Gateway Stage is using default throttling setting.',
+      info: 'The API Gateway does not have Tracing enabled.',
       explanation:
-        'API Gateway default throttling settings may not be suitable for all applications. Custom throttling limits help protect your backend systems from being overwhelmed with requests, ensure consistent performance, and can be tailored to your specific use case.',
-      level: NagMessageLevel.ERROR,
-      rule: APIGWDefaultThrottling,
+        'Amazon API Gateway provides active tracing support for AWS X-Ray. Enable active tracing on your API stages to sample incoming requests and send traces to X-Ray.',
+      level: NagMessageLevel.WARN,
+      rule: APIGWXrayEnabled,
       node: node,
     });
   }

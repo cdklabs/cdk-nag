@@ -646,26 +646,26 @@ describe('Check NagPack Details', () => {
     });
     test('Pack contains expected warning and error rules', () => {
       const expectedWarnings = [
-        'Serverless-LambdaTracing',
-        'Serverless-IAMNoWildcardPermissions',
-        'Serverless-CloudWatchLogGroupRetentionPeriod',
         'Serverless-APIGWStructuredLogging',
         'Serverless-APIGWXrayEnabled',
         'Serverless-AppSyncTracing',
+        'Serverless-CloudWatchLogGroupRetentionPeriod',
+        'Serverless-LambdaStarPermissions',
+        'Serverless-LambdaTracing',
       ];
       const expectedErrors = [
-        'Serverless-LambdaEventSourceMappingDestination',
-        'Serverless-LambdaDefaultMemorySize',
-        'Serverless-LambdaDefaultTimeout',
-        'Serverless-LambdaAsyncFailureDestination',
-        'Serverless-LambdaLatestVersion',
-        'Serverless-LambdaDLQ',
         'Serverless-APIGWAccessLogging',
         'Serverless-APIGWDefaultThrottling',
         'Serverless-EventBusDLQ',
+        'Serverless-LambdaAsyncFailureDestination',
+        'Serverless-LambdaDefaultMemorySize',
+        'Serverless-LambdaDefaultTimeout',
+        'Serverless-LambdaDLQ',
+        'Serverless-LambdaEventSourceMappingDestination',
+        'Serverless-LambdaLatestVersion',
         'Serverless-SNSRedrivePolicy',
-        'Serverless-SQSRedrivePolicy',
         'Serverless-StepFunctionStateMachineXray',
+        'Serverless-SQSRedrivePolicy',
       ];
       jest.spyOn(pack, 'applyRule');
       const stack = new Stack();

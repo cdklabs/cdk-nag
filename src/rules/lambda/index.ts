@@ -14,4 +14,5 @@ export { default as LambdaFunctionPublicAccessProhibited } from './LambdaFunctio
 export { default as LambdaFunctionUrlAuth } from './LambdaFunctionUrlAuth';
 export { default as LambdaInsideVPC } from './LambdaInsideVPC';
 export { default as LambdaLatestVersion } from './LambdaLatestVersion';
+export { default as LambdaStarPermissions } from './LambdaStarPermissions';
 export { default as LambdaTracing } from './LambdaTracing';

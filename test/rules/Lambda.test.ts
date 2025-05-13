@@ -10,6 +10,12 @@ import {
 } from 'aws-cdk-lib/aws-dynamodb';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import {
+  PolicyDocument,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
+import {
   CfnEventInvokeConfig,
   CfnEventSourceMapping,
   CfnFunction,
@@ -24,6 +30,7 @@ import {
   Runtime,
   Tracing,
 } from 'aws-cdk-lib/aws-lambda';
+// import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { SqsDestination } from 'aws-cdk-lib/aws-lambda-destinations';
 import { SqsDlq } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
@@ -40,6 +47,7 @@ import {
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaStarPermissions,
   LambdaTracing,
 } from '../../src/rules/lambda';
 
@@ -55,6 +63,7 @@ const testPack = new TestPack([
   LambdaFunctionUrlAuth,
   LambdaInsideVPC,
   LambdaLatestVersion,
+  LambdaStarPermissions,
   LambdaTracing,
 ]);
 let stack: Stack;
@@ -797,6 +806,107 @@ describe('AWS Lambda', () => {
       const queue = new Queue(stack, 'DestinationQueue');
       lambdaFunction.configureAsyncInvoke({
         onFailure: new SqsDestination(queue),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+  });
+
+  describe('LambdaStarPermissions: Lambda functions have least privileged access permissions.', () => {
+    const ruleId = 'LambdaStarPermissions';
+
+    test('Noncompliance 1: All services wildcard in actions', () => {
+      new Role(stack, 'FunctionRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['*'],
+                resources: ['s3/specific/path'],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2: Service level wildcard in actions', () => {
+      new Role(stack, 'FunctionRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:*'],
+                resources: ['s3/specific/path'],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 3: Full wildcard in resources', () => {
+      new Role(stack, 'FunctionRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:GetObject'],
+                resources: ['*'],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 1: Least privileged access permission used', () => {
+      new Role(stack, 'FunctionRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:GetObject'],
+                resources: [
+                  stack.formatArn({
+                    service: 's3',
+                    resource: 'myBucket',
+                    resourceName: '*',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 2: SubStar permission in actions', () => {
+      new Role(stack, 'FunctionRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:Get*'],
+                resources: [
+                  stack.formatArn({
+                    service: 's3',
+                    resource: 'myBucket',
+                    resourceName: '*',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
