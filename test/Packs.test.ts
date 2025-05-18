@@ -13,6 +13,7 @@ import {
   NIST80053R5Checks,
   NagMessageLevel,
   PCIDSS321Checks,
+  ServerlessChecks,
 } from '../src';
 
 describe('Check NagPack Details', () => {
@@ -618,6 +619,58 @@ describe('Check NagPack Details', () => {
       const stack = new Stack();
       Aspects.of(stack).add(pack);
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
+      SynthUtils.synthesize(stack).messages;
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
+  describe('Serverless', () => {
+    class ServerlessChecksExtended extends ServerlessChecks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
+        const ruleSuffix = params.ruleSuffixOverride
+          ? params.ruleSuffixOverride
+          : params.rule.name;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
+        if (params.level === NagMessageLevel.WARN) {
+          this.actualWarnings.push(ruleId);
+        } else {
+          this.actualErrors.push(ruleId);
+        }
+      }
+    }
+    const pack = new ServerlessChecksExtended();
+    test('Pack Name is correct', () => {
+      expect(pack.readPackName).toStrictEqual('Serverless');
+    });
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings = [
+        'Serverless-APIGWStructuredLogging',
+        'Serverless-APIGWXrayEnabled',
+        'Serverless-AppSyncTracing',
+        'Serverless-CloudWatchLogGroupRetentionPeriod',
+        'Serverless-LambdaStarPermissions',
+        'Serverless-LambdaTracing',
+      ];
+      const expectedErrors = [
+        'Serverless-APIGWAccessLogging',
+        'Serverless-APIGWDefaultThrottling',
+        'Serverless-EventBusDLQ',
+        'Serverless-LambdaAsyncFailureDestination',
+        'Serverless-LambdaDefaultMemorySize',
+        'Serverless-LambdaDefaultTimeout',
+        'Serverless-LambdaDLQ',
+        'Serverless-LambdaEventSourceMappingDestination',
+        'Serverless-LambdaLatestVersion',
+        'Serverless-SNSRedrivePolicy',
+        'Serverless-StepFunctionStateMachineXray',
+        'Serverless-SQSRedrivePolicy',
+      ];
+      jest.spyOn(pack, 'applyRule');
+      const stack = new Stack();
+      Aspects.of(stack).add(pack);
+      new CfnResource(stack, 'TestResource', { type: 'foo' });
       SynthUtils.synthesize(stack).messages;
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
