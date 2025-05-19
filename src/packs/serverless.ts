@@ -103,7 +103,7 @@ export class ServerlessChecks extends NagPack {
     });
 
     this.applyRule({
-      info: 'Lambda function does not use the latest runtime version.',
+      info: 'The Lambda function does not use the latest runtime version.',
       explanation:
         'Using the latest runtime version ensures that your Lambda function has access to the most recent features, performance improvements, and security updates. It is important to regularly update your Lambda functions to use the latest runtime versions to maintain optimal performance and security.',
       level: NagMessageLevel.ERROR,
@@ -112,7 +112,7 @@ export class ServerlessChecks extends NagPack {
     });
 
     this.applyRule({
-      info: 'Lambda function does not have overly permissive permissions.',
+      info: 'The Lambda IAM role uses wildcard permissions.',
       explanation:
         'You should follow least-privileged access and only allow the access needed to perform a given operation. If your Lambda function needs a broad range of permissions, you should know ahead of time which permissions you will need, have evaluated the risks of using broad permissions and can suppress this rule.',
       level: NagMessageLevel.WARN,

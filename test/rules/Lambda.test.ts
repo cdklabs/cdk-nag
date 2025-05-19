@@ -30,7 +30,6 @@ import {
   Runtime,
   Tracing,
 } from 'aws-cdk-lib/aws-lambda';
-// import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { SqsDestination } from 'aws-cdk-lib/aws-lambda-destinations';
 import { SqsDlq } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
@@ -863,6 +862,49 @@ describe('AWS Lambda', () => {
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4: Role with compliant and non-compliant statements', () => {
+      new Role(stack, 'FunctionRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['s3:GetObject'],
+                resources: ['*'],
+              }),
+              new PolicyStatement({
+                actions: ['s3:GetObject'],
+                resources: [
+                  stack.formatArn({
+                    service: 's3',
+                    resource: 'myBucket',
+                    resourceName: '*',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Not Applicable: Role not assumed by Lambda service', () => {
+      new Role(stack, 'NonLambdaRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+        inlinePolicies: {
+          foo: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                actions: ['*'],
+                resources: ['*'],
+              }),
+            ],
+          }),
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
     test('Compliance 1: Least privileged access permission used', () => {
