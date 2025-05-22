@@ -56,13 +56,13 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         healthCheck: HealthCheck.elb({ grace: Duration.seconds(42) }),
       });
       new AutoScalingGroup(stack, 'rAsg2', {
         vpc: new Vpc(stack, 'rVpc2'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -74,7 +74,7 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         cooldown: Duration.seconds(0),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -84,13 +84,13 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         cooldown: Duration.seconds(42),
       });
       new AutoScalingGroup(stack, 'rAsg2', {
         vpc: new Vpc(stack, 'rVpc2'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -153,7 +153,7 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         notifications: [
           {
             scalingEvents: ScalingEvents.ERRORS,
@@ -167,7 +167,7 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -177,7 +177,7 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg', {
         vpc: new Vpc(stack, 'rVpc'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         notifications: [
           {
             scalingEvents: {
@@ -197,7 +197,7 @@ describe('Amazon EC2 Auto Scaling', () => {
       new AutoScalingGroup(stack, 'rAsg2', {
         vpc: new Vpc(stack, 'rVpc2'),
         instanceType: new InstanceType(InstanceClass.T3),
-        machineImage: MachineImage.latestAmazonLinux(),
+        machineImage: MachineImage.latestAmazonLinux2(),
         notifications: [
           {
             scalingEvents: ScalingEvents.ALL,

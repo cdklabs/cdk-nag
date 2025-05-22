@@ -8,6 +8,7 @@ import {
   Wait,
   WaitTime,
   LogLevel,
+  DefinitionBody,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
@@ -32,17 +33,21 @@ describe('AWS Step Functions', () => {
     const ruleId = 'StepFunctionStateMachineAllLogsToCloudWatch';
     test('Noncompliance 1', () => {
       new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
-          time: WaitTime.duration(Duration.seconds(30)),
-        }),
+        definitionBody: DefinitionBody.fromChainable(
+          new Wait(stack, 'rWait30', {
+            time: WaitTime.duration(Duration.seconds(30)),
+          })
+        ),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
       new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
-          time: WaitTime.duration(Duration.seconds(30)),
-        }),
+        definitionBody: DefinitionBody.fromChainable(
+          new Wait(stack, 'rWait30', {
+            time: WaitTime.duration(Duration.seconds(30)),
+          })
+        ),
         logs: {
           level: LogLevel.ALL,
           destination: new LogGroup(stack, 'rSfnLog'),
@@ -56,17 +61,21 @@ describe('AWS Step Functions', () => {
     const ruleId = 'StepFunctionStateMachineXray';
     test('Noncompliance 1', () => {
       new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
-          time: WaitTime.duration(Duration.seconds(30)),
-        }),
+        definitionBody: DefinitionBody.fromChainable(
+          new Wait(stack, 'rWait30', {
+            time: WaitTime.duration(Duration.seconds(30)),
+          })
+        ),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
       new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
-          time: WaitTime.duration(Duration.seconds(30)),
-        }),
+        definitionBody: DefinitionBody.fromChainable(
+          new Wait(stack, 'rWait30', {
+            time: WaitTime.duration(Duration.seconds(30)),
+          })
+        ),
         tracingEnabled: true,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);

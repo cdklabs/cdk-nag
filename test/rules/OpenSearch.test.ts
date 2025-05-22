@@ -4,11 +4,6 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
-  CfnDomain as LegacyCfnDomain,
-  Domain as LegacyDomain,
-  ElasticsearchVersion,
-} from 'aws-cdk-lib/aws-elasticsearch';
-import {
   AccountRootPrincipal,
   AnyPrincipal,
   Effect,
@@ -58,42 +53,6 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchAllowlistedIPs: OpenSearch Service domains only grant access via allowlisted IP addresses', () => {
     const ruleId = 'OpenSearchAllowlistedIPs';
     test('Noncompliance 1', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-        accessPolicies: new PolicyDocument({
-          statements: [
-            new PolicyStatement({
-              effect: Effect.ALLOW,
-              principals: [
-                new Role(stack, 'Role', {
-                  assumedBy: new AccountRootPrincipal(),
-                }),
-              ],
-              resources: ['*'],
-            }),
-          ],
-        }).toJSON(),
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        accessPolicies: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(stack, 'Role', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-          }),
-        ],
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 3', () => {
       new CfnDomain(stack, 'Domain', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
@@ -112,7 +71,7 @@ describe('Amazon OpenSearch Service', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 4', () => {
+    test('Noncompliance 2', () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
         accessPolicies: [
@@ -130,27 +89,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-        accessPolicies: new PolicyDocument({
-          statements: [
-            new PolicyStatement({
-              effect: Effect.ALLOW,
-              principals: [
-                new Role(stack, 'Role', {
-                  assumedBy: new AccountRootPrincipal(),
-                }),
-              ],
-              resources: ['*'],
-              conditions: {
-                IpAddress: {
-                  'aws:sourceIp': ['42.42.42.42'],
-                },
-              },
-            }),
-          ],
-        }).toJSON(),
-      });
       new CfnDomain(stack, 'Domain2', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
@@ -171,25 +109,6 @@ describe('Amazon OpenSearch Service', () => {
             }),
           ],
         }).toJSON(),
-      });
-      new LegacyDomain(stack, 'Domain3', {
-        version: ElasticsearchVersion.V7_10,
-        accessPolicies: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(stack, 'Role3', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-            conditions: {
-              IpAddress: {
-                'aws:sourceIp': ['42.42.42.42'],
-              },
-            },
-          }),
-        ],
       });
       new Domain(stack, 'Domain4', {
         version: EngineVersion.OPENSEARCH_1_0,
@@ -236,22 +155,12 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchDedicatedMasterNode: OpenSearch Service domains use dedicated master nodes', () => {
     const ruleId = 'OpenSearchDedicatedMasterNode';
     test('Noncompliance 1', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        capacity: { masterNodes: 42 },
-      });
       new Domain(stack, 'Domain2', {
         version: EngineVersion.OPENSEARCH_1_0,
         capacity: { masterNodes: 42 },
@@ -263,22 +172,10 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchEncryptedAtRest: OpenSearch Service domains have encryption at rest enabled', () => {
     const ruleId = 'OpenSearchEncryptedAtRest';
     test('Noncompliance 1', () => {
-      new LegacyCfnDomain(stack, 'Domain', {});
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new CfnDomain(stack, 'Domain', {});
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 3', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        encryptionAtRestOptions: {
-          enabled: false,
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 4', () => {
+    test('Noncompliance 2', () => {
       new CfnDomain(stack, 'Domain', {
         encryptionAtRestOptions: {
           enabled: false,
@@ -287,11 +184,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        encryptionAtRestOptions: {
-          enabled: true,
-        },
-      });
       new CfnDomain(stack, 'Domain2', {
         encryptionAtRestOptions: {
           enabled: true,
@@ -304,25 +196,12 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchErrorLogsToCloudWatch: OpenSearch Service domains stream error logs to CloudWatch Logs', () => {
     const ruleId = 'OpenSearchErrorLogsToCloudWatch';
     test('Noncompliance 1', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 3', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 4', () => {
+    test('Noncompliance 2', () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
         logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
@@ -330,10 +209,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        logging: { appLogEnabled: true },
-      });
       new Domain(stack, 'Domain2', {
         version: EngineVersion.OPENSEARCH_1_0,
         logging: { appLogEnabled: true },
@@ -345,22 +220,10 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchInVPCOnly: OpenSearch Service domains are within VPCs', () => {
     const ruleId = 'OpenSearchInVPCOnly';
     test('Noncompliance 1', () => {
-      new LegacyCfnDomain(stack, 'Domain', {});
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new CfnDomain(stack, 'Domain', {});
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 3', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        vpcOptions: {
-          subnetIds: [],
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 4', () => {
+    test('Noncompliance 2', () => {
       new CfnDomain(stack, 'Domain', {
         vpcOptions: {
           subnetIds: [],
@@ -369,11 +232,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        vpcOptions: {
-          subnetIds: ['mycoolsubnet'],
-        },
-      });
       new CfnDomain(stack, 'Domain2', {
         vpcOptions: {
           subnetIds: ['mycoolsubnet'],
@@ -386,15 +244,15 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchNoUnsignedOrAnonymousAccess: OpenSearch Service domains do not allow for unsigned requests or anonymous access', () => {
     const ruleId = 'OpenSearchNoUnsignedOrAnonymousAccess';
     test('Noncompliance 1', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
+      new Domain(stack, 'Domain', {
+        version: EngineVersion.OPENSEARCH_1_0,
         accessPolicies: [],
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
+      new Domain(stack, 'Domain', {
+        version: EngineVersion.OPENSEARCH_1_0,
         accessPolicies: [
           new PolicyStatement({
             effect: Effect.ALLOW,
@@ -406,41 +264,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 3', () => {
-      new Domain(stack, 'Domain', {
-        version: EngineVersion.OPENSEARCH_1_0,
-        accessPolicies: [],
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 4', () => {
-      new Domain(stack, 'Domain', {
-        version: EngineVersion.OPENSEARCH_1_0,
-        accessPolicies: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [new AnyPrincipal()],
-            resources: ['*'],
-          }),
-        ],
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 5', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-        accessPolicies: new PolicyDocument({
-          statements: [
-            new PolicyStatement({
-              effect: Effect.ALLOW,
-              principals: [new AnyPrincipal()],
-              resources: ['*'],
-            }),
-          ],
-        }).toJSON(),
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 6', () => {
       new CfnDomain(stack, 'Domain', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
@@ -456,27 +279,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        elasticsearchVersion: ElasticsearchVersion.V7_10.version,
-        accessPolicies: new PolicyDocument({
-          statements: [
-            new PolicyStatement({
-              effect: Effect.ALLOW,
-              principals: [
-                new Role(stack, 'Role', {
-                  assumedBy: new AccountRootPrincipal(),
-                }),
-              ],
-              resources: ['*'],
-              conditions: {
-                IpAddress: {
-                  'aws:sourceIp': ['42.42.42.42'],
-                },
-              },
-            }),
-          ],
-        }).toJSON(),
-      });
       new CfnDomain(stack, 'Domain2', {
         engineVersion: EngineVersion.OPENSEARCH_1_0.version,
         accessPolicies: new PolicyDocument({
@@ -518,25 +320,6 @@ describe('Amazon OpenSearch Service', () => {
           }),
         ],
       });
-      new LegacyDomain(stack, 'Domain4', {
-        version: ElasticsearchVersion.V7_10,
-        accessPolicies: [
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [
-              new Role(stack, 'Role4', {
-                assumedBy: new AccountRootPrincipal(),
-              }),
-            ],
-            resources: ['*'],
-            conditions: {
-              IpAddress: {
-                'aws:sourceIp': ['42.42.42.42'],
-              },
-            },
-          }),
-        ],
-      });
       new Domain(stack, 'Resource', {
         version: EngineVersion.ELASTICSEARCH_7_10,
         accessPolicies: [
@@ -564,22 +347,10 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchNodeToNodeEncryption: OpenSearch Service domains are node-to-node encrypted', () => {
     const ruleId = 'OpenSearchNodeToNodeEncryption';
     test('Noncompliance 1', () => {
-      new LegacyCfnDomain(stack, 'Domain', {});
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new CfnDomain(stack, 'Domain', {});
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Noncompliance 3', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        nodeToNodeEncryptionOptions: {
-          enabled: false,
-        },
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 4', () => {
+    test('Noncompliance 2', () => {
       new CfnDomain(stack, 'Domain', {
         nodeToNodeEncryptionOptions: {
           enabled: false,
@@ -588,11 +359,6 @@ describe('Amazon OpenSearch Service', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyCfnDomain(stack, 'Domain', {
-        nodeToNodeEncryptionOptions: {
-          enabled: true,
-        },
-      });
       new CfnDomain(stack, 'Domain2', {
         nodeToNodeEncryptionOptions: {
           enabled: true,
@@ -604,22 +370,7 @@ describe('Amazon OpenSearch Service', () => {
 
   describe('OpenSearchSlowLogsToCloudWatch: OpenSearch Service domains minimally publish SEARCH_SLOW_LOGS and INDEX_SLOW_LOGS to CloudWatch Logs', () => {
     const ruleId = 'OpenSearchSlowLogsToCloudWatch';
-    test('Noncompliance 1: expect findings for all logs on the Legacy Domain', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-      });
-      validateStack(
-        stack,
-        `${ruleId}[LogExport::SEARCH_SLOW_LOGS]`,
-        TestType.NON_COMPLIANCE
-      );
-      validateStack(
-        stack,
-        `${ruleId}[LogExport::INDEX_SLOW_LOGS]`,
-        TestType.NON_COMPLIANCE
-      );
-    });
-    test('Noncompliance 2: expect findings for all logs on the OpenSearch Domain', () => {
+    test('Noncompliance 1: expect findings for all logs on the OpenSearch Domain', () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
@@ -634,23 +385,7 @@ describe('Amazon OpenSearch Service', () => {
         TestType.NON_COMPLIANCE
       );
     });
-    test("Noncompliance 3: expect finding for only 'INDEX_SLOW_LOGS' on the Legacy Domain", () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        logging: { slowSearchLogEnabled: true },
-      });
-      validateStack(
-        stack,
-        `${ruleId}\\[LogExport::SEARCH_SLOW_LOGS\\]`,
-        TestType.COMPLIANCE
-      );
-      validateStack(
-        stack,
-        `${ruleId}[LogExport::INDEX_SLOW_LOGS]`,
-        TestType.NON_COMPLIANCE
-      );
-    });
-    test("Noncompliance 4: expect finding for only 'INDEX_SLOW_LOGS' on the OpenSearch Domain", () => {
+    test("Noncompliance 2: expect finding for only 'INDEX_SLOW_LOGS' on the OpenSearch Domain", () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
         logging: { slowSearchLogEnabled: true },
@@ -667,10 +402,6 @@ describe('Amazon OpenSearch Service', () => {
       );
     });
     test('Compliance', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
-      });
       new Domain(stack, 'Domain2', {
         version: EngineVersion.OPENSEARCH_1_0,
         logging: { slowIndexLogEnabled: true, slowSearchLogEnabled: true },
@@ -682,23 +413,12 @@ describe('Amazon OpenSearch Service', () => {
   describe('OpenSearchZoneAwareness: OpenSearch Service domains have Zone Awareness enabled', () => {
     const ruleId = 'OpenSearchZoneAwareness';
     test('Noncompliance 1', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-      });
-      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
-    });
-    test('Noncompliance 2', () => {
       new Domain(stack, 'Domain', {
         version: EngineVersion.OPENSEARCH_1_0,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new LegacyDomain(stack, 'Domain', {
-        version: ElasticsearchVersion.V7_10,
-        capacity: { masterNodes: 42 },
-        zoneAwareness: { enabled: true },
-      });
       new Domain(stack, 'Domain2', {
         version: EngineVersion.OPENSEARCH_1_0,
         capacity: { masterNodes: 42 },
