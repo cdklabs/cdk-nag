@@ -17,8 +17,9 @@ export default Object.defineProperty(
       const targets: CfnRule.TargetProperty[] = Stack.of(node).resolve(
         node.targets
       );
-      if (targets.every((target) => target.deadLetterConfig !== undefined))
+      if (targets.every((target) => target.deadLetterConfig !== undefined)) {
         return NagRuleCompliance.COMPLIANT;
+      }
       return NagRuleCompliance.NON_COMPLIANT;
     }
     return NagRuleCompliance.NOT_APPLICABLE;
