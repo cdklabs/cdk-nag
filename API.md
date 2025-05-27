@@ -2163,6 +2163,72 @@ public readonly readPackName: string;
 ---
 
 
+### ServerlessChecks <a name="ServerlessChecks" id="cdk-nag.ServerlessChecks"></a>
+
+Serverless Checks are a compilation of rules to validate infrastructure-as-code template against recommended practices.
+
+#### Initializers <a name="Initializers" id="cdk-nag.ServerlessChecks.Initializer"></a>
+
+```typescript
+import { ServerlessChecks } from 'cdk-nag'
+
+new ServerlessChecks(props?: NagPackProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.ServerlessChecks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.ServerlessChecks.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.ServerlessChecks.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="cdk-nag.ServerlessChecks.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.ServerlessChecks.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.ServerlessChecks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.ServerlessChecks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
+```
+
+- *Type:* string
+
+---
+
+
 ### SuppressionIgnoreAlways <a name="SuppressionIgnoreAlways" id="cdk-nag.SuppressionIgnoreAlways"></a>
 
 - *Implements:* <a href="#cdk-nag.INagSuppressionIgnore">INagSuppressionIgnore</a>
