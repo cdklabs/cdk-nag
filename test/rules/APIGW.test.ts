@@ -68,6 +68,27 @@ describe('Amazon API Gateway', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance: CfnStage undefined settings', () => {
+      new CfnStage(stack, 'restApiDeploymentStage', {
+        restApiId: 'foo',
+        accessLogSetting: {
+          destinationArn: 'bar',
+        },
+        deploymentId: 'baz',
+        stageName: 'prod',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance: CfnV2Stage undefined settings', () => {
+      new CfnV2Stage(stack, 'stage', {
+        accessLogSettings: {
+          destinationArn: 'foo',
+        },
+        apiId: 'bar',
+        stageName: 'baz',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnStage(stack, 'RestApiDeploymentStage', {
         restApiId: 'foo',
