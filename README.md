@@ -28,6 +28,7 @@ See [RULES](./RULES.md) for more information on all the available packs.
 3. [NIST 800-53 rev 4](./RULES.md#nist-800-53-rev-4)
 4. [NIST 800-53 rev 5](./RULES.md#nist-800-53-rev-5)
 5. [PCI DSS 3.2.1](./RULES.md#pci-dss-321)
+6. [Serverless](./RULES.md#serverless)
 
 [RULES](./RULES.md) also includes a collection of [additional rules](./RULES.md#additional-rules) that are not currently included in any of the pre-built NagPacks, but are still available for inclusion in custom NagPacks.
 
@@ -47,8 +48,10 @@ import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
-// Simple rule informational messages
+// Simple rule informational messages using the AWS Solutions Rule pack
 Aspects.of(app).add(new AwsSolutionsChecks());
+// Multiple rule packs can be run against the same app
+Aspects.of(app).add(new NIST80053R5Checks());
 // Additional explanations on the purpose of triggered rules
 // Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
 ```

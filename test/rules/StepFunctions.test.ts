@@ -31,21 +31,21 @@ describe('AWS Step Functions', () => {
   describe('StepFunctionStateMachineAllLogsToCloudWatch: Step Function log "ALL" events to CloudWatch Logs', () => {
     const ruleId = 'StepFunctionStateMachineAllLogsToCloudWatch';
     test('Noncompliance 1', () => {
-      new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
+      new StateMachine(stack, 'StateMachine', {
+        definition: new Wait(stack, 'Wait30', {
           time: WaitTime.duration(Duration.seconds(30)),
         }),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
+      new StateMachine(stack, 'StateMachine', {
+        definition: new Wait(stack, 'Wait30', {
           time: WaitTime.duration(Duration.seconds(30)),
         }),
         logs: {
           level: LogLevel.ALL,
-          destination: new LogGroup(stack, 'rSfnLog'),
+          destination: new LogGroup(stack, 'SfnLog'),
         },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -55,16 +55,16 @@ describe('AWS Step Functions', () => {
   describe('StepFunctionStateMachineXray: Step Function have X-Ray tracing enabled', () => {
     const ruleId = 'StepFunctionStateMachineXray';
     test('Noncompliance 1', () => {
-      new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
+      new StateMachine(stack, 'StateMachine', {
+        definition: new Wait(stack, 'Wait30', {
           time: WaitTime.duration(Duration.seconds(30)),
         }),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new StateMachine(stack, 'rStateMachine', {
-        definition: new Wait(stack, 'rWait30', {
+      new StateMachine(stack, 'StateMachine', {
+        definition: new Wait(stack, 'Wait30', {
           time: WaitTime.duration(Duration.seconds(30)),
         }),
         tracingEnabled: true,
