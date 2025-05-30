@@ -9,6 +9,7 @@ import { CfnStage as CfnV2Stage } from 'aws-cdk-lib/aws-apigatewayv2';
 import { NagRuleCompliance } from '../../nag-rules';
 /**
  * APIs have access logging enabled
+ * API Gateway Stages have access logging enabled
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
