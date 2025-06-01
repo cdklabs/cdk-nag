@@ -21,6 +21,7 @@ import {
   CfnDBSecurityGroup,
   CfnDBSecurityGroupIngress,
   AuroraEngineVersion,
+  ClusterInstance,
 } from 'aws-cdk-lib/aws-rds';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
@@ -72,7 +73,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -173,7 +175,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraPostgres({
           version: AuroraPostgresEngineVersion.VER_10_4,
         }),
-        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -186,7 +189,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
         iamAuthentication: false,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -198,7 +202,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
         iamAuthentication: true,
-        instanceProps: { vpc: vpc },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
@@ -295,7 +300,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -315,7 +321,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: vpc },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc,
         deletionProtection: true,
       });
       new DatabaseInstance(stack, 'rDbInstance', {
@@ -497,12 +504,13 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
       });
     });
     test('Compliance', () => {
+      const vpc = new Vpc(stack, 'vpc');
       new DatabaseInstance(stack, 'rDbInstance', {
         engine: DatabaseInstanceEngine.mariaDb({
           version: MariaDbEngineVersion.VER_10_2,
         }),
         port: 5432,
-        vpc: new Vpc(stack, 'rVpc'),
+        vpc,
         cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
       });
 
@@ -511,7 +519,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           version: PostgresEngineVersion.VER_11,
         }),
         port: 5432,
-        vpc: new Vpc(stack, 'rVpc2'),
+        vpc,
         cloudwatchLogsExports: ['postgresql', 'upgrade'],
       });
 
@@ -520,7 +528,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           version: SqlServerEngineVersion.VER_11,
         }),
         port: 5432,
-        vpc: new Vpc(stack, 'rVpc3'),
+        vpc,
         cloudwatchLogsExports: ['agent', 'error'],
       });
 
@@ -529,7 +537,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           version: MysqlEngineVersion.VER_8_0_25,
         }),
         port: 5432,
-        vpc: new Vpc(stack, 'rVpc4'),
+        vpc,
         cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
       });
 
@@ -538,7 +546,7 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           version: OracleEngineVersion.VER_19_0_0_0_2021_04_R1,
         }),
         port: 5432,
-        vpc: new Vpc(stack, 'rVpc5'),
+        vpc,
         cloudwatchLogsExports: [
           'trace',
           'listener',
@@ -551,27 +559,24 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.aurora({
           version: AuroraEngineVersion.VER_1_17_9,
         }),
-        instanceProps: {
-          vpc: new Vpc(stack, 'rVpc6'),
-        },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc,
         cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
       });
       new DatabaseCluster(stack, 'rDbCluster2', {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_2_03_2,
         }),
-        instanceProps: {
-          vpc: new Vpc(stack, 'rVpc7'),
-        },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc,
         cloudwatchLogsExports: ['audit', 'error', 'general', 'slowquery'],
       });
       new DatabaseCluster(stack, 'rDbCluster3', {
         engine: DatabaseClusterEngine.auroraPostgres({
           version: AuroraPostgresEngineVersion.VER_9_6_8,
         }),
-        instanceProps: {
-          vpc: new Vpc(stack, 'rVpc8'),
-        },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc,
         cloudwatchLogsExports: ['postgresql'],
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
@@ -644,7 +649,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -664,7 +670,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: vpc },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
         port: 42,
       });
       new DatabaseInstance(stack, 'rDbInstance', {
@@ -685,7 +692,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: new Vpc(stack, 'rVpc') },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
         storageEncrypted: false,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -706,7 +714,8 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         engine: DatabaseClusterEngine.auroraMysql({
           version: AuroraMysqlEngineVersion.VER_5_7_12,
         }),
-        instanceProps: { vpc: vpc },
+        writer: ClusterInstance.provisioned('writer'),
+        vpc,
         storageEncrypted: true,
       });
       new DatabaseInstance(stack, 'rDbInstance', {
