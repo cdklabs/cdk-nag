@@ -74,6 +74,31 @@ describe('Amazon CloudFront', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance: CfnStreamingDistribution logging disabled', () => {
+      const logsBucket = new Bucket(stack, 'LoggingBucket');
+
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
+        streamingDistributionConfig: {
+          comment: 'foo',
+          enabled: true,
+          s3Origin: {
+            domainName: 'foo.s3.us-east-1.amazonaws.com',
+            originAccessIdentity:
+              'origin-access-identity/cloudfront/E127EXAMPLE51Z',
+          },
+          trustedSigners: {
+            awsAccountNumbers: ['1111222233334444'],
+            enabled: true,
+          },
+          logging: {
+            bucket: logsBucket.bucketName,
+            prefix: 'foo',
+            enabled: false,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const logsBucket = new Bucket(stack, 'LoggingBucket');
       new Distribution(stack, 'Distribution', {
