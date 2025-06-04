@@ -11,11 +11,7 @@ import {
   OriginProtocolPolicy,
   OriginSslPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import {
-  HttpOrigin,
-  S3Origin,
-  S3BucketOrigin,
-} from 'aws-cdk-lib/aws-cloudfront-origins';
+import { HttpOrigin, S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
@@ -52,7 +48,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -105,7 +103,9 @@ describe('Amazon CloudFront', () => {
       const logsBucket = new Bucket(stack, 'LoggingBucket');
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         logBucket: logsBucket,
       });
@@ -140,7 +140,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -163,7 +165,9 @@ describe('Amazon CloudFront', () => {
     test('Compliance', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         geoRestriction: GeoRestriction.allowlist('US'),
       });
@@ -246,7 +250,9 @@ describe('Amazon CloudFront', () => {
       new Distribution(stack, 'Distribution', {
         domainNames: ['foo.com'],
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         certificate: new Certificate(stack, 'Certificate', {
           domainName: 'foo.com',
@@ -300,7 +306,9 @@ describe('Amazon CloudFront', () => {
       const logsBucket = new Bucket(stack, 'LoggingBucket');
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         logBucket: logsBucket,
       });
@@ -386,7 +394,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance ', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -395,7 +405,9 @@ describe('Amazon CloudFront', () => {
     test('Compliance', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         webAclId: new CfnWebACL(stack, 'WebAcl', {
           defaultAction: {
@@ -422,7 +434,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
