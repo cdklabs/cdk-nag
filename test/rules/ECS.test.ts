@@ -9,6 +9,7 @@ import {
   ContainerImage,
   Cluster,
   LogDriver,
+  AwsLogDriverMode,
 } from 'aws-cdk-lib/aws-ecs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
@@ -17,6 +18,7 @@ import {
   ECSTaskDefinitionContainerLogging,
   ECSTaskDefinitionNoEnvironmentVariables,
   ECSTaskDefinitionUserForHostMode,
+  ECSTaskDefinitionAwslogsDriverNotBlocking,
 } from '../../src/rules/ecs';
 
 const testPack = new TestPack([
@@ -24,6 +26,7 @@ const testPack = new TestPack([
   ECSTaskDefinitionContainerLogging,
   ECSTaskDefinitionNoEnvironmentVariables,
   ECSTaskDefinitionUserForHostMode,
+  ECSTaskDefinitionAwslogsDriverNotBlocking,
 ]);
 let stack: Stack;
 
@@ -200,5 +203,66 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
+  });
+});
+
+describe('ECSTaskDefinitionAwslogsDriverNotBlocking: Containers in ECS Task Definitions have logging enabled', () => {
+  const ruleId = 'ECSTaskDefinitionAwslogsDriverNotBlocking';
+  test('Noncompliance 1', () => {
+    new TaskDefinition(stack, 'rTaskDef', {
+      compatibility: Compatibility.EC2,
+    }).addContainer('rContainer', {
+      image: ContainerImage.fromRegistry('imageName'),
+      memoryReservationMiB: 42,
+      logging: LogDriver.awsLogs({
+        streamPrefix: 'foo',
+        mode: AwsLogDriverMode.BLOCKING,
+      }),
+    });
+    validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+  });
+  test('Noncompliance 2', () => {
+    const taskDef = new TaskDefinition(stack, 'rTaskDef', {
+      compatibility: Compatibility.EC2,
+    });
+    taskDef.addContainer('rContainer', {
+      image: ContainerImage.fromRegistry('imageName'),
+      memoryReservationMiB: 42,
+      logging: LogDriver.awsLogs({
+        streamPrefix: 'foo',
+        mode: AwsLogDriverMode.NON_BLOCKING,
+      }),
+    });
+    taskDef.addContainer('rContainer2', {
+      image: ContainerImage.fromRegistry('imageName'),
+      memoryReservationMiB: 42,
+      logging: LogDriver.awsLogs({
+        streamPrefix: 'bar',
+        // mode is implicitly AwsLogDriverMode.BLOCKING
+      }),
+    });
+    validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+  });
+  test('Compliance', () => {
+    const taskDef = new TaskDefinition(stack, 'rTaskDef', {
+      compatibility: Compatibility.EC2,
+    });
+    taskDef.addContainer('rContainer', {
+      image: ContainerImage.fromRegistry('imageName'),
+      memoryReservationMiB: 42,
+      logging: LogDriver.awsLogs({
+        streamPrefix: 'foo',
+        mode: AwsLogDriverMode.NON_BLOCKING,
+      }),
+    });
+    taskDef.addContainer('rContainer2', {
+      image: ContainerImage.fromRegistry('imageName'),
+      memoryReservationMiB: 42,
+      logging: LogDriver.awsLogs({
+        streamPrefix: 'bar',
+        mode: AwsLogDriverMode.NON_BLOCKING,
+      }),
+    });
+    validateStack(stack, ruleId, TestType.COMPLIANCE);
   });
 });
