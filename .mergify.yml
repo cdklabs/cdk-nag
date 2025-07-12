@@ -3,7 +3,7 @@
 queue_rules:
   - name: default
     update_method: merge
-    conditions:
+    queue_conditions:
       - "#approved-reviews-by>=1"
       - -label~=(do-not-merge)
       - status-success=build
@@ -32,3 +32,5 @@ pull_request_rules:
       - status-success=package-python
       - status-success=package-dotnet
       - status-success=package-go
+merge_queue:
+  max_parallel_checks: 1
