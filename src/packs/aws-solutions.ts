@@ -179,7 +179,7 @@ import {
   SQSQueueSSLRequestsOnly,
 } from '../rules/sqs';
 import {
-  StepFunctionStateMachineAllLogsToCloudWatch,
+  StepFunctionStateMachineErrorLogsToCloudWatch,
   StepFunctionStateMachineXray,
 } from '../rules/stepfunctions';
 import { TimestreamDatabaseCustomerManagedKey } from '../rules/timestream';
@@ -1318,7 +1318,7 @@ export class AwsSolutionsChecks extends NagPack {
       explanation:
         'Logging "ERROR" events to CloudWatch logs help operators troubleshoot and audit systems.',
       level: NagMessageLevel.ERROR,
-      rule: StepFunctionStateMachineAllLogsToCloudWatch,
+      rule: StepFunctionStateMachineErrorLogsToCloudWatch,
       node: node,
     });
     this.applyRule({

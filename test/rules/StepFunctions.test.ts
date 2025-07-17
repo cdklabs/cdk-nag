@@ -13,12 +13,12 @@ import {
 import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
 import {
-  StepFunctionStateMachineAllLogsToCloudWatch,
+  StepFunctionStateMachineErrorLogsToCloudWatch,
   StepFunctionStateMachineXray,
 } from '../../src/rules/stepfunctions';
 
 const testPack = new TestPack([
-  StepFunctionStateMachineAllLogsToCloudWatch,
+  StepFunctionStateMachineErrorLogsToCloudWatch,
   StepFunctionStateMachineXray,
 ]);
 let stack: Stack;
