@@ -1314,9 +1314,9 @@ export class AwsSolutionsChecks extends NagPack {
     });
     this.applyRule({
       ruleSuffixOverride: 'SF1',
-      info: 'The Step Function does not log "ALL" events to CloudWatch Logs.',
+      info: 'The Step Function does not log "ERROR" events to CloudWatch Logs.',
       explanation:
-        'Logging "ALL" events to CloudWatch logs help operators troubleshoot and audit systems.',
+        'Logging "ERROR" events to CloudWatch logs help operators troubleshoot and audit systems.',
       level: NagMessageLevel.ERROR,
       rule: StepFunctionStateMachineAllLogsToCloudWatch,
       node: node,

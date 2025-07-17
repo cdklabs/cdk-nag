@@ -29,8 +29,8 @@ beforeEach(() => {
 });
 
 describe('AWS Step Functions', () => {
-  describe('StepFunctionStateMachineAllLogsToCloudWatch: Step Function log "ALL" events to CloudWatch Logs', () => {
-    const ruleId = 'StepFunctionStateMachineAllLogsToCloudWatch';
+  describe('StepFunctionStateMachineErrorLogsToCloudWatch: Step Function log "ERROR" events to CloudWatch Logs', () => {
+    const ruleId = 'StepFunctionStateMachineErrorLogsToCloudWatch';
     test('Noncompliance 1', () => {
       new StateMachine(stack, 'StateMachine', {
         definitionBody: DefinitionBody.fromChainable(
@@ -49,7 +49,7 @@ describe('AWS Step Functions', () => {
           })
         ),
         logs: {
-          level: LogLevel.ALL,
+          level: LogLevel.ERROR,
           destination: new LogGroup(stack, 'SfnLog'),
         },
       });
