@@ -22,6 +22,7 @@ import {
   InstanceSize,
   InstanceType,
   LaunchTemplate,
+  LaunchTemplateHttpTokens,
   MachineImage,
   Peer,
   Port,
@@ -715,7 +716,41 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
         });
         validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
       });
-      test('Compliance', () => {
+      test('Noncompliance 7 - Using the L2 LaunchTemplate and AutoScaling Group constructs with requireImdsv2 set to false', () => {
+        const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {
+          launchTemplateName: 'LaunchTemplate',
+          requireImdsv2: false,
+          instanceType: InstanceType.of(
+            InstanceClass.BURSTABLE2,
+            InstanceSize.MICRO
+          ),
+          machineImage: MachineImage.latestAmazonLinux2(),
+        });
+
+        new AutoScalingGroup(stack, 'ASG', {
+          vpc: new Vpc(stack, 'Vpc'),
+          launchTemplate: launchTemplate,
+        });
+        validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      });
+      test('Noncompliance 8 - Using the L2 LaunchTemplate and AutoScaling Group constructs with requireImdsv2 not set and httpTokens set to optional', () => {
+        const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {
+          launchTemplateName: 'LaunchTemplate',
+          instanceType: InstanceType.of(
+            InstanceClass.BURSTABLE2,
+            InstanceSize.MICRO
+          ),
+          machineImage: MachineImage.latestAmazonLinux2(),
+          httpTokens: LaunchTemplateHttpTokens.OPTIONAL,
+        });
+
+        new AutoScalingGroup(stack, 'ASG', {
+          vpc: new Vpc(stack, 'Vpc'),
+          launchTemplate: launchTemplate,
+        });
+        validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      });
+      test('Compliance 1', () => {
         const launchTemplate = new CfnLaunchTemplate(stack, 'LaunchTemplate', {
           launchTemplateData: {
             instanceType: 't3.small',
@@ -732,6 +767,9 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
             launchTemplateId: launchTemplate.ref,
           },
         });
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+      });
+      test('Compliance 2 - Using LaunchConfig Name', () => {
         const launchConfig = new CfnLaunchConfiguration(stack, 'LaunchConfig', {
           imageId: 'ami-123456',
           instanceType: 't3.small',
@@ -741,43 +779,59 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
           launchConfigurationName: 'foobar',
         });
 
-        new CfnAutoScalingGroup(stack, 'ASG2', {
+        new CfnAutoScalingGroup(stack, 'ASG', {
           maxSize: '2',
           minSize: '1',
           launchConfigurationName: launchConfig.launchConfigurationName,
         });
-        const launchConfig2 = new CfnLaunchConfiguration(
-          stack,
-          'LaunchConfig2',
-          {
-            imageId: 'ami-123456',
-            instanceType: 't3.small',
-            metadataOptions: {
-              httpTokens: 'required',
-            },
-          }
-        );
-        new CfnAutoScalingGroup(stack, 'ASG3', {
-          maxSize: '2',
-          minSize: '1',
-          launchConfigurationName: launchConfig2.ref,
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+      });
+      test('Compliance 3 - Using LaunchConfig Ref when the LaunchConfig does not have a provided name', () => {
+        const launchConfig = new CfnLaunchConfiguration(stack, 'LaunchConfig', {
+          imageId: 'ami-123456',
+          instanceType: 't3.small',
+          metadataOptions: {
+            httpTokens: 'required',
+          },
         });
-        const launchConfig3 = new CfnLaunchConfiguration(
-          stack,
-          'LaunchConfig3',
-          {
-            imageId: 'ami-123456',
-            instanceType: 't3.small',
-            metadataOptions: {
-              httpTokens: 'required',
-            },
-            launchConfigurationName: 'foobarbaz',
-          }
-        );
-        new CfnAutoScalingGroup(stack, 'ASG4', {
+        new CfnAutoScalingGroup(stack, 'ASG', {
           maxSize: '2',
           minSize: '1',
-          launchConfigurationName: launchConfig3.ref,
+          launchConfigurationName: launchConfig.ref,
+        });
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+      });
+      test('Compliance 4 - Using LaunchConfig Ref when the LaunchConfig has a provided name', () => {
+        const launchConfig = new CfnLaunchConfiguration(stack, 'LaunchConfig', {
+          imageId: 'ami-123456',
+          instanceType: 't3.small',
+          metadataOptions: {
+            httpTokens: 'required',
+          },
+          launchConfigurationName: 'foobarbaz',
+        });
+        new CfnAutoScalingGroup(stack, 'ASG', {
+          maxSize: '2',
+          minSize: '1',
+          launchConfigurationName: launchConfig.ref,
+        });
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+      });
+      test('Compliance 5 - Using the L2 LaunchTemplate and AutoScaling Group constructs with requireImdsv2 set to true', () => {
+        const launchTemplate = new LaunchTemplate(stack, 'LaunchTemplate', {
+          launchTemplateName: 'LaunchTemplate',
+          requireImdsv2: true,
+          instanceType: InstanceType.of(
+            InstanceClass.BURSTABLE2,
+            InstanceSize.MICRO
+          ),
+          machineImage: MachineImage.latestAmazonLinux2(),
+          httpTokens: LaunchTemplateHttpTokens.REQUIRED,
+        });
+
+        new AutoScalingGroup(stack, 'ASG', {
+          vpc: new Vpc(stack, 'Vpc'),
+          launchTemplate: launchTemplate,
         });
         validateStack(stack, ruleId, TestType.COMPLIANCE);
       });

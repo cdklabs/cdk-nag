@@ -29,8 +29,14 @@ export default Object.defineProperty(
           if (
             isMatchingLaunchTemplate(
               child,
-              instanceLaunchTemplate.launchTemplateName,
-              instanceLaunchTemplate.launchTemplateId
+              NagRules.resolveResourceFromIntrinsic(
+                node,
+                instanceLaunchTemplate.launchTemplateName
+              ),
+              NagRules.resolveResourceFromIntrinsic(
+                node,
+                instanceLaunchTemplate.launchTemplateId
+              )
             )
           ) {
             return hasHttpTokens(child)
@@ -48,8 +54,14 @@ export default Object.defineProperty(
             if (
               isMatchingLaunchTemplate(
                 child,
-                nodeLaunchTemplate.launchTemplateName,
-                nodeLaunchTemplate.launchTemplateId
+                NagRules.resolveResourceFromIntrinsic(
+                  node,
+                  nodeLaunchTemplate.launchTemplateName
+                ),
+                NagRules.resolveResourceFromIntrinsic(
+                  node,
+                  nodeLaunchTemplate.launchTemplateId
+                )
               )
             ) {
               return hasHttpTokens(child)
