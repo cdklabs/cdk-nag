@@ -41,7 +41,9 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
-      new Cluster(stack, 'rCluster', { containerInsightsV2: ContainerInsights.DISABLED });
+      new Cluster(stack, 'rCluster', {
+        containerInsightsV2: ContainerInsights.DISABLED,
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance 1', () => {
@@ -49,11 +51,15 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 2', () => {
-      new Cluster(stack, 'rCluster', { containerInsightsV2: ContainerInsights.ENABLED });
+      new Cluster(stack, 'rCluster', {
+        containerInsightsV2: ContainerInsights.ENABLED,
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
     test('Compliance 3', () => {
-      new Cluster(stack, 'rCluster', { containerInsightsV2: ContainerInsights.ENHANCED });
+      new Cluster(stack, 'rCluster', {
+        containerInsightsV2: ContainerInsights.ENHANCED,
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
