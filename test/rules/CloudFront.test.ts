@@ -11,11 +11,7 @@ import {
   OriginProtocolPolicy,
   OriginSslPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import {
-  HttpOrigin,
-  S3Origin,
-  S3BucketOrigin,
-} from 'aws-cdk-lib/aws-cloudfront-origins';
+import { HttpOrigin, S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
@@ -52,7 +48,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -76,11 +74,38 @@ describe('Amazon CloudFront', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance: CfnStreamingDistribution logging disabled', () => {
+      const logsBucket = new Bucket(stack, 'LoggingBucket');
+
+      new CfnStreamingDistribution(stack, 'StreamingDistribution', {
+        streamingDistributionConfig: {
+          comment: 'foo',
+          enabled: true,
+          s3Origin: {
+            domainName: 'foo.s3.us-east-1.amazonaws.com',
+            originAccessIdentity:
+              'origin-access-identity/cloudfront/E127EXAMPLE51Z',
+          },
+          trustedSigners: {
+            awsAccountNumbers: ['1111222233334444'],
+            enabled: true,
+          },
+          logging: {
+            bucket: logsBucket.bucketName,
+            prefix: 'foo',
+            enabled: false,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const logsBucket = new Bucket(stack, 'LoggingBucket');
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         logBucket: logsBucket,
       });
@@ -115,7 +140,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -138,7 +165,9 @@ describe('Amazon CloudFront', () => {
     test('Compliance', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         geoRestriction: GeoRestriction.allowlist('US'),
       });
@@ -221,7 +250,9 @@ describe('Amazon CloudFront', () => {
       new Distribution(stack, 'Distribution', {
         domainNames: ['foo.com'],
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         certificate: new Certificate(stack, 'Certificate', {
           domainName: 'foo.com',
@@ -275,7 +306,9 @@ describe('Amazon CloudFront', () => {
       const logsBucket = new Bucket(stack, 'LoggingBucket');
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         logBucket: logsBucket,
       });
@@ -361,7 +394,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance ', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -370,7 +405,9 @@ describe('Amazon CloudFront', () => {
     test('Compliance', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
         webAclId: new CfnWebACL(stack, 'WebAcl', {
           defaultAction: {
@@ -397,7 +434,9 @@ describe('Amazon CloudFront', () => {
     test('Noncompliance 1', () => {
       new Distribution(stack, 'Distribution', {
         defaultBehavior: {
-          origin: new S3Origin(new Bucket(stack, 'OriginBucket')),
+          origin: S3BucketOrigin.withBucketDefaults(
+            new Bucket(stack, 'OriginBucket')
+          ),
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);

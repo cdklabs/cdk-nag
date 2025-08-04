@@ -7,6 +7,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
   cdkVersion: '2.176.0',
+  jsiiVersion: '5.8',
   defaultReleaseBranch: 'main',
   majorVersion: 2,
   npmDistTag: 'latest',
@@ -27,7 +28,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     mavenGroupId: 'io.github.cdklabs',
     javaPackage: 'io.github.cdklabs.cdknag',
     mavenArtifactId: 'cdknag',
-    mavenEndpoint: 'https://s01.oss.sonatype.org',
+    mavenServerId: 'central-ossrh',
   },
   publishToGo: {
     moduleName: 'github.com/cdklabs/cdk-nag-go',
