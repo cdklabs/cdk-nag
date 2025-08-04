@@ -25,7 +25,8 @@ export default Object.defineProperty(
           resolvedSetting.name &&
           resolvedSetting.name == 'containerInsights' &&
           resolvedSetting.value &&
-          resolvedSetting.value == 'enabled'
+          (resolvedSetting.value == 'enabled' ||
+            resolvedSetting.value == 'enhanced')
         ) {
           found = true;
           break;

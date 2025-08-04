@@ -9,6 +9,7 @@ import {
   ContainerImage,
   Cluster,
   LogDriver,
+  ContainerInsights,
 } from 'aws-cdk-lib/aws-ecs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
@@ -39,9 +40,26 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       new Cluster(stack, 'rCluster', { containerInsights: false });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-
-    test('Compliance', () => {
+    test('Noncompliance 2', () => {
+      new Cluster(stack, 'rCluster', {
+        containerInsightsV2: ContainerInsights.DISABLED,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance 1', () => {
       new Cluster(stack, 'rCluster', { containerInsights: true });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2', () => {
+      new Cluster(stack, 'rCluster', {
+        containerInsightsV2: ContainerInsights.ENABLED,
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 3', () => {
+      new Cluster(stack, 'rCluster', {
+        containerInsightsV2: ContainerInsights.ENHANCED,
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
