@@ -12,6 +12,7 @@ export const VALIDATION_FAILURE_ID = 'CdkNagValidationFailure';
 export enum NagMessageLevel {
   WARN = 'Warning',
   ERROR = 'Error',
+  INFO = 'Info',
 }
 
 /**

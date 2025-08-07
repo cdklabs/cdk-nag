@@ -2720,6 +2720,7 @@ The severity level of the rule.
 | --- | --- |
 | <code><a href="#cdk-nag.NagMessageLevel.WARN">WARN</a></code> | *No description.* |
 | <code><a href="#cdk-nag.NagMessageLevel.ERROR">ERROR</a></code> | *No description.* |
+| <code><a href="#cdk-nag.NagMessageLevel.INFO">INFO</a></code> | *No description.* |
 
 ---
 
@@ -2729,6 +2730,11 @@ The severity level of the rule.
 
 
 ##### `ERROR` <a name="ERROR" id="cdk-nag.NagMessageLevel.ERROR"></a>
+
+---
+
+
+##### `INFO` <a name="INFO" id="cdk-nag.NagMessageLevel.INFO"></a>
 
 ---
 

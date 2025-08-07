@@ -138,10 +138,20 @@ export class AnnotationLogger implements INagLogger {
       data.ruleExplanation,
       this.verbose
     );
-    if (data.ruleLevel == NagMessageLevel.ERROR) {
-      Annotations.of(data.resource).addError(message);
-    } else if (data.ruleLevel == NagMessageLevel.WARN) {
-      Annotations.of(data.resource).addWarning(message);
+    switch (data.ruleLevel) {
+      case NagMessageLevel.ERROR:
+        Annotations.of(data.resource).addError(message);
+        break;
+      case NagMessageLevel.WARN:
+        Annotations.of(data.resource).addWarning(message);
+        break;
+      case NagMessageLevel.INFO:
+        Annotations.of(data.resource).addInfo(message);
+        break;
+      default:
+        throw new Error(
+          `Unrecognized message level ${data.ruleLevel} for the AnnotationLogger`
+        );
     }
   }
   onSuppressed(data: NagLoggerSuppressedData): void {
