@@ -8,7 +8,7 @@ import { CfnStateMachine, LogLevel } from 'aws-cdk-lib/aws-stepfunctions';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
- * Step Function log "ALL" events to CloudWatch Logs
+ * Step Function log "ERROR" events to CloudWatch Logs
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
@@ -24,7 +24,7 @@ export default Object.defineProperty(
         node,
         loggingConfiguration.level
       );
-      if (level == undefined || level != LogLevel.ALL) {
+      if (level == undefined || level != LogLevel.ERROR) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
