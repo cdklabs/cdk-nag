@@ -932,7 +932,7 @@ The reason to ignore the rule (minimum 10 characters).
 ##### `appliesTo`<sup>Optional</sup> <a name="appliesTo" id="cdk-nag.NagPackSuppression.property.appliesTo"></a>
 
 ```typescript
-public readonly appliesTo: string | RegexAppliesTo[];
+public readonly appliesTo: (string | RegexAppliesTo)[];
 ```
 
 - *Type:* string | <a href="#cdk-nag.RegexAppliesTo">RegexAppliesTo</a>[]
