@@ -2046,9 +2046,9 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
     gopd "^1.2.0"
 
 electron-to-chromium@^1.5.238:
-  version "1.5.247"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.247.tgz#8b3e33193b3784288216419776c573c7c2f24393"
-  integrity sha512-bCkfEJNE5EOhEsGpgbvgUAXYP/uAZeN9GCd9bPGjm2/uiLdpoiZnxrBTbWT1nbZs1y6UqN7hatM3hOB4X1kXUQ==
+  version "1.5.248"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.248.tgz#e69941494efbc69ebf2803517f4e85d016013d4b"
+  integrity sha512-zsur2yunphlyAO4gIubdJEXCK6KOVvtpiuDfCIqbM9FjcnMYiyn0ICa3hWfPr0nc41zcLWobgy1iL7VvoOyA2Q==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4666,10 +4666,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.98.8:
-  version "0.98.8"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.98.8.tgz#45fbad19ddff603c1b047e426188491d56a5e77a"
-  integrity sha512-tYhB03KGlntr4weoclvp6uJceaPjT3zasAOvugPF/GS57goW9qUUzqO42WeKkGyHaDy9/Jq0FI/NL8zg/j9Lcw==
+projen@^0.98.10:
+  version "0.98.10"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.98.10.tgz#d1bcd326a9c5fd36534224b9519920dfa46375f4"
+  integrity sha512-ovf0Iv0qw51xYL91JKii+t0UpKCL0Kf0Xy7LYOJ1RIt0kY581JX9QGqK7LfLXgK37gPncaXCOrpU6FgPtHL1Gg==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
