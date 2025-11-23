@@ -13,17 +13,17 @@ import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { TestPack, TestType, validateStack } from './utils';
 import {
   CognitoUserPoolAPIGWAuthorizer,
-  CognitoUserPoolAdvancedSecurityModeEnforced,
   CognitoUserPoolMFA,
   CognitoUserPoolNoUnauthenticatedLogins,
+  CognitoUserPoolPlusTier,
   CognitoUserPoolStrongPasswordPolicy,
 } from '../../src/rules/cognito';
 
 const testPack = new TestPack([
   CognitoUserPoolAPIGWAuthorizer,
-  CognitoUserPoolAdvancedSecurityModeEnforced,
   CognitoUserPoolMFA,
   CognitoUserPoolNoUnauthenticatedLogins,
+  CognitoUserPoolPlusTier,
   CognitoUserPoolStrongPasswordPolicy,
 ]);
 let stack: Stack;
@@ -80,22 +80,29 @@ describe('Amazon Cognito', () => {
     });
   });
 
-  describe('CognitoUserPoolAdvancedSecurityModeEnforced: Cognito user pools have AdvancedSecurityMode set to ENFORCED', () => {
-    const ruleId = 'CognitoUserPoolAdvancedSecurityModeEnforced';
+  describe('CognitoUserPoolPlusTier: Cognito user pools are on the plus tier', () => {
+    const ruleId = 'CognitoUserPoolPlusTier';
     test('Noncompliance 1', () => {
       new UserPool(stack, 'rUserPool');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Noncompliance 2', () => {
       new CfnUserPool(stack, 'rUserPool', {
-        userPoolAddOns: { advancedSecurityMode: 'OFF' },
+        userPoolTier: 'ESSENTIALS',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 3', () => {
+      new CfnUserPool(stack, 'rUserPool', {
+        userPoolTier: 'LITE',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
     test('Compliance', () => {
       new CfnUserPool(stack, 'rUserPool', {
-        userPoolAddOns: { advancedSecurityMode: 'ENFORCED' },
+        userPoolTier: 'PLUS',
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

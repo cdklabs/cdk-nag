@@ -34,9 +34,9 @@ import {
   CodeBuildProjectManagedImages,
 } from '../rules/codebuild';
 import {
-  CognitoUserPoolAdvancedSecurityModeEnforced,
   CognitoUserPoolAPIGWAuthorizer,
   CognitoUserPoolMFA,
+  CognitoUserPoolPlusTier,
   CognitoUserPoolNoUnauthenticatedLogins,
   CognitoUserPoolStrongPasswordPolicy,
 } from '../rules/cognito';
@@ -1251,15 +1251,6 @@ export class AwsSolutionsChecks extends NagPack {
       node: node,
     });
     this.applyRule({
-      ruleSuffixOverride: 'COG3',
-      info: 'The Cognito user pool does not have AdvancedSecurityMode set to ENFORCED.',
-      explanation:
-        'Advanced security features enable the system to detect and act upon malicious sign-in attempts.',
-      level: NagMessageLevel.ERROR,
-      rule: CognitoUserPoolAdvancedSecurityModeEnforced,
-      node: node,
-    });
-    this.applyRule({
       ruleSuffixOverride: 'COG4',
       info: 'The API GW method does not use a Cognito user pool authorizer.',
       explanation:
@@ -1275,6 +1266,15 @@ export class AwsSolutionsChecks extends NagPack {
         'In many cases applications do not warrant unauthenticated guest access applications. Metadata explaining the use case allows for transparency to operators.',
       level: NagMessageLevel.ERROR,
       rule: CognitoUserPoolNoUnauthenticatedLogins,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'COG8',
+      info: 'The Cognito user pool is not on the plus tier / feature plan.',
+      explanation:
+        'Plus tier enables advanced security features such as detecting and acting upon malicious sign-in attempts and protecting against unsafe passwords.',
+      level: NagMessageLevel.ERROR,
+      rule: CognitoUserPoolPlusTier,
       node: node,
     });
     this.applyRule({
