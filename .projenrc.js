@@ -6,7 +6,7 @@ const { awscdk, vscode } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
-  cdkVersion: '2.176.0',
+  cdkVersion: '2.230.0',
   jsiiVersion: '5.8',
   defaultReleaseBranch: 'main',
   majorVersion: 2,
