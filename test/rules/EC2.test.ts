@@ -333,6 +333,20 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 5: toPort -1', () => {
+      new CfnSecurityGroup(stack, 'SecurityGroup', {
+        groupDescription: 'security group with toPort -1',
+        securityGroupIngress: [
+          {
+            fromPort: 1,
+            toPort: -1,
+            ipProtocol: 'tcp',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnSecurityGroup(stack, 'rSecurityGroup1', {
         groupDescription: 'security group with no rules',
@@ -478,6 +492,37 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 6: SecurityGroup ipProtocol -1', () => {
+      new CfnSecurityGroup(stack, 'rSecurityGroup', {
+        groupDescription: 'security group with SSH unrestricted',
+        securityGroupIngress: [
+          {
+            fromPort: 23,
+            toPort: 10000,
+            ipProtocol: '-1',
+            cidrIp: '0.0.0.0/0',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 7: SecurityGroupIngress ipProtocol -1', () => {
+      new CfnSecurityGroupIngress(stack, 'SgIngress', {
+        fromPort: 23,
+        toPort: 10000,
+        ipProtocol: '-1',
+        cidrIp: '1.0.0.0/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 8: fromPort 22, ipProtocol -1', () => {
+      new CfnSecurityGroupIngress(stack, 'SgIngress', {
+        fromPort: 22,
+        ipProtocol: '-1',
+        cidrIp: '1.0.0.0/0',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnSecurityGroup(stack, 'rSecurityGroup1', {
         groupDescription: 'security group with no rules',
@@ -574,6 +619,18 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
           instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
           machineImage: MachineImage.latestAmazonLinux2(),
           requireImdsv2: false,
+        });
+        validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+      });
+      test('Noncompliance 4: Instance launchTemplate not inspectable', () => {
+        new CfnInstance(stack, 'Instance', {
+          imageId: 'ami-00112233444',
+          instanceType: 't3.micro',
+          subnetId: 'subnet-0123455667',
+          launchTemplate: {
+            version: '1',
+            launchTemplateId: 'launchTemplateId-outside-scope',
+          },
         });
         validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
       });
