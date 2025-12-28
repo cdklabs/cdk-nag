@@ -455,6 +455,26 @@ describe('Amazon Simple Storage Service (S3)', () => {
       );
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 10: non-wildcard principal', () => {
+      new CfnBucket(stack, 'Bucket6', { bucketName: 'bucket' });
+      new CfnBucketPolicy(stack, 'Policy', {
+        bucket: 'bucket',
+        policyDocument: {
+          Statement: [
+            {
+              Action: 's3:*',
+              Effect: 'Deny',
+              Principal: { AWS: 'arn:aws:iam::123456789012:user/Alice' },
+              Resource: ['arn:aws:s3:::bucket', 'arn:aws:s3:::bucket/*'],
+              Condition: {
+                Bool: { 'aws:SecureTransport': 'false' },
+              },
+            },
+          ],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const compliantBucket = new Bucket(stack, 'rBucket');
       new CfnBucketPolicy(stack, 'rPolicy', {
