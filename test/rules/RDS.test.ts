@@ -2,7 +2,11 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import {
+  BackupPlan,
+  BackupResource,
+  CfnBackupSelection,
+} from 'aws-cdk-lib/aws-backup';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
@@ -252,6 +256,20 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
     test('Noncompliance 1', () => {
       new CfnDBInstance(stack, 'rDbInstance', {
         dbInstanceClass: 'db.t3.micro',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: BackupSelection exists, but does not have the database instance', () => {
+      new CfnDBInstance(stack, 'DbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+      });
+      new CfnBackupSelection(stack, 'BackupSelection', {
+        backupPlanId: 'backupPlanId',
+        backupSelection: {
+          resources: ['otherDbInstanceArn'],
+          iamRoleArn: 'iamRoleArn',
+          selectionName: 'selectionName',
+        },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
