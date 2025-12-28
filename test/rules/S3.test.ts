@@ -629,6 +629,20 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: sseAlgorithm is not aws:kms', () => {
+      new CfnBucket(stack, 'Bucket', {
+        bucketEncryption: {
+          serverSideEncryptionConfiguration: [
+            {
+              serverSideEncryptionByDefault: {
+                sseAlgorithm: 'AES256',
+              },
+            },
+          ],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new Bucket(stack, 'rBucket', { encryption: BucketEncryption.KMS });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
