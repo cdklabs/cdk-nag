@@ -730,6 +730,16 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 7: oracle instance with default port', () => {
+      new DatabaseInstance(stack, 'DbInstance', {
+        engine: DatabaseInstanceEngine.oracleEe({
+          version: OracleEngineVersion.VER_21_0_0_0_2024_10_R1,
+        }),
+        port: 1521,
+        vpc: new Vpc(stack, 'Vpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const vpc = new Vpc(stack, 'rVpc');
       new DatabaseCluster(stack, 'rDbCluster', {
