@@ -704,6 +704,14 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 4: serverless mysql cluster with default port', () => {
+      new CfnDBCluster(stack, 'DbCluster', {
+        engineMode: 'serverless',
+        engine: 'aurora-mysql',
+        port: 3306,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const vpc = new Vpc(stack, 'rVpc');
       new DatabaseCluster(stack, 'rDbCluster', {
