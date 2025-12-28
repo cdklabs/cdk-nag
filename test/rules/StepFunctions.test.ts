@@ -83,6 +83,17 @@ describe('AWS Step Functions', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 2: tracingEnabled explicitly set to false', () => {
+      new StateMachine(stack, 'StateMachine', {
+        definitionBody: DefinitionBody.fromChainable(
+          new Wait(stack, 'Wait30', {
+            time: WaitTime.duration(Duration.seconds(30)),
+          })
+        ),
+        tracingEnabled: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new StateMachine(stack, 'StateMachine', {
         definitionBody: DefinitionBody.fromChainable(
