@@ -205,6 +205,9 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         writer: ClusterInstance.provisioned('writer'),
         vpc,
       });
+      new CfnDBCluster(stack, 'DbCluster2', {
+        databaseName: 'cluster-without-engine-specified',
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
