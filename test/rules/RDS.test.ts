@@ -336,6 +336,17 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: DatabaseCluster with deletionProtection explicitly disabled', () => {
+      new DatabaseCluster(stack, 'DbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_3_08_0,
+        }),
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
+        deletionProtection: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const vpc = new Vpc(stack, 'rVpc');
       new DatabaseCluster(stack, 'rDbCluster', {
