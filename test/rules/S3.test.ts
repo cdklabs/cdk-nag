@@ -140,6 +140,10 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: specified but empty loggingConfiguration', () => {
+      new CfnBucket(stack, 'Bucket', { loggingConfiguration: {} });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new Bucket(stack, 'LogsBucket', { bucketName: 'bar' });
       new Bucket(stack, 'Bucket', {
