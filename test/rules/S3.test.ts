@@ -530,6 +530,25 @@ describe('Amazon Simple Storage Service (S3)', () => {
           ],
         }),
       });
+      new CfnBucket(stack, 'Bucket5', { bucketName: 'bucket5' });
+      new CfnBucketPolicy(stack, 'Policy5', {
+        bucket: 'bucket5',
+        policyDocument: {
+          Statement: [
+            {
+              Action: 's3:*',
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
+              Resource: ['arn:aws:s3:::bucket5', 'arn:aws:s3:::bucket5/*'],
+              Condition: {
+                Bool: { 'aws:SecureTransport': 'false' },
+              },
+            },
+          ],
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
