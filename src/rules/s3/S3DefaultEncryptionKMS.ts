@@ -18,9 +18,6 @@ export default Object.defineProperty(
         return NagRuleCompliance.NON_COMPLIANT;
       }
       const encryption = Stack.of(node).resolve(node.bucketEncryption);
-      if (encryption.serverSideEncryptionConfiguration == undefined) {
-        return NagRuleCompliance.NON_COMPLIANT;
-      }
       const sse = Stack.of(node).resolve(
         encryption.serverSideEncryptionConfiguration
       );
