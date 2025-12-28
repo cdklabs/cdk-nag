@@ -208,6 +208,27 @@ describe('Amazon Simple Queue Service (SQS)', () => {
           ],
         }).toJSON(),
       });
+      const queue3 = new Queue(stack, 'Queue3', { queueName: 'queue3' });
+      new CfnQueuePolicy(stack, 'QueuePolicy3', {
+        queues: ['queue3'],
+        policyDocument: {
+          Statement: [
+            {
+              Action: ['sqs:*'],
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
+              Resource: queue3.queueArn,
+              Condition: {
+                Bool: {
+                  'aws:SecureTransport': false,
+                },
+              },
+            },
+          ],
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
