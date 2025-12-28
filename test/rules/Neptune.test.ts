@@ -36,6 +36,13 @@ describe('Amazon Neptune', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 2: autoMinorVersionUpgrade explicitly set to false', () => {
+      new CfnDBInstance(stack, 'DatabaseInstance', {
+        dbInstanceClass: 'db.r4.2xlarge',
+        autoMinorVersionUpgrade: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnDBInstance(stack, 'rDatabaseInstance', {
         dbInstanceClass: 'db.r4.2xlarge',
@@ -77,6 +84,12 @@ describe('Amazon Neptune', () => {
     const ruleId = 'NeptuneClusterIAMAuth';
     test('Noncompliance 1', () => {
       new CfnDBCluster(stack, 'rDatabaseCluster');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: iamAuthEnabled explicitly set to false', () => {
+      new CfnDBCluster(stack, 'DatabaseCluster', {
+        iamAuthEnabled: false,
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
