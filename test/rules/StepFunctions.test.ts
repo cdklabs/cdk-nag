@@ -41,6 +41,20 @@ describe('AWS Step Functions', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 2: LogLevel not ALL', () => {
+      new StateMachine(stack, 'StateMachine', {
+        definitionBody: DefinitionBody.fromChainable(
+          new Wait(stack, 'Wait30', {
+            time: WaitTime.duration(Duration.seconds(30)),
+          })
+        ),
+        logs: {
+          destination: new LogGroup(stack, 'SfnLog'),
+          level: LogLevel.ERROR,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new StateMachine(stack, 'StateMachine', {
         definitionBody: DefinitionBody.fromChainable(
