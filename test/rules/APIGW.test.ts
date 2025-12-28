@@ -220,7 +220,7 @@ describe('Amazon API Gateway', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Compliance 1', () => {
       new RestApi(stack, 'RestApi', {
         defaultMethodOptions: { authorizationType: AuthorizationType.CUSTOM },
       }).root.addMethod('ANY');
@@ -230,6 +230,29 @@ describe('Amazon API Gateway', () => {
         authorizationType: 'CUSTOM',
         authorizerId: 'baz',
       });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2: OPTIONS method with Access-Control-Allow-Credentials', () => {
+      const method = new RestApi(stack, 'RestApi', {
+        defaultMethodOptions: { authorizationType: AuthorizationType.COGNITO },
+      }).root.addMethod('OPTIONS');
+      method.addMethodResponse({
+        statusCode: '204',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Credentials': true,
+        },
+      });
+
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 3: OPTIONS method without Access-Control-Allow-Credentials', () => {
+      const method = new RestApi(stack, 'RestApi', {
+        defaultMethodOptions: { authorizationType: AuthorizationType.COGNITO },
+      }).root.addMethod('OPTIONS');
+      method.addMethodResponse({
+        statusCode: '204',
+      });
+
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
@@ -463,6 +486,14 @@ describe('Amazon API Gateway', () => {
           format:
             '{"requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength"}',
         },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 6: No access log settings (CfnDeployment)', () => {
+      new CfnDeployment(stack, 'RestApiDeploymentNoLogs', {
+        restApiId: 'foo',
+        stageDescription: {},
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
