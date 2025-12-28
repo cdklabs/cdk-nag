@@ -139,7 +139,7 @@ describe('AWS Elastic Beanstalk', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Compliance 1: ManagedActionsEnabled before UpdateLevel', () => {
       new CfnEnvironment(stack, 'rBeanstalk', {
         applicationName: 'foo',
         optionSettings: [
@@ -156,6 +156,28 @@ describe('AWS Elastic Beanstalk', () => {
             namespace: 'aws:elasticbeanstalk:managedactions:platformupdate',
             optionName: 'UpdateLevel',
             value: 'minor',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2: ManagedActionsEnabled after UpdateLevel', () => {
+      new CfnEnvironment(stack, 'rBeanstalk', {
+        applicationName: 'foo',
+        optionSettings: [
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions:platformupdate',
+            optionName: 'UpdateLevel',
+            value: 'minor',
+          },
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'ManagedActionsEnabled',
+          },
+          {
+            namespace: 'aws:elasticbeanstalk:managedactions',
+            optionName: 'PreferredStartTime',
+            value: 'Tue:09:00',
           },
         ],
       });
