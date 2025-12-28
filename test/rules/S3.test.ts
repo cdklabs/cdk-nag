@@ -621,6 +621,14 @@ describe('Amazon Simple Storage Service (S3)', () => {
       new Bucket(stack, 'rBucket');
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 2: serverSideEncryptionConfiguration without serverSideEncryptionByDefault rule', () => {
+      new CfnBucket(stack, 'Bucket', {
+        bucketEncryption: {
+          serverSideEncryptionConfiguration: [{}],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new Bucket(stack, 'rBucket', { encryption: BucketEncryption.KMS });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
