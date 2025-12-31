@@ -3,7 +3,7 @@
 * text=auto eol=lf
 *.snap linguist-generated
 /.devcontainer.json linguist-generated
-/.eslintrc.json linguist-generated
+/.eslintrc.json linguist-generated linguist-language=JSON-with-Comments
 /.gitattributes linguist-generated
 /.github/pull_request_template.md linguist-generated
 /.github/workflows/auto-approve.yml linguist-generated
@@ -21,5 +21,5 @@
 /API.md linguist-generated
 /LICENSE linguist-generated
 /package.json linguist-generated
-/tsconfig.dev.json linguist-generated
+/tsconfig.dev.json linguist-generated linguist-language=JSON-with-Comments
 /yarn.lock linguist-generated
