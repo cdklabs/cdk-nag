@@ -283,6 +283,27 @@ describe('Amazon CodeBuild', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
+    test('Noncompliance 2', () => {
+      new CfnProject(stack, 'Project1', {
+        artifacts: {
+          type: 'no_artifacts',
+        },
+        environment: {
+          computeType: 'BUILD_GENERAL1_SMALL',
+          image: 'aws/CodeBuild/standard:4.0',
+          type: 'LINUX_CONTAINER',
+        },
+        serviceRole: 'someservicerole',
+        source: {
+          type: 'NO_SOURCE',
+          auth: {
+            type: 'PERSONAL_ACCESS_TOKEN',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
     test('Compliance', () => {
       new CfnProject(stack, 'rProject1', {
         artifacts: {
