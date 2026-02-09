@@ -2395,11 +2395,11 @@ fast-uri@^3.0.1:
   integrity sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==
 
 fast-xml-parser@^5.2.5:
-  version "5.3.4"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.3.4.tgz#06f39aafffdbc97bef0321e626c7ddd06a043ecf"
-  integrity sha512-EFd6afGmXlCx8H8WTZHhAoDaWaGyuIBoZJ2mknrNxug+aZKjkp0a0dlars9Izl+jF+7Gu1/5f/2h68cQpe0IiA==
+  version "5.3.5"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.3.5.tgz#3e914cb852e636923cb555deaa356f7366e18b49"
+  integrity sha512-JeaA2Vm9ffQKp9VjvfzObuMCjUYAp5WDYhRYL5LrBPY/jUDlUtOvDfot0vKSkB9tuX885BDHjtw4fZadD95wnA==
   dependencies:
-    strnum "^2.1.0"
+    strnum "^2.1.2"
 
 fastq@^1.6.0:
   version "1.20.1"
@@ -4530,10 +4530,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.99.10:
-  version "0.99.10"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.99.10.tgz#0a0d8fe00d160163ecc91217f66d40bb66d1ac55"
-  integrity sha512-QJDj6ltNxoKkQQzgRw3lUHThb7/ScTP1YYFiti8V2Ot54ndGPTKuyEnYYj675jeDf1NZMnIzzcCLLKWg4ANYzw==
+projen@^0.99.11:
+  version "0.99.11"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.99.11.tgz#97e96856704933449e2e9a0d44aacf31ffdc83a5"
+  integrity sha512-F9HY1eAGymjtulRPpAgeO/rltcCb6x8UgiIwlTnKM7olc1CrOx9UWHxayWYJ/r/Qxrr/xbwdrtjtv4FZZKM6ww==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -4545,7 +4545,7 @@ projen@^0.99.10:
     fast-json-patch "^3.1.1"
     ini "^2.0.0"
     parse-conflict-json "^4.0.0"
-    semver "^7.7.3"
+    semver "^7.7.4"
     shx "^0.4.0"
     xmlbuilder2 "^4.0.3"
     yaml "^2.2.2"
@@ -4835,7 +4835,7 @@ semver-intersect@^1.5.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.2.tgz#48d55db737c3287cd4835e17fa13feace1c41ef8"
   integrity sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==
 
-semver@7.x, semver@^7.0.0, semver@^7.3.2, semver@^7.3.4, semver@^7.5.3, semver@^7.6.3, semver@^7.7.1, semver@^7.7.2, semver@^7.7.3:
+semver@7.x, semver@^7.0.0, semver@^7.3.2, semver@^7.3.4, semver@^7.5.3, semver@^7.6.3, semver@^7.7.1, semver@^7.7.2, semver@^7.7.3, semver@^7.7.4:
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.4.tgz#28464e36060e991fa7a11d0279d2d3f3b57a7e8a"
   integrity sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==
@@ -5197,7 +5197,7 @@ strip-json-comments@^3.1.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
-strnum@^2.1.0:
+strnum@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/strnum/-/strnum-2.1.2.tgz#a5e00ba66ab25f9cafa3726b567ce7a49170937a"
   integrity sha512-l63NF9y/cLROq/yqKXSLtcMeeyOfnSQlfMSlzFt/K73oIaD8DGaQWd7Z34X9GPiKqP5rbSh84Hl4bOlLcjiSrQ==
