@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Repository } from 'aws-cdk-lib/aws-ecr';
+import { CfnRegistryPolicy, Repository } from 'aws-cdk-lib/aws-ecr';
 import {
   PolicyStatement,
   Effect,
@@ -35,8 +35,36 @@ describe('Amazon Elastic Container Registry (ECR)', () => {
       );
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
-    test('Compliance', () => {
+    test('Noncompliance 2: Registry Policy with wildcard principal', () => {
+      new CfnRegistryPolicy(stack, 'RegistryPolicy', {
+        policyText: {
+          Statement: [
+            {
+              Effect: 'Allow',
+              Principal: '*',
+              Action: '*',
+            },
+          ],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Compliance 1', () => {
       new Repository(stack, 'rRepo');
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Compliance 2: Registry Policy with non-wildcard principal', () => {
+      new CfnRegistryPolicy(stack, 'RegistryPolicy', {
+        policyText: {
+          Statement: [
+            {
+              Effect: 'Allow',
+              Principal: '',
+              Action: '*',
+            },
+          ],
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
