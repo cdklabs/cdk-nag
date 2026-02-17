@@ -50,6 +50,57 @@ describe('Amazon Cognito', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: undefined passwordPolicy', () => {
+      new CfnUserPool(stack, 'UserPool', {
+        policies: {
+          passwordPolicy: undefined,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4: no minimumLength in passwordPolicy', () => {
+      new CfnUserPool(stack, 'UserPool', {
+        policies: {
+          passwordPolicy: {
+            minimumLength: undefined,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5: passwordPolicy.minimumLength < 8', () => {
+      new CfnUserPool(stack, 'UserPool', {
+        policies: {
+          passwordPolicy: {
+            minimumLength: 7,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 6: passwordPolicy.requireUppercase is not true', () => {
+      new CfnUserPool(stack, 'UserPool', {
+        policies: {
+          passwordPolicy: {
+            minimumLength: 8,
+            requireUppercase: undefined,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 7: passwordPolicy.requireNumberst is not true', () => {
+      new CfnUserPool(stack, 'UserPool', {
+        policies: {
+          passwordPolicy: {
+            minimumLength: 8,
+            requireUppercase: true,
+            requireNumbers: undefined,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new UserPool(stack, 'rUserPool', {
         passwordPolicy: {
