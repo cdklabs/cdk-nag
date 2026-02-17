@@ -57,14 +57,16 @@ describe('Amazon CloudWatch', () => {
     });
 
     test('Compliance', () => {
-      new Alarm(stack, 'Alarm', {
+      const alarm = new Alarm(stack, 'Alarm', {
         metric: new Metric({
           namespace: 'MyNamespace',
           metricName: 'MyMetric',
         }),
         threshold: 100,
         evaluationPeriods: 2,
-      }).addOkAction(new Ec2Action(Ec2InstanceAction.REBOOT));
+      });
+      alarm.addOkAction(new Ec2Action(Ec2InstanceAction.REBOOT));
+      alarm.addInsufficientDataAction(new Ec2Action(Ec2InstanceAction.REBOOT));
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
