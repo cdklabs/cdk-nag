@@ -10,6 +10,7 @@ import {
   Cluster,
   LogDriver,
   ContainerInsights,
+  CfnCluster,
 } from 'aws-cdk-lib/aws-ecs';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
@@ -44,6 +45,10 @@ describe('Amazon Elastic Container Service (Amazon ECS)', () => {
       new Cluster(stack, 'rCluster', {
         containerInsightsV2: ContainerInsights.DISABLED,
       });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: no clusterSettings', () => {
+      new CfnCluster(stack, 'Cluster', {});
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance 1', () => {
