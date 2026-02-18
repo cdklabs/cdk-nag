@@ -1588,9 +1588,9 @@ constructs@10.0.5:
   integrity sha512-IwOwekzrASFC3qt4ozCtV09rteAIAesuCGsW0p+uBfqHd2XcvA5CXqJjgf4eUqm6g8e/noXlVCMDWwC8GaLtrg==
 
 constructs@^10.0.0:
-  version "10.4.5"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-10.4.5.tgz#d06c9b33f8d1668ed36036c62e2e98dadfa1ed31"
-  integrity sha512-fOoP70YLevMZr5avJHx2DU3LNYmC6wM8OwdrNewMZou1kZnPGOeVzBrRjZNgFDHUlulYUjkpFRSpTE3D+n+ZSg==
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-10.5.0.tgz#66d1a5fb748f4adeb8698ea5f53f27e06f99b930"
+  integrity sha512-zWjwqIgk4nAWmQGrPnDWv+M2Yly6m7ROyqmmQVLgJiHnWP762It22uWFaF2Pu/sSx0u8WsoUcvt0PZ4DQIQYwQ==
 
 conventional-changelog-angular@^6.0.0:
   version "6.0.0"
@@ -3711,9 +3711,9 @@ jsii-diff@^1.126.0:
     yargs "^17.7.2"
 
 jsii-docgen@^10.5.0:
-  version "10.11.12"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.11.12.tgz#8378237d77beb7b2e3669986c4dc603140120bea"
-  integrity sha512-vrXF4W4Jgs7HpA6gFxoYjfXC3liMt8DqnK1aiqQQpxg+FcwamX2L/37pirVRxzYpyLuSjyDj/4/E20dc+ijEEw==
+  version "10.11.13"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.11.13.tgz#a013d7a2437621b33e42e9ad85b976eabf54524d"
+  integrity sha512-NsMH0DZLbbbwimxPxpK8b7g30m2lIZX0UPW5ktc0NwWlOYXOFM9ChEE98JmDeCok7LIyX01CUlLuH02gxLeQtg==
   dependencies:
     "@jsii/spec" "^1.126.0"
     case "^1.6.3"
@@ -3721,7 +3721,7 @@ jsii-docgen@^10.5.0:
     fs-extra "^10.1.0"
     jsii-reflect "^1.126.0"
     json-stream-stringify "^3.1.6"
-    semver "^7.7.3"
+    semver "^7.7.4"
     yargs "^16.2.0"
 
 jsii-pacmak@^1.126.0:
