@@ -183,6 +183,24 @@ describe('Amazon Simple Queue Service (SQS)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: non-wildcard action', () => {
+      new Queue(stack, 'Queue', { queueName: 'foo' });
+      new CfnQueuePolicy(stack, 'QueuePolicy', {
+        queues: ['foo'],
+        policyDocument: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['sqs:PublishMessage'],
+              effect: Effect.DENY,
+              principals: [new AnyPrincipal()],
+              conditions: { Bool: { 'aws:SecureTransport': false } },
+              resources: ['foo'],
+            }),
+          ],
+        }).toJSON(),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new Queue(stack, 'Queue', { queueName: 'foo' });
       new Queue(stack, 'Queue2').addToResourcePolicy(
@@ -207,6 +225,27 @@ describe('Amazon Simple Queue Service (SQS)', () => {
             }),
           ],
         }).toJSON(),
+      });
+      const queue3 = new Queue(stack, 'Queue3', { queueName: 'queue3' });
+      new CfnQueuePolicy(stack, 'QueuePolicy3', {
+        queues: ['queue3'],
+        policyDocument: {
+          Statement: [
+            {
+              Action: ['sqs:*'],
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
+              Resource: queue3.queueArn,
+              Condition: {
+                Bool: {
+                  'aws:SecureTransport': false,
+                },
+              },
+            },
+          ],
+        },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
