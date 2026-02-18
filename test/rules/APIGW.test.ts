@@ -466,6 +466,13 @@ describe('Amazon API Gateway', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
+
+    test('Compliance 6: No stageDescription (CfnDeployment)', () => {
+      new CfnDeployment(stack, 'RestApiDeploymentNoStageDescription', {
+        restApiId: 'foo',
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
   });
 
   describe('APIGWDefaultThrottling: API Gateway REST and HTTP APIs have default throttling enabled', () => {
