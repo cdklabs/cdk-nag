@@ -88,6 +88,15 @@ describe('Amazon ElastiCache', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: CacheCluster redis with default port', () => {
+      new CfnCacheCluster(stack, 'CacheCluster', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        port: 6379,
+        numCacheNodes: 42,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnCacheCluster(stack, 'rAec', {
         cacheNodeType: 'cache.t3.micro',
@@ -156,6 +165,17 @@ describe('Amazon ElastiCache', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
+    test('Noncompliance 2: atRest and transit encryption explicitly disabled', () => {
+      new CfnReplicationGroup(stack, 'RedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        atRestEncryptionEnabled: false,
+        transitEncryptionEnabled: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
     test('Compliance', () => {
       new CfnReplicationGroup(stack, 'rRedisGroup', {
         cacheNodeType: 'cache.t3.micro',
@@ -176,6 +196,15 @@ describe('Amazon ElastiCache', () => {
         cacheNodeType: 'cache.t3.micro',
         engine: 'redis',
         replicationGroupDescription: 'lorem ipsum dolor sit amet',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: multiAZ explicitly disabled', () => {
+      new CfnReplicationGroup(stack, 'rRedisGroup', {
+        cacheNodeType: 'cache.t3.micro',
+        engine: 'redis',
+        replicationGroupDescription: 'lorem ipsum dolor sit amet',
+        multiAzEnabled: false,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
