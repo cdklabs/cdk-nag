@@ -1295,9 +1295,9 @@ baseline-browser-mapping@^2.9.0:
   integrity sha512-DAKrHphkJyiGuau/cFieRYhcTFeK/lBuD++C7cZ6KZHbMhBrisoi+EvhQ5RZrIfV5qwsW8kgQ07JIC+MDJRAhg==
 
 brace-expansion@^1.1.7:
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.12.tgz#ab9b454466e5a8cc3a187beaad580412a9c5b843"
-  integrity sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.13.tgz#d37875c01dc9eff988dd49d112a57cb67b54efe6"
+  integrity sha512-9ZLprWS6EENmhEOpjCYW2c8VkmOvckIJZfkr7rBW6dObmfgJ/L1GpSYW5Hpo9lDz4D1+n0Ckz8rU7FwHDQiG/w==
   dependencies:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
@@ -1986,9 +1986,9 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
     gopd "^1.2.0"
 
 electron-to-chromium@^1.5.263:
-  version "1.5.326"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.326.tgz#849d1d7212450d0fc00eda2abc7c3c98e8de0943"
-  integrity sha512-uRBlUfKKdsXMkiiOurgaybNC10tjrD+skXLEg7NHbm6h0uAoqj3xMb9uue5BfcSCXJ4mcyJMOucI6q55D7p6KQ==
+  version "1.5.328"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.328.tgz#d24ce55f1aa5e4a3b877c1b315a0ab40e9498cc8"
+  integrity sha512-QNQ5l45DzYytThO21403XN3FvK0hOkWDG8viNf6jqS42msJ8I4tGDSpBCgvDRRPnkffafiwAym2X2eHeGD2V0w==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -3723,9 +3723,9 @@ jsii-diff@^1.127.0:
     yargs "^17.7.2"
 
 jsii-docgen@^10.5.0:
-  version "10.11.14"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.11.14.tgz#2419f1ab6a0432afefcad135c91c18ed458ca46d"
-  integrity sha512-i1htUoUpkd31JKIVp78SCaaBf05Sigl1DPYViJMCM/ahVq//OPHRatp/7L9GpeIzaVUanA9H51vNZSIKO9k94g==
+  version "10.11.15"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-10.11.15.tgz#05e631270535474f4973fa81dce9357df2786216"
+  integrity sha512-vTiExZqFc61HCbk+RwSi/kNicQGj21K1DeUMIBG8NehsnTbzLtGyTQD4jYVB1kYIgoQg7g/8NhMJv/jGFoTkfw==
   dependencies:
     "@jsii/spec" "^1.127.0"
     case "^1.6.3"
@@ -4552,10 +4552,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.99.24:
-  version "0.99.24"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.99.24.tgz#bd215ddf2f98e2db7e7e3f5d76d362a917171a4c"
-  integrity sha512-7N8Hm/My1RJSjxuaQcKqyRaLMegSQd/4q2k7qLQqhebL3kAHJNyTB//iLA4utdYH+oqNgJ52xen6ZBH1ZA+DlQ==
+projen@^0.99.25:
+  version "0.99.25"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.99.25.tgz#fd9190c9baeadab588a8a5dca3f779e46280da0d"
+  integrity sha512-9A9G6pnav5Cb0aJK8fFsvwIhilbxY+8ky5VhshkSRHAi0feEHRqHChzOvKBCCOd2VVVFB3aNLHzkf0rtYaHd6A==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
