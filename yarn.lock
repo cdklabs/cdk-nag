@@ -1402,9 +1402,9 @@ camelcase@^6.2.0, camelcase@^6.3.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001782:
-  version "1.0.30001782"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001782.tgz#f2b8617f998bc134701c54ce9748af44f646e062"
-  integrity sha512-dZcaJLJeDMh4rELYFw1tvSn1bhZWYFOt468FcbHHxx/Z/dFidd1I6ciyFdi3iwfQCyOjqo9upF6lGQYtMiJWxw==
+  version "1.0.30001784"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001784.tgz#bdf9733a0813ccfb5ab4d02f2127e62ee4c6b718"
+  integrity sha512-WU346nBTklUV9YfUl60fqRbU5ZqyXlqvo1SgigE1OAXK5bFL8LL9q1K7aap3N739l4BvNqnkm3YrGHiY9sfUQw==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
@@ -1986,9 +1986,9 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
     gopd "^1.2.0"
 
 electron-to-chromium@^1.5.328:
-  version "1.5.329"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.329.tgz#3b0b10ed570ac5625e365e8fbfd412e0b1615c69"
-  integrity sha512-/4t+AS1l4S3ZC0Ja7PHFIWeBIxGA3QGqV8/yKsP36v7NcyUCl+bIcmw6s5zVuMIECWwBrAK/6QLzTmbJChBboQ==
+  version "1.5.331"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.331.tgz#3e4e845042d517c68b3c00be5fc33204f13b2058"
+  integrity sha512-IbxXrsTlD3hRodkLnbxAPP4OuJYdWCeM3IOdT+CpcMoIwIoDfCmRpEtSPfwBXxVkg9xmBeY7Lz2Eo2TDn/HC3Q==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -3997,9 +3997,9 @@ lodash.truncate@^4.4.2:
   integrity sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==
 
 lodash@^4.7.0:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
-  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
+  version "4.18.1"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.18.1.tgz#ff2b66c1f6326d59513de2407bf881439812771c"
+  integrity sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==
 
 log4js@^6.9.1:
   version "6.9.1"
@@ -4552,10 +4552,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-projen@^0.99.26:
-  version "0.99.26"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.99.26.tgz#fa35d04140a7154439593a64e597f96e33acb97b"
-  integrity sha512-FGaMrSa+BgydIs61enxqgHPePB4r3pOTPFldaN+OmWW65WDWoMyGAqVEb3UaGRtiX6rP9qeQVnvufnEfZfaPRg==
+projen@^0.99.27:
+  version "0.99.27"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.99.27.tgz#43c74d6bffb71adc531376509359563d328b420c"
+  integrity sha512-/sDsmoVe5BKRQQ0IDzR1Eg2ezGpKtUU8aKv7U0NmXHxG5pW8nXJm2RY1pevfoAKzlVagtUZvUhLAs6EYLkPkOg==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
