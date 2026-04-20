@@ -41,7 +41,7 @@ For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-na
 <details>
 <summary>Including in an application</summary>
 
-```typescript nofixture
+```typescript nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
@@ -146,7 +146,7 @@ class CdkTestStack extends Stack {
 <details>
   <summary>Example 4) Stack Level </summary>
 
-```typescript nofixture
+```typescript nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
@@ -360,7 +360,7 @@ See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more informati
 
 `example-app.ts`
 
-```ts nofixture
+```ts nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import { ExamplePipeline } from '../lib/example-pipeline';
@@ -466,7 +466,7 @@ You can optionally create a condition that prevents certain rules from being sup
 <details>
   <summary>Example) Using the pre-built `SuppressionIgnoreErrors` class to ignore suppressions on any `Error` level rules.</summary>
 
-```ts nofixture
+```ts nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks, SuppressionIgnoreErrors } from 'cdk-nag';
@@ -492,7 +492,7 @@ See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
 <details>
   <summary>Example) Adding the `ExtremelyHelpfulConsoleLogger` example from the NagLogger docs</summary>
 
-```ts nofixture
+```ts nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { ExtremelyHelpfulConsoleLogger } from './docs/NagLogger';
@@ -543,7 +543,7 @@ Sample CloudFormation template with suppression
 
 Sample App
 
-```typescript nofixture
+```typescript nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
@@ -631,7 +631,7 @@ Sample CloudFormation template with suppression
 
 Sample App
 
-```typescript nofixture
+```typescript nofixture infused
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
