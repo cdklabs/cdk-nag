@@ -36,7 +36,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     gitUserName: 'cdklabs-automation',
     gitUserEmail: 'cdklabs-automation@amazon.com',
   },
-  projenCredentials: github.GithubCredentials.fromPersonalAccessToken({ secret: 'PROJEN_GITHUB_TOKEN' }),
+  projenCredentials: github.GithubCredentials.fromPersonalAccessToken({
+    secret: 'PROJEN_GITHUB_TOKEN',
+  }),
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation', 'dontirun'],
     secret: 'GITHUB_TOKEN',
@@ -45,7 +47,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ['auto-approve'],
-      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({ secret: 'PROJEN_GITHUB_TOKEN' }),
+      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({
+        secret: 'PROJEN_GITHUB_TOKEN',
+      }),
     },
   },
   eslintOptions: { dirs: ['src'], prettier: true },
