@@ -65,11 +65,9 @@ Aspects.of(app).add(new NIST80053R5Checks());
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const test = new SecurityGroup(this, 'test', {
@@ -90,11 +88,9 @@ export class CdkTestStack extends Stack {
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const vpc = new Vpc(this, 'vpc');
@@ -117,11 +113,9 @@ export class CdkTestStack extends Stack {
 
 ```typescript
 import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const user = new User(this, 'rUser');
@@ -179,11 +173,9 @@ If you received the following error on synth/deploy
 ```typescript
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     new BucketDeployment(this, 'rDeployment', {
@@ -217,11 +209,9 @@ By applying the following suppressions
 
 ```typescript
 import { User } from 'aws-cdk-lib/aws-iam';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const firstUser = new User(this, 'rFirstUser');
@@ -307,11 +297,9 @@ Validation failure suppression respects any applied [Suppression Ignore Conditio
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const test = new SecurityGroup(this, 'test', {
@@ -333,11 +321,9 @@ Validation failures can be suppressed for individual rules by using `appliesTo` 
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const test = new SecurityGroup(this, 'test', {
@@ -388,7 +374,6 @@ app.synth();
 `example-pipeline.ts`
 
 ```ts
-import { Stack, StackProps } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
 import {
   CodePipeline,
@@ -396,9 +381,8 @@ import {
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import { NagSuppressions } from 'cdk-nag';
-import { Construct } from 'constructs';
 
-export class ExamplePipeline extends Stack {
+class ExamplePipeline extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
@@ -451,11 +435,9 @@ import {
   Vpc,
   CfnInstance,
 } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const instance = new Instance(this, 'rInstance', {
@@ -576,10 +558,8 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     new CfnInclude(this, 'Template', {
@@ -666,10 +646,8 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
 
-export class CdkTestStack extends Stack {
+class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     new CfnInclude(this, 'Template', {
