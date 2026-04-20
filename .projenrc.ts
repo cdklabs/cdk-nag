@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { awscdk, vscode } from 'projen';
+import { awscdk, vscode, DevEnvironmentDockerImage, github } from 'projen';
 const project = new awscdk.AwsCdkConstructLibrary({
   projenrcTs: true,
   author: 'Arun Donti',
@@ -36,25 +36,24 @@ const project = new awscdk.AwsCdkConstructLibrary({
     gitUserName: 'cdklabs-automation',
     gitUserEmail: 'cdklabs-automation@amazon.com',
   },
-  projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
+  projenCredentials: github.GithubCredentials.fromPersonalAccessToken({ secret: 'PROJEN_GITHUB_TOKEN' }),
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation', 'dontirun'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
   depsUpgradeOptions: {
-    ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      secret: 'PROJEN_GITHUB_TOKEN',
+      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({ secret: 'PROJEN_GITHUB_TOKEN' }),
     },
   },
-  eslintOptions: { prettier: true },
+  eslintOptions: { dirs: ['src'], prettier: true },
   buildWorkflow: true,
   release: true,
   releaseEnvironment: 'release',
   gitignore: ['.vscode', '**/.DS_Store'],
-} as any);
+});
 project.package.addField('prettier', {
   singleQuote: true,
   semi: true,
@@ -75,17 +74,15 @@ const setup = project.addTask('dev-container-setup', {
 const def = project.tasks.tryFind('default')!;
 def.prependExec('python3 -m pip install pre-commit && pre-commit install');
 
-new vscode.DevContainer(project, {
+const devContainer = new vscode.DevContainer(project, {
   features: [
     { name: 'docker-in-docker' },
     { name: 'ghcr.io/devcontainers/features/github-cli' },
   ],
   tasks: [setup, def],
-  dockerImage: {
-    containerUser: 'superchain',
-    remoteUser: 'superchain',
-    extensions: ['dbaeumer.vscode-eslint'],
-    dockerFile: './Dockerfile',
-  },
-} as any);
+  dockerImage: DevEnvironmentDockerImage.fromFile('./Dockerfile'),
+  vscodeExtensions: ['dbaeumer.vscode-eslint'],
+});
+devContainer.config.containerUser = 'superchain';
+devContainer.config.remoteUser = 'superchain';
 project.synth();
