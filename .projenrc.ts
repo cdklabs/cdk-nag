@@ -2,8 +2,9 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const { awscdk, vscode } = require('projen');
+import { awscdk, vscode } from 'projen';
 const project = new awscdk.AwsCdkConstructLibrary({
+  projenrcTs: true,
   author: 'Arun Donti',
   authorAddress: 'donti@amazon.com',
   cdkVersion: '2.176.0',
@@ -65,13 +66,13 @@ project.eslint.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-eslint = project.tasks
+const eslint = project.tasks
   .tryFind('eslint')
   .prependExec('npx prettier --write RULES.md');
-setup = project.addTask('dev-container-setup', {
+const setup = project.addTask('dev-container-setup', {
   exec: 'sudo chown superchain . -R',
 });
-def = project.tasks.tryFind('default');
+const def = project.tasks.tryFind('default');
 def.prependExec('python3 -m pip install pre-commit && pre-commit install');
 
 new vscode.DevContainer(project, {
