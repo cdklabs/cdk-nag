@@ -41,7 +41,7 @@ For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-na
 <details>
 <summary>Including in an application</summary>
 
-```typescript nofixture infused
+```typescript
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
@@ -65,9 +65,11 @@ Aspects.of(app).add(new NIST80053R5Checks());
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const test = new SecurityGroup(this, 'test', {
@@ -88,9 +90,11 @@ class CdkTestStack extends Stack {
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const vpc = new Vpc(this, 'vpc');
@@ -113,9 +117,11 @@ class CdkTestStack extends Stack {
 
 ```typescript
 import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const user = new User(this, 'rUser');
@@ -146,7 +152,7 @@ class CdkTestStack extends Stack {
 <details>
   <summary>Example 4) Stack Level </summary>
 
-```typescript nofixture infused
+```typescript
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
@@ -173,9 +179,11 @@ If you received the following error on synth/deploy
 ```typescript
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     new BucketDeployment(this, 'rDeployment', {
@@ -208,10 +216,12 @@ Certain rules support granular suppressions of `findings`. If you received the f
 By applying the following suppressions
 
 ```typescript
-import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { User } from 'aws-cdk-lib/aws-iam';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const firstUser = new User(this, 'rFirstUser');
@@ -297,9 +307,11 @@ Validation failure suppression respects any applied [Suppression Ignore Conditio
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const test = new SecurityGroup(this, 'test', {
@@ -321,9 +333,11 @@ Validation failures can be suppressed for individual rules by using `appliesTo` 
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const test = new SecurityGroup(this, 'test', {
@@ -360,7 +374,7 @@ See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more informati
 
 `example-app.ts`
 
-```ts nofixture infused
+```ts
 import { App, Aspects } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import { ExamplePipeline } from '../lib/example-pipeline';
@@ -374,6 +388,7 @@ app.synth();
 `example-pipeline.ts`
 
 ```ts
+import { Stack, StackProps } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-codecommit';
 import {
   CodePipeline,
@@ -381,8 +396,9 @@ import {
   ShellStep,
 } from 'aws-cdk-lib/pipelines';
 import { NagSuppressions } from 'cdk-nag';
+import { Construct } from 'constructs';
 
-class ExamplePipeline extends Stack {
+export class ExamplePipeline extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
@@ -435,9 +451,11 @@ import {
   Vpc,
   CfnInstance,
 } from 'aws-cdk-lib/aws-ec2';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { NagSuppressions } from 'cdk-nag';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     const instance = new Instance(this, 'rInstance', {
@@ -466,7 +484,7 @@ You can optionally create a condition that prevents certain rules from being sup
 <details>
   <summary>Example) Using the pre-built `SuppressionIgnoreErrors` class to ignore suppressions on any `Error` level rules.</summary>
 
-```ts nofixture infused
+```ts
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks, SuppressionIgnoreErrors } from 'cdk-nag';
@@ -492,7 +510,7 @@ See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
 <details>
   <summary>Example) Adding the `ExtremelyHelpfulConsoleLogger` example from the NagLogger docs</summary>
 
-```ts nofixture infused
+```ts
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { ExtremelyHelpfulConsoleLogger } from './docs/NagLogger';
@@ -543,7 +561,7 @@ Sample CloudFormation template with suppression
 
 Sample App
 
-```typescript nofixture infused
+```typescript
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
@@ -558,8 +576,10 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     new CfnInclude(this, 'Template', {
@@ -631,7 +651,7 @@ Sample CloudFormation template with suppression
 
 Sample App
 
-```typescript nofixture infused
+```typescript
 import { App, Aspects } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
@@ -646,8 +666,10 @@ Sample Stack with imported template
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { NagSuppressions } from 'cdk-nag';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 
-class CdkTestStack extends Stack {
+export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
     new CfnInclude(this, 'Template', {
