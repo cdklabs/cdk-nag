@@ -54,25 +54,25 @@ const project = new awscdk.AwsCdkConstructLibrary({
   release: true,
   releaseEnvironment: 'release',
   gitignore: ['.vscode', '**/.DS_Store'],
-});
+} as any);
 project.package.addField('prettier', {
   singleQuote: true,
   semi: true,
   trailingComma: 'es5',
 });
-project.eslint.addRules({
+project.eslint!.addRules({
   'prettier/prettier': [
     'error',
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-const eslint = project.tasks
-  .tryFind('eslint')
+project.tasks
+  .tryFind('eslint')!
   .prependExec('npx prettier --write RULES.md');
 const setup = project.addTask('dev-container-setup', {
   exec: 'sudo chown superchain . -R',
 });
-const def = project.tasks.tryFind('default');
+const def = project.tasks.tryFind('default')!;
 def.prependExec('python3 -m pip install pre-commit && pre-commit install');
 
 new vscode.DevContainer(project, {
@@ -87,5 +87,5 @@ new vscode.DevContainer(project, {
     extensions: ['dbaeumer.vscode-eslint'],
     dockerFile: './Dockerfile',
   },
-});
+} as any);
 project.synth();
