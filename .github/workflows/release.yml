@@ -72,6 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v6
@@ -97,6 +98,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v6
@@ -138,6 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-java@v5
@@ -185,6 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v6
@@ -227,6 +231,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v6
@@ -268,6 +273,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v6
