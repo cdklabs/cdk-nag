@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { Annotations, App, CfnResource, Names } from 'aws-cdk-lib';
+import { Annotations, App, CfnResource, Names, Stage } from 'aws-cdk-lib';
 import {
   NagMessageLevel,
   NagRuleCompliance,
@@ -291,10 +291,13 @@ export class NagReportLogger implements INagLogger {
    */
   protected initializeStackReport(data: NagLoggerBaseData): void {
     for (const format of this.formats) {
+      const assembly = Stage.of(data.resource.stack);
+      const prefix =
+        assembly && assembly.stageName ? `${assembly.stageName}-` : '';
       const stackName = data.resource.stack.nested
         ? Names.uniqueId(data.resource.stack)
         : data.resource.stack.stackName;
-      const fileName = `${data.nagPackName}-${stackName}-NagReport.${format}`;
+      const fileName = `${data.nagPackName}-${prefix}${stackName}-NagReport.${format}`;
       const stacks = this.getFormatStacks(format);
       if (!stacks.includes(fileName)) {
         const filePath = join(App.of(data.resource)?.outdir ?? '', fileName);
@@ -320,10 +323,13 @@ export class NagReportLogger implements INagLogger {
     compliance: NagRuleStates
   ): void {
     for (const format of this.formats) {
+      const assembly = Stage.of(data.resource.stack);
+      const prefix =
+        assembly && assembly.stageName ? `${assembly.stageName}-` : '';
       const stackName = data.resource.stack.nested
         ? Names.uniqueId(data.resource.stack)
         : data.resource.stack.stackName;
-      const fileName = `${data.nagPackName}-${stackName}-NagReport.${format}`;
+      const fileName = `${data.nagPackName}-${prefix}${stackName}-NagReport.${format}`;
       const filePath = join(App.of(data.resource)?.outdir ?? '', fileName);
       if (format === NagReportFormat.CSV) {
         //| Rule ID | Resource ID | Compliance | Exception Reason | Rule Level | Rule Info
