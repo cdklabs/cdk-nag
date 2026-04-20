@@ -51,6 +51,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   eslintOptions: { prettier: true },
   buildWorkflow: true,
   release: true,
+  releaseEnvironment: 'release',
   gitignore: ['.vscode', '**/.DS_Store'],
 });
 project.package.addField('prettier', {
