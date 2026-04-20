@@ -11,6 +11,7 @@
     },
     {
       "name": "@types/node",
+      "version": "^18",
       "type": "build"
     },
     {
@@ -21,6 +22,10 @@
     {
       "name": "@typescript-eslint/parser",
       "version": "^8",
+      "type": "build"
+    },
+    {
+      "name": "cdklabs-projen-project-types",
       "type": "build"
     },
     {
@@ -73,7 +78,6 @@
     },
     {
       "name": "jsii-rosetta",
-      "version": "5.8",
       "type": "build"
     },
     {
@@ -100,6 +104,16 @@
     {
       "name": "typescript",
       "type": "build"
+    },
+    {
+      "name": "@aws-cdk/integ-runner",
+      "version": "latest",
+      "type": "devenv"
+    },
+    {
+      "name": "@aws-cdk/integ-tests-alpha",
+      "version": "latest",
+      "type": "devenv"
     },
     {
       "name": "aws-cdk-lib",

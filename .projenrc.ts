@@ -2,14 +2,16 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { awscdk, vscode, DevEnvironmentDockerImage, github } from 'projen';
-const project = new awscdk.AwsCdkConstructLibrary({
+import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
+import { vscode, DevEnvironmentDockerImage } from 'projen';
+const project = new CdklabsConstructLibrary({
   projenrcTs: true,
-  author: 'Arun Donti',
-  authorAddress: 'donti@amazon.com',
+  private: false,
+  author: 'Amazon Web Services',
+  authorAddress: 'aws-cdk-dev@amazon.com',
+  defaultReleaseBranch: 'main',
   cdkVersion: '2.176.0',
   jsiiVersion: '5.8',
-  defaultReleaseBranch: 'main',
   majorVersion: 2,
   npmDistTag: 'latest',
   name: 'cdk-nag',
@@ -17,41 +19,19 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'Check CDK v2 applications for best practices using a combination on available rule packs.',
   repositoryUrl: 'https://github.com/cdklabs/cdk-nag.git',
   devDeps: ['@aws-cdk/assert@^2.18'],
-  publishToPypi: {
-    distName: 'cdk-nag',
-    module: 'cdk_nag',
-  },
-  publishToNuget: {
-    packageId: 'Cdklabs.CdkNag',
-    dotNetNamespace: 'Cdklabs.CdkNag',
-  },
   publishToMaven: {
     mavenGroupId: 'io.github.cdklabs',
     javaPackage: 'io.github.cdklabs.cdknag',
     mavenArtifactId: 'cdknag',
     mavenServerId: 'central-ossrh',
   },
-  publishToGo: {
-    moduleName: 'github.com/cdklabs/cdk-nag-go',
-    gitUserName: 'cdklabs-automation',
-    gitUserEmail: 'cdklabs-automation@amazon.com',
-  },
-  projenCredentials: github.GithubCredentials.fromPersonalAccessToken({ secret: 'PROJEN_GITHUB_TOKEN' }),
-  autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation', 'dontirun'],
-    secret: 'GITHUB_TOKEN',
-  },
-  autoApproveUpgrades: true,
-  depsUpgradeOptions: {
-    workflowOptions: {
-      labels: ['auto-approve'],
-      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({ secret: 'PROJEN_GITHUB_TOKEN' }),
-    },
+  publishToNuget: {
+    packageId: 'Cdklabs.CdkNag',
+    dotNetNamespace: 'Cdklabs.CdkNag',
   },
   eslintOptions: { dirs: ['src'], prettier: true },
   buildWorkflow: true,
   release: true,
-  releaseEnvironment: 'release',
   gitignore: ['.vscode', '**/.DS_Store'],
 });
 project.package.addField('prettier', {
