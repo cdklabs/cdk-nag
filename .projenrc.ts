@@ -65,9 +65,7 @@ project.eslint!.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.tasks
-  .tryFind('eslint')!
-  .prependExec('npx prettier --write RULES.md');
+project.tasks.tryFind('eslint')!.prependExec('npx prettier --write RULES.md');
 const setup = project.addTask('dev-container-setup', {
   exec: 'sudo chown superchain . -R',
 });
