@@ -490,10 +490,9 @@ describe('Amazon API Gateway', () => {
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
 
-    test('Compliance 6: No access log settings (CfnDeployment)', () => {
-      new CfnDeployment(stack, 'RestApiDeploymentNoLogs', {
+    test('Compliance 6: No stageDescription (CfnDeployment)', () => {
+      new CfnDeployment(stack, 'RestApiDeploymentNoStageDescription', {
         restApiId: 'foo',
-        stageDescription: {},
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
