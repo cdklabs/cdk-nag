@@ -38,6 +38,15 @@ describe('AWS Elemental MediaStore', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 2: containerLevelMetrics is DISABLED', () => {
+      new CfnContainer(stack, 'MsContainer', {
+        containerName: 'foo',
+        metricPolicy: {
+          containerLevelMetrics: 'DISABLED',
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnContainer(stack, 'rMsContainer', {
         containerName: 'foo',
@@ -147,6 +156,31 @@ describe('AWS Elemental MediaStore', () => {
               },
               Effect: 'Deny',
               Principal: '*',
+              Resource:
+                'arn:aws:mediastore:us-east-1:111222333444:container/foo/*',
+            },
+          ],
+          Version: '2012-10-17',
+        }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: non-array Action on mediastore:*; array, wildcard AWS principal', () => {
+      new CfnContainer(stack, 'MsContainer', {
+        containerName: 'foo',
+        policy: JSON.stringify({
+          Statement: [
+            {
+              Action: 'mediastore:*',
+              Condition: {
+                Bool: {
+                  'aws:SecureTransport': true,
+                },
+              },
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
               Resource:
                 'arn:aws:mediastore:us-east-1:111222333444:container/foo/*',
             },
