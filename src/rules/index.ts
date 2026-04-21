@@ -32,6 +32,7 @@ export * as lambda from './lambda';
 export * as lex from './lex';
 export * as mediastore from './mediastore';
 export * as msk from './msk';
+export * as mwaa from './mwaa';
 export * as neptune from './neptune';
 export * as opensearch from './opensearch';
 export * as quicksight from './quicksight';
