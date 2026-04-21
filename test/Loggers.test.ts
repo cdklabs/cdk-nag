@@ -10,6 +10,7 @@ import {
   CfnResource,
   NestedStack,
   Stack,
+  Stage,
   Token,
 } from 'aws-cdk-lib';
 import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -156,6 +157,49 @@ describe('NagReportLogger', () => {
       memoryLogger.results.forEach((r) => {
         expect(r.ruleOriginalName).toBe('ReportPackRule');
       });
+    });
+    test('Reports are generated for scoped stacks', () => {
+      const stage = new Stage(app, 'Stage1');
+      Aspects.of(stage).add(pack);
+      const stack = new Stack(stage, 'Stack1');
+      new Bucket(stack, 'rBucket');
+
+      app.synth();
+      reportLogger.getFormatStacks(NagReportFormat.CSV)?.forEach((r) => {
+        expect(r).toMatch('Stage1-Stack1');
+      });
+      reportLogger.getFormatStacks(NagReportFormat.JSON)?.forEach((r) => {
+        expect(r).toMatch('Stage1-Stack1');
+      });
+    });
+    test('Reports are generated for named stacks', () => {
+      const stage = new Stage(app, 'Stage1');
+      Aspects.of(stage).add(pack);
+
+      const stack = new Stack(stage, 'Stack1', {
+        stackName: 'NamedStack',
+      });
+      const stage2 = new Stage(app, 'Stage2');
+      Aspects.of(stage2).add(pack);
+
+      const stack2 = new Stack(stage2, 'Stack2', {
+        stackName: 'NamedStack',
+      });
+      new Bucket(stack, 'rBucket');
+      new Bucket(stack2, 'rBucket');
+      app.synth();
+      expect(reportLogger.getFormatStacks(NagReportFormat.CSV)).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching('Stage1-NamedStack'),
+          expect.stringMatching('Stage2-NamedStack'),
+        ])
+      );
+      expect(reportLogger.getFormatStacks(NagReportFormat.JSON)).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching('Stage1-NamedStack'),
+          expect.stringMatching('Stage2-NamedStack'),
+        ])
+      );
     });
   });
   describe('CSV', () => {
