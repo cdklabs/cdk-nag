@@ -140,6 +140,10 @@ describe('Amazon Simple Storage Service (S3)', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: specified but empty loggingConfiguration', () => {
+      new CfnBucket(stack, 'Bucket', { loggingConfiguration: {} });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new Bucket(stack, 'LogsBucket', { bucketName: 'bar' });
       new Bucket(stack, 'Bucket', {
@@ -451,6 +455,48 @@ describe('Amazon Simple Storage Service (S3)', () => {
       );
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 10: non-wildcard principal', () => {
+      new CfnBucket(stack, 'Bucket', { bucketName: 'bucket' });
+      new CfnBucketPolicy(stack, 'Policy', {
+        bucket: 'bucket',
+        policyDocument: {
+          Statement: [
+            {
+              Action: 's3:*',
+              Effect: 'Deny',
+              Principal: { AWS: 'arn:aws:iam::123456789012:user/Alice' },
+              Resource: ['arn:aws:s3:::bucket', 'arn:aws:s3:::bucket/*'],
+              Condition: {
+                Bool: { 'aws:SecureTransport': 'false' },
+              },
+            },
+          ],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 11: non-array resource', () => {
+      new CfnBucket(stack, 'Bucket', { bucketName: 'bucket' });
+      new CfnBucketPolicy(stack, 'Policy', {
+        bucket: 'bucket',
+        policyDocument: {
+          Statement: [
+            {
+              Action: 's3:*',
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
+              Resource: 'arn:aws:s3:::bucket/*',
+              Condition: {
+                Bool: { 'aws:SecureTransport': 'false' },
+              },
+            },
+          ],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       const compliantBucket = new Bucket(stack, 'rBucket');
       new CfnBucketPolicy(stack, 'rPolicy', {
@@ -526,6 +572,25 @@ describe('Amazon Simple Storage Service (S3)', () => {
           ],
         }),
       });
+      new CfnBucket(stack, 'Bucket5', { bucketName: 'bucket5' });
+      new CfnBucketPolicy(stack, 'Policy5', {
+        bucket: 'bucket5',
+        policyDocument: {
+          Statement: [
+            {
+              Action: 's3:*',
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
+              Resource: ['arn:aws:s3:::bucket5', 'arn:aws:s3:::bucket5/*'],
+              Condition: {
+                Bool: { 'aws:SecureTransport': 'false' },
+              },
+            },
+          ],
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
@@ -554,6 +619,28 @@ describe('Amazon Simple Storage Service (S3)', () => {
     const ruleId = 'S3DefaultEncryptionKMS';
     test('Noncompliance 1', () => {
       new Bucket(stack, 'rBucket');
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: serverSideEncryptionConfiguration without serverSideEncryptionByDefault rule', () => {
+      new CfnBucket(stack, 'Bucket', {
+        bucketEncryption: {
+          serverSideEncryptionConfiguration: [{}],
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: sseAlgorithm is not aws:kms', () => {
+      new CfnBucket(stack, 'Bucket', {
+        bucketEncryption: {
+          serverSideEncryptionConfiguration: [
+            {
+              serverSideEncryptionByDefault: {
+                sseAlgorithm: 'AES256',
+              },
+            },
+          ],
+        },
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
