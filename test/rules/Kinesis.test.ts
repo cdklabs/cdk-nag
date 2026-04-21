@@ -41,6 +41,49 @@ describe('Amazon Kinesis Data Analytics', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 2: flinkApplicationConfiguration is undefined', () => {
+      new CfnApplicationV2(stack, 'FlinkApp', {
+        runtimeEnvironment: 'FLINK-1_11',
+        serviceExecutionRole: new Role(stack, 'KdaRole', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+        applicationConfiguration: {
+          flinkApplicationConfiguration: undefined,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: checkpointConfiguration is undefined', () => {
+      new CfnApplicationV2(stack, 'FlinkApp', {
+        runtimeEnvironment: 'FLINK-1_11',
+        serviceExecutionRole: new Role(stack, 'KdaRole', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+        applicationConfiguration: {
+          flinkApplicationConfiguration: {
+            checkpointConfiguration: undefined,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4: checkpointingEnabled is false', () => {
+      new CfnApplicationV2(stack, 'FlinkApp', {
+        runtimeEnvironment: 'FLINK-1_11',
+        serviceExecutionRole: new Role(stack, 'KdaRole', {
+          assumedBy: new ServicePrincipal('kinesisanalytics.amazonaws.com'),
+        }).roleArn,
+        applicationConfiguration: {
+          flinkApplicationConfiguration: {
+            checkpointConfiguration: {
+              configurationType: 'CUSTOM',
+              checkpointingEnabled: false,
+            },
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnApplicationV2(stack, 'rFlinkApp', {
         runtimeEnvironment: 'FLINK-1_11',
