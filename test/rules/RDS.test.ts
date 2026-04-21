@@ -2,7 +2,11 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
+import {
+  BackupPlan,
+  BackupResource,
+  CfnBackupSelection,
+} from 'aws-cdk-lib/aws-backup';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   AuroraMysqlEngineVersion,
@@ -205,6 +209,9 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         writer: ClusterInstance.provisioned('writer'),
         vpc,
       });
+      new CfnDBCluster(stack, 'DbCluster2', {
+        databaseName: 'cluster-without-engine-specified',
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
@@ -249,6 +256,20 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
     test('Noncompliance 1', () => {
       new CfnDBInstance(stack, 'rDbInstance', {
         dbInstanceClass: 'db.t3.micro',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: BackupSelection exists, but does not have the database instance', () => {
+      new CfnDBInstance(stack, 'DbInstance', {
+        dbInstanceClass: 'db.t3.micro',
+      });
+      new CfnBackupSelection(stack, 'BackupSelection', {
+        backupPlanId: 'backupPlanId',
+        backupSelection: {
+          resources: ['otherDbInstanceArn'],
+          iamRoleArn: 'iamRoleArn',
+          selectionName: 'selectionName',
+        },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -311,6 +332,17 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
           version: PostgresEngineVersion.VER_13_2,
         }),
         vpc: new Vpc(stack, 'rVpc'),
+        deletionProtection: false,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: DatabaseCluster with deletionProtection explicitly disabled', () => {
+      new DatabaseCluster(stack, 'DbCluster', {
+        engine: DatabaseClusterEngine.auroraMysql({
+          version: AuroraMysqlEngineVersion.VER_3_08_0,
+        }),
+        writer: ClusterInstance.provisioned('writer'),
+        vpc: new Vpc(stack, 'vpc'),
         deletionProtection: false,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
@@ -661,6 +693,60 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
         }),
         port: 5432,
         vpc: new Vpc(stack, 'rVpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: provisioned cluster with default port', () => {
+      new CfnDBCluster(stack, 'DbCluster', {
+        engineMode: 'provisioned',
+        engine: 'aurora',
+        port: 3306,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4: serverless mysql cluster with default port', () => {
+      new CfnDBCluster(stack, 'DbCluster', {
+        engineMode: 'serverless',
+        engine: 'aurora-mysql',
+        port: 3306,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5: serverless postgres cluster with default port', () => {
+      new CfnDBCluster(stack, 'DbCluster', {
+        engineMode: 'serverless',
+        engine: 'aurora-postgresql',
+        port: 5432,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 6: mysql instance with default port', () => {
+      new DatabaseInstance(stack, 'DbInstance', {
+        engine: DatabaseInstanceEngine.mysql({
+          version: MysqlEngineVersion.VER_8_4_3,
+        }),
+        port: 3306,
+        vpc: new Vpc(stack, 'Vpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 7: oracle instance with default port', () => {
+      new DatabaseInstance(stack, 'DbInstance', {
+        engine: DatabaseInstanceEngine.oracleEe({
+          version: OracleEngineVersion.VER_21_0_0_0_2024_10_R1,
+        }),
+        port: 1521,
+        vpc: new Vpc(stack, 'Vpc'),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 8: sqlserver instance with default port', () => {
+      new DatabaseInstance(stack, 'DbInstance', {
+        engine: DatabaseInstanceEngine.sqlServerEe({
+          version: SqlServerEngineVersion.VER_16_00_4165_4_V1,
+        }),
+        port: 1433,
+        vpc: new Vpc(stack, 'Vpc'),
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
