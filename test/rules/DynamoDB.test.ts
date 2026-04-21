@@ -8,7 +8,12 @@ import {
 } from 'aws-cdk-lib/aws-applicationautoscaling';
 import { BackupPlan, BackupResource } from 'aws-cdk-lib/aws-backup';
 import { CfnCluster } from 'aws-cdk-lib/aws-dax';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import {
+  AttributeType,
+  BillingMode,
+  CfnTable,
+  Table,
+} from 'aws-cdk-lib/aws-dynamodb';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
@@ -42,6 +47,18 @@ describe('Amazon DynamoDB', () => {
         }).roleArn,
         nodeType: 't3.small',
         replicationFactor: 3,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 2: sseSpecification not enabled', () => {
+      new CfnCluster(stack, 'Dax', {
+        iamRoleArn: new Role(stack, 'DAXRole', {
+          assumedBy: new ServicePrincipal('dax.amazonaws.com'),
+        }).roleArn,
+        nodeType: 't3.small',
+        replicationFactor: 3,
+        sseSpecification: { sseEnabled: false },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -133,6 +150,13 @@ describe('Amazon DynamoDB', () => {
         resourceId: 'table/baz/index/bazbar',
         minCapacity: 7,
         maxCapacity: 42,
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 5: pointInTimeRecoveryEnabled false', () => {
+      new CfnTable(stack, 'Table', {
+        keySchema: [{ keyType: 'HASH', attributeName: 'foo' }],
+        pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: false },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
