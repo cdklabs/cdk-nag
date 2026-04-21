@@ -246,7 +246,7 @@ describe('Amazon CloudFront', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
 
-    test('Compliance', () => {
+    test('Compliance 1', () => {
       new Distribution(stack, 'Distribution', {
         domainNames: ['foo.com'],
         defaultBehavior: {
@@ -265,6 +265,34 @@ describe('Amazon CloudFront', () => {
             viewerProtocolPolicy: 'https-only',
           },
           enabled: true,
+          viewerCertificate: {
+            acmCertificateArn:
+              'arn:aws:acm:us-east-1:111222333444:certificate/foo',
+            minimumProtocolVersion: 'TLSv1.2_2019',
+            sslSupportMethod: 'sni-only',
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Compliance 2: no originSSLProtocols', () => {
+      new CfnDistribution(stack, 'Distribution2', {
+        distributionConfig: {
+          defaultCacheBehavior: {
+            targetOriginId: 'bar',
+            viewerProtocolPolicy: 'https-only',
+          },
+          enabled: true,
+          origins: [
+            {
+              domainName: 'foo.s3.us-east-1.amazonaws.com',
+              id: 'loremipsum',
+              customOriginConfig: {
+                originProtocolPolicy: 'https-only',
+              },
+            },
+          ],
           viewerCertificate: {
             acmCertificateArn:
               'arn:aws:acm:us-east-1:111222333444:certificate/foo',
@@ -447,6 +475,26 @@ describe('Amazon CloudFront', () => {
           origin: S3BucketOrigin.withOriginAccessIdentity(
             new Bucket(stack, 'OriginBucket')
           ),
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 3: originAccessControlId empty or whitespace', () => {
+      const bucket = new Bucket(stack, 'OriginBucket');
+      new CfnDistribution(stack, 'Distribution', {
+        distributionConfig: {
+          enabled: true,
+          defaultCacheBehavior: {
+            targetOriginId: 'origin1',
+            viewerProtocolPolicy: 'https-only',
+          },
+          origins: [
+            {
+              id: 'origin1',
+              domainName: bucket.bucketRegionalDomainName,
+              originAccessControlId: '   ',
+            },
+          ],
         },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
