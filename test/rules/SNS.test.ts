@@ -96,6 +96,23 @@ describe('Amazon Simple Notification Service (Amazon SNS)', () => {
           ],
         }).toJSON(),
       });
+      const topic4 = new Topic(stack, 'Topic4', { topicName: 'topic4' });
+      new CfnTopicPolicy(stack, 'TopicPolicy4', {
+        topics: [topic4.topicArn],
+        policyDocument: {
+          Statement: [
+            {
+              Action: 'sns:Publish',
+              Effect: 'Deny',
+              Principal: {
+                AWS: ['*'],
+              },
+              Resource: [topic4.topicArn],
+              Condition: { Bool: { 'aws:SecureTransport': false } },
+            },
+          ],
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });

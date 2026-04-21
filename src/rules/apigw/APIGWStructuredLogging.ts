@@ -39,7 +39,7 @@ export default Object.defineProperty(
       return NagRuleCompliance.NON_COMPLIANT;
     } else if (node instanceof CfnDeployment) {
       const stageDescription = Stack.of(node).resolve(node.stageDescription);
-      const accessLogSetting = stageDescription.accessLogSetting;
+      const accessLogSetting = stageDescription?.accessLogSetting;
       if (!accessLogSetting) {
         return NagRuleCompliance.NOT_APPLICABLE;
       }
