@@ -15,6 +15,7 @@ import {
   ListenerAction,
   ApplicationProtocol,
   CfnLoadBalancer as CfnLoadBalancerV2,
+  CfnListener,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
@@ -62,6 +63,13 @@ describe('Elastic Load Balancing', () => {
         vpc: new Vpc(stack, 'rVPC'),
       });
       alb1.logAccessLogs(new Bucket(stack, 'rLogsBucket'));
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: undefined loadBalancerAttributes', () => {
+      new CfnLoadBalancerV2(stack, 'ALB', {
+        type: 'application',
+        loadBalancerAttributes: undefined,
+      });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
@@ -256,6 +264,14 @@ describe('Elastic Load Balancing', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3: crossZone but single subnet', () => {
+      new CfnLoadBalancer(stack, 'ELB', {
+        crossZone: true,
+        subnets: ['subnetId1'],
+        listeners: [],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new LoadBalancer(stack, 'rELB', {
         vpc: new Vpc(stack, 'rVPC'),
@@ -299,6 +315,12 @@ describe('Elastic Load Balancing', () => {
             value: 'true',
           },
         ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 4: loadBalancerAttributes is undefined', () => {
+      new CfnLoadBalancerV2(stack, 'rELB', {
+        loadBalancerAttributes: undefined,
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -407,6 +429,14 @@ describe('Elastic Load Balancing', () => {
           contentType: 'string',
           messageBody: 'OK',
         }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+    test('Noncompliance 2: no certificates found', () => {
+      new CfnListener(stack, 'Listener', {
+        certificates: [],
+        defaultActions: [],
+        loadBalancerArn: 'lbArn',
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
