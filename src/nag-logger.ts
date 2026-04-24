@@ -292,8 +292,7 @@ export class NagReportLogger implements INagLogger {
   protected initializeStackReport(data: NagLoggerBaseData): void {
     for (const format of this.formats) {
       const assembly = Stage.of(data.resource.stack);
-      const prefix =
-        assembly && assembly.stageName ? `${assembly.stageName}-` : '';
+      const prefix = assembly ? `${assembly.node.id}-` : '';
       const stackName = data.resource.stack.nested
         ? Names.uniqueId(data.resource.stack)
         : data.resource.stack.stackName;
@@ -324,8 +323,7 @@ export class NagReportLogger implements INagLogger {
   ): void {
     for (const format of this.formats) {
       const assembly = Stage.of(data.resource.stack);
-      const prefix =
-        assembly && assembly.stageName ? `${assembly.stageName}-` : '';
+      const prefix = assembly ? `${assembly.node.id}-` : '';
       const stackName = data.resource.stack.nested
         ? Names.uniqueId(data.resource.stack)
         : data.resource.stack.stackName;

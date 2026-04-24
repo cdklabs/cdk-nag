@@ -201,6 +201,35 @@ describe('NagReportLogger', () => {
         ])
       );
     });
+    test('Reports are generated for stages with the same name', () => {
+      const stage = new Stage(app, 'Stage1', { stageName: 'NamedStage' });
+      Aspects.of(stage).add(pack);
+
+      const stack = new Stack(stage, 'Stack1', {
+        stackName: 'NamedStack',
+      });
+      const stage2 = new Stage(app, 'Stage2', { stageName: 'NamedStage' });
+      Aspects.of(stage2).add(pack);
+
+      const stack2 = new Stack(stage2, 'Stack2', {
+        stackName: 'NamedStack',
+      });
+      new Bucket(stack, 'rBucket');
+      new Bucket(stack2, 'rBucket');
+      app.synth();
+      expect(reportLogger.getFormatStacks(NagReportFormat.CSV)).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching('Stage1-NamedStack'),
+          expect.stringMatching('Stage2-NamedStack'),
+        ])
+      );
+      expect(reportLogger.getFormatStacks(NagReportFormat.JSON)).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching('Stage1-NamedStack'),
+          expect.stringMatching('Stage2-NamedStack'),
+        ])
+      );
+    });
   });
   describe('CSV', () => {
     function getReportLines(reportStack: string): string[] {
