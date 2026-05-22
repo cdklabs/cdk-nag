@@ -9,6 +9,7 @@ import {
   EndpointAccess,
   KubernetesVersion,
 } from 'aws-cdk-lib/aws-eks';
+import { LayerVersion } from 'aws-cdk-lib/aws-lambda';
 import { Aspects, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack } from './utils';
 import {
@@ -27,11 +28,19 @@ beforeEach(() => {
   Aspects.of(stack).add(testPack);
 });
 
+function kubectlLayer(s: Stack) {
+  return LayerVersion.fromLayerVersionArn(
+    s,
+    `KubectlLayer${Math.random().toString(36).slice(2)}`,
+    'arn:aws:lambda:us-east-1:123456789012:layer:kubectl:1'
+  );
+}
+
 describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
   describe('EKSClusterNoEndpointPublicAccess: EKS Cluster Kubernetes API server endpoints have public access disabled', () => {
     const ruleId = 'EKSClusterNoEndpointPublicAccess';
     test('Noncompliance 1', () => {
-      new Cluster(stack, 'rCustomEKS', {
+      new Cluster(stack, 'rCustomEKS', { kubectlLayer: kubectlLayer(stack),
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PUBLIC,
       });
@@ -49,7 +58,7 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
     test('Compliance', () => {
-      new Cluster(stack, 'rCustomEKS', {
+      new Cluster(stack, 'rCustomEKS', { kubectlLayer: kubectlLayer(stack),
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PRIVATE,
       });
@@ -68,7 +77,7 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
   describe("EKSClusterControlPlaneLogs: EKS Clusters publish 'api', 'audit', 'authenticator, 'controllerManager', and 'scheduler' control plane logs", () => {
     const ruleId = 'EKSClusterControlPlaneLogs';
     test('Noncompliance 1: ', () => {
-      new Cluster(stack, 'rCustomEKS', {
+      new Cluster(stack, 'rCustomEKS', { kubectlLayer: kubectlLayer(stack),
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PUBLIC,
       });
@@ -99,7 +108,7 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
       );
     });
     test("Noncompliance 2: expect findings for all logs except 'api' logs", () => {
-      new Cluster(stack, 'rCustomEKS', {
+      new Cluster(stack, 'rCustomEKS', { kubectlLayer: kubectlLayer(stack),
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PUBLIC,
         clusterLogging: [ClusterLoggingTypes.API],
@@ -210,7 +219,7 @@ describe('Amazon Elastic Kubernetes Service (Amazon EKS)', () => {
       );
     });
     test('Compliance', () => {
-      new Cluster(stack, 'rCustomEKS', {
+      new Cluster(stack, 'rCustomEKS', { kubectlLayer: kubectlLayer(stack),
         version: KubernetesVersion.V1_14,
         endpointAccess: EndpointAccess.PRIVATE,
         clusterLogging: [

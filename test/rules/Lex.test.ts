@@ -165,7 +165,7 @@ describe('Amazon Lex', () => {
           ],
         },
       });
-      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+      validateStack(stack, ruleId, TestType.ERROR);
     });
     test('Compliance', () => {
       new CfnBotAlias(stack, 'rBotAlias', {

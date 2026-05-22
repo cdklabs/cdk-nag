@@ -58,16 +58,17 @@ Aspects.of(app).add(new NIST80053R5Checks());
 
 </details>
 
-## Suppressing a Rule
+## Acknowledging a Rule
+
+Use CDK's native `Validations.of()` API to acknowledge (suppress) rule violations on specific constructs.
 
 <details>
-  <summary>Example 1) Default Construct</summary>
+  <summary>Example 1) Acknowledging a rule on a construct</summary>
 
 ```typescript
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -76,9 +77,10 @@ export class CdkTestStack extends Stack {
       vpc: new Vpc(this, 'vpc'),
     });
     test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    NagSuppressions.addResourceSuppressions(test, [
-      { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-    ]);
+    Validations.of(test).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'This security group is used for internal testing only.',
+    });
   }
 }
 ```
@@ -86,40 +88,42 @@ export class CdkTestStack extends Stack {
 </details>
 
 <details>
-  <summary>Example 2) On Multiple Constructs</summary>
+  <summary>Example 2) Acknowledging a rule on a stack</summary>
 
 ```typescript
-import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { App, Aspects, Validations } from 'aws-cdk-lib';
+import { CdkTestStack } from '../lib/cdk-test-stack';
+import { AwsSolutionsChecks } from 'cdk-nag';
 
-export class CdkTestStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-    const vpc = new Vpc(this, 'vpc');
-    const test1 = new SecurityGroup(this, 'test', { vpc });
-    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const test2 = new SecurityGroup(this, 'test', { vpc });
-    test2.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    NagSuppressions.addResourceSuppressions(
-      [test1, test2],
-      [{ id: 'AwsSolutions-EC23', reason: 'lorem ipsum' }]
-    );
-  }
-}
+const app = new App();
+const stack = new CdkTestStack(app, 'CdkNagDemo');
+Aspects.of(app).add(new AwsSolutionsChecks());
+Validations.of(stack).acknowledge({
+  id: 'AwsSolutions-EC23',
+  reason: 'All security groups in this stack are internal only.',
+});
 ```
 
 </details>
 
 <details>
-  <summary>Example 3) Child Constructs</summary>
+  <summary>Example 3) Acknowledging a specific finding</summary>
+
+Certain rules report multiple findings per resource (e.g., IAM wildcard permissions). Each finding has its own ID in the format `RuleId[FindingId]`.
+
+If you received the following errors on synth/deploy:
+
+```bash
+[Error at /StackName/rUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions.
+[Error at /StackName/rUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions.
+```
+
+You can acknowledge a specific finding:
 
 ```typescript
 import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -127,308 +131,15 @@ export class CdkTestStack extends Stack {
     const user = new User(this, 'rUser');
     user.addToPolicy(
       new PolicyStatement({
-        actions: ['s3:PutObject'],
-        resources: ['arn:aws:s3:::bucket_name/*'],
-      })
-    );
-    // Enable adding suppressions to child constructs
-    NagSuppressions.addResourceSuppressions(
-      user,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'lorem ipsum',
-          appliesTo: ['Resource::arn:aws:s3:::bucket_name/*'], // optional
-        },
-      ],
-      true
-    );
-  }
-}
-```
-
-</details>
-
-<details>
-  <summary>Example 4) Stack Level </summary>
-
-```typescript
-import { App, Aspects } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
-
-const app = new App();
-const stack = new CdkTestStack(app, 'CdkNagDemo');
-Aspects.of(app).add(new AwsSolutionsChecks());
-NagSuppressions.addStackSuppressions(stack, [
-  { id: 'AwsSolutions-EC23', reason: 'lorem ipsum' },
-]);
-```
-
-</details>
-
-<details>
-  <summary>Example 5) Construct path</summary>
-
-If you received the following error on synth/deploy
-
-```bash
-[Error at /StackName/Custom::CDKBucketDeployment8675309/ServiceRole/Resource] AwsSolutions-IAM4: The IAM user, role, or group uses AWS managed policies
-```
-
-```typescript
-import { Bucket } from 'aws-cdk-lib/aws-s3';
-import { BucketDeployment } from 'aws-cdk-lib/aws-s3-deployment';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
-
-export class CdkTestStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-    new BucketDeployment(this, 'rDeployment', {
-      sources: [],
-      destinationBucket: Bucket.fromBucketName(this, 'rBucket', 'foo'),
-    });
-    NagSuppressions.addResourceSuppressionsByPath(
-      this,
-      '/StackName/Custom::CDKBucketDeployment8675309/ServiceRole/Resource',
-      [{ id: 'AwsSolutions-IAM4', reason: 'at least 10 characters' }]
-    );
-  }
-}
-```
-
-</details>
-
-<details>
-  <summary>Example 6) Granular Suppressions of findings</summary>
-
-Certain rules support granular suppressions of `findings`. If you received the following errors on synth/deploy
-
-```bash
-[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
-[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
-[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Action::s3:*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
-[Error at /StackName/rSecondUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
-```
-
-By applying the following suppressions
-
-```typescript
-import { User } from 'aws-cdk-lib/aws-iam';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
-
-export class CdkTestStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-    const firstUser = new User(this, 'rFirstUser');
-    firstUser.addToPolicy(
-      new PolicyStatement({
         actions: ['s3:*'],
         resources: ['*'],
       })
     );
-    const secondUser = new User(this, 'rSecondUser');
-    secondUser.addToPolicy(
-      new PolicyStatement({
-        actions: ['s3:*'],
-        resources: ['*'],
-      })
-    );
-    const thirdUser = new User(this, 'rSecondUser');
-    thirdUser.addToPolicy(
-      new PolicyStatement({
-        actions: ['sqs:CreateQueue'],
-        resources: [`arn:aws:sqs:${this.region}:${this.account}:*`],
-      })
-    );
-    NagSuppressions.addResourceSuppressions(
-      firstUser,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason:
-            "Only suppress AwsSolutions-IAM5 's3:*' finding on First User.",
-          appliesTo: ['Action::s3:*'],
-        },
-      ],
-      true
-    );
-    NagSuppressions.addResourceSuppressions(
-      secondUser,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'Suppress all AwsSolutions-IAM5 findings on Second User.',
-        },
-      ],
-      true
-    );
-    NagSuppressions.addResourceSuppressions(
-      thirdUser,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'Suppress AwsSolutions-IAM5 on the SQS resource.',
-          appliesTo: [
-            {
-              regex: '/^Resource::arn:aws:sqs:(.*):\\*$/g',
-            },
-          ],
-        },
-      ],
-      true
-    );
-  }
-}
-```
-
-You would see the following error on synth/deploy
-
-```bash
-[Error at /StackName/rFirstUser/DefaultPolicy/Resource] AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.
-```
-
-</details>
-
-## Suppressing Rule Validation Failures
-
-When a rule validation fails it is handled similarly to a rule violation, and can be suppressed in the same manner. The `ID` for a rule failure is `CdkNagValidationFailure`.
-
-If a rule is suppressed in a non-granular manner (i.e. `appliesTo` is not set, see example 1 above) then validation failures on that rule are also suppressed.
-
-Validation failure suppression respects any applied [Suppression Ignore Conditions](#conditionally-ignoring-suppressions)
-
-<details>
-  <summary>Example 1) Suppress all Validation Failures on a Resource</summary>
-
-```typescript
-import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
-
-export class CdkTestStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-    const test = new SecurityGroup(this, 'test', {
-      vpc: new Vpc(this, 'vpc'),
+    // Only acknowledge the s3:* action — Resource::* still triggers
+    Validations.of(user).acknowledge({
+      id: 'AwsSolutions-IAM5[Action::s3:*]',
+      reason: 'Need s3:* for cross-account replication.',
     });
-    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    NagSuppressions.addResourceSuppressions(test, [
-      { id: 'CdkNagValidationFailure', reason: 'lorem ipsum' },
-    ]);
-  }
-}
-```
-
-</details>
-
-<details>
-  <summary>Example 2) Granular Suppression of Validation Failures</summary>
-Validation failures can be suppressed for individual rules by using `appliesTo` to list the desired rules
-
-```typescript
-import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
-
-export class CdkTestStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-    const test = new SecurityGroup(this, 'test', {
-      vpc: new Vpc(this, 'vpc'),
-    });
-    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    NagSuppressions.addResourceSuppressions(test, [
-      {
-        id: 'CdkNagValidationFailure',
-        reason: 'lorem ipsum',
-        appliesTo: ['AwsSolutions-L1'],
-      },
-    ]);
-  }
-}
-```
-
-</details>
-
-## Suppressing `aws-cdk-lib/pipelines` Violations
-
-The [aws-cdk-lib/pipelines.CodePipeline](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines.CodePipeline.html) construct and its child constructs are not guaranteed to be "Visited" by `Aspects`, as they are not added during the "Construction" phase of the [cdk lifecycle](https://docs.aws.amazon.com/cdk/v2/guide/apps.html#lifecycle). Because of this behavior, you may experience problems such as rule violations not appearing or the inability to suppress violations on these constructs.
-
-You can remediate these rule violation and suppression problems by forcing the pipeline construct creation forward by calling `.buildPipeline()` on your `CodePipeline` object. Otherwise you may see errors such as:
-
-```
-Error: Suppression path "/this/construct/path" did not match any resource. This can occur when a resource does not exist or if a suppression is applied before a resource is created.
-```
-
-See [this issue](https://github.com/aws/aws-cdk/issues/18440) for more information.
-
-<details>
-  <summary>Example) Suppressing Violations in Pipelines</summary>
-
-`example-app.ts`
-
-```ts
-import { App, Aspects } from 'aws-cdk-lib';
-import { AwsSolutionsChecks } from 'cdk-nag';
-import { ExamplePipeline } from '../lib/example-pipeline';
-
-const app = new App();
-new ExamplePipeline(app, 'example-cdk-pipeline');
-Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
-app.synth();
-```
-
-`example-pipeline.ts`
-
-```ts
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Repository } from 'aws-cdk-lib/aws-codecommit';
-import {
-  CodePipeline,
-  CodePipelineSource,
-  ShellStep,
-} from 'aws-cdk-lib/pipelines';
-import { NagSuppressions } from 'cdk-nag';
-import { Construct } from 'constructs';
-
-export class ExamplePipeline extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-
-    const exampleSynth = new ShellStep('ExampleSynth', {
-      commands: ['yarn build --frozen-lockfile'],
-      input: CodePipelineSource.codeCommit(
-        new Repository(this, 'ExampleRepo', { repositoryName: 'ExampleRepo' }),
-        'main'
-      ),
-    });
-
-    const ExamplePipeline = new CodePipeline(this, 'ExamplePipeline', {
-      synth: exampleSynth,
-    });
-
-    // Force the pipeline construct creation forward before applying suppressions.
-    // @See https://github.com/aws/aws-cdk/issues/18440
-    ExamplePipeline.buildPipeline();
-
-    // The path suppression will error if you comment out "ExamplePipeline.buildPipeline();""
-    NagSuppressions.addResourceSuppressionsByPath(
-      this,
-      '/example-cdk-pipeline/ExamplePipeline/Pipeline/ArtifactsBucket/Resource',
-      [
-        {
-          id: 'AwsSolutions-S1',
-          reason: 'Because I said so',
-        },
-      ]
-    );
   }
 }
 ```
@@ -437,7 +148,7 @@ export class ExamplePipeline extends Stack {
 
 ## Rules and Property Overrides
 
-In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by cdk-nag. In this case you should remediate the issue and suppress the issue like in the following example.
+In some cases L2 Constructs do not have a native option to remediate an issue and must be fixed via [Raw Overrides](https://docs.aws.amazon.com/cdk/latest/guide/cfn_layer.html#cfn_layer_raw). Since raw overrides take place after template synthesis these fixes are not caught by cdk-nag. In this case you should remediate the issue and acknowledge the rule.
 
 <details>
   <summary>Example) Property Overrides</summary>
@@ -451,9 +162,8 @@ import {
   Vpc,
   CfnInstance,
 } from 'aws-cdk-lib/aws-ec2';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { NagSuppressions } from 'cdk-nag';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -465,50 +175,24 @@ export class CdkTestStack extends Stack {
     });
     const cfnIns = instance.node.defaultChild as CfnInstance;
     cfnIns.addPropertyOverride('DisableApiTermination', true);
-    NagSuppressions.addResourceSuppressions(instance, [
-      {
-        id: 'AwsSolutions-EC29',
-        reason: 'Remediated through property override.',
-      },
-    ]);
+    Validations.of(instance).acknowledge({
+      id: 'AwsSolutions-EC29',
+      reason: 'Remediated through property override.',
+    });
   }
 }
 ```
 
 </details>
 
-## Conditionally Ignoring Suppressions
-
-You can optionally create a condition that prevents certain rules from being suppressed. You can create conditions for any variety of reasons. Examples include a condition that always ignores a suppression, a condition that ignores a suppression based on the date, a condition that ignores a suppression based on the reason. You can read [the developer docs](./docs/IgnoreSuppressionConditions.md) for more information on creating your own conditions.
-
-<details>
-  <summary>Example) Using the pre-built `SuppressionIgnoreErrors` class to ignore suppressions on any `Error` level rules.</summary>
-
-```ts
-import { App, Aspects } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks, SuppressionIgnoreErrors } from 'cdk-nag';
-
-const app = new App();
-new CdkTestStack(app, 'CdkNagDemo');
-// Ignore Suppressions on any errors
-Aspects.of(app).add(
-  new AwsSolutionsChecks({
-    suppressionIgnoreCondition: new SuppressionIgnoreErrors(),
-  })
-);
-```
-
-</details>
-
 ## Customizing Logging
 
-`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks`come with the `AnnotationsLogger`and the `NagReportLogger` (with CSV reports) enabled by default.
+`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationLogger` and the `NagReportLogger` (with CSV reports) enabled by default.
 
 See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
 
 <details>
-  <summary>Example) Adding the `ExtremelyHelpfulConsoleLogger` example from the NagLogger docs</summary>
+  <summary>Example) Adding a custom logger</summary>
 
 ```ts
 import { App, Aspects } from 'aws-cdk-lib';
@@ -532,32 +216,7 @@ Aspects.of(app).add(
 You can use cdk-nag on existing CloudFormation templates by using the [cloudformation-include](https://docs.aws.amazon.com/cdk/latest/guide/use-cfn-template.html#use-cfn-template-import) module.
 
 <details>
-  <summary>Example 1) CloudFormation template with suppression</summary>
-
-Sample CloudFormation template with suppression
-
-```json
-{
-  "Resources": {
-    "rBucket": {
-      "Type": "AWS::S3::Bucket",
-      "Properties": {
-        "BucketName": "some-bucket-name"
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-S1",
-              "reason": "at least 10 characters"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
-```
+  <summary>Example) CloudFormation template</summary>
 
 Sample App
 
@@ -575,123 +234,45 @@ Sample Stack with imported template
 
 ```typescript
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
-import { NagSuppressions } from 'cdk-nag';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export class CdkTestStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
-    new CfnInclude(this, 'Template', {
+    const template = new CfnInclude(this, 'Template', {
       templateFile: 'my-template.json',
     });
-    // Add any additional suppressions
-    NagSuppressions.addResourceSuppressionsByPath(
-      this,
-      '/CdkNagDemo/Template/rBucket',
-      [
-        {
-          id: 'AwsSolutions-S2',
-          reason: 'at least 10 characters',
-        },
-      ]
-    );
+    // Acknowledge rules on imported resources
+    const bucket = template.getResource('rBucket');
+    Validations.of(bucket).acknowledge({
+      id: 'AwsSolutions-S1',
+      reason: 'Logging not required for this bucket.',
+    });
   }
 }
 ```
 
 </details>
 
-<details>
-  <summary>Example 2) CloudFormation template with granular suppressions</summary>
+## Migrating from v2
 
-Sample CloudFormation template with suppression
+cdk-nag v3 replaces the custom `NagSuppressions` API with CDK's native `Validations.of().acknowledge()` mechanism.
 
-```json
-{
-  "Resources": {
-    "myPolicy": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:DescribeKey",
-                "kms:Encrypt",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*"
-              ],
-              "Effect": "Allow",
-              "Resource": ["some-key-arn"]
-            }
-          ],
-          "Version": "2012-10-17"
-        }
-      },
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "Allow key data access",
-              "applies_to": [
-                "Action::kms:ReEncrypt*",
-                "Action::kms:GenerateDataKey*"
-              ]
-            }
-          ]
-        }
-      }
-    }
-  }
-}
-```
+| v2 | v3 |
+|---|---|
+| `NagSuppressions.addResourceSuppressions(construct, [{ id, reason }])` | `Validations.of(construct).acknowledge({ id, reason })` |
+| `NagSuppressions.addStackSuppressions(stack, [{ id, reason }])` | `Validations.of(stack).acknowledge({ id, reason })` |
+| `NagSuppressions.addResourceSuppressionsByPath(stack, path, [...])` | `Validations.of(construct).acknowledge({ id, reason })` |
+| `appliesTo: ['Action::s3:*']` | `id: 'AwsSolutions-IAM5[Action::s3:*]'` |
+| `{ id: 'CdkNagValidationFailure', reason: '...' }` | `Validations.of(construct).acknowledge({ id: 'RuleId', reason: '...' })` |
 
-Sample App
-
-```typescript
-import { App, Aspects } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks } from 'cdk-nag';
-
-const app = new App();
-new CdkTestStack(app, 'CdkNagDemo');
-Aspects.of(app).add(new AwsSolutionsChecks());
-```
-
-Sample Stack with imported template
-
-```typescript
-import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
-import { NagSuppressions } from 'cdk-nag';
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-
-export class CdkTestStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-    new CfnInclude(this, 'Template', {
-      templateFile: 'my-template.json',
-    });
-    // Add any additional suppressions
-    NagSuppressions.addResourceSuppressionsByPath(
-      this,
-      '/CdkNagDemo/Template/myPolicy',
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'Allow key data access',
-          appliesTo: ['Action::kms:ReEncrypt*', 'Action::kms:GenerateDataKey*'],
-        },
-      ]
-    );
-  }
-}
-```
-
-</details>
+**Removed APIs:**
+- `NagSuppressions` (use `Validations.of().acknowledge()`)
+- `INagSuppressionIgnore` and all condition classes
+- `NagPackSuppression` interface
+- `CdkNagValidationFailure` concept
+- `logIgnores` and `suppressionIgnoreCondition` props
 
 ## Contributing
 

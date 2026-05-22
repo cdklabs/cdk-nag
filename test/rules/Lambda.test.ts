@@ -523,7 +523,7 @@ describe('AWS Lambda', () => {
         code: {},
         role: 'somerole',
       });
-      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+      validateStack(stack, ruleId, TestType.ERROR);
     });
     test('Validation Failure 2: No families found', () => {
       new CfnFunction(stack, 'Function', {
@@ -531,7 +531,7 @@ describe('AWS Lambda', () => {
         code: {},
         role: 'somerole',
       });
-      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+      validateStack(stack, ruleId, TestType.ERROR);
     });
   });
 

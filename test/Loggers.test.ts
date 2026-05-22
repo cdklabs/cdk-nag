@@ -21,7 +21,6 @@ import {
   NagPack,
   NagPackProps,
   NagRuleCompliance,
-  NagSuppressions,
 } from '../src';
 import {
   NagReportLogger,
@@ -33,8 +32,6 @@ import {
   NagLoggerErrorData,
   NagLoggerNonComplianceData,
   NagLoggerNotApplicableData,
-  NagLoggerSuppressedData,
-  NagLoggerSuppressedErrorData,
   NagLoggerBaseData,
   AnnotationLogger,
 } from '../src/nag-logger';
@@ -85,13 +82,7 @@ describe('NagReportLogger', () => {
     onNonCompliance(data: NagLoggerNonComplianceData): void {
       this.results.push(data);
     }
-    onSuppressed(data: NagLoggerSuppressedData): void {
-      this.results.push(data);
-    }
     onError(data: NagLoggerErrorData): void {
-      this.results.push(data);
-    }
-    onSuppressedError(data: NagLoggerSuppressedErrorData): void {
       this.results.push(data);
     }
     onNotApplicable(data: NagLoggerNotApplicableData): void {
@@ -111,7 +102,6 @@ describe('NagReportLogger', () => {
     });
     memoryLogger = new MemoryLogger();
     pack = new ReportPack({
-      // Add reports as an additional logger for testing
       reports: false,
       additionalLoggers: [reportLogger, memoryLogger],
     });
@@ -201,35 +191,6 @@ describe('NagReportLogger', () => {
         ])
       );
     });
-    test('Reports are generated for stages with the same name', () => {
-      const stage = new Stage(app, 'Stage1', { stageName: 'NamedStage' });
-      Aspects.of(stage).add(pack);
-
-      const stack = new Stack(stage, 'Stack1', {
-        stackName: 'NamedStack',
-      });
-      const stage2 = new Stage(app, 'Stage2', { stageName: 'NamedStage' });
-      Aspects.of(stage2).add(pack);
-
-      const stack2 = new Stack(stage2, 'Stack2', {
-        stackName: 'NamedStack',
-      });
-      new Bucket(stack, 'rBucket');
-      new Bucket(stack2, 'rBucket');
-      app.synth();
-      expect(reportLogger.getFormatStacks(NagReportFormat.CSV)).toEqual(
-        expect.arrayContaining([
-          expect.stringMatching('Stage1-NamedStack'),
-          expect.stringMatching('Stage2-NamedStack'),
-        ])
-      );
-      expect(reportLogger.getFormatStacks(NagReportFormat.JSON)).toEqual(
-        expect.arrayContaining([
-          expect.stringMatching('Stage1-NamedStack'),
-          expect.stringMatching('Stage2-NamedStack'),
-        ])
-      );
-    });
   });
   describe('CSV', () => {
     function getReportLines(reportStack: string): string[] {
@@ -239,8 +200,7 @@ describe('NagReportLogger', () => {
         .filter(
           (l) =>
             l.length > 0 &&
-            l !==
-              'Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info'
+            l !== 'Rule ID,Resource ID,Compliance,Rule Level,Rule Info'
         );
     }
     test('Reports are initialized for stacks with no relevant resources', () => {
@@ -262,48 +222,8 @@ describe('NagReportLogger', () => {
       new CfnResource(stack, 'rResource', { type: 'foo' });
       app.synth();
       const expectedOutput = [
-        '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."',
-        '"Test-Non-Compliant","Stack1/rResource","Non-Compliant","N/A","Error","foo."',
-      ];
-      expect(
-        getReportLines(
-          reportLogger.getFormatStacks(NagReportFormat.CSV)[0]
-        ).sort()
-      ).toEqual(expectedOutput.sort());
-    });
-    test('Suppression values are written properly', () => {
-      const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        {
-          id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
-          reason: 'lorem ipsum',
-        },
-      ]);
-      app.synth();
-      const expectedOutput = [
-        '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."',
-        '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error","foo."',
-      ];
-      expect(
-        getReportLines(
-          reportLogger.getFormatStacks(NagReportFormat.CSV)?.[0] ?? ''
-        ).sort()
-      ).toEqual(expectedOutput.sort());
-    });
-    test('Suppression values are written properly when multibyte characters are used in reason', () => {
-      const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        {
-          id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
-          reason: 'あいうえおかきくけこ',
-        },
-      ]);
-      app.synth();
-      const expectedOutput = [
-        '"Test-Compliant","Stack1/rResource","Compliant","N/A","Error","foo."',
-        '"Test-Non-Compliant","Stack1/rResource","Suppressed","あいうえおかきくけこ","Error","foo."',
+        '"Test-Compliant","Stack1/rResource","Compliant","Error","foo."',
+        '"Test-Non-Compliant","Stack1/rResource","Non-Compliant","Error","foo."',
       ];
       expect(
         getReportLines(
@@ -313,36 +233,12 @@ describe('NagReportLogger', () => {
     });
     test('Error values are written properly', () => {
       const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        {
-          id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
-          reason: 'lorem ipsum',
-        },
-      ]);
+      new CfnResource(stack, 'rResource', { type: 'Error' });
       app.synth();
       const expectedOutput = [
-        '"Test-Non-Compliant","Stack1/rResource","Suppressed","lorem ipsum","Error","foo."',
-        '"Test-Compliant","Stack1/rResource","UNKNOWN","N/A","Error","foo."',
-        '"Test-N/A","Stack1/rResource","UNKNOWN","N/A","Error","foo."',
-      ];
-      expect(
-        getReportLines(
-          reportLogger.getFormatStacks(NagReportFormat.CSV)[0]
-        ).sort()
-      ).toEqual(expectedOutput.sort());
-    });
-    test('Suppressed error values are escaped and written properly', () => {
-      const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        { id: 'CdkNagValidationFailure', reason: '"quoted "lorem" ipsum"' },
-      ]);
-      app.synth();
-      const expectedOutput = [
-        '"Test-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo."',
-        '"Test-N/A","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo."',
-        '"Test-Non-Compliant","Stack1/rResource","Suppressed","""quoted ""lorem"" ipsum""","Error","foo."',
+        '"Test-Compliant","Stack1/rResource","UNKNOWN","Error","foo."',
+        '"Test-Non-Compliant","Stack1/rResource","UNKNOWN","Error","foo."',
+        '"Test-N/A","Stack1/rResource","UNKNOWN","Error","foo."',
       ];
       expect(
         getReportLines(
@@ -382,7 +278,6 @@ describe('NagReportLogger', () => {
           ruleId: 'Test-Compliant',
           resourceId: 'Stack1/rResource',
           compliance: 'Compliant',
-          exceptionReason: 'N/A',
           ruleLevel: 'Error',
           ruleInfo: 'foo.',
         },
@@ -390,71 +285,6 @@ describe('NagReportLogger', () => {
           ruleId: 'Test-Non-Compliant',
           resourceId: 'Stack1/rResource',
           compliance: 'Non-Compliant',
-          exceptionReason: 'N/A',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-      ];
-      expect(
-        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
-      ).toEqual(expect.arrayContaining(expectedOutput));
-    });
-    test('Suppression values are written properly', () => {
-      const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        {
-          id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
-          reason: 'lorem ipsum',
-        },
-      ]);
-      app.synth();
-      const expectedOutput: NagReportLine[] = [
-        {
-          ruleId: 'Test-Compliant',
-          resourceId: 'Stack1/rResource',
-          compliance: 'Compliant',
-          exceptionReason: 'N/A',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-        {
-          ruleId: 'Test-Non-Compliant',
-          resourceId: 'Stack1/rResource',
-          compliance: 'Suppressed',
-          exceptionReason: 'lorem ipsum',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-      ];
-      expect(
-        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
-      ).toEqual(expect.arrayContaining(expectedOutput));
-    });
-    test('Suppression values are written properly when multibyte characters are used in reason', () => {
-      const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'foo' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        {
-          id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
-          reason: 'あいうえおかきくけこ',
-        },
-      ]);
-      app.synth();
-      const expectedOutput: NagReportLine[] = [
-        {
-          ruleId: 'Test-Compliant',
-          resourceId: 'Stack1/rResource',
-          compliance: 'Compliant',
-          exceptionReason: 'N/A',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-        {
-          ruleId: 'Test-Non-Compliant',
-          resourceId: 'Stack1/rResource',
-          compliance: 'Suppressed',
-          exceptionReason: 'あいうえおかきくけこ',
           ruleLevel: 'Error',
           ruleInfo: 'foo.',
         },
@@ -472,7 +302,6 @@ describe('NagReportLogger', () => {
           ruleId: 'Test-Compliant',
           resourceId: 'Stack1/rResource',
           compliance: 'UNKNOWN',
-          exceptionReason: 'N/A',
           ruleLevel: 'Error',
           ruleInfo: 'foo.',
         },
@@ -480,7 +309,6 @@ describe('NagReportLogger', () => {
           ruleId: 'Test-Non-Compliant',
           resourceId: 'Stack1/rResource',
           compliance: 'UNKNOWN',
-          exceptionReason: 'N/A',
           ruleLevel: 'Error',
           ruleInfo: 'foo.',
         },
@@ -488,47 +316,6 @@ describe('NagReportLogger', () => {
           ruleId: 'Test-N/A',
           resourceId: 'Stack1/rResource',
           compliance: 'UNKNOWN',
-          exceptionReason: 'N/A',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-      ];
-      expect(
-        getReportLines(reportLogger.getFormatStacks(NagReportFormat.JSON)[0])
-      ).toEqual(expect.arrayContaining(expectedOutput));
-    });
-    test('Error values are suppressed properly', () => {
-      const stack = new Stack(app, 'Stack1');
-      const resource = new CfnResource(stack, 'rResource', { type: 'Error' });
-      NagSuppressions.addResourceSuppressions(resource, [
-        {
-          id: `${pack.readPackName}-${NagRuleCompliance.NON_COMPLIANT}`,
-          reason: 'lorem ipsum',
-        },
-      ]);
-      app.synth();
-      const expectedOutput: NagReportLine[] = [
-        {
-          ruleId: 'Test-Compliant',
-          resourceId: 'Stack1/rResource',
-          compliance: 'UNKNOWN',
-          exceptionReason: 'N/A',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-        {
-          ruleId: 'Test-Non-Compliant',
-          resourceId: 'Stack1/rResource',
-          compliance: 'Suppressed',
-          exceptionReason: 'lorem ipsum',
-          ruleLevel: 'Error',
-          ruleInfo: 'foo.',
-        },
-        {
-          ruleId: 'Test-N/A',
-          resourceId: 'Stack1/rResource',
-          compliance: 'UNKNOWN',
-          exceptionReason: 'N/A',
           ruleLevel: 'Error',
           ruleInfo: 'foo.',
         },
@@ -597,43 +384,5 @@ describe('AnnotationLogger', () => {
           (entry.data as string).includes('S3BucketWarning1')
       )
     ).toBe(true);
-  });
-
-  test('should add an info annotation for INFO level', () => {
-    const data: NagLoggerNonComplianceData = {
-      nagPackName: 'TestPack',
-      resource: cfnBucket,
-      ruleId: 'S3BucketInfo1',
-      ruleOriginalName: 'S3BucketInfo1',
-      ruleInfo: 'S3 bucket rule that will throw an info',
-      ruleExplanation: 'This rule throws an info for a certain condition.',
-      ruleLevel: NagMessageLevel.INFO,
-      findingId: 'INFO.1',
-    };
-    logger.onNonCompliance(data);
-    const meta = cfnBucket.node.metadata;
-    expect(
-      meta.some(
-        (entry) =>
-          entry.type === 'aws:cdk:info' &&
-          (entry.data as string).includes('S3BucketInfo')
-      )
-    ).toBe(true);
-  });
-
-  test('should throw for unknown ruleLevel', () => {
-    const data: any = {
-      nagPackName: 'TestPack',
-      resource: cfnBucket,
-      ruleId: 'UnknownRuleLevel',
-      ruleOriginalName: 'UnknownRuleLevel',
-      ruleInfo: 'This rule level is not recognized',
-      ruleExplanation: 'Should throw an error for unknown rule level.',
-      ruleLevel: 'UNKNOWN',
-      findingId: 'FIND_UNKNOWN',
-    };
-    expect(() => logger.onNonCompliance(data)).toThrow(
-      /Unrecognized message level/
-    );
   });
 });

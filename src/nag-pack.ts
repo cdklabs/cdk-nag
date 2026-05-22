@@ -2,14 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Annotations, CfnResource, IAspect } from 'aws-cdk-lib';
+import { CfnResource, IAspect } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import {
-  INagSuppressionIgnore,
-  SuppressionIgnoreNever,
-  SuppressionIgnoreOr,
-} from './ignore-suppression-conditions';
-import { NagPackSuppression } from './models/nag-suppression';
 import {
   AnnotationLogger,
   INagLogger,
@@ -22,9 +16,7 @@ import {
   NagRuleCompliance,
   NagRuleFindings,
   NagRuleResult,
-  VALIDATION_FAILURE_ID,
 } from './nag-rules';
-import { NagSuppressionHelper } from './utils/nag-suppression-helper';
 
 /**
  * Interface for creating a NagPack.
@@ -36,11 +28,6 @@ export interface NagPackProps {
   readonly verbose?: boolean;
 
   /**
-   * Whether or not to log suppressed rule violations as informational messages (default: false).
-   */
-  readonly logIgnores?: boolean;
-
-  /**
    * Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).
    */
   readonly reports?: boolean;
@@ -49,11 +36,6 @@ export interface NagPackProps {
    * If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).
    */
   readonly reportFormats?: NagReportFormat[];
-
-  /**
-   * Conditionally prevent rules from being suppressed (default: no user provided condition).
-   */
-  readonly suppressionIgnoreCondition?: INagSuppressionIgnore;
 
   /**
    * Additional NagLoggers for logging rule validation outputs.
@@ -82,10 +64,6 @@ export interface IApplyRule {
    */
   level: NagMessageLevel;
   /**
-   * A condition in which a suppression should be ignored.
-   */
-  ignoreSuppressionCondition?: INagSuppressionIgnore;
-  /**
    * The CfnResource to check
    */
   node: CfnResource;
@@ -102,15 +80,11 @@ export interface IApplyRule {
 export abstract class NagPack implements IAspect {
   protected loggers = new Array<INagLogger>();
   protected packName = '';
-  protected userGlobalSuppressionIgnore?: INagSuppressionIgnore;
-  protected packGlobalSuppressionIgnore?: INagSuppressionIgnore;
 
   constructor(props?: NagPackProps) {
-    this.userGlobalSuppressionIgnore = props?.suppressionIgnoreCondition;
     this.loggers.push(
       new AnnotationLogger({
         verbose: props?.verbose,
-        logIgnores: props?.logIgnores,
       })
     );
     if (props?.reports ?? true) {
@@ -143,7 +117,6 @@ export abstract class NagPack implements IAspect {
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
       );
     }
-    const allSuppressions = NagSuppressionHelper.getSuppressions(params.node);
     const ruleSuffix = params.ruleSuffixOverride
       ? params.ruleSuffixOverride
       : params.rule.name;
@@ -164,30 +137,12 @@ export abstract class NagPack implements IAspect {
       } else if (this.isNonCompliant(ruleCompliance)) {
         const findings = this.asFindings(ruleCompliance);
         for (const findingId of findings) {
-          const suppressionReason = this.ignoreRule(
-            allSuppressions,
-            ruleId,
-            findingId,
-            params.node,
-            params.level,
-            params.ignoreSuppressionCondition
+          this.loggers.forEach((t) =>
+            t.onNonCompliance({
+              ...base,
+              findingId,
+            })
           );
-          if (suppressionReason) {
-            this.loggers.forEach((t) =>
-              t.onSuppressed({
-                ...base,
-                suppressionReason,
-                findingId,
-              })
-            );
-          } else {
-            this.loggers.forEach((t) =>
-              t.onNonCompliance({
-                ...base,
-                findingId,
-              })
-            );
-          }
         }
       } else if (ruleCompliance === NagRuleCompliance.NOT_APPLICABLE) {
         this.loggers.forEach((t) =>
@@ -197,90 +152,13 @@ export abstract class NagPack implements IAspect {
         );
       }
     } catch (error) {
-      const reason = this.ignoreRule(
-        allSuppressions,
-        ruleId,
-        '',
-        params.node,
-        params.level,
-        params.ignoreSuppressionCondition,
-        true
+      this.loggers.forEach((t) =>
+        t.onError({
+          ...base,
+          errorMessage: (error as Error).message,
+        })
       );
-      if (reason) {
-        this.loggers.forEach((t) =>
-          t.onSuppressedError({
-            ...base,
-            errorMessage: (error as Error).message,
-            errorSuppressionReason: reason,
-          })
-        );
-      } else {
-        this.loggers.forEach((t) =>
-          t.onError({
-            ...base,
-            errorMessage: (error as Error).message,
-          })
-        );
-      }
     }
-  }
-
-  /**
-   * Check whether a specific rule should be ignored.
-   * @param suppressions The suppressions listed in the cdk-nag metadata.
-   * @param ruleId The id of the rule to ignore.
-   * @param resource The resource being evaluated.
-   * @param findingId The id of the finding that is being checked.
-   * @param validationFailure Whether the rule is being checked due to a validation failure.
-   * @returns The reason the rule was ignored, or an empty string.
-   */
-  protected ignoreRule(
-    suppressions: NagPackSuppression[],
-    ruleId: string,
-    findingId: string,
-    resource: CfnResource,
-    level: NagMessageLevel,
-    ignoreSuppressionCondition?: INagSuppressionIgnore,
-    validationFailure: boolean = false
-  ): string {
-    for (let suppression of suppressions) {
-      if (
-        NagSuppressionHelper.doesApply(suppression, ruleId, findingId) ||
-        // If this is marked as an exception, also check for a suppression on VALIDATION_FAILURE_ID
-        (validationFailure &&
-          NagSuppressionHelper.doesApply(
-            suppression,
-            VALIDATION_FAILURE_ID,
-            ruleId
-          ))
-      ) {
-        const ignoreMessage = new SuppressionIgnoreOr(
-          this.userGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
-          this.packGlobalSuppressionIgnore ?? new SuppressionIgnoreNever(),
-          ignoreSuppressionCondition ?? new SuppressionIgnoreNever()
-        ).createMessage({
-          resource,
-          reason: suppression.reason,
-          ruleId,
-          findingId,
-          ruleLevel: level,
-        });
-        if (ignoreMessage) {
-          let id = findingId ? `${ruleId}[${findingId}]` : `${ruleId}`;
-          Annotations.of(resource).addInfo(
-            `The suppression for ${id} was ignored for the following reason(s).\n\t${ignoreMessage}`
-          );
-        } else {
-          if (!suppression.appliesTo) {
-            // the rule is not granular so it always applies
-            return suppression.reason;
-          } else {
-            return `[${findingId}] ${suppression.reason}`;
-          }
-        }
-      }
-    }
-    return '';
   }
 
   private isNonCompliant(ruleResult: NagRuleResult) {
