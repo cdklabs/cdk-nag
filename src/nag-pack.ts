@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnResource, IAspect } from 'aws-cdk-lib';
+import { CfnResource, IAspect, Validations } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
 import {
   AnnotationLogger,
@@ -80,6 +80,7 @@ export interface IApplyRule {
 export abstract class NagPack implements IAspect {
   protected loggers = new Array<INagLogger>();
   protected packName = '';
+  private syncedResources = new Set<CfnResource>();
 
   constructor(props?: NagPackProps) {
     this.loggers.push(
@@ -116,6 +117,10 @@ export abstract class NagPack implements IAspect {
       throw Error(
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
       );
+    }
+    if (!this.syncedResources.has(params.node)) {
+      this.syncAcknowledgmentsToMetadata(params.node);
+      this.syncedResources.add(params.node);
     }
     const ruleSuffix = params.ruleSuffixOverride
       ? params.ruleSuffixOverride
@@ -159,6 +164,45 @@ export abstract class NagPack implements IAspect {
         })
       );
     }
+  }
+
+  /**
+   * Reads acknowledgments from construct metadata and writes them into
+   * the CfnResource's CloudFormation Metadata for audit trail persistence
+   * in the synthesized template.
+   */
+  protected syncAcknowledgmentsToMetadata(resource: CfnResource): void {
+    const acknowledged = this.getAcknowledgedRules(resource);
+    if (acknowledged.size === 0) return;
+
+    const existing = resource.getMetadata('cdk_nag') ?? {};
+    const existingRules: any[] = existing.rules_to_suppress ?? [];
+
+    const existingIds = new Set(existingRules.map((r: any) => r.id));
+    for (const [id, reason] of acknowledged) {
+      if (!existingIds.has(id)) {
+        existingRules.push({ id, reason });
+      }
+    }
+
+    resource.addMetadata('cdk_nag', { rules_to_suppress: existingRules });
+  }
+
+  /**
+   * Reads the acknowledged rules from the construct node metadata.
+   */
+  private getAcknowledgedRules(resource: CfnResource): Map<string, string> {
+    const result = new Map<string, string>();
+    const metadataKey = Validations.ACKNOWLEDGED_RULES_METADATA_KEY;
+    for (const entry of resource.node.metadata) {
+      if (entry.type === metadataKey && entry.data) {
+        for (const [qualifiedId, reason] of Object.entries(entry.data as Record<string, string>)) {
+          const id = qualifiedId.replace(/^annotation::/, '');
+          result.set(id, reason);
+        }
+      }
+    }
+    return result;
   }
 
   private isNonCompliant(ruleResult: NagRuleResult) {

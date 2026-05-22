@@ -9,6 +9,7 @@ import {
   CfnParameter,
   CfnResource,
   Stack,
+  Validations,
 } from 'aws-cdk-lib';
 import {
   Peer,
@@ -151,5 +152,30 @@ describe('Basic rule validation', () => {
     expectMessages(messages, {
       notContaining: ['AwsSolutions-EC23'],
     });
+  });
+});
+
+describe('Acknowledgment metadata persistence', () => {
+  test('Acknowledged rules are written to CfnResource CloudFormation Metadata', () => {
+    const stack = new Stack();
+    Aspects.of(stack).add(new AwsSolutionsChecks());
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const cfnSg = sg.node.defaultChild as CfnResource;
+    Validations.of(cfnSg).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Internal testing security group',
+    });
+    SynthUtils.synthesize(stack);
+    const metadata = cfnSg.getMetadata('cdk_nag');
+    expect(metadata).toBeDefined();
+    expect(metadata.rules_to_suppress).toContainEqual(
+      expect.objectContaining({
+        id: 'AwsSolutions-EC23',
+        reason: 'Internal testing security group',
+      })
+    );
   });
 });

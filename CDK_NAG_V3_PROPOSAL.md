@@ -8,7 +8,8 @@ This proposal recommends a new major version of cdk-nag that replaces the librar
 
 ### The Problem: Duplicate Suppression Mechanisms
 
-cdk-nag v2 predates CDK's validation framework. It was forced to invent its own suppression system:
+cdk-nag v2 predates CDK's validation framework. In fact, it was built when `Annotations.addWarning()` was unsuppressable.
+It was forced to invent its own suppression system:
 
 - `NagSuppressions.addResourceSuppressions()`
 - `NagSuppressions.addStackSuppressions()`
@@ -18,7 +19,10 @@ cdk-nag v2 predates CDK's validation framework. It was forced to invent its own 
 - `CdkNagValidationFailure` pseudo-rule for error handling
 - `NagSuppressionHelper` utility (164 lines of metadata parsing)
 
-CDK now natively supports acknowledgment of validation warnings and errors via `Validations.of(construct).acknowledge()`. This creates a situation where:
+When CDK built `Annotations.addWarningV2()` to support suppressions, CDK Nag could not use it because their bespoke
+suppression system _also_ reports what was suppressed as metadata on the CFN template. CDK now natively supports 
+acknowledgment of validation warnings and errors via `Validations.of(construct).acknowledge()` _with_ a reporting 
+mechanism. This creates a situation where:
 
 1. **Two incompatible suppression APIs exist** — users must learn cdk-nag's custom API rather than CDK's standard one
 2. **Suppressions are invisible to CDK tooling** — cdk-nag's `cdk_nag` metadata isn't understood by CDK CLI, CloudFormation, or other CDK tools
@@ -40,7 +44,7 @@ Validations.of(resource).acknowledge({ id: 'AwsSolutions-S1', reason: 'Logging b
 
 Benefits:
 - **Standard CDK pattern** — no cdk-nag-specific APIs to learn for suppressions
-- **Tooling interoperability** — CDK CLI, IDE extensions, and other tools understand the format
+- **Annotations in the CDK Validation Report** — CDK Annotations are natively integrated into the new validation report
 - **Less code to maintain** — 2,787 lines deleted, 163 added
 - **No behavior change for rules** — all 150+ rules remain unchanged
 
@@ -62,9 +66,9 @@ This means a plugin cannot access the construct tree — it only sees the final 
 
 3. **Building an adapter layer or factory registry** — to preserve `instanceof` checks, we'd need to hydrate real L1 class instances from template JSON (60-80 factory functions mapping CloudFormation types to CDK constructors, plus PascalCase→camelCase property conversion).
 
-4. **No annotation integration** — the plugin returns a `PolicyValidationPluginReport` struct. It cannot write annotations back to constructs, breaking the acknowledgment flow.
-
-**The Aspect model gives us all of this for free.** Rules run during synthesis with full access to the construct tree, typed properties, and token resolution. The only thing v2's Aspect model was missing was a standard suppression mechanism — which `Validations.of().acknowledge()` now provides.
+The future I would like to see is CDK Nag as a plugin, but this is a baby step in the right direction.
+Annotations are written to the validation report, so the final outcome (Nag issues showing up in the report)
+is achieved.
 
 By keeping the Aspect architecture and adopting only the Validations API for annotation emission and acknowledgment, v3 achieves:
 - Zero changes to rule implementations
@@ -87,7 +91,7 @@ By keeping the Aspect architecture and adopting only the Validations API for ann
 
 ## POC Results
 
-Branch: `v3-validation-framework` (commit `f29761f`)
+Branch: `v3-validation-framework`
 
 | Metric | Value |
 |--------|-------|
@@ -160,15 +164,41 @@ No changes needed to:
 - Custom NagPack implementations (rules stay the same)
 - NagReportLogger configuration
 
+## Audit Trail: CFN Template Metadata Persistence
+
+v2 writes suppression data directly into the CloudFormation template via `CfnResource.addMetadata('cdk_nag', { rules_to_suppress: [...] })`. This means the synthesized template contains a record of every acknowledged rule and why — visible in the AWS console, auditable, and persisted alongside the deployed infrastructure.
+
+CDK's `Validations.of().acknowledge()` stores acknowledgments as construct node metadata (`aws:cdk:acknowledged-rules`), which does **not** flow into the CloudFormation template.
+
+**v3 bridges this gap.** When cdk-nag runs rules on a resource, it reads the `aws:cdk:acknowledged-rules` construct metadata and writes it into the CfnResource's CloudFormation Metadata in the same `cdk_nag` format as v2. The synthesized template retains the full audit trail:
+
+```json
+{
+  "Resources": {
+    "MyBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            { "id": "AwsSolutions-S1", "reason": "This is a logging bucket" }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+This means:
+- Zero behavioral change for audit/compliance teams who inspect deployed templates
+- NagReportLogger can report acknowledged rules as "Suppressed" (same as v2)
+- The `cdk_nag` metadata format is preserved in synthesized output
+
 ## Open Questions for Discussion
 
 1. **Error acknowledgment timeline** — When can we expect CDK to ship `acknowledge()` for errors? This gates v3 GA.
 
 2. **Bulk acknowledgment** — In v2, suppressing a rule without `appliesTo` suppresses all findings. Should v3 support `acknowledge({ id: 'AwsSolutions-IAM5' })` to suppress all `AwsSolutions-IAM5[*]` findings on a construct? Recommendation: add as a fast-follow if customers request it.
-
-3. **CloudFormation template metadata** — v2 embedds `cdk_nag` metadata in templates for suppressions. v3 uses CDK's `aws:cdk:acknowledged-rules` metadata. Should v3 still read legacy `cdk_nag` metadata for backwards compatibility during migration? Recommendation: no — clean break at major version.
-
-4. **NagReportLogger audit trail** — v2 reports include "Suppressed" status. v3 can read `aws:cdk:acknowledged-rules` construct metadata to determine acknowledgment status. Should reports still show what was acknowledged? Recommendation: yes, for audit compliance.
 
 ## Next Steps
 
