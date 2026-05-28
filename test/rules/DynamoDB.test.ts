@@ -15,8 +15,8 @@ import {
   Table,
 } from 'aws-cdk-lib/aws-dynamodb';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   DAXEncrypted,
   DynamoDBAutoScalingEnabled,
@@ -34,7 +34,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon DynamoDB', () => {

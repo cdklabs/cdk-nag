@@ -15,8 +15,8 @@ import {
 import { CfnRoute, CfnStage as CfnV2Stage } from 'aws-cdk-lib/aws-apigatewayv2';
 import { CfnApi, CfnHttpApi } from 'aws-cdk-lib/aws-sam';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   APIGWAccessLogging,
   APIGWAssociatedWithWAF,
@@ -46,7 +46,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon API Gateway', () => {

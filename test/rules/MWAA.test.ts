@@ -2,10 +2,10 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aspects, Stack } from 'aws-cdk-lib';
+import { Stack } from 'aws-cdk-lib';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnEnvironment } from 'aws-cdk-lib/aws-mwaa';
-import { TestPack, TestType, validateStack } from './utils';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import { MWAAAllLoggingInfo } from '../../src/rules/mwaa';
 
 const testPack = new TestPack([MWAAAllLoggingInfo]);
@@ -13,7 +13,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Managed Workflows for Apache Airflow', () => {

@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnContainer } from 'aws-cdk-lib/aws-mediastore';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   MediaStoreCloudWatchMetricPolicy,
   MediaStoreContainerAccessLogging,
@@ -26,7 +26,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS Elemental MediaStore', () => {

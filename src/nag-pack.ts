@@ -2,21 +2,27 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnResource, IAspect, Validations } from 'aws-cdk-lib';
+import {
+  Aspects,
+  CfnResource,
+  IAspect,
+  IPolicyValidationPlugin,
+  IPolicyValidationContext,
+  PolicyValidationPluginReport,
+  PolicyViolation,
+  PolicyViolatingResource,
+  Validations,
+} from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
-import {
-  AnnotationLogger,
-  INagLogger,
-  NagLoggerBaseData,
-  NagReportFormat,
-  NagReportLogger,
-} from './nag-logger';
-import {
-  NagMessageLevel,
-  NagRuleCompliance,
-  NagRuleFindings,
-  NagRuleResult,
-} from './nag-rules';
+import { NagMessageLevel, NagRuleCompliance, NagRuleResult } from './nag-rules';
+
+/**
+ * Extended validation context that includes the construct tree.
+ * Requires CDK core change to populate `appConstruct` during plugin validation.
+ */
+export interface NagValidationContext extends IPolicyValidationContext {
+  readonly appConstruct: IConstruct;
+}
 
 /**
  * Interface for creating a NagPack.
@@ -28,19 +34,11 @@ export interface NagPackProps {
   readonly verbose?: boolean;
 
   /**
-   * Whether or not to generate compliance reports for applied Stacks in the App's output directory (default: true).
+   * Whether to write acknowledged rules into CfnResource CloudFormation
+   * Metadata as `cdk_nag: { rules_to_suppress: [...] }` for backwards
+   * compatibility with v2 audit trail tooling (default: false).
    */
-  readonly reports?: boolean;
-
-  /**
-   * If reports are enabled, the output formats of compliance reports in the App's output directory (default: only CSV).
-   */
-  readonly reportFormats?: NagReportFormat[];
-
-  /**
-   * Additional NagLoggers for logging rule validation outputs.
-   */
-  readonly additionalLoggers?: INagLogger[];
+  readonly writeSuppressionsToCloudFormation?: boolean;
 }
 
 /**
@@ -75,27 +73,20 @@ export interface IApplyRule {
 }
 
 /**
- * Base class for all rule packs.
+ * Base class for all rule packs. Implements IPolicyValidationPlugin so that
+ * packs are registered via `Validations.of(app).addPlugins(new MyPack(app))`
+ * instead of `Aspects.of(app).add(...)`.
  */
-export abstract class NagPack implements IAspect {
-  protected loggers = new Array<INagLogger>();
+export abstract class NagPack implements IPolicyValidationPlugin {
+  public abstract readonly name: string;
   protected packName = '';
-  private syncedResources = new Set<CfnResource>();
+  private violations: PolicyViolation[] = [];
+  private verbose: boolean;
 
-  constructor(props?: NagPackProps) {
-    this.loggers.push(
-      new AnnotationLogger({
-        verbose: props?.verbose,
-      })
-    );
-    if (props?.reports ?? true) {
-      const formats = props?.reportFormats
-        ? props.reportFormats
-        : [NagReportFormat.CSV];
-      this.loggers.push(new NagReportLogger({ formats }));
-    }
-    if (props?.additionalLoggers) {
-      this.loggers.push(...props.additionalLoggers);
+  constructor(scope?: IConstruct, props?: NagPackProps) {
+    this.verbose = props?.verbose ?? false;
+    if (scope && props?.writeSuppressionsToCloudFormation) {
+      Aspects.of(scope).add(new WriteNagSuppressionsToCloudFormationAspect());
     }
   }
 
@@ -104,9 +95,53 @@ export abstract class NagPack implements IAspect {
   }
 
   /**
-   * All aspects can visit an IConstruct.
+   * Entry point called by the CDK validation framework.
+   * Requires `appConstruct` to be present on the context (CDK core change).
+   * For testing or direct invocation, use `validateScope(scope)`.
    */
-  public abstract visit(node: IConstruct): void;
+  public validate(
+    context: IPolicyValidationContext
+  ): PolicyValidationPluginReport {
+    const nagContext = context as NagValidationContext;
+    if (!nagContext.appConstruct) {
+      throw new Error(
+        'NagPack requires a construct tree on the validation context. ' +
+          'Use validateScope(scope) for direct invocation or ensure your CDK version provides appConstruct on IPolicyValidationContext.'
+      );
+    }
+    return this.validateScope(nagContext.appConstruct);
+  }
+
+  /**
+   * Validate a construct tree directly. This is the primary entry point
+   * for testing and for CDK versions that do not yet provide `appConstruct` on
+   * `IPolicyValidationContext`.
+   */
+  public validateScope(scope: IConstruct): PolicyValidationPluginReport {
+    this.violations = [];
+    this.walkTree(scope);
+    return {
+      success: this.violations.length === 0,
+      violations: this.violations,
+    };
+  }
+
+  /**
+   * Recursively walk the construct tree and invoke checkResource on each CfnResource.
+   */
+  private walkTree(node: IConstruct): void {
+    if (CfnResource.isCfnResource(node)) {
+      this.checkResource(node);
+    }
+    for (const child of node.node.children) {
+      this.walkTree(child);
+    }
+  }
+
+  /**
+   * Subclasses implement this to apply rules to each CfnResource.
+   */
+  protected abstract checkResource(node: CfnResource): void;
 
   /**
    * Create a rule to be used in the NagPack.
@@ -118,105 +153,113 @@ export abstract class NagPack implements IAspect {
         'The NagPack does not have a pack name, therefore the rule could not be applied. Set a packName in the NagPack constructor.'
       );
     }
-    if (!this.syncedResources.has(params.node)) {
-      this.syncAcknowledgmentsToMetadata(params.node);
-      this.syncedResources.add(params.node);
-    }
     const ruleSuffix = params.ruleSuffixOverride
       ? params.ruleSuffixOverride
       : params.rule.name;
     const ruleId = `${this.packName}-${ruleSuffix}`;
-    const base: NagLoggerBaseData = {
-      nagPackName: this.packName,
-      resource: params.node,
-      ruleId: ruleId,
-      ruleOriginalName: params.rule.name,
-      ruleInfo: params.info,
-      ruleExplanation: params.explanation,
-      ruleLevel: params.level,
-    };
+
     try {
-      const ruleCompliance = params.rule(params.node);
-      if (ruleCompliance === NagRuleCompliance.COMPLIANT) {
-        this.loggers.forEach((t) => t.onCompliance(base));
-      } else if (this.isNonCompliant(ruleCompliance)) {
-        const findings = this.asFindings(ruleCompliance);
-        for (const findingId of findings) {
-          this.loggers.forEach((t) =>
-            t.onNonCompliance({
-              ...base,
-              findingId,
-            })
-          );
+      const result = params.rule(params.node);
+      if (result === NagRuleCompliance.NON_COMPLIANT) {
+        if (!this.isAcknowledged(params.node, ruleId)) {
+          this.addViolation(ruleId, params);
         }
-      } else if (ruleCompliance === NagRuleCompliance.NOT_APPLICABLE) {
-        this.loggers.forEach((t) =>
-          t.onNotApplicable({
-            ...base,
-          })
-        );
+      } else if (Array.isArray(result)) {
+        for (const finding of result) {
+          const findingRuleId = `${ruleId}[${finding}]`;
+          if (!this.isAcknowledged(params.node, findingRuleId)) {
+            this.addViolation(findingRuleId, params);
+          }
+        }
       }
     } catch (error) {
-      this.loggers.forEach((t) =>
-        t.onError({
-          ...base,
-          errorMessage: (error as Error).message,
-        })
-      );
-    }
-  }
-
-  /**
-   * Reads acknowledgments from construct metadata and writes them into
-   * the CfnResource's CloudFormation Metadata for audit trail persistence
-   * in the synthesized template.
-   */
-  protected syncAcknowledgmentsToMetadata(resource: CfnResource): void {
-    const acknowledged = this.getAcknowledgedRules(resource);
-    if (acknowledged.size === 0) return;
-
-    const existing = resource.getMetadata('cdk_nag') ?? {};
-    const existingRules: any[] = existing.rules_to_suppress ?? [];
-
-    const existingIds = new Set(existingRules.map((r: any) => r.id));
-    for (const [id, reason] of acknowledged) {
-      if (!existingIds.has(id)) {
-        existingRules.push({ id, reason });
+      if (!this.isAcknowledged(params.node, ruleId)) {
+        this.addViolation(ruleId, params, (error as Error).message);
       }
     }
-
-    resource.addMetadata('cdk_nag', { rules_to_suppress: existingRules });
   }
 
   /**
-   * Reads the acknowledged rules from the construct node metadata.
+   * Add a violation to the internal violations array, grouping by ruleName.
    */
-  private getAcknowledgedRules(resource: CfnResource): Map<string, string> {
-    const result = new Map<string, string>();
+  private addViolation(
+    ruleName: string,
+    params: IApplyRule,
+    errorMessage?: string
+  ): void {
+    const description = errorMessage
+      ? `Rule threw an error during validation. ${
+          this.verbose
+            ? errorMessage
+            : 'This is generally caused by a parameter referencing an intrinsic function.'
+        }`
+      : this.verbose
+      ? `${params.info} ${params.explanation}`
+      : params.info;
+
+    const resource: PolicyViolatingResource = {
+      constructPath: params.node.node.path,
+      locations: ['Properties'],
+    };
+
+    const existing = this.violations.find((v) => v.ruleName === ruleName);
+    if (existing) {
+      existing.violatingResources.push(resource);
+    } else {
+      this.violations.push({
+        ruleName,
+        description,
+        severity: params.level === NagMessageLevel.ERROR ? 'error' : 'warning',
+        violatingResources: [resource],
+      });
+    }
+  }
+
+  /**
+   * Check whether a specific rule has been acknowledged on the given resource
+   * via the CDK Validations acknowledged-rules metadata mechanism.
+   */
+  private isAcknowledged(resource: CfnResource, ruleId: string): boolean {
     const metadataKey = Validations.ACKNOWLEDGED_RULES_METADATA_KEY;
     for (const entry of resource.node.metadata) {
       if (entry.type === metadataKey && entry.data) {
-        for (const [qualifiedId, reason] of Object.entries(entry.data as Record<string, string>)) {
-          const id = qualifiedId.replace(/^annotation::/, '');
-          result.set(id, reason);
+        const ids = Object.keys(entry.data as Record<string, string>).map((k) =>
+          k.replace(/^annotation::/, '')
+        );
+        if (ids.includes(ruleId)) return true;
+      }
+    }
+    return false;
+  }
+}
+
+/**
+ * An IAspect that reads acknowledged rules from construct metadata and writes
+ * them into the CfnResource's CloudFormation Metadata for audit trail
+ * persistence in the synthesized template. Preserves the v2 `cdk_nag`
+ * metadata format.
+ */
+export class WriteNagSuppressionsToCloudFormationAspect implements IAspect {
+  public visit(node: IConstruct): void {
+    if (!CfnResource.isCfnResource(node)) return;
+    const metadataKey = Validations.ACKNOWLEDGED_RULES_METADATA_KEY;
+    const rules: { id: string; reason: string }[] = [];
+
+    for (const entry of node.node.metadata) {
+      if (entry.type === metadataKey && entry.data) {
+        for (const [qualifiedId, reason] of Object.entries(
+          entry.data as Record<string, string>
+        )) {
+          rules.push({
+            id: qualifiedId.replace(/^annotation::/, ''),
+            reason,
+          });
         }
       }
     }
-    return result;
-  }
 
-  private isNonCompliant(ruleResult: NagRuleResult) {
-    return (
-      ruleResult === NagRuleCompliance.NON_COMPLIANT ||
-      Array.isArray(ruleResult)
-    );
-  }
-
-  private asFindings(ruleResult: NagRuleResult): NagRuleFindings {
-    if (Array.isArray(ruleResult)) {
-      return ruleResult;
-    } else {
-      return [''];
+    if (rules.length > 0) {
+      node.addMetadata('cdk_nag', { rules_to_suppress: rules });
     }
   }
 }

@@ -190,32 +190,32 @@ import { VPCFlowLogsEnabled, VPCNoNACLs } from '../rules/vpc';
  *
  */
 export class AwsSolutionsChecks extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
+  public readonly name = 'AwsSolutions';
+
+  constructor(scope?: IConstruct, props?: NagPackProps) {
+    super(scope, props);
     this.packName = 'AwsSolutions';
   }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      this.checkCompute(node);
-      this.checkStorage(node);
-      this.checkDatabases(node);
-      this.checkNetworkDelivery(node);
-      this.checkManagementGovernance(node);
-      this.checkMachineLearning(node);
-      this.checkAnalytics(node);
-      this.checkSecurityCompliance(node);
-      this.checkServerless(node);
-      this.checkApplicationIntegration(node);
-      this.checkMediaServices(node);
-      this.checkDeveloperTools(node);
-      this.checkLambda(node);
-    }
+
+  protected checkResource(node: CfnResource): void {
+    this.checkCompute(node);
+    this.checkStorage(node);
+    this.checkDatabases(node);
+    this.checkNetworkDelivery(node);
+    this.checkManagementGovernance(node);
+    this.checkMachineLearning(node);
+    this.checkAnalytics(node);
+    this.checkSecurityCompliance(node);
+    this.checkServerless(node);
+    this.checkApplicationIntegration(node);
+    this.checkMediaServices(node);
+    this.checkDeveloperTools(node);
+    this.checkLambda(node);
   }
 
   /**
    * Check Compute Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkCompute(node: CfnResource): void {
     this.applyRule({
@@ -395,7 +395,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Storage Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkStorage(node: CfnResource): void {
     this.applyRule({
@@ -448,7 +447,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Database Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkDatabases(node: CfnResource): void {
     this.applyRule({
@@ -789,7 +787,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Network and Delivery Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkNetworkDelivery(node: CfnResource): void {
     this.applyRule({
@@ -923,7 +920,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Management and Governance Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkManagementGovernance(node: CfnResource): void {
     this.applyRule({
@@ -958,7 +954,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Machine Learning Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkMachineLearning(node: CfnResource): void {
     this.applyRule({
@@ -1002,7 +997,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Analytics Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkAnalytics(node: CfnResource): void {
     this.applyRule({
@@ -1081,7 +1075,7 @@ export class AwsSolutionsChecks extends NagPack {
       ruleSuffixOverride: 'KDS1',
       info: 'The Kinesis Data Stream does not has server-side encryption enabled.',
       explanation:
-        "Data is encrypted before it's written to the Kinesis stream storage layer, and decrypted after it’s retrieved from storage. This allows the system to meet strict regulatory requirements and enhance the security of system data.",
+        "Data is encrypted before it's written to the Kinesis stream storage layer, and decrypted after it's retrieved from storage. This allows the system to meet strict regulatory requirements and enhance the security of system data.",
       level: NagMessageLevel.ERROR,
       rule: KinesisDataStreamSSE,
       node: node,
@@ -1209,14 +1203,13 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Security and Compliance Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkSecurityCompliance(node: CfnResource): void {
     this.applyRule({
       ruleSuffixOverride: 'IAM4',
       info: 'The IAM user, role, or group uses AWS managed policies.',
       explanation:
-        'An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.' +
+        'An AWS managed policy is a standalone policy that is created and administered by AWS. Currently, many AWS managed policies do not restrict resource scope. Replace AWS managed policies with system specific (customer) managed policies.' +
         "This is a granular rule that returns individual findings that can be suppressed with 'appliesTo'. The findings are in the format 'Policy::<policy>' for AWS managed policies. Example: appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/foo'].",
       level: NagMessageLevel.ERROR,
       rule: IAMNoManagedPolicies,
@@ -1300,7 +1293,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Serverless Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkServerless(node: CfnResource): void {
     this.applyRule({
@@ -1335,7 +1327,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Application Integration Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkApplicationIntegration(node: CfnResource): void {
     this.applyRule({
@@ -1388,7 +1379,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Media Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkMediaServices(node: CfnResource): void {
     this.applyRule({
@@ -1450,7 +1440,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Developer Tools Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkDeveloperTools(node: CfnResource): void {
     this.applyRule({
@@ -1485,7 +1474,6 @@ export class AwsSolutionsChecks extends NagPack {
   /**
    * Check Lambda Services
    * @param node the CfnResource to check
-   * @param ignores list of ignores for the resource
    */
   private checkLambda(node: CfnResource): void {
     this.applyRule({

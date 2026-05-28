@@ -112,36 +112,37 @@ import { WAFv2LoggingEnabled } from '../rules/waf';
  * Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html
  */
 export class PCIDSS321Checks extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
+  public readonly name = 'PCI.DSS.321';
+
+  constructor(scope?: IConstruct, props?: NagPackProps) {
+    super(scope, props);
     this.packName = 'PCI.DSS.321';
   }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      this.checkAPIGW(node);
-      this.checkAutoScaling(node);
-      this.checkCloudTrail(node);
-      this.checkCloudWatch(node);
-      this.checkCodeBuild(node);
-      this.checkDMS(node);
-      this.checkEC2(node);
-      this.checkECS(node);
-      this.checkEFS(node);
-      this.checkELB(node);
-      this.checkEMR(node);
-      this.checkIAM(node);
-      this.checkKMS(node);
-      this.checkLambda(node);
-      this.checkOpenSearch(node);
-      this.checkRDS(node);
-      this.checkRedshift(node);
-      this.checkS3(node);
-      this.checkSageMaker(node);
-      this.checkSecretsManager(node);
-      this.checkSNS(node);
-      this.checkVPC(node);
-      this.checkWAF(node);
-    }
+
+  protected checkResource(node: CfnResource): void {
+    this.checkAPIGW(node);
+    this.checkAutoScaling(node);
+    this.checkCloudTrail(node);
+    this.checkCloudWatch(node);
+    this.checkCodeBuild(node);
+    this.checkDMS(node);
+    this.checkEC2(node);
+    this.checkECS(node);
+    this.checkEFS(node);
+    this.checkELB(node);
+    this.checkEMR(node);
+    this.checkIAM(node);
+    this.checkKMS(node);
+    this.checkLambda(node);
+    this.checkOpenSearch(node);
+    this.checkRDS(node);
+    this.checkRedshift(node);
+    this.checkS3(node);
+    this.checkSageMaker(node);
+    this.checkSecretsManager(node);
+    this.checkSNS(node);
+    this.checkVPC(node);
+    this.checkWAF(node);
   }
 
   /**

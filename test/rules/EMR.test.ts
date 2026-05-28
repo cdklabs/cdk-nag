@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster, CfnSecurityConfiguration } from 'aws-cdk-lib/aws-emr';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   EMRAuthEC2KeyPairOrKerberos,
   EMREncryptionInTransit,
@@ -24,7 +24,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon EMR', () => {

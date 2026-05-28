@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-neptune';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   NeptuneClusterAutomaticMinorVersionUpgrade,
   NeptuneClusterBackupRetentionPeriod,
@@ -24,7 +24,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Neptune', () => {

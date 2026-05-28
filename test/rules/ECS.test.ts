@@ -12,8 +12,8 @@ import {
   ContainerInsights,
   CfnCluster,
 } from 'aws-cdk-lib/aws-ecs';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   ECSClusterCloudWatchContainerInsights,
   ECSTaskDefinitionContainerLogging,
@@ -31,7 +31,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Elastic Container Service (Amazon ECS)', () => {

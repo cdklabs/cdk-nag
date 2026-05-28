@@ -2,9 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { SynthUtils } from '@aws-cdk/assert';
-import '@aws-cdk/assert/jest';
 import {
+  App,
   Aspects,
   CfnParameter,
   CfnResource,
@@ -18,98 +17,104 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
-import { IConstruct } from 'constructs';
 import {
   AwsSolutionsChecks,
+  WriteNagSuppressionsToCloudFormationAspect,
   NagMessageLevel,
   NagPack,
   NagPackProps,
   NagRuleCompliance,
   NagRules,
 } from '../src';
-import { expectMessages } from './test-utils';
 
 describe('Rule explanations', () => {
   test('Test no explicit explanation', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks());
-    const test = new SecurityGroup(stack, 'rSg', {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const pack = new AwsSolutionsChecks();
+    const test1 = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
     });
-    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      notContaining: ['Large port ranges'],
-    });
+    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const report = pack.validateScope(app);
+    const descriptions = report.violations.map((v) => v.description);
+    expect(descriptions.some((d) => d.includes('Large port ranges'))).toBe(
+      false
+    );
   });
   test('Test no explanation', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: false }));
-    const test = new SecurityGroup(stack, 'rSg', {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const pack = new AwsSolutionsChecks(undefined, { verbose: false });
+    const test1 = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
     });
-    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      notContaining: ['Large port ranges'],
-    });
+    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const report = pack.validateScope(app);
+    const descriptions = report.violations.map((v) => v.description);
+    expect(descriptions.some((d) => d.includes('Large port ranges'))).toBe(
+      false
+    );
   });
   test('Test explanation', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
-    const test = new SecurityGroup(stack, 'rSg', {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const pack = new AwsSolutionsChecks(undefined, { verbose: true });
+    const test1 = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
     });
-    test.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      containing: ['Large port ranges'],
-    });
+    test1.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const report = pack.validateScope(app);
+    const descriptions = report.violations.map((v) => v.description);
+    expect(descriptions.some((d) => d.includes('Large port ranges'))).toBe(
+      true
+    );
   });
 });
 
 describe('Rule exception handling', () => {
   const ERROR_MESSAGE = 'oops!';
   class BadPack extends NagPack {
-    constructor(props?: NagPackProps) {
-      super(props);
+    public readonly name = 'Bad';
+    constructor(scope?: any, props?: NagPackProps) {
+      super(scope, props);
       this.packName = 'Bad.Pack';
     }
-    public visit(node: IConstruct): void {
-      if (node instanceof CfnResource) {
-        this.applyRule({
-          ruleSuffixOverride: 'BadRule',
-          info: 'This is an improperly made rule.',
-          explanation: 'This will throw an error',
-          level: NagMessageLevel.ERROR,
-          rule: function (node2: CfnResource): NagRuleCompliance {
-            if (node2) {
-              throw Error(ERROR_MESSAGE);
-            }
-            return NagRuleCompliance.NON_COMPLIANT;
-          },
-          node: node,
-        });
-      }
+    protected checkResource(node: CfnResource): void {
+      this.applyRule({
+        ruleSuffixOverride: 'BadRule',
+        info: 'This is an improperly made rule.',
+        explanation: 'This will throw an error',
+        level: NagMessageLevel.ERROR,
+        rule: function (node2: CfnResource): NagRuleCompliance {
+          if (node2) {
+            throw Error(ERROR_MESSAGE);
+          }
+          return NagRuleCompliance.NON_COMPLIANT;
+        },
+        node: node,
+      });
     }
   }
   test('Error is properly caught', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new BadPack());
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
     new CfnBucket(stack, 'rBucket');
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      containing: ['Bad.Pack-BadRule'],
-    });
+    const pack = new BadPack();
+    const report = pack.validateScope(app);
+    expect(report.violations.some((v) => v.ruleName === 'Bad.Pack-BadRule')).toBe(
+      true
+    );
   });
   test('Error properly handles verbose logging', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new BadPack({ verbose: true }));
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
     new CfnBucket(stack, 'rBucket');
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      containing: [ERROR_MESSAGE],
-    });
+    const pack = new BadPack(undefined, { verbose: true });
+    const report = pack.validateScope(app);
+    expect(
+      report.violations.some((v) => v.description.includes(ERROR_MESSAGE))
+    ).toBe(true);
   });
   test('Encoded Intrinsic function with resolveIfPrimitive error handling', () => {
     const stack = new Stack();
@@ -130,35 +135,37 @@ describe('Rule exception handling', () => {
 });
 
 describe('Basic rule validation', () => {
-  test('Non-compliant resource produces annotation', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks());
+  test('Non-compliant resource produces violation', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
     const sg = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
     });
     sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      containing: ['AwsSolutions-EC23'],
-    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    expect(
+      report.violations.some((v) => v.ruleName === 'AwsSolutions-EC23')
+    ).toBe(true);
   });
-  test('Compliant resource does not produce annotation', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks());
+  test('Compliant resource does not produce violation', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
     new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
     });
-    const messages = SynthUtils.synthesize(stack).messages;
-    expectMessages(messages, {
-      notContaining: ['AwsSolutions-EC23'],
-    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    expect(
+      report.violations.some((v) => v.ruleName === 'AwsSolutions-EC23')
+    ).toBe(false);
   });
 });
 
-describe('Acknowledgment metadata persistence', () => {
-  test('Acknowledged rules are written to CfnResource CloudFormation Metadata', () => {
-    const stack = new Stack();
-    Aspects.of(stack).add(new AwsSolutionsChecks());
+describe('Acknowledgment suppression', () => {
+  test('Acknowledged rules are suppressed from violations', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
     const sg = new SecurityGroup(stack, 'rSg', {
       vpc: new Vpc(stack, 'rVpc'),
     });
@@ -168,7 +175,29 @@ describe('Acknowledgment metadata persistence', () => {
       id: 'AwsSolutions-EC23',
       reason: 'Internal testing security group',
     });
-    SynthUtils.synthesize(stack);
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    expect(
+      report.violations.some((v) => v.ruleName === 'AwsSolutions-EC23')
+    ).toBe(false);
+  });
+});
+
+describe('Audit trail metadata persistence', () => {
+  test('WriteNagSuppressionsToCloudFormationAspect writes acknowledged rules to CfnResource metadata', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const cfnSg = sg.node.defaultChild as CfnResource;
+    Validations.of(cfnSg).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Internal testing security group',
+    });
+    Aspects.of(app).add(new WriteNagSuppressionsToCloudFormationAspect());
+    app.synth();
     const metadata = cfnSg.getMetadata('cdk_nag');
     expect(metadata).toBeDefined();
     expect(metadata.rules_to_suppress).toContainEqual(

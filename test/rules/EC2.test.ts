@@ -31,8 +31,8 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Aspects, Size, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Size, Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   EC2EBSInBackupPlan,
   EC2EBSOptimizedInstance,
@@ -68,7 +68,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
