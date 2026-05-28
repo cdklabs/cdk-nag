@@ -42,18 +42,18 @@ For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-na
 <summary>Including in an application</summary>
 
 ```typescript
-import { App, Aspects } from 'aws-cdk-lib';
+import { App, Validations } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
-import { AwsSolutionsChecks } from 'cdk-nag';
+import { AwsSolutionsChecks, NIST80053R5Checks } from 'cdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
 // Simple rule informational messages using the AWS Solutions Rule pack
-Aspects.of(app).add(new AwsSolutionsChecks());
+Validations.of(app).addPlugins(new AwsSolutionsChecks(app));
 // Multiple rule packs can be run against the same app
-Aspects.of(app).add(new NIST80053R5Checks());
+Validations.of(app).addPlugins(new NIST80053R5Checks(app));
 // Additional explanations on the purpose of triggered rules
-// Aspects.of(stack).add(new AwsSolutionsChecks({ verbose: true }));
+// Validations.of(app).addPlugins(new AwsSolutionsChecks(app, { verbose: true }));
 ```
 
 </details>
@@ -91,13 +91,13 @@ export class CdkTestStack extends Stack {
   <summary>Example 2) Acknowledging a rule on a stack</summary>
 
 ```typescript
-import { App, Aspects, Validations } from 'aws-cdk-lib';
+import { App, Validations } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new App();
 const stack = new CdkTestStack(app, 'CdkNagDemo');
-Aspects.of(app).add(new AwsSolutionsChecks());
+Validations.of(app).addPlugins(new AwsSolutionsChecks(app));
 Validations.of(stack).acknowledge({
   id: 'AwsSolutions-EC23',
   reason: 'All security groups in this stack are internal only.',
@@ -185,31 +185,20 @@ export class CdkTestStack extends Stack {
 
 </details>
 
-## Customizing Logging
+## Audit Trail: CloudFormation Metadata
 
-`NagLogger`s give `NagPack` authors and users the ability to create their own custom reporting mechanisms. All pre-built `NagPacks` come with the `AnnotationLogger` and the `NagReportLogger` (with CSV reports) enabled by default.
+By default, cdk-nag writes violations to CDK's `policy-validation-report.json` in the cloud assembly. If you need the v2-compatible `cdk_nag` metadata block in your synthesized CloudFormation templates (for existing compliance tooling), enable `writeSuppressionsToCloudFormation`:
 
-See the [NagLogger](./docs/NagLogger.md) developer docs for more information.
-
-<details>
-  <summary>Example) Adding a custom logger</summary>
-
-```ts
-import { App, Aspects } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
-import { ExtremelyHelpfulConsoleLogger } from './docs/NagLogger';
+```typescript
+import { App, Validations } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new App();
-new CdkTestStack(app, 'CdkNagDemo');
-Aspects.of(app).add(
-  new AwsSolutionsChecks({
-    additionalLoggers: [new ExtremelyHelpfulConsoleLogger()],
-  })
-);
+// Writes acknowledged rules into CfnResource Metadata as cdk_nag: { rules_to_suppress: [...] }
+Validations.of(app).addPlugins(new AwsSolutionsChecks(app, { writeSuppressionsToCloudFormation: true }));
 ```
 
-</details>
+This registers a `WriteNagSuppressionsToCloudFormationAspect` that runs during synthesis and copies `Validations.of().acknowledge()` data into the CloudFormation template Metadata section, preserving the same format as cdk-nag v2.
 
 ## Using on CloudFormation templates
 
@@ -221,13 +210,13 @@ You can use cdk-nag on existing CloudFormation templates by using the [cloudform
 Sample App
 
 ```typescript
-import { App, Aspects } from 'aws-cdk-lib';
+import { App, Validations } from 'aws-cdk-lib';
 import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
-Aspects.of(app).add(new AwsSolutionsChecks());
+Validations.of(app).addPlugins(new AwsSolutionsChecks(app));
 ```
 
 Sample Stack with imported template
