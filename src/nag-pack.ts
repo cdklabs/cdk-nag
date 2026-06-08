@@ -20,7 +20,7 @@ import { NagMessageLevel, NagRuleCompliance, NagRuleResult } from './nag-rules';
  * Extended validation context that includes the construct tree.
  * Requires CDK core change to populate `appConstruct` during plugin validation.
  */
-export interface NagValidationContext extends IPolicyValidationContext {
+export interface INagValidationContext extends IPolicyValidationContext {
   readonly appConstruct: IConstruct;
 }
 
@@ -79,6 +79,8 @@ export interface IApplyRule {
  */
 export abstract class NagPack implements IPolicyValidationPlugin {
   public abstract readonly name: string;
+  public readonly version?: string;
+  public readonly ruleIds?: string[];
   protected packName = '';
   private violations: PolicyViolation[] = [];
   private verbose: boolean;
@@ -102,7 +104,7 @@ export abstract class NagPack implements IPolicyValidationPlugin {
   public validate(
     context: IPolicyValidationContext
   ): PolicyValidationPluginReport {
-    const nagContext = context as NagValidationContext;
+    const nagContext = context as INagValidationContext;
     if (!nagContext.appConstruct) {
       throw new Error(
         'NagPack requires a construct tree on the validation context. ' +
