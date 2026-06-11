@@ -41,10 +41,11 @@ For a full list of options See `NagPackProps` in the [API.md](./API.md#struct-na
 <details>
 <summary>Including in an application</summary>
 
-```typescript
+```ts nofixture
 import { App, Validations } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks, NIST80053R5Checks } from 'cdk-nag';
+
+declare const CdkTestStack: any;
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
@@ -65,7 +66,7 @@ Use CDK's native `Validations.of()` API to acknowledge (suppress) rule violation
 <details>
   <summary>Example 1) Acknowledging a rule on a construct</summary>
 
-```typescript
+```ts nofixture
 import { SecurityGroup, Vpc, Peer, Port } from 'aws-cdk-lib/aws-ec2';
 import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -90,10 +91,11 @@ export class CdkTestStack extends Stack {
 <details>
   <summary>Example 2) Acknowledging a rule on a stack</summary>
 
-```typescript
+```ts nofixture
 import { App, Validations } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
+
+declare const CdkTestStack: any;
 
 const app = new App();
 const stack = new CdkTestStack(app, 'CdkNagDemo');
@@ -120,7 +122,7 @@ If you received the following errors on synth/deploy:
 
 You can acknowledge a specific finding:
 
-```typescript
+```ts nofixture
 import { User, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -153,7 +155,7 @@ In some cases L2 Constructs do not have a native option to remediate an issue an
 <details>
   <summary>Example) Property Overrides</summary>
 
-```ts
+```ts nofixture
 import {
   Instance,
   InstanceType,
@@ -189,7 +191,7 @@ export class CdkTestStack extends Stack {
 
 By default, cdk-nag writes violations to CDK's `policy-validation-report.json` in the cloud assembly. If you need the v2-compatible `cdk_nag` metadata block in your synthesized CloudFormation templates (for existing compliance tooling), enable `writeSuppressionsToCloudFormation`:
 
-```typescript
+```ts nofixture
 import { App, Validations } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
@@ -209,10 +211,11 @@ You can use cdk-nag on existing CloudFormation templates by using the [cloudform
 
 Sample App
 
-```typescript
+```ts nofixture
 import { App, Validations } from 'aws-cdk-lib';
-import { CdkTestStack } from '../lib/cdk-test-stack';
 import { AwsSolutionsChecks } from 'cdk-nag';
+
+declare const CdkTestStack: any;
 
 const app = new App();
 new CdkTestStack(app, 'CdkNagDemo');
@@ -221,7 +224,7 @@ Validations.of(app).addPlugins(new AwsSolutionsChecks(app));
 
 Sample Stack with imported template
 
-```typescript
+```ts nofixture
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 import { Stack, StackProps, Validations } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
