@@ -18,9 +18,9 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInstance) {
-      const instanceMeta = Stack.of(node).resolve(
-        node.metadataOptions
-      ) as { httpTokens?: string } | undefined;
+      const instanceMeta = Stack.of(node).resolve(node.metadataOptions) as
+        | { httpTokens?: string }
+        | undefined;
       if (instanceMeta?.httpTokens === 'required') {
         return NagRuleCompliance.COMPLIANT;
       }

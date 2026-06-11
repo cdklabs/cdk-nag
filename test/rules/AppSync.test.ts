@@ -32,7 +32,11 @@ describe('AWS AppSync', () => {
       new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
-        logConfig: { excludeVerboseContent: true, fieldLogLevel: 'NONE', cloudWatchLogsRoleArn: 'arn:aws:iam::123456789012:role/role' },
+        logConfig: {
+          excludeVerboseContent: true,
+          fieldLogLevel: 'NONE',
+          cloudWatchLogsRoleArn: 'arn:aws:iam::123456789012:role/role',
+        },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -47,7 +51,10 @@ describe('AWS AppSync', () => {
       new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
-        logConfig: { cloudWatchLogsRoleArn: 'foo', fieldLogLevel: 'ALL' } as any,
+        logConfig: {
+          cloudWatchLogsRoleArn: 'foo',
+          fieldLogLevel: 'ALL',
+        } as any,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

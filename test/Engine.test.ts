@@ -10,12 +10,7 @@ import {
   Stack,
   Validations,
 } from 'aws-cdk-lib';
-import {
-  Peer,
-  Port,
-  SecurityGroup,
-  Vpc,
-} from 'aws-cdk-lib/aws-ec2';
+import { Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
 import {
   AwsSolutionsChecks,
@@ -102,9 +97,9 @@ describe('Rule exception handling', () => {
     new CfnBucket(stack, 'rBucket');
     const pack = new BadPack();
     const report = pack.validateScope(app);
-    expect(report.violations.some((v) => v.ruleName === 'Bad.Pack-BadRule')).toBe(
-      true
-    );
+    expect(
+      report.violations.some((v) => v.ruleName === 'Bad.Pack-BadRule')
+    ).toBe(true);
   });
   test('Error properly handles verbose logging', () => {
     const app = new App();
