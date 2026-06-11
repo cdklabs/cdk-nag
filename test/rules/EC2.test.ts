@@ -636,12 +636,13 @@ describe('Amazon Elastic Compute Cloud (Amazon EC2)', () => {
       });
 
       test('Compliance', () => {
-        const vpc = new Vpc(stack, 'Vpc', {});
-        new Instance(stack, 'Instance', {
-          vpc: vpc,
-          instanceType: InstanceType.of(InstanceClass.R5, InstanceSize.LARGE),
-          machineImage: MachineImage.latestAmazonLinux2(),
-          requireImdsv2: true,
+        new CfnInstance(stack, 'Instance', {
+          imageId: 'ami-00112233444',
+          instanceType: 't3.micro',
+          subnetId: 'subnet-0123455667',
+          metadataOptions: {
+            httpTokens: 'required',
+          },
         });
         const launchTemplate = new CfnLaunchTemplate(stack, 'LaunchTemplate', {
           launchTemplateData: {
