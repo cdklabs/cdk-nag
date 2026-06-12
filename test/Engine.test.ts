@@ -158,7 +158,7 @@ describe('Basic rule validation', () => {
 });
 
 describe('Acknowledgment suppression', () => {
-  test('Acknowledged rules are suppressed from violations', () => {
+  test('Acknowledged rules on CfnResource are suppressed from violations', () => {
     const app = new App();
     const stack = new Stack(app, 'TestStack');
     const sg = new SecurityGroup(stack, 'rSg', {
@@ -175,6 +175,96 @@ describe('Acknowledgment suppression', () => {
     expect(
       report.violations.some((v) => v.ruleName === 'AwsSolutions-EC23')
     ).toBe(false);
+  });
+
+  test('Acknowledged rules on L2 construct suppress findings on CfnResource child', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    Validations.of(sg).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Acknowledged at L2 level',
+    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    expect(
+      report.violations.some((v) => v.ruleName === 'AwsSolutions-EC23')
+    ).toBe(false);
+  });
+
+  test('Acknowledged rules on Stack suppress findings on all CfnResources in the stack', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    Validations.of(stack).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Acknowledged at stack level',
+    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    expect(
+      report.violations.some((v) => v.ruleName === 'AwsSolutions-EC23')
+    ).toBe(false);
+  });
+
+  test('Granular finding acknowledgement at parent level only suppresses matching finding', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    sg.addIngressRule(Peer.anyIpv6(), Port.allTraffic());
+    Validations.of(stack).acknowledge({
+      id: 'AwsSolutions-EC23[Security Groups/rSg]',
+      reason: 'Only suppress this specific finding',
+    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    const ec23Violations = report.violations.filter((v) =>
+      v.ruleName.startsWith('AwsSolutions-EC23')
+    );
+    expect(
+      ec23Violations.some(
+        (v) => v.ruleName === 'AwsSolutions-EC23[Security Groups/rSg]'
+      )
+    ).toBe(false);
+    expect(ec23Violations.length).toBeGreaterThanOrEqual(0);
+  });
+
+  test('Acknowledgement on Stack A does NOT suppress findings in Stack B', () => {
+    const app = new App();
+    const stackA = new Stack(app, 'StackA');
+    const stackB = new Stack(app, 'StackB');
+    const sgA = new SecurityGroup(stackA, 'rSg', {
+      vpc: new Vpc(stackA, 'rVpc'),
+    });
+    sgA.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const sgB = new SecurityGroup(stackB, 'rSg', {
+      vpc: new Vpc(stackB, 'rVpc'),
+    });
+    sgB.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    Validations.of(stackA).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Only for stack A',
+    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    const ec23Violations = report.violations.filter(
+      (v) => v.ruleName === 'AwsSolutions-EC23'
+    );
+    expect(ec23Violations.length).toBe(1);
+    expect(
+      ec23Violations[0].violatingResources.every((r) =>
+        r.constructPath!.startsWith('StackB/')
+      )
+    ).toBe(true);
   });
 });
 
@@ -201,5 +291,55 @@ describe('Audit trail metadata persistence', () => {
         reason: 'Internal testing security group',
       })
     );
+  });
+
+  test('WriteNagSuppressionsToCloudFormationAspect includes parent-level acknowledgements', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    Validations.of(stack).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Stack-level acknowledgement',
+    });
+    Aspects.of(app).add(new WriteNagSuppressionsToCloudFormationAspect());
+    app.synth();
+    const cfnSg = sg.node.defaultChild as CfnResource;
+    const metadata = cfnSg.getMetadata('cdk_nag');
+    expect(metadata).toBeDefined();
+    expect(metadata.rules_to_suppress).toContainEqual(
+      expect.objectContaining({
+        id: 'AwsSolutions-EC23',
+        reason: 'Stack-level acknowledgement',
+      })
+    );
+  });
+
+  test('WriteNagSuppressionsToCloudFormationAspect deduplicates rules acknowledged at multiple levels', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const sg = new SecurityGroup(stack, 'rSg', {
+      vpc: new Vpc(stack, 'rVpc'),
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.allTraffic());
+    const cfnSg = sg.node.defaultChild as CfnResource;
+    Validations.of(cfnSg).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'CfnResource-level reason',
+    });
+    Validations.of(stack).acknowledge({
+      id: 'AwsSolutions-EC23',
+      reason: 'Stack-level reason',
+    });
+    Aspects.of(app).add(new WriteNagSuppressionsToCloudFormationAspect());
+    app.synth();
+    const metadata = cfnSg.getMetadata('cdk_nag');
+    expect(metadata).toBeDefined();
+    const ec23Rules = metadata.rules_to_suppress.filter(
+      (r: { id: string }) => r.id === 'AwsSolutions-EC23'
+    );
+    expect(ec23Rules).toHaveLength(1);
   });
 });
