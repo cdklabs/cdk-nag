@@ -219,17 +219,22 @@ export abstract class NagPack implements IPolicyValidationPlugin {
 
   /**
    * Check whether a specific rule has been acknowledged on the given resource
-   * via the CDK Validations acknowledged-rules metadata mechanism.
+   * or any of its ancestor constructs via the CDK Validations
+   * acknowledged-rules metadata mechanism.
    */
   private isAcknowledged(resource: CfnResource, ruleId: string): boolean {
     const metadataKey = Validations.ACKNOWLEDGED_RULES_METADATA_KEY;
-    for (const entry of resource.node.metadata) {
-      if (entry.type === metadataKey && entry.data) {
-        const ids = Object.keys(entry.data as Record<string, string>).map((k) =>
-          k.replace(/^annotation::/, '')
-        );
-        if (ids.includes(ruleId)) return true;
+    let current: IConstruct | undefined = resource;
+    while (current) {
+      for (const entry of current.node.metadata) {
+        if (entry.type === metadataKey && entry.data) {
+          const ids = Object.keys(
+            entry.data as Record<string, string>
+          ).map((k) => k.replace(/^annotation::/, ''));
+          if (ids.includes(ruleId)) return true;
+        }
       }
+      current = current.node.scope;
     }
     return false;
   }
@@ -245,19 +250,25 @@ export class WriteNagSuppressionsToCloudFormationAspect implements IAspect {
   public visit(node: IConstruct): void {
     if (!CfnResource.isCfnResource(node)) return;
     const metadataKey = Validations.ACKNOWLEDGED_RULES_METADATA_KEY;
+    const seen = new Set<string>();
     const rules: { id: string; reason: string }[] = [];
 
-    for (const entry of node.node.metadata) {
-      if (entry.type === metadataKey && entry.data) {
-        for (const [qualifiedId, reason] of Object.entries(
-          entry.data as Record<string, string>
-        )) {
-          rules.push({
-            id: qualifiedId.replace(/^annotation::/, ''),
-            reason,
-          });
+    let current: IConstruct | undefined = node;
+    while (current) {
+      for (const entry of current.node.metadata) {
+        if (entry.type === metadataKey && entry.data) {
+          for (const [qualifiedId, reason] of Object.entries(
+            entry.data as Record<string, string>
+          )) {
+            const id = qualifiedId.replace(/^annotation::/, '');
+            if (!seen.has(id)) {
+              seen.add(id);
+              rules.push({ id, reason });
+            }
+          }
         }
       }
+      current = current.node.scope;
     }
 
     if (rules.length > 0) {
