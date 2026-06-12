@@ -228,9 +228,9 @@ export abstract class NagPack implements IPolicyValidationPlugin {
     while (current) {
       for (const entry of current.node.metadata) {
         if (entry.type === metadataKey && entry.data) {
-          const ids = Object.keys(
-            entry.data as Record<string, string>
-          ).map((k) => k.replace(/^annotation::/, ''));
+          const ids = Object.keys(entry.data as Record<string, string>).map(
+            (k) => k.replace(/^annotation::/, '')
+          );
           if (ids.includes(ruleId)) return true;
         }
       }
