@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnCluster, CfnClusterParameterGroup } from 'aws-cdk-lib/aws-redshift';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   RedshiftBackupEnabled,
   RedshiftClusterAuditLogging,
@@ -40,7 +40,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 describe('Amazon Redshift', () => {
   describe('RedshiftBackupEnabled: Redshift clusters have automated snapshots enabled and the retention period is between 1 and 35 days', () => {

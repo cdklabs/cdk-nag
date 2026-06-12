@@ -2,13 +2,13 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aspects, Stack } from 'aws-cdk-lib';
+import { Stack } from 'aws-cdk-lib';
 import * as events from 'aws-cdk-lib/aws-events';
 import { CfnEventBusPolicy, CfnRule } from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
-import { validateStack, TestType, TestPack } from './utils';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import { EventBusOpenAccess, EventBusDLQ } from '../../src/rules/eventbridge';
 
 const testPack = new TestPack([EventBusOpenAccess, EventBusDLQ]);
@@ -16,7 +16,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('EventBusDLQ: EventBridge rules have a Dead Letter Queue configured.', () => {

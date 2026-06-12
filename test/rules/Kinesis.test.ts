@@ -7,8 +7,8 @@ import { StreamEncryption, Stream } from 'aws-cdk-lib/aws-kinesis';
 import { CfnApplicationV2 } from 'aws-cdk-lib/aws-kinesisanalytics';
 import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   KinesisDataAnalyticsFlinkCheckpointing,
   KinesisDataFirehoseSSE,
@@ -26,7 +26,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Kinesis Data Analytics', () => {

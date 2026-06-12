@@ -9,8 +9,8 @@ import {
 } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnLogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   CloudWatchAlarmAction,
   CloudWatchLogGroupEncrypted,
@@ -26,7 +26,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon CloudWatch', () => {

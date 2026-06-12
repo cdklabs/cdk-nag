@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aspects, Duration, Stack } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 import {
   AttributeType,
   StreamViewType,
@@ -33,7 +33,7 @@ import {
 import { SqsDestination } from 'aws-cdk-lib/aws-lambda-destinations';
 import { SqsDlq } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { TestPack, TestType, validateStack } from './utils';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   LambdaAsyncFailureDestination,
   LambdaConcurrency,
@@ -91,7 +91,7 @@ function getLatestRuntime(family: string): Runtime {
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS Lambda', () => {
@@ -523,7 +523,7 @@ describe('AWS Lambda', () => {
         code: {},
         role: 'somerole',
       });
-      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+      validateStack(stack, ruleId, TestType.ERROR);
     });
     test('Validation Failure 2: No families found', () => {
       new CfnFunction(stack, 'Function', {
@@ -531,7 +531,7 @@ describe('AWS Lambda', () => {
         code: {},
         role: 'somerole',
       });
-      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+      validateStack(stack, ruleId, TestType.ERROR);
     });
   });
 

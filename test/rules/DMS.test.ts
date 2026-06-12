@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnReplicationInstance } from 'aws-cdk-lib/aws-dms';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import { DMSReplicationNotPublic } from '../../src/rules/dms';
 
 const testPack = new TestPack([DMSReplicationNotPublic]);
@@ -12,7 +12,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS Database Migration Service (AWS DMS)', () => {

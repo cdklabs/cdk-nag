@@ -5,8 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { Trail } from 'aws-cdk-lib/aws-cloudtrail';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   CloudTrailCloudWatchLogsEnabled,
   CloudTrailEncryptionEnabled,
@@ -22,7 +22,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS CloudTrail', () => {

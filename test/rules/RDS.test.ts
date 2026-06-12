@@ -27,8 +27,8 @@ import {
   AuroraEngineVersion,
   ClusterInstance,
 } from 'aws-cdk-lib/aws-rds';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   AuroraMySQLBacktrack,
   AuroraMySQLLogging,
@@ -66,7 +66,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {

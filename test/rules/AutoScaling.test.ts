@@ -17,8 +17,8 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { Topic } from 'aws-cdk-lib/aws-sns';
-import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Duration, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   AutoScalingGroupHealthCheck,
   AutoScalingGroupCooldownPeriod,
@@ -38,7 +38,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon EC2 Auto Scaling', () => {

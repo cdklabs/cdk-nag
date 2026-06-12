@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnGraphQLApi } from 'aws-cdk-lib/aws-appsync';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   AppSyncGraphQLRequestLogging,
   AppSyncTracing,
@@ -15,7 +15,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS AppSync', () => {
@@ -32,7 +32,11 @@ describe('AWS AppSync', () => {
       new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
-        logConfig: { excludeVerboseContent: true },
+        logConfig: {
+          excludeVerboseContent: true,
+          fieldLogLevel: 'NONE',
+          cloudWatchLogsRoleArn: 'arn:aws:iam::123456789012:role/role',
+        },
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
@@ -47,7 +51,10 @@ describe('AWS AppSync', () => {
       new CfnGraphQLApi(stack, 'GraphqlApi', {
         authenticationType: 'AMAZON_COGNITO_USER_POOL',
         name: 'foo',
-        logConfig: { cloudWatchLogsRoleArn: 'foo' },
+        logConfig: {
+          cloudWatchLogsRoleArn: 'foo',
+          fieldLogLevel: 'ALL',
+        } as any,
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });

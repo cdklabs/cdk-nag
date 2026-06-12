@@ -112,37 +112,37 @@ import { WAFv2LoggingEnabled } from '../rules/waf';
  * Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
  */
 export class NIST80053R4Checks extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
+  public readonly name = 'NIST.800.53.R4';
+
+  constructor(scope?: IConstruct, props?: NagPackProps) {
+    super(scope, props);
     this.packName = 'NIST.800.53.R4';
   }
 
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      this.checkAPIGW(node);
-      this.checkAutoScaling(node);
-      this.checkCloudTrail(node);
-      this.checkCloudWatch(node);
-      this.checkCodeBuild(node);
-      this.checkDMS(node);
-      this.checkDynamoDB(node);
-      this.checkEC2(node);
-      this.checkEFS(node);
-      this.checkElastiCache(node);
-      this.checkELB(node);
-      this.checkEMR(node);
-      this.checkIAM(node);
-      this.checkKMS(node);
-      this.checkLambda(node);
-      this.checkOpenSearch(node);
-      this.checkRDS(node);
-      this.checkRedshift(node);
-      this.checkS3(node);
-      this.checkSageMaker(node);
-      this.checkSNS(node);
-      this.checkVPC(node);
-      this.checkWAF(node);
-    }
+  protected checkResource(node: CfnResource): void {
+    this.checkAPIGW(node);
+    this.checkAutoScaling(node);
+    this.checkCloudTrail(node);
+    this.checkCloudWatch(node);
+    this.checkCodeBuild(node);
+    this.checkDMS(node);
+    this.checkDynamoDB(node);
+    this.checkEC2(node);
+    this.checkEFS(node);
+    this.checkElastiCache(node);
+    this.checkELB(node);
+    this.checkEMR(node);
+    this.checkIAM(node);
+    this.checkKMS(node);
+    this.checkLambda(node);
+    this.checkOpenSearch(node);
+    this.checkRDS(node);
+    this.checkRedshift(node);
+    this.checkS3(node);
+    this.checkSageMaker(node);
+    this.checkSNS(node);
+    this.checkVPC(node);
+    this.checkWAF(node);
   }
 
   /**

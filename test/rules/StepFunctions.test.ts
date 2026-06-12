@@ -10,8 +10,8 @@ import {
   LogLevel,
   DefinitionBody,
 } from 'aws-cdk-lib/aws-stepfunctions';
-import { Aspects, Duration, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Duration, Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   StepFunctionStateMachineAllLogsToCloudWatch,
   StepFunctionStateMachineXray,
@@ -25,7 +25,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS Step Functions', () => {

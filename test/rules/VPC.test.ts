@@ -14,8 +14,8 @@ import {
   Subnet,
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   VPCDefaultSecurityGroupClosed,
   VPCFlowLogsEnabled,
@@ -35,7 +35,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Virtual Private Cloud (VPC)', () => {

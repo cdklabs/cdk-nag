@@ -9,8 +9,8 @@ import {
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
 import { Key } from 'aws-cdk-lib/aws-kms';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   CodeBuildProjectEnvVarAwsCred,
   CodeBuildProjectKMSEncryptedArtifacts,
@@ -28,7 +28,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon CodeBuild', () => {
