@@ -13,8 +13,8 @@ import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnSubscription, CfnTopicPolicy, Topic } from 'aws-cdk-lib/aws-sns';
 import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   SNSEncryptedKMS,
   SNSRedrivePolicy,
@@ -30,7 +30,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Simple Notification Service (Amazon SNS)', () => {

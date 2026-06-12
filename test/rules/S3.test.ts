@@ -22,8 +22,8 @@ import {
   CfnBucket,
   CfnBucketPolicy,
 } from 'aws-cdk-lib/aws-s3';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   S3BucketDefaultLockEnabled,
   S3BucketLevelPublicAccessProhibited,
@@ -53,7 +53,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Simple Storage Service (S3)', () => {

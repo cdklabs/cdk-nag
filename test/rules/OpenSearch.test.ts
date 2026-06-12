@@ -21,8 +21,8 @@ import {
   Domain,
   EngineVersion,
 } from 'aws-cdk-lib/aws-opensearchservice';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   OpenSearchAllowlistedIPs,
   OpenSearchDedicatedMasterNode,
@@ -51,7 +51,7 @@ let stack: Stack;
 beforeEach(() => {
   const topStack = new Stack(undefined, 'Resource');
   stack = new Stack(topStack, 'Resource');
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon OpenSearch Service', () => {

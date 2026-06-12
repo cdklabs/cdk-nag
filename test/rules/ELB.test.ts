@@ -19,8 +19,8 @@ import {
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { validateStack, TestType, TestPack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import {
   ALBHttpDropInvalidHeaderEnabled,
   ALBHttpToHttpsRedirection,
@@ -52,7 +52,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack(undefined, undefined, { env: { region: 'us-east-1' } });
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Elastic Load Balancing', () => {

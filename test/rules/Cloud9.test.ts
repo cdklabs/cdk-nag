@@ -4,8 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { CfnEnvironmentEC2 } from 'aws-cdk-lib/aws-cloud9';
 import { InstanceType, InstanceClass, InstanceSize } from 'aws-cdk-lib/aws-ec2';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, validateStack, TestType } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, validateStack, TestType, setActivePack } from './utils';
 import { Cloud9InstanceNoIngressSystemsManager } from '../../src/rules/cloud9';
 
 const testPack = new TestPack([Cloud9InstanceNoIngressSystemsManager]);
@@ -13,7 +13,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS Cloud9', () => {

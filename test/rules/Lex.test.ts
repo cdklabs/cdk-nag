@@ -2,11 +2,11 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aspects, Stack } from 'aws-cdk-lib';
+import { Stack } from 'aws-cdk-lib';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnBot, CfnBotAlias } from 'aws-cdk-lib/aws-lex';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
-import { validateStack, TestType, TestPack } from './utils';
+import { validateStack, TestType, TestPack, setActivePack } from './utils';
 import { LexBotAliasEncryptedConversationLogs } from '../../src/rules/lex';
 
 const testPack = new TestPack([LexBotAliasEncryptedConversationLogs]);
@@ -14,7 +14,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Lex', () => {
@@ -165,7 +165,7 @@ describe('Amazon Lex', () => {
           ],
         },
       });
-      validateStack(stack, ruleId, TestType.VALIDATION_FAILURE);
+      validateStack(stack, ruleId, TestType.ERROR);
     });
     test('Compliance', () => {
       new CfnBotAlias(stack, 'rBotAlias', {

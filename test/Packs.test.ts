@@ -3,8 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { SynthUtils } from '@aws-cdk/assert';
-import { Aspects, CfnResource, Stack } from 'aws-cdk-lib';
+import { App, CfnResource, Stack } from 'aws-cdk-lib';
 import {
   AwsSolutionsChecks,
   HIPAASecurityChecks,
@@ -174,10 +173,10 @@ describe('Check NagPack Details', () => {
         'AwsSolutions-VPC7',
       ];
       jest.spyOn(pack, 'applyRule');
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
+      pack.validateScope(app);
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });
@@ -296,10 +295,10 @@ describe('Check NagPack Details', () => {
         'HIPAA.Security-WAFv2LoggingEnabled',
       ];
       jest.spyOn(pack, 'applyRule');
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
+      pack.validateScope(app);
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });
@@ -398,10 +397,10 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R4-WAFv2LoggingEnabled',
       ];
       jest.spyOn(pack, 'applyRule');
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
+      pack.validateScope(app);
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });
@@ -515,10 +514,10 @@ describe('Check NagPack Details', () => {
         'NIST.800.53.R5-WAFv2LoggingEnabled',
       ];
       jest.spyOn(pack, 'applyRule');
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
+      pack.validateScope(app);
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });
@@ -616,10 +615,10 @@ describe('Check NagPack Details', () => {
         'PCI.DSS.321-WAFv2LoggingEnabled',
       ];
       jest.spyOn(pack, 'applyRule');
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
       new CfnResource(stack, 'rTestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
+      pack.validateScope(app);
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });
@@ -668,10 +667,10 @@ describe('Check NagPack Details', () => {
         'Serverless-SQSRedrivePolicy',
       ];
       jest.spyOn(pack, 'applyRule');
-      const stack = new Stack();
-      Aspects.of(stack).add(pack);
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
       new CfnResource(stack, 'TestResource', { type: 'foo' });
-      SynthUtils.synthesize(stack).messages;
+      pack.validateScope(app);
       expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
       expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
     });

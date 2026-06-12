@@ -3,8 +3,8 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnWebACL, CfnLoggingConfiguration } from 'aws-cdk-lib/aws-wafv2';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import { WAFv2LoggingEnabled } from '../../src/rules/waf';
 
 const testPack = new TestPack([WAFv2LoggingEnabled]);
@@ -12,7 +12,7 @@ let stack: Stack;
 
 beforeEach(() => {
   stack = new Stack();
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('AWS WAF - Web Application Firewall', () => {

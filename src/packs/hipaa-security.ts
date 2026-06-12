@@ -138,39 +138,39 @@ import { WAFv2LoggingEnabled } from '../rules/waf';
  * Based on the HIPAA Security AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-hipaa_security.html
  */
 export class HIPAASecurityChecks extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
+  public readonly name = 'HIPAA.Security';
+
+  constructor(scope?: IConstruct, props?: NagPackProps) {
+    super(scope, props);
     this.packName = 'HIPAA.Security';
   }
 
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      this.checkAPIGW(node);
-      this.checkAutoScaling(node);
-      this.checkCloudTrail(node);
-      this.checkCloudWatch(node);
-      this.checkCodeBuild(node);
-      this.checkDMS(node);
-      this.checkDynamoDB(node);
-      this.checkEC2(node);
-      this.checkECS(node);
-      this.checkEFS(node);
-      this.checkElastiCache(node);
-      this.checkElasticBeanstalk(node);
-      this.checkELB(node);
-      this.checkEMR(node);
-      this.checkIAM(node);
-      this.checkLambda(node);
-      this.checkOpenSearch(node);
-      this.checkRDS(node);
-      this.checkRedshift(node);
-      this.checkS3(node);
-      this.checkSageMaker(node);
-      this.checkSecretsManager(node);
-      this.checkSNS(node);
-      this.checkVPC(node);
-      this.checkWAF(node);
-    }
+  protected checkResource(node: CfnResource): void {
+    this.checkAPIGW(node);
+    this.checkAutoScaling(node);
+    this.checkCloudTrail(node);
+    this.checkCloudWatch(node);
+    this.checkCodeBuild(node);
+    this.checkDMS(node);
+    this.checkDynamoDB(node);
+    this.checkEC2(node);
+    this.checkECS(node);
+    this.checkEFS(node);
+    this.checkElastiCache(node);
+    this.checkElasticBeanstalk(node);
+    this.checkELB(node);
+    this.checkEMR(node);
+    this.checkIAM(node);
+    this.checkLambda(node);
+    this.checkOpenSearch(node);
+    this.checkRDS(node);
+    this.checkRedshift(node);
+    this.checkS3(node);
+    this.checkSageMaker(node);
+    this.checkSecretsManager(node);
+    this.checkSNS(node);
+    this.checkVPC(node);
+    this.checkWAF(node);
   }
 
   /**

@@ -17,8 +17,8 @@ import {
   Queue,
   QueueEncryption,
 } from 'aws-cdk-lib/aws-sqs';
-import { Aspects, Stack } from 'aws-cdk-lib/core';
-import { TestPack, TestType, validateStack } from './utils';
+import { Stack } from 'aws-cdk-lib/core';
+import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   SQSQueueDLQ,
   SQSQueueSSE,
@@ -38,7 +38,7 @@ beforeEach(() => {
   stack = new Stack(undefined, undefined, {
     env: { account: '111222333444', region: 'us-west-2' },
   });
-  Aspects.of(stack).add(testPack);
+  setActivePack(testPack);
 });
 
 describe('Amazon Simple Queue Service (SQS)', () => {

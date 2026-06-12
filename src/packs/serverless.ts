@@ -34,21 +34,22 @@ import { StepFunctionStateMachineXray } from '../rules/stepfunctions';
  *
  */
 export class ServerlessChecks extends NagPack {
-  constructor(props?: NagPackProps) {
-    super(props);
+  public readonly name = 'Serverless';
+
+  constructor(scope?: IConstruct, props?: NagPackProps) {
+    super(scope, props);
     this.packName = 'Serverless';
   }
-  public visit(node: IConstruct): void {
-    if (node instanceof CfnResource) {
-      this.checkLambda(node);
-      this.checkCloudwatch(node);
-      this.checkApiGw(node);
-      this.checkAppSync(node);
-      this.checkEventBridge(node);
-      this.checkSNS(node);
-      this.checkSQS(node);
-      this.checkStepFunctions(node);
-    }
+
+  protected checkResource(node: CfnResource): void {
+    this.checkLambda(node);
+    this.checkCloudwatch(node);
+    this.checkApiGw(node);
+    this.checkAppSync(node);
+    this.checkEventBridge(node);
+    this.checkSNS(node);
+    this.checkSQS(node);
+    this.checkStepFunctions(node);
   }
 
   /**

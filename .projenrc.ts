@@ -10,9 +10,9 @@ const project = new CdklabsConstructLibrary({
   author: 'Amazon Web Services',
   authorAddress: 'aws-cdk-dev@amazon.com',
   defaultReleaseBranch: 'main',
-  cdkVersion: '2.176.0',
+  cdkVersion: '2.257.0',
   jsiiVersion: '5.8',
-  majorVersion: 2,
+  majorVersion: 3,
   npmDistTag: 'latest',
   name: 'cdk-nag',
   description:
