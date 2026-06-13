@@ -27,7 +27,7 @@ export default Object.defineProperty(
           }
         }
       }
-      if (!found) {
+      if (!found && !hasOpenApiRequestValidator(node)) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
@@ -58,4 +58,33 @@ function isMatchingRequestValidator(
     Stack.of(node).resolve(node.validateRequestBody) === true &&
     Stack.of(node).resolve(node.validateRequestParameters) === true
   );
+}
+
+
+/**
+ * Check whether an imported OpenAPI definition has basic request validation enabled.
+ * @param node the CfnRestApi to check
+ * returns whether a request validator in the OpenAPI body validates both body and parameters
+ */
+function hasOpenApiRequestValidator(node: CfnRestApi): boolean {
+  const body = Stack.of(node).resolve(node.body);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return false;
+  }
+
+  const validators = body['x-amazon-apigateway-request-validators'];
+  if (!validators || typeof validators !== 'object' || Array.isArray(validators)) {
+    return false;
+  }
+
+  return Object.values(validators).some(validator => {
+    if (!validator || typeof validator !== 'object' || Array.isArray(validator)) {
+      return false;
+    }
+
+    return (
+      Stack.of(node).resolve(validator['validateRequestBody']) === true &&
+      Stack.of(node).resolve(validator['validateRequestParameters']) === true
+    );
+  });
 }
