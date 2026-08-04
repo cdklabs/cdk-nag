@@ -60,18 +60,18 @@ GitHub provides additional document on [forking a repository](https://help.githu
 
 The following tools need to be installed on your system prior to building `cdk-nag` locally:
 
-- [Node.js >= 14.15.0](https://nodejs.org/download/release/latest-v14.x/)
+- [Node.js >= 18.12.0](https://nodejs.org/en/download)
   - We recommend using a version in [Active LTS](https://nodejs.org/en/about/releases/)
-- [Yarn >= 1.19.1, < 2](https://yarnpkg.com/lang/en/docs/install)
+- [Yarn >= 4](https://yarnpkg.com/getting-started/install)
 - [.NET SDK >= 6.0.x](https://www.microsoft.com/net/download)
 - [Python >= 3.6.5, < 4.0](https://www.python.org/downloads/release/python-365/)
 - [Java Development Kit >= 17.0.0](https://www.oracle.com/java/technologies/downloads/)
-- [Golang >= 16.0.0](https://go.dev/doc/install)
+- [Golang >= 1.25.0](https://go.dev/doc/install)
 
 Install dependencies
 
 - `yarn install`
-- `npx projen`
+- `yarn projen`
 
 #### Option 2: Dev Container
 
@@ -82,16 +82,16 @@ Install dependencies
 
 Please follow the [setup instructions](https://code.visualstudio.com/docs/remote/containers-tutorial) to configure VS Code.
 
-With VS Code setup, you will be prompted to open the `cdk-nag` repo in a Dev Container, or you can choos "Dev Containers: Reopen in Container" from the VS Code command palette.
+With VS Code setup, you will be prompted to open the `cdk-nag` repo in a Dev Container, or you can choose "Dev Containers: Reopen in Container" from the VS Code command palette.
 
 ### Step 4: Develop
 
 1. Change code
 2. If relevant, add [tests](./test/)
 3. Run tests
-   - `npx projen test`
+   - `yarn test`
 4. Build
-   - `npx projen build`
+   - `yarn build`
 5. Update relevant documentation
 6. Create the commit with relevant files
    - Note: you may need to update the commit if `pre-commit` changes/suggests changes to files
@@ -108,7 +108,7 @@ Looking at the existing issues is a great way to find something to contribute on
 
 This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
 For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq) or contact
-opensource-codeofconduct@amazon.com with any additional questions or comments.
+<opensource-codeofconduct@amazon.com> with any additional questions or comments.
 
 ## Security issue notifications
 
