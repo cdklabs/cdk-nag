@@ -1,5 +1,4 @@
-FROM jsii/superchain:1-buster-slim-node20
-
+FROM jsii/superchain:1-bookworm-slim
 USER root
 
 # Change uid/guid of superchain so it can work with the docker-in-docker feature

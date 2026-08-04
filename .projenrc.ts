@@ -40,6 +40,13 @@ const project = new CdklabsConstructLibrary({
   eslintOptions: { dirs: ['src'], prettier: true },
   buildWorkflow: true,
   gitignore: ['.vscode', '**/.DS_Store'],
+
+  githubOptions: {
+    pullRequestLintOptions: {
+      contributorStatement:
+        'By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license',
+    },
+  },
 });
 project.package.addField('prettier', {
   singleQuote: true,
