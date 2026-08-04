@@ -229,7 +229,8 @@ export abstract class NagPack implements IPolicyValidationPlugin {
       for (const entry of current.node.metadata) {
         if (entry.type === metadataKey && entry.data) {
           const ids = Object.keys(entry.data as Record<string, string>).map(
-            (k) => k.replace(/^annotation::/, '')
+            // aws-cdk-lib <2.262.1 wrote 'annotation::', >=2.262.1 writes 'Annotation::'
+            (k) => k.replace(/^annotation::/i, '')
           );
           if (ids.includes(ruleId)) return true;
         }
@@ -260,7 +261,7 @@ export class WriteNagSuppressionsToCloudFormationAspect implements IAspect {
           for (const [qualifiedId, reason] of Object.entries(
             entry.data as Record<string, string>
           )) {
-            const id = qualifiedId.replace(/^annotation::/, '');
+            const id = qualifiedId.replace(/^annotation::/i, '');
             if (!seen.has(id)) {
               seen.add(id);
               rules.push({ id, reason });
