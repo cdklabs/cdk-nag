@@ -12,8 +12,10 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
+        id: checkout
         uses: actions/checkout@v6
       - name: Dependency Review
+        id: dependency_review
         uses: actions/dependency-review-action@v4
         with:
           comment-summary-in-pr: always

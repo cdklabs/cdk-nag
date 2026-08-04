@@ -11,8 +11,10 @@ jobs:
     permissions: {}
     steps:
       - name: Print github context
+        id: print_github_context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
       - name: Print github event file
+        id: print_github_event_file
         run: jq . "$GITHUB_EVENT_PATH"
