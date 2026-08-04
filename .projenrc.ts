@@ -25,6 +25,7 @@ const project = new CdklabsConstructLibrary({
   release: true,
   defaultReleaseBranch: 'main',
   npmDistTag: 'latest',
+  enablePRAutoMerge: true,
   publishToMaven: {
     mavenGroupId: 'io.github.cdklabs',
     javaPackage: 'io.github.cdklabs.cdknag',
