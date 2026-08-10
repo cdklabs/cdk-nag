@@ -89,13 +89,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.204.1
-  resolution: "@aws-cdk/integ-runner@npm:2.204.1"
+  version: 2.204.2
+  resolution: "@aws-cdk/integ-runner@npm:2.204.2"
   dependencies:
     "@aws-cdk/aws-service-spec": "npm:0.1.199"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/0812445e33084412d87488660166c1fec069f7a5cd3ae306787e48b63a33f2ab427c0c9c7e8b3b6fcf190cc22646c67d0997e722b6793c72f7ca1a47e916892e
+  checksum: 10c0/b365d9b7f7a8d654f2deab614b75bd14f9fe2bac9bef952877373031da9ee8179942a39c4903d509fa68a20ec4600bcf0722cb33a30df79b1ca89d903f194135
   languageName: node
   linkType: hard
 
@@ -1195,11 +1195,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 26.1.2
-  resolution: "@types/node@npm:26.1.2"
+  version: 26.2.0
+  resolution: "@types/node@npm:26.2.0"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/a45503222c7db8f374afd5c9381db63dd95b6b1f703abea0890dd3d4a09eeb41da489e08a1a45baf18fe89fb77fbf310ff2789f680c490b04dafc41a60800a86
+  checksum: 10c0/f8566d88162241eb55a46f7e4ea097188eab0aaafefea7a58e63adab8c4144eb98c08b7911452c846104c339a0f82282f5e1ed4b26b578d60709614fe2843f4d
   languageName: node
   linkType: hard
 
