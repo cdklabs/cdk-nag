@@ -32,13 +32,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.200":
-  version: 0.1.200
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.200"
+"@aws-cdk/aws-service-spec@npm:0.1.203":
+  version: 0.1.203
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.203"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.266"
+    "@aws-cdk/service-spec-types": "npm:^0.0.269"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/52b0ec0bfee9168acc5b5c8e2c5669667c6275f4a1996b546a7cd5018875cb838d03519284d8b51a6f15d98703d3e1c49e9e3b86955eeab218de0968f47d9615
+  checksum: 10c0/b84d8d95416d0b7b65dd9e5a5e82745a1f83a5f44dbc939916e78dfc0327bc41a01685655532832202d22fd9be5035e2c5cbb981a347a36106cbf0aadae6c513
   languageName: node
   linkType: hard
 
@@ -89,32 +89,32 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.204.3
-  resolution: "@aws-cdk/integ-runner@npm:2.204.3"
+  version: 2.204.5
+  resolution: "@aws-cdk/integ-runner@npm:2.204.5"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.200"
+    "@aws-cdk/aws-service-spec": "npm:0.1.203"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/6084a3f4b2ef47b8a41d3f45da93204a9ae8d192b1b0c0bfcfee7935149da37051858cca521559279d48e7d80946387c2c976a51d3b2b1bc68e20ee6686b4ab0
+  checksum: 10c0/58d31a263dfbedf38a6b783833a40b7a9a4171046075e904cdfdf4bfe498babf46ecab9506a6d8e1c6c1956ee2675fad9351a827b5b0c2208bbb62b4c41a1104
   languageName: node
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.265.0-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.265.0-alpha.0"
+  version: 2.266.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.266.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.265.0
+    aws-cdk-lib: ^2.266.0
     constructs: ^10.5.0
-  checksum: 10c0/6ad159c72e6c23ceece4250eed685180376ca22df9a24ab305175325c51c14a7452adc8a1d326044a338f3c8d93d5b6ac3cf0dc4b8f8e8be7c52f365d302825c
+  checksum: 10c0/d865d0ba3a4fa789098ad4e7ef45008d40532ec2352523e64ef8034a204d77e1faac46a0422fa8fca237f981db80b3ad3048f589b78f6888ca9acceb68f8ca7a
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.266":
-  version: 0.0.266
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.266"
+"@aws-cdk/service-spec-types@npm:^0.0.269":
+  version: 0.0.269
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.269"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/f9d3ee54794ae1394449460522b74a6e52a0435b541e4e71e71b32c2f32236edce22aaf2f55c396f019be09c4e9d0d0e9a43fb41e28a877ca6d700b323fcaf36
+  checksum: 10c0/0bb5d1c9f9d7cedf39d9dff2e1a2e4aadd8b521c86176c12d64bc9f57997b3eca58b0e2249561a989e9a01b81576c845538bd38aadff453eadbab20998f46a8d
   languageName: node
   linkType: hard
 
@@ -1384,10 +1384,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmldom/xmldom@npm:^0.9.10":
-  version: 0.9.10
-  resolution: "@xmldom/xmldom@npm:0.9.10"
-  checksum: 10c0/38a9c9b95450d7fccebc61371c8e0b90ceaae992886484108333d29ccbd2640e3555b6af012f15ce1beb5067aeb40486659b6183fad38af179e82d28028bfc5d
+"@xmldom/xmldom@npm:^0.9.11":
+  version: 0.9.11
+  resolution: "@xmldom/xmldom@npm:0.9.11"
+  checksum: 10c0/f29dd4a35b525224cb1bdc8728041fdab218c3a2f5572452c764781490d64a6755f34a1792212abe7ca319a18b157de5dcf9734f067560b968e6ba2b66d58f0f
   languageName: node
   linkType: hard
 
@@ -5155,12 +5155,12 @@ __metadata:
   linkType: hard
 
 "jsii-rosetta@npm:5.9":
-  version: 5.9.61
-  resolution: "jsii-rosetta@npm:5.9.61"
+  version: 5.9.62
+  resolution: "jsii-rosetta@npm:5.9.62"
   dependencies:
     "@jsii/check-node": "npm:^1.139.0"
     "@jsii/spec": "npm:^1.139.0"
-    "@xmldom/xmldom": "npm:^0.9.10"
+    "@xmldom/xmldom": "npm:^0.9.11"
     chalk: "npm:^4"
     commonmark: "npm:^0.31.2"
     fast-glob: "npm:^3.3.3"
@@ -5173,7 +5173,7 @@ __metadata:
     yargs: "npm:^17.7.3"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/61301e5bf8aa8b195fe250ac182bb7fb47cdbe7f89a02a9e9e355df492a41ec9f02ecf8f28442d78158c3b1b99cbe66ed2b6d85cb5308ff151fdd6f6ed38727e
+  checksum: 10c0/6a38f14058e15990ed902701a6536bc9778daa61d268bd60231394586f0c210b8188b14c177c95b9539b34aa1c9e09d1288836ba7440644414dd78cb0c5772b3
   languageName: node
   linkType: hard
 
