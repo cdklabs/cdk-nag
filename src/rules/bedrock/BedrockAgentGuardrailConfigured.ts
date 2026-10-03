@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnAgent } from 'aws-cdk-lib/aws-bedrock';
+import { isConfigured } from './is-configured';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
@@ -15,15 +16,9 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnAgent) {
       const guardrail = Stack.of(node).resolve(node.guardrailConfiguration);
-      const identifier = Stack.of(node).resolve(guardrail?.guardrailIdentifier);
-      const version = Stack.of(node).resolve(guardrail?.guardrailVersion);
       if (
-        identifier == undefined ||
-        identifier === '' ||
-        identifier.Ref === 'AWS::NoValue' ||
-        version == undefined ||
-        version === '' ||
-        version.Ref === 'AWS::NoValue'
+        !isConfigured(guardrail, ['guardrailIdentifier']) ||
+        !isConfigured(guardrail, ['guardrailVersion'])
       ) {
         return NagRuleCompliance.NON_COMPLIANT;
       }

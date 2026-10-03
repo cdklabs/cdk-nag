@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aws, CfnParameter, Lazy, Stack } from 'aws-cdk-lib';
+import { Aws, CfnParameter, Fn, Lazy, Stack } from 'aws-cdk-lib';
 import { CfnAgent, CfnDataSource, CfnGuardrail } from 'aws-cdk-lib/aws-bedrock';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
@@ -79,6 +79,23 @@ describe.each([
     );
   });
 
+  test('rejects a conditional key that can be removed', () => {
+    const key = Fn.conditionIf('UseKey', keyArn, Aws.NO_VALUE).toString();
+    expect(rule(createResource(key))).toBe(NagRuleCompliance.NON_COMPLIANT);
+  });
+
+  test('accepts conditional keys when both branches configure a key', () => {
+    const key = new Key(stack, 'Key');
+    const conditionalKey = Fn.conditionIf(
+      'UseKey',
+      keyArn,
+      key.keyArn
+    ).toString();
+    expect(rule(createResource(conditionalKey))).toBe(
+      NagRuleCompliance.COMPLIANT
+    );
+  });
+
   test('does not apply to other resource types', () => {
     expect(rule(new CfnBucket(stack, 'Bucket'))).toBe(
       NagRuleCompliance.NOT_APPLICABLE
@@ -90,6 +107,30 @@ describe('BedrockDataSourceKMSKeyConfigured', () => {
   test('rejects a missing encryption configuration', () => {
     const source = createDataSource();
     source.serverSideEncryptionConfiguration = undefined;
+    expect(BedrockDataSourceKMSKeyConfigured(source)).toBe(
+      NagRuleCompliance.NON_COMPLIANT
+    );
+  });
+
+  test('accepts conditional encryption configurations', () => {
+    const source = createDataSource();
+    source.serverSideEncryptionConfiguration = Fn.conditionIf(
+      'SelectKey',
+      { kmsKeyArn: keyArn },
+      { kmsKeyArn: new Key(stack, 'Key').keyArn }
+    );
+    expect(BedrockDataSourceKMSKeyConfigured(source)).toBe(
+      NagRuleCompliance.COMPLIANT
+    );
+  });
+
+  test('rejects conditional encryption with an empty branch', () => {
+    const source = createDataSource();
+    source.serverSideEncryptionConfiguration = Fn.conditionIf(
+      'UseKey',
+      { kmsKeyArn: keyArn },
+      Aws.NO_VALUE
+    );
     expect(BedrockDataSourceKMSKeyConfigured(source)).toBe(
       NagRuleCompliance.NON_COMPLIANT
     );
@@ -167,6 +208,49 @@ describe('BedrockAgentGuardrailConfigured', () => {
       guardrailIdentifier: Lazy.string({ produce: () => undefined }),
       guardrailVersion: '1',
     };
+    expect(BedrockAgentGuardrailConfigured(agent)).toBe(
+      NagRuleCompliance.NON_COMPLIANT
+    );
+  });
+
+  test('accepts conditional guardrail configurations', () => {
+    const agent = createAgent();
+    agent.guardrailConfiguration = Fn.conditionIf(
+      'SelectGuardrail',
+      { guardrailIdentifier: 'abcdef123456', guardrailVersion: '1' },
+      { guardrailIdentifier: 'fedcba654321', guardrailVersion: 'DRAFT' }
+    );
+    expect(BedrockAgentGuardrailConfigured(agent)).toBe(
+      NagRuleCompliance.COMPLIANT
+    );
+  });
+
+  test('rejects a conditional guardrail version that can be removed', () => {
+    const agent = createAgent();
+    agent.guardrailConfiguration = {
+      guardrailIdentifier: 'abcdef123456',
+      guardrailVersion: Fn.conditionIf(
+        'UseGuardrail',
+        '1',
+        Aws.NO_VALUE
+      ).toString(),
+    };
+    expect(BedrockAgentGuardrailConfigured(agent)).toBe(
+      NagRuleCompliance.NON_COMPLIANT
+    );
+  });
+
+  test('rejects a nested conditional guardrail with an incomplete branch', () => {
+    const agent = createAgent();
+    agent.guardrailConfiguration = Fn.conditionIf(
+      'UseGuardrail',
+      { guardrailIdentifier: 'abcdef123456', guardrailVersion: '1' },
+      Fn.conditionIf(
+        'UseFallback',
+        { guardrailIdentifier: 'fedcba654321', guardrailVersion: '1' },
+        { guardrailIdentifier: 'fedcba654321' }
+      )
+    );
     expect(BedrockAgentGuardrailConfigured(agent)).toBe(
       NagRuleCompliance.NON_COMPLIANT
     );

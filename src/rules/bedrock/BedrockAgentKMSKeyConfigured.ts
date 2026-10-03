@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource, Stack } from 'aws-cdk-lib';
 import { CfnAgent } from 'aws-cdk-lib/aws-bedrock';
+import { isConfigured } from './is-configured';
 import { NagRuleCompliance } from '../../nag-rules';
 
 /**
@@ -15,11 +16,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnAgent) {
       const kmsKey = Stack.of(node).resolve(node.customerEncryptionKeyArn);
-      if (
-        kmsKey == undefined ||
-        kmsKey === '' ||
-        kmsKey.Ref === 'AWS::NoValue'
-      ) {
+      if (!isConfigured(kmsKey)) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
