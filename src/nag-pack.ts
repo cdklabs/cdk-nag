@@ -167,10 +167,13 @@ export abstract class NagPack implements IPolicyValidationPlugin {
           this.addViolation(ruleId, params);
         }
       } else if (Array.isArray(result)) {
-        for (const finding of result) {
-          const findingRuleId = `${ruleId}[${finding}]`;
-          if (!this.isAcknowledged(params.node, findingRuleId)) {
-            this.addViolation(findingRuleId, params);
+        const ruleAcknowledged = this.isAcknowledged(params.node, ruleId);
+        if (!ruleAcknowledged) {
+          for (const finding of result) {
+            const findingRuleId = `${ruleId}[${finding}]`;
+            if (!this.isAcknowledged(params.node, findingRuleId)) {
+              this.addViolation(findingRuleId, params);
+            }
           }
         }
       }
