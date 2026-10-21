@@ -39,6 +39,13 @@ describe('Amazon Bedrock', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 3', () => {
+      new CfnDataSource(stack, 'DataSource', {
+        ...dataSourceProps,
+        serverSideEncryptionConfiguration: { kmsKeyArn: '' },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnDataSource(stack, 'DataSource', {
         ...dataSourceProps,

@@ -15,7 +15,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnMemory) {
       const kmsKey = Stack.of(node).resolve(node.encryptionKeyArn);
-      if (kmsKey == undefined) {
+      if (!kmsKey) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;

@@ -15,7 +15,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnGateway) {
       const kmsKey = Stack.of(node).resolve(node.kmsKeyArn);
-      if (kmsKey == undefined) {
+      if (!kmsKey) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;

@@ -3,9 +3,10 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnResource } from 'aws-cdk-lib';
 import { CfnCodeInterpreterCustom } from 'aws-cdk-lib/aws-bedrockagentcore';
-import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import { resolveNetworkMode } from './utils';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
  * Bedrock AgentCore custom code interpreters are configured with VPC network mode
@@ -14,13 +15,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnCodeInterpreterCustom) {
-      const networkConfiguration = Stack.of(node).resolve(
-        node.networkConfiguration
-      );
-      const networkMode = NagRules.resolveIfPrimitive(
-        node,
-        networkConfiguration?.networkMode
-      );
+      const networkMode = resolveNetworkMode(node, node.networkConfiguration);
       if (networkMode !== 'VPC') {
         return NagRuleCompliance.NON_COMPLIANT;
       }

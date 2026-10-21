@@ -17,7 +17,7 @@ export default Object.defineProperty(
       const serverSideEncryptionConfiguration = Stack.of(node).resolve(
         node.serverSideEncryptionConfiguration
       );
-      if (serverSideEncryptionConfiguration?.kmsKeyArn == undefined) {
+      if (!serverSideEncryptionConfiguration?.kmsKeyArn) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;

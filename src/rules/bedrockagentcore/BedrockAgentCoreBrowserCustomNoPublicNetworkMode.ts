@@ -3,25 +3,20 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnResource } from 'aws-cdk-lib';
 import { CfnBrowserCustom } from 'aws-cdk-lib/aws-bedrockagentcore';
-import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import { resolveNetworkMode } from './utils';
+import { NagRuleCompliance } from '../../nag-rules';
 
 /**
- * Bedrock AgentCore custom browsers are configured with VPC network mode
+ * Bedrock AgentCore custom browsers are not configured with PUBLIC network mode
  * @param node the CfnResource to check
  */
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBrowserCustom) {
-      const networkConfiguration = Stack.of(node).resolve(
-        node.networkConfiguration
-      );
-      const networkMode = NagRules.resolveIfPrimitive(
-        node,
-        networkConfiguration?.networkMode
-      );
-      if (networkMode !== 'VPC') {
+      const networkMode = resolveNetworkMode(node, node.networkConfiguration);
+      if (networkMode === 'PUBLIC') {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;

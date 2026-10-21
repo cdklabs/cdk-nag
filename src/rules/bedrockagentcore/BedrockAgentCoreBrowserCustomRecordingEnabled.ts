@@ -3,8 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnResource } from 'aws-cdk-lib';
 import { CfnBrowserCustom } from 'aws-cdk-lib/aws-bedrockagentcore';
+import { resolveIfNotIntrinsic } from './utils';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
@@ -14,7 +15,7 @@ import { NagRuleCompliance, NagRules } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBrowserCustom) {
-      const recordingConfig = Stack.of(node).resolve(node.recordingConfig);
+      const recordingConfig = resolveIfNotIntrinsic(node, node.recordingConfig);
       if (recordingConfig == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
@@ -22,7 +23,11 @@ export default Object.defineProperty(
         node,
         recordingConfig.enabled
       );
-      if (enabled !== true || recordingConfig.s3Location?.bucket == undefined) {
+      const s3Location = resolveIfNotIntrinsic(
+        node,
+        recordingConfig.s3Location
+      );
+      if (enabled !== true || !s3Location?.bucket) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
       return NagRuleCompliance.COMPLIANT;
