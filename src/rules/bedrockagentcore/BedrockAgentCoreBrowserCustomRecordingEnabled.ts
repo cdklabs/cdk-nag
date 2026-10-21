@@ -5,8 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnBrowserCustom } from 'aws-cdk-lib/aws-bedrockagentcore';
-import { resolveIfNotIntrinsic } from './utils';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
+import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 
 /**
  * Bedrock AgentCore custom browsers have session recording enabled with an S3 destination
