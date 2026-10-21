@@ -6,7 +6,6 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnEndpointConfig } from 'aws-cdk-lib/aws-sagemaker';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 
 /**
  * SageMaker endpoint configurations have more than one initial instance for each instance-based production variant
@@ -16,10 +15,14 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnEndpointConfig) {
       const productionVariants: any[] =
-        resolveIfNotIntrinsic(node, node.productionVariants) ?? [];
+        NagRules.resolveIfNotIntrinsic(node, node.productionVariants) ?? [];
       const instanceBasedVariants = productionVariants
-        .map((variant) => resolveIfNotIntrinsic(node, variant))
-        .filter((variant) => variant?.serverlessConfig == undefined);
+        .map((variant) => NagRules.resolveIfNotIntrinsic(node, variant))
+        .filter(
+          (variant) =>
+            NagRules.resolveIfNotIntrinsic(node, variant?.serverlessConfig) ==
+            undefined
+        );
       if (instanceBasedVariants.length === 0) {
         return NagRuleCompliance.NOT_APPLICABLE;
       }

@@ -5,8 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnRuntime } from 'aws-cdk-lib/aws-bedrockagentcore';
-import { resolveNetworkMode } from './utils';
 import { NagRuleCompliance } from '../../nag-rules';
+import { resolveNestedPrimitive } from '../../utils/resolve-nested-primitive';
 
 /**
  * Bedrock AgentCore runtimes are not configured with PUBLIC network mode
@@ -15,7 +15,11 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnRuntime) {
-      const networkMode = resolveNetworkMode(node, node.networkConfiguration);
+      const networkMode = resolveNestedPrimitive(
+        node,
+        node.networkConfiguration,
+        'networkMode'
+      );
       if (networkMode === 'PUBLIC') {
         return NagRuleCompliance.NON_COMPLIANT;
       }

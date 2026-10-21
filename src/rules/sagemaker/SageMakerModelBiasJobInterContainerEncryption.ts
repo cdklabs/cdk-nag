@@ -5,9 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnModelBiasJobDefinition } from 'aws-cdk-lib/aws-sagemaker';
-import { resolveNetworkConfigSetting } from './utils';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
+import { resolveNestedPrimitive } from '../../utils/resolve-nested-primitive';
 
 /**
  * SageMaker model bias job definitions that use multiple instances have inter-container traffic encryption enabled
@@ -16,18 +15,18 @@ import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnModelBiasJobDefinition) {
-      const clusterConfig = resolveIfNotIntrinsic(
+      const clusterConfig = NagRules.resolveIfNotIntrinsic(
         node,
-        resolveIfNotIntrinsic(node, node.jobResources)?.clusterConfig
+        NagRules.resolveIfNotIntrinsic(node, node.jobResources)?.clusterConfig
       );
       const instanceCount = NagRules.resolveIfPrimitive(
         node,
         clusterConfig?.instanceCount
       );
       if (instanceCount == undefined || instanceCount < 2) {
-        return NagRuleCompliance.COMPLIANT;
+        return NagRuleCompliance.NOT_APPLICABLE;
       }
-      const enableInterContainerTrafficEncryption = resolveNetworkConfigSetting(
+      const enableInterContainerTrafficEncryption = resolveNestedPrimitive(
         node,
         node.networkConfig,
         'enableInterContainerTrafficEncryption'

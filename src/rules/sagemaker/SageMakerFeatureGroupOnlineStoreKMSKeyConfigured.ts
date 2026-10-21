@@ -6,7 +6,6 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnFeatureGroup } from 'aws-cdk-lib/aws-sagemaker';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 
 /**
  * SageMaker feature group online stores with standard storage are encrypted with a KMS key
@@ -15,7 +14,7 @@ import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFeatureGroup) {
-      const onlineStoreConfig = resolveIfNotIntrinsic(
+      const onlineStoreConfig = NagRules.resolveIfNotIntrinsic(
         node,
         node.onlineStoreConfig
       );
@@ -30,7 +29,7 @@ export default Object.defineProperty(
       if (enableOnlineStore !== true || storageType === 'InMemory') {
         return NagRuleCompliance.NOT_APPLICABLE;
       }
-      const securityConfig = resolveIfNotIntrinsic(
+      const securityConfig = NagRules.resolveIfNotIntrinsic(
         node,
         onlineStoreConfig.SecurityConfig
       );

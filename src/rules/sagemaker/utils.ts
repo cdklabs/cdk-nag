@@ -3,24 +3,21 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { CfnResource } from 'aws-cdk-lib';
+import { CfnMonitoringSchedule } from 'aws-cdk-lib/aws-sagemaker';
 import { NagRules } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 
 /**
- * Resolve a boolean setting of a SageMaker monitoring network configuration
- * @param node the CfnResource to check
- * @param networkConfig the network configuration property of the resource
- * @param setting the setting to resolve
- * @returns the resolved setting
+ * Resolve the inline job definition of a SageMaker monitoring schedule
+ * @param node the CfnMonitoringSchedule to check
+ * @returns the resolved inline job definition, or undefined if the schedule references a separate job definition
  */
-export function resolveNetworkConfigSetting(
-  node: CfnResource,
-  networkConfig: any,
-  setting: 'enableInterContainerTrafficEncryption' | 'enableNetworkIsolation'
+export function resolveInlineMonitoringJobDefinition(
+  node: CfnMonitoringSchedule
 ): any {
-  return NagRules.resolveIfPrimitive(
+  return NagRules.resolveIfNotIntrinsic(
     node,
-    resolveIfNotIntrinsic(node, networkConfig)?.[setting]
+    NagRules.resolveIfNotIntrinsic(node, node.monitoringScheduleConfig)
+      ?.monitoringJobDefinition
   );
 }
 
@@ -34,9 +31,9 @@ export function usesPrivateRegistry(
   node: CfnResource,
   container: any
 ): boolean {
-  const imageConfig = resolveIfNotIntrinsic(
+  const imageConfig = NagRules.resolveIfNotIntrinsic(
     node,
-    resolveIfNotIntrinsic(node, container)?.imageConfig
+    NagRules.resolveIfNotIntrinsic(node, container)?.imageConfig
   );
   return (
     NagRules.resolveIfPrimitive(node, imageConfig?.repositoryAccessMode) ===

@@ -5,8 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnDataQualityJobDefinition } from 'aws-cdk-lib/aws-sagemaker';
-import { resolveNetworkConfigSetting } from './utils';
 import { NagRuleCompliance } from '../../nag-rules';
+import { resolveNestedPrimitive } from '../../utils/resolve-nested-primitive';
 
 /**
  * SageMaker data quality job definitions have network isolation enabled
@@ -15,7 +15,7 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDataQualityJobDefinition) {
-      const enableNetworkIsolation = resolveNetworkConfigSetting(
+      const enableNetworkIsolation = resolveNestedPrimitive(
         node,
         node.networkConfig,
         'enableNetworkIsolation'

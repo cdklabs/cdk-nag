@@ -3,9 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { parse } from 'path';
-import { CfnResource, Stack } from 'aws-cdk-lib';
+import { CfnResource } from 'aws-cdk-lib';
 import { CfnDataSource } from 'aws-cdk-lib/aws-bedrock';
-import { NagRuleCompliance } from '../../nag-rules';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * Bedrock knowledge base data sources are encrypted with a customer managed KMS key
@@ -14,7 +14,8 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnDataSource) {
-      const serverSideEncryptionConfiguration = Stack.of(node).resolve(
+      const serverSideEncryptionConfiguration = NagRules.resolveIfNotIntrinsic(
+        node,
         node.serverSideEncryptionConfiguration
       );
       if (!serverSideEncryptionConfiguration?.kmsKeyArn) {

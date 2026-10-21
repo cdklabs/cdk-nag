@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnParameter, Fn } from 'aws-cdk-lib';
+import { Aws, CfnParameter, Fn } from 'aws-cdk-lib';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import {
@@ -742,6 +742,24 @@ describe('Amazon SageMaker', () => {
             initialInstanceCount: new CfnParameter(stack, 'Count', {
               type: 'Number',
             }).valueAsNumber,
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.ERROR);
+    });
+    test('Error 2', () => {
+      new CfnEndpointConfig(stack, 'EndpointConfig', {
+        productionVariants: [
+          {
+            variantName: 'primary',
+            modelName: 'model',
+            instanceType: 'ml.m5.large',
+            initialInstanceCount: 1,
+            serverlessConfig: Fn.conditionIf(
+              'IsDev',
+              { maxConcurrency: 1, memorySizeInMb: 1024 },
+              Aws.NO_VALUE
+            ),
           },
         ],
       });

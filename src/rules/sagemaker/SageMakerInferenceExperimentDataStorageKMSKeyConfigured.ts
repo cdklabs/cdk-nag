@@ -5,8 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnInferenceExperiment } from 'aws-cdk-lib/aws-sagemaker';
-import { NagRuleCompliance } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * SageMaker inference experiments that capture data encrypt it with a customer managed KMS key
@@ -15,7 +14,7 @@ import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnInferenceExperiment) {
-      const dataStorageConfig = resolveIfNotIntrinsic(
+      const dataStorageConfig = NagRules.resolveIfNotIntrinsic(
         node,
         node.dataStorageConfig
       );

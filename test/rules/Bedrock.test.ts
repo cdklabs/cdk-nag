@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { Aws, CfnCondition, Fn } from 'aws-cdk-lib';
 import { CfnDataSource } from 'aws-cdk-lib/aws-bedrock';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Stack } from 'aws-cdk-lib/core';
@@ -54,6 +55,20 @@ describe('Amazon Bedrock', () => {
         },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    test('Error', () => {
+      const useCmk = new CfnCondition(stack, 'UseCmk', {
+        expression: Fn.conditionEquals('true', 'true'),
+      });
+      new CfnDataSource(stack, 'DataSource', {
+        ...dataSourceProps,
+        serverSideEncryptionConfiguration: Fn.conditionIf(
+          useCmk.logicalId,
+          { kmsKeyArn: new Key(stack, 'Key').keyArn },
+          Aws.NO_VALUE
+        ),
+      });
+      validateStack(stack, ruleId, TestType.ERROR);
     });
   });
 });

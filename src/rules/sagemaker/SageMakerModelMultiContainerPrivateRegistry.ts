@@ -6,8 +6,7 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnModel } from 'aws-cdk-lib/aws-sagemaker';
 import { usesPrivateRegistry } from './utils';
-import { NagRuleCompliance } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * SageMaker models with multi-container inference pipelines pull every container image from a private registry in a VPC
@@ -17,7 +16,7 @@ export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnModel) {
       const containers: any[] =
-        resolveIfNotIntrinsic(node, node.containers) ?? [];
+        NagRules.resolveIfNotIntrinsic(node, node.containers) ?? [];
       if (containers.length === 0) {
         return NagRuleCompliance.NOT_APPLICABLE;
       }

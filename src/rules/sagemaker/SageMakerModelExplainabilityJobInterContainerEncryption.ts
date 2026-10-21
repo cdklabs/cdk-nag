@@ -5,8 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnModelExplainabilityJobDefinition } from 'aws-cdk-lib/aws-sagemaker';
-import { resolveNetworkConfigSetting } from './utils';
 import { NagRuleCompliance } from '../../nag-rules';
+import { resolveNestedPrimitive } from '../../utils/resolve-nested-primitive';
 
 /**
  * SageMaker model explainability job definitions have inter-container traffic encryption enabled
@@ -15,7 +15,7 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnModelExplainabilityJobDefinition) {
-      const enableInterContainerTrafficEncryption = resolveNetworkConfigSetting(
+      const enableInterContainerTrafficEncryption = resolveNestedPrimitive(
         node,
         node.networkConfig,
         'enableInterContainerTrafficEncryption'

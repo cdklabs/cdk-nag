@@ -5,8 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnFeatureGroup } from 'aws-cdk-lib/aws-sagemaker';
-import { NagRuleCompliance } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
+import { NagRuleCompliance, NagRules } from '../../nag-rules';
 
 /**
  * SageMaker feature group offline stores are encrypted with a KMS key
@@ -15,14 +14,14 @@ import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnFeatureGroup) {
-      const offlineStoreConfig = resolveIfNotIntrinsic(
+      const offlineStoreConfig = NagRules.resolveIfNotIntrinsic(
         node,
         node.offlineStoreConfig
       );
       if (offlineStoreConfig == undefined) {
         return NagRuleCompliance.NOT_APPLICABLE;
       }
-      const s3StorageConfig = resolveIfNotIntrinsic(
+      const s3StorageConfig = NagRules.resolveIfNotIntrinsic(
         node,
         offlineStoreConfig.S3StorageConfig
       );

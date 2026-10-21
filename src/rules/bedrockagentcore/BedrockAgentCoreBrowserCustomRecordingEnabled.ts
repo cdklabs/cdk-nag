@@ -6,7 +6,6 @@ import { parse } from 'path';
 import { CfnResource } from 'aws-cdk-lib';
 import { CfnBrowserCustom } from 'aws-cdk-lib/aws-bedrockagentcore';
 import { NagRuleCompliance, NagRules } from '../../nag-rules';
-import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 
 /**
  * Bedrock AgentCore custom browsers have session recording enabled with an S3 destination
@@ -15,7 +14,10 @@ import { resolveIfNotIntrinsic } from '../../utils/resolve-if-not-intrinsic';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnBrowserCustom) {
-      const recordingConfig = resolveIfNotIntrinsic(node, node.recordingConfig);
+      const recordingConfig = NagRules.resolveIfNotIntrinsic(
+        node,
+        node.recordingConfig
+      );
       if (recordingConfig == undefined) {
         return NagRuleCompliance.NON_COMPLIANT;
       }
@@ -23,7 +25,7 @@ export default Object.defineProperty(
         node,
         recordingConfig.enabled
       );
-      const s3Location = resolveIfNotIntrinsic(
+      const s3Location = NagRules.resolveIfNotIntrinsic(
         node,
         recordingConfig.s3Location
       );
