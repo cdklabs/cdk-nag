@@ -29,6 +29,7 @@ See [RULES](./RULES.md) for more information on all the available packs.
 4. [NIST 800-53 rev 5](./RULES.md#nist-800-53-rev-5)
 5. [PCI DSS 3.2.1](./RULES.md#pci-dss-321)
 6. [Serverless](./RULES.md#serverless)
+7. [AI Security Best Practices](./RULES.md#ai-security-best-practices)
 
 [RULES](./RULES.md) also includes a collection of [additional rules](./RULES.md#additional-rules) that are not currently included in any of the pre-built NagPacks, but are still available for inclusion in custom NagPacks.
 
