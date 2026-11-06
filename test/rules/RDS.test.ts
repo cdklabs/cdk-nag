@@ -27,8 +27,9 @@ import {
   AuroraEngineVersion,
   ClusterInstance,
 } from 'aws-cdk-lib/aws-rds';
-import { Stack } from 'aws-cdk-lib/core';
+import { CfnParameter, Duration, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack, setActivePack } from './utils';
+import { NagRuleCompliance } from '../../src/nag-rules';
 import {
   AuroraMySQLBacktrack,
   AuroraMySQLLogging,
@@ -249,6 +250,110 @@ describe('Amazon Relational Database Service (RDS) and Amazon Aurora', () => {
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
+  });
+
+  describe('RDSEnhancedMonitoringEnabled: cluster-level monitoring', () => {
+    const ruleId = 'RDSEnhancedMonitoringEnabled';
+
+    test.each([true, false])(
+      'Aurora Serverless v2 with cluster-level monitoring %s',
+      (enableClusterLevelEnhancedMonitoring) => {
+        new DatabaseCluster(stack, 'cluster', {
+          engine: DatabaseClusterEngine.auroraPostgres({
+            version: AuroraPostgresEngineVersion.VER_17_4,
+          }),
+          writer: ClusterInstance.serverlessV2('writer'),
+          vpc: new Vpc(stack, 'vpc'),
+          enableClusterLevelEnhancedMonitoring,
+          monitoringInterval: Duration.seconds(30),
+        });
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+      }
+    );
+
+    test('matches a cluster by its explicit identifier', () => {
+      new CfnDBCluster(stack, 'cluster', {
+        dbClusterIdentifier: 'monitored-cluster',
+        monitoringInterval: 30,
+      });
+      const instance = new CfnDBInstance(stack, 'instance', {
+        dbClusterIdentifier: 'monitored-cluster',
+      });
+      expect(RDSEnhancedMonitoringEnabled(instance)).toBe(
+        NagRuleCompliance.COMPLIANT
+      );
+    });
+
+    test('does not inherit from an unrelated cluster', () => {
+      new CfnDBCluster(stack, 'cluster', { monitoringInterval: 30 });
+      const instance = new CfnDBInstance(stack, 'instance', {
+        dbClusterIdentifier: 'external-cluster',
+      });
+      expect(RDSEnhancedMonitoringEnabled(instance)).toBe(
+        NagRuleCompliance.NON_COMPLIANT
+      );
+    });
+
+    test.each([0, 15])(
+      'preserves instance interval %s',
+      (monitoringInterval) => {
+        const cluster = new CfnDBCluster(stack, 'cluster', {
+          monitoringInterval: 30,
+        });
+        const instance = new CfnDBInstance(stack, 'instance', {
+          dbClusterIdentifier: cluster.ref,
+          monitoringInterval,
+        });
+        expect(RDSEnhancedMonitoringEnabled(instance)).toBe(
+          monitoringInterval
+            ? NagRuleCompliance.COMPLIANT
+            : NagRuleCompliance.NON_COMPLIANT
+        );
+      }
+    );
+
+    test('cannot confirm an unresolved cluster reference', () => {
+      new CfnDBCluster(stack, 'cluster', { monitoringInterval: 30 });
+      const instance = new CfnDBInstance(stack, 'instance', {
+        dbClusterIdentifier: new CfnParameter(stack, 'clusterName')
+          .valueAsString,
+      });
+      expect(RDSEnhancedMonitoringEnabled(instance)).toBe(
+        NagRuleCompliance.NON_COMPLIANT
+      );
+    });
+
+    test('reports unresolved cluster monitoring as a validation error', () => {
+      const cluster = new CfnDBCluster(stack, 'cluster', {
+        monitoringInterval: new CfnParameter(stack, 'interval', {
+          type: 'Number',
+        }).valueAsNumber,
+      });
+      new CfnDBInstance(stack, 'instance', {
+        dbClusterIdentifier: cluster.ref,
+      });
+      validateStack(stack, ruleId, TestType.ERROR);
+    });
+
+    test.each([undefined, 0, 30])(
+      'cluster monitoring interval %s',
+      (monitoringInterval) => {
+        const cluster = new CfnDBCluster(stack, 'cluster', {
+          engine: 'aurora-postgresql',
+          monitoringInterval,
+        });
+        new CfnDBInstance(stack, 'instance', {
+          dbInstanceClass: 'db.serverless',
+          dbClusterIdentifier: cluster.ref,
+          engine: 'aurora-postgresql',
+        });
+        validateStack(
+          stack,
+          ruleId,
+          monitoringInterval ? TestType.COMPLIANCE : TestType.NON_COMPLIANCE
+        );
+      }
+    );
   });
 
   describe('RDSInBackupPlan: RDS DB Instances are part of AWS Backup plan(s)', () => {
