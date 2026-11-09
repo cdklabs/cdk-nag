@@ -17,10 +17,16 @@ import {
   CfnLoadBalancer as CfnLoadBalancerV2,
   CfnListener,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import {
+  CfnDelivery,
+  CfnDeliveryDestination,
+  CfnDeliverySource,
+} from 'aws-cdk-lib/aws-logs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
-import { Stack } from 'aws-cdk-lib/core';
+import { App, CfnCondition, Fn, NestedStack, Stack } from 'aws-cdk-lib/core';
 import { validateStack, TestType, TestPack, setActivePack } from './utils';
+import { NagRuleCompliance } from '../../src/nag-rules';
 import {
   ALBHttpDropInvalidHeaderEnabled,
   ALBHttpToHttpsRedirection,
@@ -339,6 +345,170 @@ describe('Elastic Load Balancing', () => {
 
   describe('ELBLoggingEnabled: Elastic Load Balancers have logging enabled', () => {
     const ruleId = 'ELBLoggingEnabled';
+    function vendedLogs(type = 'application') {
+      const lb = new CfnLoadBalancerV2(stack, 'VendedLB', { type });
+      const source = new CfnDeliverySource(stack, 'Source', {
+        name: 'access-logs',
+        logType: 'ACCESS_LOGS',
+        resourceArn: lb.ref,
+      });
+      const destination = new CfnDeliveryDestination(stack, 'Destination', {
+        name: 'destination',
+        destinationResourceArn:
+          'arn:aws:logs:us-east-1:123456789012:log-group:access',
+      });
+      const delivery = new CfnDelivery(stack, 'Delivery', {
+        deliverySourceName: source.name,
+        deliveryDestinationArn: destination.attrArn,
+      });
+      delivery.addDependency(source);
+      return { lb, source, destination, delivery };
+    }
+
+    test.each(['application', 'network'])(
+      'Vended access logs for %s load balancer',
+      (type) => {
+        vendedLogs(type);
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+      }
+    );
+
+    test('Vended access logs using the load balancer ARN attribute', () => {
+      const { lb, source } = vendedLogs();
+      source.resourceArn = lb.attrLoadBalancerArn;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+    });
+
+    test('Vended access logs using a source name Ref', () => {
+      const { lb, source, delivery } = vendedLogs();
+      delivery.deliverySourceName = source.ref;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+    });
+
+    test.each([
+      'arn:aws:s3:::access-logs',
+      'arn:aws:firehose:us-east-1:123456789012:deliverystream/access',
+    ])('Vended delivery to %s', (arn) => {
+      const { lb, destination } = vendedLogs();
+      destination.destinationResourceArn = arn;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+    });
+
+    test.each(['source', 'delivery', 'destination'] as const)(
+      'Conditional %s is not proof of logging',
+      (key) => {
+        const chain = vendedLogs();
+        chain[key].cfnOptions.condition = new CfnCondition(stack, 'Disabled', {
+          expression: Fn.conditionEquals('enabled', 'disabled'),
+        });
+        expect(ELBLoggingEnabled(chain.lb)).toBe(
+          NagRuleCompliance.NON_COMPLIANT
+        );
+      }
+    );
+
+    test('The destination name Ref is not its ARN', () => {
+      const { lb, delivery, destination } = vendedLogs();
+      delivery.deliveryDestinationArn = destination.ref;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A destination without a target is not accepted', () => {
+      const { lb, destination } = vendedLogs();
+      destination.destinationResourceArn = undefined;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A source without a resource ARN is not accepted', () => {
+      const { lb, source } = vendedLogs();
+      source.resourceArn = undefined;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('An imported load balancer ARN is not accepted', () => {
+      const { lb, source } = vendedLogs();
+      source.resourceArn = Fn.importValue('external-lb');
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A reference to a non-ARN source attribute is not its name', () => {
+      const { lb, source, delivery } = vendedLogs();
+      delivery.deliverySourceName = source.attrArn;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A nested stack with colliding logical IDs cannot satisfy the parent', () => {
+      stack = new Stack(new App(), 'Parent');
+      const parent = new CfnLoadBalancerV2(stack, 'LB', {
+        type: 'application',
+      });
+      parent.overrideLogicalId('SharedLB');
+      stack = new NestedStack(stack, 'Nested');
+      const { lb } = vendedLogs();
+      lb.overrideLogicalId('SharedLB');
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+      expect(ELBLoggingEnabled(parent)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('No log attributes or delivery is noncompliant without throwing', () => {
+      const lb = new CfnLoadBalancerV2(stack, 'LB', { type: 'application' });
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('Gateway load balancers cannot use the vended fallback', () => {
+      const { lb } = vendedLogs('gateway');
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A source without a delivery does not enable logging', () => {
+      const { lb } = vendedLogs();
+      stack.node.tryRemoveChild('Delivery');
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A delivery for a different source does not enable logging', () => {
+      const { lb, delivery } = vendedLogs();
+      delivery.deliverySourceName = 'another-source';
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('Logging applies only to the referenced load balancer', () => {
+      const { lb } = vendedLogs();
+      const other = new CfnLoadBalancerV2(stack, 'OtherLB', {
+        type: 'application',
+      });
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+      expect(ELBLoggingEnabled(other)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test.each(['CONNECTION_LOGS', 'HEALTH_CHECK_LOGS', undefined])(
+      'Log type %s is not access logging',
+      (logType) => {
+        const { lb, source } = vendedLogs();
+        source.logType = logType;
+        expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+      }
+    );
+
+    test('A delivery without a local destination is not accepted', () => {
+      const { lb } = vendedLogs();
+      stack.node.tryRemoveChild('Destination');
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('A non-ARN load balancer attribute is not accepted', () => {
+      const { lb, source } = vendedLogs();
+      source.resourceArn = lb.attrDnsName;
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
+
+    test('Repeated validation observes changes to delivery configuration', () => {
+      const { lb, delivery } = vendedLogs();
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.COMPLIANT);
+      delivery.deliverySourceName = 'another-source';
+      expect(ELBLoggingEnabled(lb)).toBe(NagRuleCompliance.NON_COMPLIANT);
+    });
     test('Noncompliance 1', () => {
       new LoadBalancer(stack, 'rELB', {
         vpc: new Vpc(stack, 'rVPC'),

@@ -247,6 +247,27 @@ export class CdkTestStack extends Stack {
 
 </details>
 
+## ELB access log delivery
+
+`ELBLoggingEnabled` (including `AwsSolutions-ELB2`) recognizes legacy S3 access
+logging and CloudWatch Logs vended access log delivery for application and network
+load balancers. Vended delivery requires an `AWS::Logs::DeliverySource` with
+`LogType: ACCESS_LOGS` referencing the load balancer, an `AWS::Logs::Delivery`
+referencing that source's name, and a referenced `AWS::Logs::DeliveryDestination`
+with a destination resource ARN. A delivery source alone does not enable logging.
+CloudWatch Logs, S3, and Firehose targets can be used.
+
+All three delivery resources must be unconditional and in the load balancer's
+stack. The rule recognizes direct load balancer `Ref` and
+`Fn::GetAtt: [logicalId, LoadBalancerArn]` references, a source's configured name
+or `Ref`, and a destination's `Fn::GetAtt: [logicalId, Arn]` reference. External
+or cross-stack delivery configurations and computed ARN expressions are not
+resolved; acknowledge the finding with a justification when logging is managed
+outside this scope. This static check verifies configuration, not successful
+log delivery or destination permissions.
+
+See [AWS CloudWatch Logs delivery configuration](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-logs-deliverysource.html).
+
 ## Migrating from v2
 
 cdk-nag v3 replaces the custom `NagSuppressions` API with CDK's native `Validations.of().acknowledge()` mechanism.
