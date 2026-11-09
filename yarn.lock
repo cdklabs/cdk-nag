@@ -32,13 +32,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.223":
-  version: 0.1.223
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.223"
+"@aws-cdk/aws-service-spec@npm:0.1.226":
+  version: 0.1.226
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.226"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.289"
+    "@aws-cdk/service-spec-types": "npm:^0.0.292"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/6a101352cd5a78f3619ee4fa2fb0fd00df4928e23191f744d68fd85b6240cfc7aedca029e1b6dacd3e86e087a410b9137a4af461af91bdef9af8d8b74a2795f5
+  checksum: 10c0/09423898a8e5694c392c1c773c05dbdc6f73fb1665fc7dc980917fbdf16b8b67e4a5bdf47d69dfabf5528caabd05d690fcb166803f7c48630a0e7c7a7763e293
   languageName: node
   linkType: hard
 
@@ -89,13 +89,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.206.0
-  resolution: "@aws-cdk/integ-runner@npm:2.206.0"
+  version: 2.206.1
+  resolution: "@aws-cdk/integ-runner@npm:2.206.1"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.223"
+    "@aws-cdk/aws-service-spec": "npm:0.1.226"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/b39cb3c2156ad8734e12736a37020cba78dc6c54e0a8f0b46307fcbaf561cc53d0f7edec2798a2f770fd2a734f9ff23eea950a3da5667fb609b93292396c5e1c
+  checksum: 10c0/27dd6b4a0f485a700a56ba80b320a1104ded6ccf578c27f3eb74332cda28a9700c571db05ebb9a4138560eb72a7d133a35ca6ba071604c3c7772cedc492b7981
   languageName: node
   linkType: hard
 
@@ -109,12 +109,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.289":
-  version: 0.0.289
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.289"
+"@aws-cdk/service-spec-types@npm:^0.0.292":
+  version: 0.0.292
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.292"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/66c5a692a0596a052e14df446e9249ad2902ea0f961eb52a9b9303e32f8e74e1f235d5c56f8adef9d30e12ca3a4374105ae39b4ae2b02838722b6cc3b726685f
+  checksum: 10c0/6e26c6467b9a92be488f7cffcd6a07dc6321b791187837340238aeda12a795a42e731e6846188bea99e0951ba144d0fc9e71b7d08e8d4e2311e2206ffbe3c318
   languageName: node
   linkType: hard
 
@@ -5178,8 +5178,8 @@ __metadata:
   linkType: hard
 
 "jsii@npm:6.0.x":
-  version: 6.0.19
-  resolution: "jsii@npm:6.0.19"
+  version: 6.0.20
+  resolution: "jsii@npm:6.0.20"
   dependencies:
     "@jsii/check-node": "npm:1.142.0"
     "@jsii/spec": "npm:1.142.0"
@@ -5195,7 +5195,7 @@ __metadata:
     yargs: "npm:^17.7.3"
   bin:
     jsii: bin/jsii
-  checksum: 10c0/749b8e121f4fa1aa9a889f35af87f4a225c3bf355152ad8c12419608091b279fe6326d59fca1f98c3916cff5f58e26765327c79d9c4abdee49d3c91f47bd9fbe
+  checksum: 10c0/bd21e0178ce9da5e893c362db66a3e898259d1e9fdebc706f81afa269838f8c0ccd9c7b9d3f9682bda5daa9c76dd94da7a1a65894f2470aab79ce212008389c1
   languageName: node
   linkType: hard
 
