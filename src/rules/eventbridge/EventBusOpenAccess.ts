@@ -14,8 +14,11 @@ import { NagRuleCompliance } from '../../nag-rules';
 export default Object.defineProperty(
   (node: CfnResource): NagRuleCompliance => {
     if (node instanceof CfnEventBusPolicy) {
-      if (Stack.of(node).resolve(node.principal) === '*') {
-        const condition = Stack.of(node).resolve(node.condition);
+      // Read the deprecated principal and condition properties without their
+      // getters, which print a deprecation warning on every access
+      const props = (<any>node).cfnProperties;
+      if (Stack.of(node).resolve(props.principal) === '*') {
+        const condition = Stack.of(node).resolve(props.condition);
         if (
           condition === undefined ||
           condition.key === undefined ||
