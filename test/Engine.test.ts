@@ -11,6 +11,12 @@ import {
   Validations,
 } from 'aws-cdk-lib';
 import { Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import {
+  AccountRootPrincipal,
+  PolicyDocument,
+  PolicyStatement,
+  Role,
+} from 'aws-cdk-lib/aws-iam';
 import { CfnBucket } from 'aws-cdk-lib/aws-s3';
 import {
   AwsSolutionsChecks,
@@ -236,6 +242,42 @@ describe('Acknowledgment suppression', () => {
       )
     ).toBe(false);
     expect(ec23Violations.length).toBeGreaterThanOrEqual(0);
+  });
+
+  test('Acknowledging a rule by its base ID suppresses all of its granular findings', () => {
+    const app = new App();
+    const stack = new Stack(app, 'TestStack');
+    const role = new Role(stack, 'rRole', {
+      assumedBy: new AccountRootPrincipal(),
+      inlinePolicies: {
+        foo: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ['s3:*'],
+              resources: ['*'],
+            }),
+          ],
+        }),
+      },
+    });
+    // Sanity check: this policy produces more than one granular IAM5 finding.
+    const preAckPack = new AwsSolutionsChecks();
+    const preAckReport = preAckPack.validateScope(app);
+    const preAckIam5Violations = preAckReport.violations.filter((v) =>
+      v.ruleName.startsWith('AwsSolutions-IAM5')
+    );
+    expect(preAckIam5Violations.length).toBeGreaterThan(1);
+
+    Validations.of(role).acknowledge({
+      id: 'AwsSolutions-IAM5',
+      reason: 'Acknowledge all IAM5 findings for this role',
+    });
+    const pack = new AwsSolutionsChecks();
+    const report = pack.validateScope(app);
+    const iam5Violations = report.violations.filter((v) =>
+      v.ruleName.startsWith('AwsSolutions-IAM5')
+    );
+    expect(iam5Violations.length).toBe(0);
   });
 
   test('Acknowledgement on Stack A does NOT suppress findings in Stack B', () => {

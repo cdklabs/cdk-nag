@@ -146,6 +146,8 @@ export class CdkTestStack extends Stack {
 }
 ```
 
+Alternatively, acknowledging the rule by its base ID (e.g., `AwsSolutions-IAM5`, without a `[FindingId]` suffix) suppresses **all** findings for that rule on the construct.
+
 </details>
 
 ## Rules and Property Overrides
@@ -259,7 +261,7 @@ cdk-nag v3 replaces the custom `NagSuppressions` API with CDK's native `Validati
 | `appliesTo: ['Action::s3:*']` | `id: 'AwsSolutions-IAM5[Action::s3:*]'` |
 | `{ id: 'CdkNagValidationFailure', reason: '...' }` | `Validations.of(construct).acknowledge({ id: 'RuleId', reason: '...' })` |
 
-**Note on bulk suppression:** In v2, suppressing a rule without `appliesTo` would suppress all findings for that rule on the construct. In v3, each finding must be acknowledged individually (e.g., `AwsSolutions-IAM5[Action::s3:*]` and `AwsSolutions-IAM5[Resource::*]` are separate acknowledgments). Prefix matching (acknowledging `AwsSolutions-IAM5` to suppress all findings) is not yet supported — tracked via [issue link].
+**Note on bulk suppression:** As in v2, acknowledging a rule by its base ID (e.g., `AwsSolutions-IAM5`) without a `[FindingId]` suffix suppresses all granular findings for that rule on the construct. Use granular IDs like `AwsSolutions-IAM5[Action::s3:*]` if you only want to acknowledge a specific finding.
 
 **Removed APIs:**
 - `NagSuppressions` (use `Validations.of().acknowledge()`)
