@@ -69,6 +69,30 @@ export class NagRules {
   }
 
   /**
+   * Use in cases where the nested values of an object or array must be known to pass a rule.
+   * @param node The CfnResource to check.
+   * @param parameter The value to attempt to resolve.
+   * @returns Return the resolved value if it is not an intrinsic function, otherwise throw an error.
+   */
+  static resolveIfNotIntrinsic(node: CfnResource, parameter: any): any {
+    const resolvedValue = Stack.of(node).resolve(parameter);
+    if (
+      resolvedValue === Object(resolvedValue) &&
+      !Array.isArray(resolvedValue) &&
+      Object.keys(resolvedValue).some(
+        (key) => key === 'Ref' || key.startsWith('Fn::')
+      )
+    ) {
+      throw Error(
+        `The parameter resolved to an intrinsic function "${JSON.stringify(
+          resolvedValue
+        )}", therefore the rule could not be validated.`
+      );
+    }
+    return resolvedValue;
+  }
+
+  /**
    * @deprecated
    * Use resolveResourceFromIntrinsic instead
    *

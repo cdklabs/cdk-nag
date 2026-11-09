@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { App, CfnResource, Stack } from 'aws-cdk-lib';
 import {
+  AISecurityBestPracticesChecks,
   AwsSolutionsChecks,
   HIPAASecurityChecks,
   IApplyRule,
@@ -16,6 +17,70 @@ import {
 } from '../src';
 
 describe('Check NagPack Details', () => {
+  describe('AISecurityBestPractices', () => {
+    class AISecurityBestPracticesChecksExtended extends AISecurityBestPracticesChecks {
+      actualWarnings = new Array<string>();
+      actualErrors = new Array<string>();
+      applyRule(params: IApplyRule): void {
+        const ruleSuffix = params.ruleSuffixOverride
+          ? params.ruleSuffixOverride
+          : params.rule.name;
+        const ruleId = `${pack.readPackName}-${ruleSuffix}`;
+        if (params.level === NagMessageLevel.WARN) {
+          this.actualWarnings.push(ruleId);
+        } else {
+          this.actualErrors.push(ruleId);
+        }
+      }
+    }
+    const pack = new AISecurityBestPracticesChecksExtended();
+    test('Pack Name is correct', () => {
+      expect(pack.readPackName).toStrictEqual('AISecurityBestPractices');
+    });
+    test('Pack contains expected warning and error rules', () => {
+      const expectedWarnings: string[] = [];
+      const expectedErrors = [
+        'AISecurityBestPractices-BedrockAgentCoreBrowserCustomNoPublicNetworkMode',
+        'AISecurityBestPractices-BedrockAgentCoreBrowserCustomRecordingEnabled',
+        'AISecurityBestPractices-BedrockAgentCoreCodeInterpreterCustomVPCNetworkMode',
+        'AISecurityBestPractices-BedrockAgentCoreGatewayAuthorizerConfigured',
+        'AISecurityBestPractices-BedrockAgentCoreGatewayKMSKeyConfigured',
+        'AISecurityBestPractices-BedrockAgentCoreMemoryKMSKeyConfigured',
+        'AISecurityBestPractices-BedrockAgentCoreRuntimeNoPublicNetworkMode',
+        'AISecurityBestPractices-BedrockDataSourceKMSKeyConfigured',
+        'AISecurityBestPractices-SageMakerDataQualityJobInterContainerEncryption',
+        'AISecurityBestPractices-SageMakerDataQualityJobNetworkIsolation',
+        'AISecurityBestPractices-SageMakerEndpointConfigProdInstanceCount',
+        'AISecurityBestPractices-SageMakerFeatureGroupOfflineStoreKMSKeyConfigured',
+        'AISecurityBestPractices-SageMakerFeatureGroupOnlineStoreKMSKeyConfigured',
+        'AISecurityBestPractices-SageMakerInferenceExperimentDataStorageKMSKeyConfigured',
+        'AISecurityBestPractices-SageMakerInferenceExperimentKMSKeyConfigured',
+        'AISecurityBestPractices-SageMakerModelBiasJobInterContainerEncryption',
+        'AISecurityBestPractices-SageMakerModelBiasJobNetworkIsolation',
+        'AISecurityBestPractices-SageMakerModelExplainabilityJobInterContainerEncryption',
+        'AISecurityBestPractices-SageMakerModelExplainabilityJobNetworkIsolation',
+        'AISecurityBestPractices-SageMakerModelMultiContainerPrivateRegistry',
+        'AISecurityBestPractices-SageMakerModelNetworkIsolation',
+        'AISecurityBestPractices-SageMakerModelPrimaryContainerPrivateRegistry',
+        'AISecurityBestPractices-SageMakerModelQualityJobInterContainerEncryption',
+        'AISecurityBestPractices-SageMakerModelQualityJobNetworkIsolation',
+        'AISecurityBestPractices-SageMakerMonitoringScheduleInterContainerEncryption',
+        'AISecurityBestPractices-SageMakerMonitoringScheduleNetworkIsolation',
+        'AISecurityBestPractices-SageMakerNotebookInVPC',
+        'AISecurityBestPractices-SageMakerNotebookInstanceKMSKeyConfigured',
+        'AISecurityBestPractices-SageMakerNotebookNoDirectInternetAccess',
+        'AISecurityBestPractices-SageMakerNotebookRootAccessDisabled',
+        'AISecurityBestPractices-SageMakerNotebookSupportedPlatform',
+      ];
+      jest.spyOn(pack, 'applyRule');
+      const app = new App();
+      const stack = new Stack(app, 'TestStack');
+      new CfnResource(stack, 'TestResource', { type: 'foo' });
+      pack.validateScope(app);
+      expect(pack.actualWarnings.sort()).toEqual(expectedWarnings.sort());
+      expect(pack.actualErrors.sort()).toEqual(expectedErrors.sort());
+    });
+  });
   describe('AwsSolutions', () => {
     class AwsSolutionsChecksExtended extends AwsSolutionsChecks {
       actualWarnings = new Array<string>();
