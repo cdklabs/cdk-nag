@@ -332,6 +332,18 @@ describe('Amazon API Gateway', () => {
         validateRequestBody: true,
         validateRequestParameters: true,
       });
+      new CfnRestApi(stack, 'OpenApiRestApi', {
+        body: {
+          openapi: '3.0.0',
+          paths: {},
+          'x-amazon-apigateway-request-validators': {
+            all: {
+              validateRequestBody: true,
+              validateRequestParameters: true,
+            },
+          },
+        },
+      });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
     });
   });
