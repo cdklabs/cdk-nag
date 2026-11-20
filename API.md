@@ -154,6 +154,145 @@ public readonly lines: NagReportLine[];
 
 ## Classes <a name="Classes" id="Classes"></a>
 
+### AISecurityBestPracticesChecks <a name="AISecurityBestPracticesChecks" id="cdk-nag.AISecurityBestPracticesChecks"></a>
+
+Check for AI workload configurations that do not align with the AWS Security Hub CSPM AI Security Best Practices standard (v1.0.0).
+
+> [https://docs.aws.amazon.com/securityhub/latest/userguide/standards-ai-security.html](https://docs.aws.amazon.com/securityhub/latest/userguide/standards-ai-security.html)
+
+#### Initializers <a name="Initializers" id="cdk-nag.AISecurityBestPracticesChecks.Initializer"></a>
+
+```typescript
+import { AISecurityBestPracticesChecks } from 'cdk-nag'
+
+new AISecurityBestPracticesChecks(scope?: IConstruct, props?: NagPackProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.Initializer.parameter.scope">scope</a></code> | <code>constructs.IConstruct</code> | *No description.* |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-nag.NagPackProps">NagPackProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Optional</sup> <a name="scope" id="cdk-nag.AISecurityBestPracticesChecks.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+##### `props`<sup>Optional</sup> <a name="props" id="cdk-nag.AISecurityBestPracticesChecks.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#cdk-nag.NagPackProps">NagPackProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.validate">validate</a></code> | Entry point called by the CDK validation framework. |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.validateScope">validateScope</a></code> | Validate a construct tree directly. |
+
+---
+
+##### `validate` <a name="validate" id="cdk-nag.AISecurityBestPracticesChecks.validate"></a>
+
+```typescript
+public validate(context: IPolicyValidationContext): PolicyValidationPluginReport
+```
+
+Entry point called by the CDK validation framework.
+
+Requires `appConstruct` to be present on the context (CDK core change).
+For testing or direct invocation, use `validateScope(scope)`.
+
+###### `context`<sup>Required</sup> <a name="context" id="cdk-nag.AISecurityBestPracticesChecks.validate.parameter.context"></a>
+
+- *Type:* aws-cdk-lib.IPolicyValidationContext
+
+---
+
+##### `validateScope` <a name="validateScope" id="cdk-nag.AISecurityBestPracticesChecks.validateScope"></a>
+
+```typescript
+public validateScope(scope: IConstruct): PolicyValidationPluginReport
+```
+
+Validate a construct tree directly.
+
+This is the primary entry point
+for testing and for CDK versions that do not yet provide `appConstruct` on
+`IPolicyValidationContext`.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="cdk-nag.AISecurityBestPracticesChecks.validateScope.parameter.scope"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.property.name">name</a></code> | <code>string</code> | The name of the plugin that will be displayed in the validation report. |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.property.readPackName">readPackName</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.property.ruleIds">ruleIds</a></code> | <code>string[]</code> | The list of rule IDs that the plugin will evaluate. |
+| <code><a href="#cdk-nag.AISecurityBestPracticesChecks.property.version">version</a></code> | <code>string</code> | The version of the plugin, following the Semantic Versioning specification (see https://semver.org/). This version is used for analytics purposes, to measure the usage of different plugins and different versions. The value of this property should be kept in sync with the actual version of the software package. If the version is not provided or is not a valid semantic version, it will be reported as `0.0.0`. |
+
+---
+
+##### `name`<sup>Required</sup> <a name="name" id="cdk-nag.AISecurityBestPracticesChecks.property.name"></a>
+
+```typescript
+public readonly name: string;
+```
+
+- *Type:* string
+
+The name of the plugin that will be displayed in the validation report.
+
+---
+
+##### `readPackName`<sup>Required</sup> <a name="readPackName" id="cdk-nag.AISecurityBestPracticesChecks.property.readPackName"></a>
+
+```typescript
+public readonly readPackName: string;
+```
+
+- *Type:* string
+
+---
+
+##### `ruleIds`<sup>Optional</sup> <a name="ruleIds" id="cdk-nag.AISecurityBestPracticesChecks.property.ruleIds"></a>
+
+```typescript
+public readonly ruleIds: string[];
+```
+
+- *Type:* string[]
+
+The list of rule IDs that the plugin will evaluate.
+
+Used for analytics
+purposes.
+
+---
+
+##### `version`<sup>Optional</sup> <a name="version" id="cdk-nag.AISecurityBestPracticesChecks.property.version"></a>
+
+```typescript
+public readonly version: string;
+```
+
+- *Type:* string
+
+The version of the plugin, following the Semantic Versioning specification (see https://semver.org/). This version is used for analytics purposes, to measure the usage of different plugins and different versions. The value of this property should be kept in sync with the actual version of the software package. If the version is not provided or is not a valid semantic version, it will be reported as `0.0.0`.
+
+---
+
+
 ### AwsSolutionsChecks <a name="AwsSolutionsChecks" id="cdk-nag.AwsSolutionsChecks"></a>
 
 Check Best practices based on AWS Solutions Security Matrix.
@@ -595,9 +734,36 @@ new NagRules()
 
 | **Name** | **Description** |
 | --- | --- |
+| <code><a href="#cdk-nag.NagRules.resolveIfNotIntrinsic">resolveIfNotIntrinsic</a></code> | Use in cases where the nested values of an object or array must be known to pass a rule. |
 | <code><a href="#cdk-nag.NagRules.resolveIfPrimitive">resolveIfPrimitive</a></code> | Use in cases where a primitive value must be known to pass a rule. |
 | <code><a href="#cdk-nag.NagRules.resolveResourceFromInstrinsic">resolveResourceFromInstrinsic</a></code> | *No description.* |
 | <code><a href="#cdk-nag.NagRules.resolveResourceFromIntrinsic">resolveResourceFromIntrinsic</a></code> | Use in cases where a token resolves to an intrinsic function and the referenced resource must be known to pass a rule. |
+
+---
+
+##### `resolveIfNotIntrinsic` <a name="resolveIfNotIntrinsic" id="cdk-nag.NagRules.resolveIfNotIntrinsic"></a>
+
+```typescript
+import { NagRules } from 'cdk-nag'
+
+NagRules.resolveIfNotIntrinsic(node: CfnResource, parameter: any)
+```
+
+Use in cases where the nested values of an object or array must be known to pass a rule.
+
+###### `node`<sup>Required</sup> <a name="node" id="cdk-nag.NagRules.resolveIfNotIntrinsic.parameter.node"></a>
+
+- *Type:* aws-cdk-lib.CfnResource
+
+The CfnResource to check.
+
+---
+
+###### `parameter`<sup>Required</sup> <a name="parameter" id="cdk-nag.NagRules.resolveIfNotIntrinsic.parameter.parameter"></a>
+
+- *Type:* any
+
+The value to attempt to resolve.
 
 ---
 

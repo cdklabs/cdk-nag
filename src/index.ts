@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 export * from './nag-logger';
 export * from './nag-pack';
 export * from './nag-rules';
+export * from './packs/ai-security-best-practices';
 export * from './packs/aws-solutions';
 export * from './packs/hipaa-security';
 export * from './packs/nist-800-53-r4';
