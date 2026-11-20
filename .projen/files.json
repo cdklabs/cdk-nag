@@ -11,6 +11,7 @@
     ".github/workflows/pull-request-lint.yml",
     ".github/workflows/release.yml",
     ".github/workflows/retry-automerge.yml",
+    ".github/workflows/self-mutation.yml",
     ".github/workflows/upgrade-cdklabs-projen-project-types-main.yml",
     ".github/workflows/upgrade-dev-deps-main.yml",
     ".github/workflows/upgrade-main.yml",
