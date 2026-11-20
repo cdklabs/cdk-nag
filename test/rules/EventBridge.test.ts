@@ -6,6 +6,7 @@ import { Stack } from 'aws-cdk-lib';
 import * as events from 'aws-cdk-lib/aws-events';
 import { CfnEventBusPolicy, CfnRule } from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
+import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { validateStack, TestType, TestPack, setActivePack } from './utils';
@@ -284,6 +285,14 @@ describe('Amazon EventBridge', () => {
       });
       validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
+    test('Noncompliance 6', () => {
+      const policy = new CfnEventBusPolicy(stack, 'Policy', {
+        statementId: 'foo',
+        action: 'events:*',
+      });
+      policy.principal = '*';
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
     test('Compliance', () => {
       new CfnEventBusPolicy(stack, 'Policy1', {
         statementId: 'foo',
@@ -333,6 +342,58 @@ describe('Amazon EventBridge', () => {
         },
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+    describe('Deprecated property warnings', () => {
+      const jsiiDeprecated = process.env.JSII_DEPRECATED;
+      let warn: jest.SpyInstance;
+      beforeEach(() => {
+        process.env.JSII_DEPRECATED = 'warn';
+        warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      });
+      afterEach(() => {
+        warn.mockRestore();
+        if (jsiiDeprecated === undefined) {
+          delete process.env.JSII_DEPRECATED;
+        } else {
+          process.env.JSII_DEPRECATED = jsiiDeprecated;
+        }
+      });
+      const expectNoDeprecatedPropertyWarning = () =>
+        expect(warn).not.toHaveBeenCalledWith(
+          '[WARNING]',
+          expect.stringMatching(
+            /CfnEventBusPolicy#(action|condition|principal) is deprecated/
+          )
+        );
+      test('Noncompliance 1: L2 EventBus policy open to all principals', () => {
+        const bus = new events.EventBus(stack, 'Bus', { eventBusName: 'foo' });
+        bus.addToResourcePolicy(
+          new PolicyStatement({
+            sid: 'foo',
+            actions: ['events:PutEvents'],
+            resources: [bus.eventBusArn],
+            principals: [new AnyPrincipal()],
+          })
+        );
+        validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+        expectNoDeprecatedPropertyWarning();
+      });
+      test('Compliance 1: Policy that only sets a statement', () => {
+        new CfnEventBusPolicy(stack, 'Policy', {
+          statementId: 'foo',
+          statement: {
+            Effect: 'Allow',
+            Principal: '*',
+            Action: 'events:*',
+            Resource: 'arn:aws:events:us-east-1:111122223333:event-bus/default',
+            Condition: {
+              StringEquals: { 'aws:PrincipalOrgID': 'o-1234567890' },
+            },
+          },
+        });
+        validateStack(stack, ruleId, TestType.COMPLIANCE);
+        expectNoDeprecatedPropertyWarning();
+      });
     });
   });
 });
