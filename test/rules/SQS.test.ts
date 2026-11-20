@@ -2,6 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { CfnRule, Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import {
   AnyPrincipal,
   Effect,
@@ -11,13 +13,20 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { CfnSchedule } from 'aws-cdk-lib/aws-scheduler';
+import {
+  CfnSubscription,
+  Subscription,
+  SubscriptionProtocol,
+  Topic,
+} from 'aws-cdk-lib/aws-sns';
 import {
   CfnQueue,
   CfnQueuePolicy,
   Queue,
   QueueEncryption,
 } from 'aws-cdk-lib/aws-sqs';
-import { Stack } from 'aws-cdk-lib/core';
+import { Duration, Lazy, Stack } from 'aws-cdk-lib/core';
 import { TestPack, TestType, validateStack, setActivePack } from './utils';
 import {
   SQSQueueDLQ,
@@ -130,6 +139,203 @@ describe('Amazon Simple Queue Service (SQS)', () => {
         ),
       });
       validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Noncompliance 5', () => {
+      new Queue(stack, 'Dlq', { queueName: 'foo' });
+      const fn = new Function(stack, 'Function', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+      });
+      new Rule(stack, 'Rule', {
+        schedule: Schedule.rate(Duration.minutes(5)),
+      }).addTarget(
+        new LambdaFunction(fn, {
+          deadLetterQueue: Queue.fromQueueArn(
+            stack,
+            'Dlq2FromArn',
+            `arn:aws:sqs:${stack.region}:${stack.account}:foo2`
+          ),
+        })
+      );
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 3', () => {
+      const dlq = new Queue(stack, 'Dlq');
+      const fn = new Function(stack, 'Function', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+      });
+      new Rule(stack, 'Rule', {
+        schedule: Schedule.rate(Duration.minutes(5)),
+      }).addTarget(new LambdaFunction(fn, { deadLetterQueue: dlq }));
+      new Queue(stack, 'Dlq2', { queueName: 'foo' });
+      const fn2 = new Function(stack, 'Function2', {
+        runtime: Runtime.NODEJS_18_X,
+        code: Code.fromInline('hi'),
+        handler: 'index.handler',
+      });
+      new Rule(stack, 'Rule2', {
+        schedule: Schedule.rate(Duration.minutes(5)),
+      }).addTarget(
+        new LambdaFunction(fn2, {
+          deadLetterQueue: Queue.fromQueueArn(
+            stack,
+            'Dlq2FromArn',
+            `arn:aws:sqs:${stack.region}:${stack.account}:foo`
+          ),
+        })
+      );
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Noncompliance 6', () => {
+      new Queue(stack, 'Dlq', { queueName: 'foo' });
+      new CfnSchedule(stack, 'Schedule', {
+        flexibleTimeWindow: { mode: 'OFF' },
+        scheduleExpression: 'rate(5 minutes)',
+        target: {
+          arn: `arn:aws:sqs:${stack.region}:${stack.account}:someTarget`,
+          roleArn: `arn:aws:iam::${stack.account}:role/someRole`,
+          deadLetterConfig: {
+            arn: `arn:aws:sqs:${stack.region}:${stack.account}:foo2`,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 4', () => {
+      const dlq = new Queue(stack, 'Dlq');
+      new CfnSchedule(stack, 'Schedule', {
+        flexibleTimeWindow: { mode: 'OFF' },
+        scheduleExpression: 'rate(5 minutes)',
+        target: {
+          arn: `arn:aws:sqs:${stack.region}:${stack.account}:someTarget`,
+          roleArn: `arn:aws:iam::${stack.account}:role/someRole`,
+          deadLetterConfig: {
+            arn: dlq.queueArn,
+          },
+        },
+      });
+      new Queue(stack, 'Dlq2', { queueName: 'foo' });
+      new CfnSchedule(stack, 'Schedule2', {
+        flexibleTimeWindow: { mode: 'OFF' },
+        scheduleExpression: 'rate(5 minutes)',
+        target: {
+          arn: `arn:aws:sqs:${stack.region}:${stack.account}:someTarget`,
+          roleArn: `arn:aws:iam::${stack.account}:role/someRole`,
+          deadLetterConfig: {
+            arn: `arn:aws:sqs:${stack.region}:${stack.account}:foo`,
+          },
+        },
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Noncompliance 7', () => {
+      new Queue(stack, 'Dlq', { queueName: 'foo' });
+      const topic = new Topic(stack, 'Topic');
+      new Subscription(stack, 'Sub', {
+        topic,
+        protocol: SubscriptionProtocol.EMAIL,
+        endpoint: 'a@b.com',
+        deadLetterQueue: Queue.fromQueueArn(
+          stack,
+          'Dlq2FromArn',
+          `arn:aws:sqs:${stack.region}:${stack.account}:foo2`
+        ),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Compliance 5', () => {
+      const dlq = new Queue(stack, 'Dlq');
+      const topic = new Topic(stack, 'Topic');
+      new Subscription(stack, 'Sub', {
+        topic,
+        protocol: SubscriptionProtocol.EMAIL,
+        endpoint: 'a@b.com',
+        deadLetterQueue: dlq,
+      });
+      new Queue(stack, 'Dlq2', { queueName: 'foo' });
+      new Subscription(stack, 'Sub2', {
+        topic,
+        protocol: SubscriptionProtocol.EMAIL,
+        endpoint: 'c@d.com',
+        deadLetterQueue: Queue.fromQueueArn(
+          stack,
+          'Dlq2FromArn',
+          `arn:aws:sqs:${stack.region}:${stack.account}:foo`
+        ),
+      });
+      validateStack(stack, ruleId, TestType.COMPLIANCE);
+    });
+
+    test('Noncompliance 8: EventBridge Rule target without a dead-letter config', () => {
+      new CfnQueue(stack, 'Queue', {});
+      new CfnRule(stack, 'Rule', {
+        scheduleExpression: 'rate(5 minutes)',
+        targets: [
+          {
+            arn: `arn:aws:sqs:${stack.region}:${stack.account}:someTarget`,
+            id: 'Target',
+          },
+        ],
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 9: Scheduler Schedule without a dead-letter config', () => {
+      new CfnQueue(stack, 'Queue', {});
+      new CfnSchedule(stack, 'Schedule', {
+        flexibleTimeWindow: { mode: 'OFF' },
+        scheduleExpression: 'rate(5 minutes)',
+        target: {
+          arn: `arn:aws:sqs:${stack.region}:${stack.account}:someTarget`,
+          roleArn: `arn:aws:iam::${stack.account}:role/someRole`,
+        },
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 10: SNS Subscription without a redrive policy', () => {
+      new CfnQueue(stack, 'Queue', {});
+      const topic = new Topic(stack, 'Topic');
+      new CfnSubscription(stack, 'Sub', {
+        topicArn: topic.topicArn,
+        protocol: 'email',
+        endpoint: 'a@b.com',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 11: queue name containing regular expression metacharacters', () => {
+      new CfnQueue(stack, 'Queue', { queueName: 'my[queue' });
+      // The queue name is escaped before it is used in a regular expression, so
+      // the rule reports non-compliance instead of throwing a SyntaxError
+      expect(() => validateStack(stack, ruleId, TestType.ERROR)).toThrow();
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 12: EventBridge Rule targets not resolving to a list', () => {
+      new CfnQueue(stack, 'Queue', {});
+      new CfnRule(stack, 'Rule', {
+        scheduleExpression: 'rate(5 minutes)',
+        targets: Lazy.any({ produce: () => ({ Ref: 'someTargets' }) }),
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
+    });
+
+    test('Noncompliance 13: EventBridge Rule without any target', () => {
+      new CfnQueue(stack, 'Queue', {});
+      new CfnRule(stack, 'Rule', {
+        scheduleExpression: 'rate(5 minutes)',
+      });
+      validateStack(stack, ruleId, TestType.NON_COMPLIANCE);
     });
   });
 
