@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 export * as apigw from './apigw';
 export * as appsync from './appsync';
 export * as autoscaling from './autoscaling';
+export * as bedrock from './bedrock';
 export * as cloud9 from './cloud9';
 export * as cloudfront from './cloudfront';
 export * as cloudtrail from './cloudtrail';

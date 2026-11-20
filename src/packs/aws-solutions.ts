@@ -19,6 +19,12 @@ import {
   AutoScalingGroupHealthCheck,
   AutoScalingGroupScalingNotifications,
 } from '../rules/autoscaling';
+import {
+  BedrockAgentGuardrailConfigured,
+  BedrockAgentKMSKeyConfigured,
+  BedrockDataSourceKMSKeyConfigured,
+  BedrockGuardrailKMSKeyConfigured,
+} from '../rules/bedrock';
 import { Cloud9InstanceNoIngressSystemsManager } from '../rules/cloud9';
 import {
   CloudFrontDistributionAccessLogging,
@@ -956,6 +962,42 @@ export class AwsSolutionsChecks extends NagPack {
    * @param node the CfnResource to check
    */
   private checkMachineLearning(node: CfnResource): void {
+    this.applyRule({
+      ruleSuffixOverride: 'BR1',
+      info: 'The Bedrock agent does not use a customer managed KMS key.',
+      explanation:
+        'Bedrock encrypts agent information by default. A customer managed KMS key provides control over key policies and allows you to audit key usage.',
+      level: NagMessageLevel.ERROR,
+      rule: BedrockAgentKMSKeyConfigured,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'BR2',
+      info: 'The Bedrock agent does not have a guardrail identifier and version configured.',
+      explanation:
+        'Associate a guardrail with the agent to help filter harmful content in user inputs and model responses. This rule checks the association, not the policies configured in the guardrail.',
+      level: NagMessageLevel.ERROR,
+      rule: BedrockAgentGuardrailConfigured,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'BR3',
+      info: 'The Bedrock guardrail does not use a customer managed KMS key.',
+      explanation:
+        'A customer managed KMS key gives you control over the key used to encrypt the guardrail.',
+      level: NagMessageLevel.ERROR,
+      rule: BedrockGuardrailKMSKeyConfigured,
+      node: node,
+    });
+    this.applyRule({
+      ruleSuffixOverride: 'BR4',
+      info: 'The Bedrock data source does not use a customer managed KMS key for ingestion.',
+      explanation:
+        'Configure a customer managed KMS key to encrypt transient data during knowledge base ingestion. Encryption of the source data and vector store must be configured separately.',
+      level: NagMessageLevel.ERROR,
+      rule: BedrockDataSourceKMSKeyConfigured,
+      node: node,
+    });
     this.applyRule({
       ruleSuffixOverride: 'LEX4',
       info: 'Lex conversation logs are enabled and not encrypted with a KMS key.',
