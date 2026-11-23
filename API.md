@@ -156,6 +156,8 @@ public readonly lines: NagReportLine[];
 
 ### AwsSolutionsChecks <a name="AwsSolutionsChecks" id="cdk-nag.AwsSolutionsChecks"></a>
 
+- *Implements:* aws-cdk-lib.IPolicyValidationPlugin
+
 Check Best practices based on AWS Solutions Security Matrix.
 
 #### Initializers <a name="Initializers" id="cdk-nag.AwsSolutionsChecks.Initializer"></a>
@@ -292,6 +294,8 @@ The version of the plugin, following the Semantic Versioning specification (see 
 
 
 ### HIPAASecurityChecks <a name="HIPAASecurityChecks" id="cdk-nag.HIPAASecurityChecks"></a>
+
+- *Implements:* aws-cdk-lib.IPolicyValidationPlugin
 
 Check for HIPAA Security compliance.
 
@@ -683,6 +687,8 @@ The value to attempt to resolve.
 
 ### NIST80053R4Checks <a name="NIST80053R4Checks" id="cdk-nag.NIST80053R4Checks"></a>
 
+- *Implements:* aws-cdk-lib.IPolicyValidationPlugin
+
 Check for NIST 800-53 rev 4 compliance.
 
 Based on the NIST 800-53 rev 4 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist-800-53_rev_4.html
@@ -821,6 +827,8 @@ The version of the plugin, following the Semantic Versioning specification (see 
 
 
 ### NIST80053R5Checks <a name="NIST80053R5Checks" id="cdk-nag.NIST80053R5Checks"></a>
+
+- *Implements:* aws-cdk-lib.IPolicyValidationPlugin
 
 Check for NIST 800-53 rev 5 compliance.
 
@@ -961,6 +969,8 @@ The version of the plugin, following the Semantic Versioning specification (see 
 
 ### PCIDSS321Checks <a name="PCIDSS321Checks" id="cdk-nag.PCIDSS321Checks"></a>
 
+- *Implements:* aws-cdk-lib.IPolicyValidationPlugin
+
 Check for PCI DSS 3.2.1 compliance. Based on the PCI DSS 3.2.1 AWS operational best practices: https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-pci-dss.html.
 
 #### Initializers <a name="Initializers" id="cdk-nag.PCIDSS321Checks.Initializer"></a>
@@ -1097,6 +1107,8 @@ The version of the plugin, following the Semantic Versioning specification (see 
 
 
 ### ServerlessChecks <a name="ServerlessChecks" id="cdk-nag.ServerlessChecks"></a>
+
+- *Implements:* aws-cdk-lib.IPolicyValidationPlugin
 
 Serverless Checks are a compilation of rules to validate infrastructure-as-code template against recommended practices.
 
